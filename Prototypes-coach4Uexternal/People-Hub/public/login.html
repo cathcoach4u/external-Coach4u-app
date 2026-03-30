@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The People Hub — Sign In</title>
+  <style>
+    :root {
+      --primary: #003366;
+      --secondary: #0066CC;
+      --accent: #059669;
+      --bg: #F0F4F8;
+      --card: #FFFFFF;
+      --border: #DEE2E6;
+      --text: #212529;
+      --text-muted: #6C757D;
+      --danger: #DC3545;
+      --radius: 10px;
+      --font: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+    }
+    .brand {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .brand-icon {
+      font-size: 40px;
+      margin-bottom: 8px;
+    }
+    .brand-name {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--primary);
+      display: block;
+    }
+    .brand-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-size: 15px;
+      font-family: var(--font);
+      color: var(--text);
+      transition: border-color 0.15s;
+      outline: none;
+    }
+    input:focus { border-color: var(--secondary); }
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-top: 8px;
+    }
+    .btn-primary:hover { background: #002244; }
+    .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+    .error-msg {
+      background: #FEE2E2;
+      color: var(--danger);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .demo-hint {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .demo-hint strong { color: var(--text); }
+    .demo-hint table { width: 100%; margin-top: 8px; border-collapse: collapse; }
+    .demo-hint td { padding: 3px 0; }
+    .demo-hint td:first-child { color: var(--primary); font-weight: 600; min-width: 90px; }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-icon">👥</div>
+      <span class="brand-name">The People Hub</span>
+      <p class="brand-sub">People Development &amp; 1:1 System</p>
+    </div>
+
+    <div class="error-msg" id="error-msg"></div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" placeholder="you@company.com" autocomplete="email" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required />
+      </div>
+      <button type="submit" class="btn-primary" id="submit-btn">Sign In</button>
+    </form>
+
+    <div class="demo-hint">
+      <strong>Demo accounts</strong> — password for all: <strong>Password1</strong>
+      <table>
+        <tr><td>Admin/CEO</td><td>sarah.m@ias.com</td></tr>
+        <tr><td>Manager</td><td>james.h@ias.com</td></tr>
+        <tr><td>Manager</td><td>emma.w@ias.com</td></tr>
+        <tr><td>Staff</td><td>lucy.b@ias.com</td></tr>
+        <tr><td>Staff</td><td>aoife.m@ias.com</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Redirect if already logged in
+    if (localStorage.getItem('ph_token')) {
+      window.location.href = '/';
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const errEl = document.getElementById('error-msg');
+      errEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Signing in…';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+
+        localStorage.setItem('ph_token', data.token);
+        localStorage.setItem('ph_user', JSON.stringify(data.user));
+        window.location.href = '/';
+      } catch (err) {
+        errEl.textContent = err.message;
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+      }
+    });
+  </script>
+</body>
+</html>

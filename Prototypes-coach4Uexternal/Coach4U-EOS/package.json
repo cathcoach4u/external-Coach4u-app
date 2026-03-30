@@ -1,0 +1,17 @@
+{
+  "name": "strategic-hub",
+  "version": "1.0.0",
+  "description": "The Strategic Hub — EOS Operating System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "install-native": "cd node_modules/better-sqlite3 && node ../../node_modules/prebuild-install/bin.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
+    "better-sqlite3": "^12.8.0",
+    "dotenv": "^17.3.1",
+    "express": "^4.22.1"
+  }
+}

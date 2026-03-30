@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The People Hub</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-icon">👥</span>
+      <span class="brand-name">The People <span class="brand-accent">Hub</span></span>
+    </div>
+    <nav class="main-nav" id="main-nav">
+      <button class="nav-tab active" data-panel="team">Team Structure</button>
+      <button class="nav-tab" data-panel="people">People</button>
+      <button class="nav-tab" data-panel="strengths">Strengths</button>
+      <button class="nav-tab" data-panel="meetings">1:1 Meetings</button>
+      <button class="nav-tab" data-panel="dashboard">KPI Dashboard</button>
+      <button class="nav-tab manager-only" data-panel="admin" style="display:none">Admin</button>
+    </nav>
+    <div class="header-user">
+      <div class="user-avatar" id="user-avatar">?</div>
+      <div class="user-info">
+        <div class="user-name" id="user-name">Loading…</div>
+        <div class="user-role" id="user-role"></div>
+      </div>
+      <button class="btn-logout" id="btn-logout">Sign out</button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════ MAIN CONTENT -->
+<main class="main-content">
+
+  <!-- ───────────────────────────────────── TEAM STRUCTURE -->
+  <div class="panel active" id="team-panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Team Structure</div>
+        <div class="panel-subtitle">Company priorities → department goals → individual KPIs</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="team-actions">
+        <button class="btn btn-secondary btn-sm" id="btn-sync-priorities">⟳ Sync from Strategic Hub</button>
+        <button class="btn btn-primary btn-sm manager-only" id="btn-add-priority" style="display:none">+ Add Priority</button>
+      </div>
+    </div>
+    <div id="team-content"><div class="loading"><span class="spinner"></span>Loading…</div></div>
+  </div>
+
+  <!-- ───────────────────────────────────── PEOPLE -->
+  <div class="panel" id="people-panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">People</div>
+        <div class="panel-subtitle" id="people-subtitle">Select a person to view their profile</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-secondary btn-sm" id="btn-back-people" style="display:none">← All People</button>
+        <button class="btn btn-primary btn-sm admin-only" id="btn-add-user" style="display:none">+ Add Person</button>
+      </div>
+    </div>
+    <div id="people-list-view">
+      <div class="search-bar">
+        <input type="text" class="search-input" id="people-search" placeholder="Search by name or role…" />
+        <select id="people-dept-filter" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:14px">
+          <option value="">All departments</option>
+        </select>
+      </div>
+      <div id="people-grid"><div class="loading"><span class="spinner"></span>Loading…</div></div>
+    </div>
+    <div id="people-profile-view" style="display:none"></div>
+  </div>
+
+  <!-- ───────────────────────────────────── STRENGTHS DIRECTORY -->
+  <div class="panel" id="strengths-panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Team Strengths Directory</div>
+        <div class="panel-subtitle">Browse and search CliftonStrengths across the organisation</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-secondary btn-sm" id="btn-analyze-strengths">🤖 AI Analysis</button>
+        <button class="btn btn-secondary btn-sm" id="btn-print-strengths" onclick="window.print()">⎙ Print</button>
+      </div>
+    </div>
+    <div class="search-bar">
+      <input type="text" class="search-input" id="strengths-search" placeholder="Search by name…" />
+      <select id="strengths-filter" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:14px">
+        <option value="">All strengths</option>
+      </select>
+      <select id="strengths-dept-filter" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:14px">
+        <option value="">All departments</option>
+      </select>
+    </div>
+    <div id="strengths-content"><div class="loading"><span class="spinner"></span>Loading…</div></div>
+    <div id="ai-strengths-result" style="display:none" class="card" style="margin-top:16px">
+      <div class="card-header">🤖 AI Team Strengths Analysis</div>
+      <div class="card-body"><div class="ai-response" id="ai-strengths-text"></div></div>
+    </div>
+  </div>
+
+  <!-- ───────────────────────────────────── 1:1 MEETINGS -->
+  <div class="panel" id="meetings-panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">1:1 Meetings</div>
+        <div class="panel-subtitle">Schedule, track, and document 1:1 conversations</div>
+      </div>
+      <div style="display:flex;gap:8px" id="meetings-actions">
+        <button class="btn btn-secondary btn-sm" id="btn-back-meetings" style="display:none">← All 1:1s</button>
+        <button class="btn btn-primary btn-sm manager-only" id="btn-new-schedule" style="display:none">+ New 1:1</button>
+      </div>
+    </div>
+    <div id="meetings-list-view">
+      <div id="meetings-schedules"><div class="loading"><span class="spinner"></span>Loading…</div></div>
+    </div>
+    <div id="meetings-detail-view" style="display:none"></div>
+  </div>
+
+  <!-- ───────────────────────────────────── KPI DASHBOARD -->
+  <div class="panel" id="dashboard-panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">KPI Dashboard</div>
+        <div class="panel-subtitle">Traffic light view of KPI health across the organisation</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <select id="dashboard-view-select" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:14px">
+          <option value="mine">My KPIs</option>
+        </select>
+      </div>
+    </div>
+    <div id="dashboard-content"><div class="loading"><span class="spinner"></span>Loading…</div></div>
+  </div>
+
+  <!-- ───────────────────────────────────── ADMIN -->
+  <div class="panel" id="admin-panel">
+    <div class="panel-header">
+      <div class="panel-title">Admin</div>
+    </div>
+    <div class="sub-tabs">
+      <button class="sub-tab active" data-subtab="admin-users">Users</button>
+      <button class="sub-tab" data-subtab="admin-depts">Departments</button>
+    </div>
+    <div class="sub-panel active" id="admin-users">
+      <div style="margin-bottom:12px;display:flex;justify-content:flex-end">
+        <button class="btn btn-primary btn-sm" id="btn-add-user-admin">+ Add User</button>
+      </div>
+      <div class="card"><div id="admin-users-table"><div class="loading"><span class="spinner"></span>Loading…</div></div></div>
+    </div>
+    <div class="sub-panel" id="admin-depts">
+      <div style="margin-bottom:12px;display:flex;justify-content:flex-end">
+        <button class="btn btn-primary btn-sm" id="btn-add-dept">+ Add Department</button>
+      </div>
+      <div class="card"><div id="admin-depts-table"><div class="loading"><span class="spinner"></span>Loading…</div></div></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════ MODALS -->
+
+<!-- Add/Edit Priority -->
+<div class="modal-overlay hidden" id="modal-priority">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-priority-title">Add Company Priority</span>
+      <button class="modal-close" data-close="modal-priority">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="priority-id" />
+      <div class="form-group">
+        <label>Quarter</label>
+        <input type="text" id="priority-quarter" placeholder="e.g. Q2 2026" />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="priority-description" rows="3" placeholder="Describe this company priority…"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Owner</label>
+          <input type="text" id="priority-owner" placeholder="Name" />
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="priority-status">
+            <option value="on_track">On Track</option>
+            <option value="at_risk">At Risk</option>
+            <option value="off_track">Off Track</option>
+            <option value="complete">Complete</option>
+          </select>
+        </div>
+      </div>
+      <div id="priority-amend-note" style="display:none" class="form-hint" style="color:var(--warning)">
+        ⚠ This priority is synced from the Strategic Hub. You can add a local amendment below — the original will be preserved.
+      </div>
+      <div id="priority-amend-group" style="display:none" class="form-group">
+        <label>Local Amendment</label>
+        <textarea id="priority-amended" rows="2" placeholder="Add context or amendments for your team…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close="modal-priority">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-priority">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Goal -->
+<div class="modal-overlay hidden" id="modal-goal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-goal-title">Add Department Goal</span>
+      <button class="modal-close" data-close="modal-goal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="goal-id" />
+      <input type="hidden" id="goal-dept-id" />
+      <div class="form-group">
+        <label>Goal Description</label>
+        <textarea id="goal-description" rows="3" placeholder="What does this department aim to achieve?"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Linked Company Priority</label>
+          <select id="goal-priority-id"><option value="">— None —</option></select>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="goal-status">
+            <option value="on_track">On Track</option>
+            <option value="at_risk">At Risk</option>
+            <option value="off_track">Off Track</option>
+            <option value="complete">Complete</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close="modal-goal">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-goal">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit KPI -->
+<div class="modal-overlay hidden" id="modal-kpi">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-kpi-title">Add KPI</span>
+      <button class="modal-close" data-close="modal-kpi">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="kpi-id" />
+      <input type="hidden" id="kpi-user-id" />
+      <div class="form-group">
+        <label>KPI Description</label>
+        <input type="text" id="kpi-description" placeholder="e.g. Policies underwritten per month" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Target</label>
+          <input type="text" id="kpi-target" placeholder="e.g. 25" />
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="kpi-type">
+            <option value="number">Number</option>
+            <option value="percentage">Percentage</option>
+            <option value="currency">Currency</option>
+            <option value="boolean">Yes/No</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Unit (optional)</label>
+          <input type="text" id="kpi-unit" placeholder="e.g. policies, days, %" />
+        </div>
+        <div class="form-group">
+          <label>Current Value</label>
+          <input type="text" id="kpi-current" placeholder="e.g. 22" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Status</label>
+          <select id="kpi-status">
+            <option value="green">Green — On Track</option>
+            <option value="yellow">Yellow — At Risk</option>
+            <option value="red">Red — Off Track</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Linked Department Goal</label>
+          <select id="kpi-goal-id"><option value="">— None —</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="kpi-notes" rows="2" placeholder="Optional context…"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button class="btn btn-secondary btn-sm" id="btn-suggest-kpis">🤖 Suggest KPIs</button>
+      </div>
+      <div id="kpi-ai-suggestions" style="display:none;margin-top:10px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close="modal-kpi">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-kpi">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Strengths -->
+<div class="modal-overlay hidden" id="modal-strengths">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Edit CliftonStrengths</span>
+      <button class="modal-close" data-close="modal-strengths">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="strengths-user-id" />
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Select the top 5 CliftonStrengths in order (1 = dominant strength)</p>
+      <div id="strengths-selects"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close="modal-strengths">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-strengths">Save Strengths</button>
+    </div>
+  </div>
+</div>
+
+<!-- New 1:1 Schedule -->
+<div class="modal-overlay hidden" id="modal-schedule">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">New 1:1 Schedule</span>
+      <button class="modal-close" data-close="modal-schedule">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Staff Member</label>
+        <select id="schedule-staff-id"><option value="">Select person…</option></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Frequency</label>
+          <select id="schedule-frequency">
+            <option value="biweekly">Every 2 weeks</option>
+            <option value="monthly">Monthly</option>
+            <option value="weekly">Weekly</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Next Meeting Date</label>
+          <input type="date" id="schedule-next-date" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close="modal-schedule">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-schedule">Create Schedule</button>
+    </div>
+  </div>
+</div>
+
+<!-- Log Meeting -->
+<div class="modal-overlay hidden" id="modal-meeting">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-meeting-title">Log Meeting</span>
+      <button class="modal-close" data-close="modal-meeting">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="meeting-id" />
+      <input type="hidden" id="meeting-oo-id" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Meeting Date</label>
+          <input type="date" id="meeting-date" />
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="meeting-status">
+            <option value="scheduled">Scheduled</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>📊 KPI Review Notes</label>
+        <textarea id="meeting-kpi-notes" rows="3" placeholder="How are KPIs tracking? Any updates on targets?"></textarea>
+      </div>
+      <div class="form-group">
+        <label>🚧 Blockers &amp; Challenges</label>
+        <textarea id="meeting-blockers" rows="3" placeholder="What's getting in the way? How can I help?"></textarea>
+      </div>
+      <div class="form-group">
+        <label>🌱 Development &amp; Growth</label>
+        <textarea id="meeting-development" rows="3" placeholder="Goals, training, career conversations…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>📝 General Notes</label>
+        <textarea id="meeting-general" rows="3" placeholder="Other discussion points, shared with both parties…"></textarea>
+      </div>
+      <div class="form-group manager-only" id="meeting-private-group" style="display:none">
+        <label>🔒 Manager Private Notes <span style="font-size:11px;color:var(--text-muted);font-weight:400">(not visible to staff)</span></label>
+        <textarea id="meeting-private" rows="3" placeholder="Your private observations…"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button class="btn btn-secondary btn-sm" id="btn-draft-actions">🤖 Draft Action Items from Notes</button>
+      </div>
+      <div id="ai-action-suggestions" style="display:none;margin-top:10px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close="modal-meeting">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-meeting">Save Meeting</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Note -->
+<div class="modal-overlay hidden" id="modal-note">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-note-title">Add Note</span>
+      <button class="modal-close" data-close="modal-note">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="note-id" />
+      <input type="hidden" id="note-user-id" />
+      <div class="form-group">
+        <label>Note</label>
+        <textarea id="note-content" rows="5" placeholder="Add your observations, feedback, or context…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Tags</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <label style="font-weight:normal;display:flex;align-items:center;gap:5px;cursor:pointer">
+            <input type="checkbox" class="note-tag-cb" value="performance" /> Performance
+          </label>
+          <label style="font-weight:normal;display:flex;align-items:center;gap:5px;cursor:pointer">
+            <input type="checkbox" class="note-tag-cb" value="development" /> Development
+          </label>
+          <label style="font-weight:normal;display:flex;align-items:center;gap:5px;cursor:pointer">
+            <input type="checkbox" class="note-tag-cb" value="win" /> Win 🎉
+          </label>
+          <label style="font-weight:normal;display:flex;align-items:center;gap:5px;cursor:pointer">
+            <input type="checkbox" class="note-tag-cb" value="concern" /> Concern
+          </label>
+          <label style="font-weight:normal;display:flex;align-items:center;gap:5px;cursor:pointer">
+            <input type="checkbox" class="note-tag-cb" value="feedback" /> Feedback
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close="modal-note">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-note">Save Note</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add File -->
+<div class="modal-overlay hidden" id="modal-file">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Add File / Document</span>
+      <button class="modal-close" data-close="modal-file">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="file-user-id" />
+      <div class="form-group">
+        <label>Link or File Path</label>
+        <input type="text" id="file-link" placeholder="https://sharepoint.com/… or C:\HR\Reviews\…" />
+        <div class="form-hint">Paste a SharePoint link, Google Drive link, OneDrive URL, or local file path</div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" id="file-description" placeholder="What is this document?" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>File Type</label>
+          <select id="file-type">
+            <option value="performance_review">Performance Review</option>
+            <option value="certification">Certification</option>
+            <option value="training">Training Record</option>
+            <option value="contract">Contract</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="file-date" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close="modal-file">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-file">Add File</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add User (Admin) -->
+<div class="modal-overlay hidden" id="modal-user">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-user-title">Add User</span>
+      <button class="modal-close" data-close="modal-user">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-user-id" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="user-name-field" placeholder="First Last" />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="user-email-field" placeholder="email@company.com" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Job Title</label>
+          <input type="text" id="user-title-field" placeholder="Senior Underwriter" />
+        </div>
+        <div class="form-group">
+          <label>Role</label>
+          <select id="user-role-field">
+            <option value="staff">Staff</option>
+            <option value="manager">Manager</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Department</label>
+          <select id="user-dept-field"><option value="">— None —</option></select>
+        </div>
+        <div class="form-group">
+          <label>Manager</label>
+          <select id="user-manager-field"><option value="">— None —</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label id="user-pw-label">Password</label>
+        <input type="password" id="user-pw-field" placeholder="••••••••" />
+        <div class="form-hint" id="user-pw-hint">Leave blank to keep existing password (when editing)</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close="modal-user">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-user">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Strengths Analysis -->
+<div class="modal-overlay hidden" id="modal-ai-strengths">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">🤖 AI Team Strengths Analysis</span>
+      <button class="modal-close" data-close="modal-ai-strengths">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Analyse</label>
+        <select id="ai-dept-select">
+          <option value="">Whole organisation</option>
+        </select>
+      </div>
+      <button class="btn btn-accent" id="btn-run-analysis" style="width:100%">Run Analysis</button>
+      <div id="ai-analysis-result" style="display:none;margin-top:16px">
+        <div class="ai-response" id="ai-analysis-text"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TOASTS -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ═══════════════════════════════════════════════════════ SCRIPTS -->
+<script src="/js/api.js"></script>
+<script src="/js/team.js"></script>
+<script src="/js/people.js"></script>
+<script src="/js/strengths.js"></script>
+<script src="/js/meetings_ui.js"></script>
+<script src="/js/dashboard.js"></script>
+<script src="/js/app.js"></script>
+
+</body>
+</html>

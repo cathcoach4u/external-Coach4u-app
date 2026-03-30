@@ -1,0 +1,16 @@
+{
+  "name": "growth-hub",
+  "version": "1.0.0",
+  "description": "The Growth Hub - Marketing & Growth Execution System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
+    "better-sqlite3": "^12.8.0",
+    "dotenv": "^17.3.1",
+    "express": "^4.22.1"
+  }
+}
