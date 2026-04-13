@@ -258,43 +258,55 @@
   </footer>
 
   <script>
+    // Construct base URL (works both locally and on GitHub Pages)
+    const getBaseUrl = () => {
+      const pathname = window.location.pathname
+      // If in /external-Coach4u-app/ subdirectory (GitHub Pages), use that
+      if (pathname.includes('external-Coach4u-app')) {
+        return pathname.split('external-Coach4u-app')[0] + 'external-Coach4u-app/'
+      }
+      // Otherwise use current location
+      return '/'
+    }
+    const baseUrl = getBaseUrl()
+
     // Module definitions with their associated hubs
     const MODULES = {
       business: {
         name: 'Business Coach4U',
         description: 'Get clear on direction, priorities and metrics for your business',
         hubs: ['strategic', 'operations', 'leadership', 'people', 'connect', 'team_goals'],
-        url: 'https://cathcoach4u.github.io/external-Coach4u-app/business/index.html'
+        url: baseUrl + 'business/index.html'
       },
       teams: {
         name: 'Teams Coach4U',
         description: 'Develop your leadership and team capabilities',
         hubs: ['leadership', 'people', 'connect', 'team_goals'],
-        url: 'https://cathcoach4u.github.io/external-Coach4u-app/teams/index.html'
+        url: baseUrl + 'teams/index.html'
       },
       growth: {
         name: 'Growth Coach4U',
         description: 'Your marketing hub — strategy, campaigns, content and metrics in one place. Works alongside any Coach4U module.',
         hubs: ['growth'],
-        url: 'https://cathcoach4u.github.io/external-Coach4u-app/growth/index.html'
+        url: baseUrl + 'growth/index.html'
       },
       personal: {
         name: 'Personal Coach4U',
         description: 'Achieve your goals and build the life you want',
         hubs: ['wellbeing', 'strengths', 'goals', 'community', 'rhythm', 'resources'],
-        url: 'https://cathcoach4u.github.io/external-Coach4u-app/personal/index.html'
+        url: baseUrl + 'personal/index.html'
       },
       relationships: {
         name: 'Relationships Coach4U',
         description: 'Strengthen your most important relationships',
         hubs: ['couples', 'family', 'meeting'],
-        url: 'https://cathcoach4u.github.io/external-Coach4u-app/relationships/index.html'
+        url: baseUrl + 'relationships/index.html'
       },
       thrivehq: {
         name: 'ThriveHQ',
         description: 'A complete wellbeing and strengths platform',
         hubs: ['wellbeing', 'strengths', 'goals'],
-        url: 'https://cathcoach4u.github.io/external-Coach4u-app/thrivehq/index.html'
+        url: baseUrl + 'thrivehq/index.html'
       }
     }
 
@@ -316,7 +328,15 @@
 
         // Determine which modules are active
         const activeHubs = new Set()
-        if (userModules && Array.isArray(userModules)) {
+
+        // If no modules returned, enable all for demo mode
+        if (!userModules || userModules.length === 0) {
+          // Demo mode: enable all modules
+          Object.values(MODULES).forEach(module => {
+            module.hubs.forEach(hub => activeHubs.add(hub))
+          })
+        } else {
+          // Production mode: use actual user module access
           userModules.forEach(module => {
             if (module.hub && module.active) {
               activeHubs.add(module.hub)
