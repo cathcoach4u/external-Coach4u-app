@@ -143,15 +143,17 @@ window.getUserProfile = async function() {
 
 // Listen for auth state changes on page load
 window.supabaseClient.auth.onAuthStateChange((event, session) => {
-  // If user is on index.html and has a confirmed session with valid user, redirect to dashboard
-  const pathname = window.location.pathname
-  const isIndexPage = pathname.endsWith('/index.html') || pathname.endsWith('/external-Coach4u-app/') || pathname === '/'
-  const hasConfirmedSession = session && session.user && session.user.id
+  // Only redirect to dashboard on actual SIGNED_IN event
+  // Don't redirect during OTP flow (INITIAL_SESSION, USER_UPDATED, etc)
+  if (event === 'SIGNED_IN' && session && session.user && session.user.id) {
+    const pathname = window.location.pathname
+    const isIndexPage = pathname.endsWith('/index.html') || pathname.endsWith('/external-Coach4u-app/') || pathname === '/'
 
-  if (isIndexPage && hasConfirmedSession) {
-    // Wait 500ms for page to render before redirecting
-    setTimeout(() => {
-      window.location.href = 'https://cathcoach4u.github.io/external-Coach4u-app/dashboard.html'
-    }, 500)
+    if (isIndexPage) {
+      console.log('User signed in, redirecting to dashboard...')
+      setTimeout(() => {
+        window.location.href = 'https://cathcoach4u.github.io/external-Coach4u-app/dashboard.html'
+      }, 500)
+    }
   }
 })
