@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Coach4U</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/supabase.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/ai.js"></script>
+  <script>
+    // Require authentication
+    window.requireAuth()
+  </script>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════ HEADER -->
+  <header class="site-header" id="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-name">Business Coach4U</span>
+      </div>
+
+      <!-- Business Switcher -->
+      <div class="biz-switcher" id="biz-switcher">
+        <button class="biz-switcher-btn" id="biz-switcher-btn">
+          <span class="biz-dot" id="biz-dot"></span>
+          <span class="biz-name" id="biz-name-display">Loading…</span>
+          <span class="biz-arrow">▾</span>
+        </button>
+        <div class="biz-dropdown hidden" id="biz-dropdown">
+          <div class="biz-dropdown-list" id="biz-dropdown-list"></div>
+          <div class="biz-dropdown-footer">
+            <button class="biz-manage-btn" id="biz-manage-btn">⚙ Manage Businesses</button>
+          </div>
+        </div>
+      </div>
+
+      <nav class="main-nav" id="main-nav">
+        <button class="nav-tab active" data-hub="strategic">Strategic</button>
+        <button class="nav-tab" data-hub="operations">Operations</button>
+        <button class="nav-tab" data-hub="team">Team</button>
+        <button class="nav-tab" data-hub="growth">Growth</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════ SUB-NAV -->
+  <div class="sub-nav hidden" id="sub-nav">
+    <div class="sub-nav-inner" id="sub-nav-tabs"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ VISION BANNER -->
+  <div class="vision-banner" id="vision-banner">
+    <div class="vision-banner-inner">
+      <div class="vision-col">
+        <span class="vision-label">Core Values</span>
+        <div class="vision-values" id="banner-values">—</div>
+      </div>
+      <div class="vision-divider"></div>
+      <div class="vision-col">
+        <span class="vision-label">10-Year Target</span>
+        <div class="vision-text" id="banner-10yr">—</div>
+      </div>
+      <div class="vision-divider"></div>
+      <div class="vision-col vision-col-split">
+        <div>
+          <span class="vision-label">1-Year Revenue</span>
+          <div class="vision-text vision-highlight" id="banner-revenue">—</div>
+        </div>
+        <div>
+          <span class="vision-label">1-Year Profit</span>
+          <div class="vision-text vision-highlight" id="banner-profit">—</div>
+        </div>
+      </div>
+      <button class="vision-collapse-btn" id="vision-collapse-btn" title="Collapse vision banner">▲</button>
+    </div>
+  </div>
+  <div class="vision-banner-collapsed" id="vision-banner-collapsed" style="display:none;">
+    <button class="vision-expand-btn" id="vision-expand-btn">▼ Vision</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ MAIN CONTENT -->
+  <main class="main-content" id="main-content">
+
+    <!-- ─────────────────────────────────────────── VTO PANEL -->
+    <div class="panel" id="vto-panel">
+
+      <!-- GROUP OVERVIEW (shown when holding company selected) -->
+      <div id="group-overview-content" class="hidden">
+        <!-- populated dynamically by renderGroupOverview() -->
+      </div>
+
+      <!-- NORMAL VTO FORM (shown for sub-businesses) -->
+      <div id="vto-form-content">
+      <div class="panel-header vto-panel-header">
+        <h1 class="vto-page-title">Your company's one-page strategic plan</h1>
+      </div>
+
+      <div class="vto-grid">
+
+        <div class="vto-section card">
+          <div class="card-header"><span class="card-icon">★</span> Core Values</div>
+          <div class="card-body">
+            <p class="card-hint">The 3–5 fundamental beliefs that guide how your company operates</p>
+            <div class="vto-field-group" id="vto-core-values">
+              <!-- populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <div class="vto-section card">
+          <div class="card-header"><span class="card-icon">◎</span> Core Focus</div>
+          <div class="card-body">
+            <label class="field-label">Purpose / Cause / Passion</label>
+            <p class="card-hint">Why your company exists and what problem you solve</p>
+            <textarea class="field-input vto-field" data-section="core_focus" data-key="purpose" rows="2" placeholder="Why does your company exist?"></textarea>
+            <label class="field-label mt-8">Niche</label>
+            <p class="card-hint">What you do better than anyone else</p>
+            <textarea class="field-input vto-field" data-section="core_focus" data-key="niche" rows="2" placeholder="What is your unique niche?"></textarea>
+          </div>
+        </div>
+
+        <div class="vto-section card">
+          <div class="card-header"><span class="card-icon">◉</span> 10-Year Target</div>
+          <div class="card-body">
+            <p class="card-hint">Your big, audacious long-term vision</p>
+            <textarea class="field-input vto-field" data-section="ten_year" data-key="target" rows="3" placeholder="Where will you be in 10 years?"></textarea>
+          </div>
+        </div>
+
+        <div class="vto-section card">
+          <div class="card-header"><span class="card-icon">◈</span> Marketing Strategy</div>
+          <div class="card-body">
+            <p class="card-hint">How we go to market</p>
+            <label class="field-label">Target Market</label>
+            <textarea class="field-input vto-field" data-section="marketing" data-key="target_market" rows="2" placeholder="Who is your ideal client?"></textarea>
+            <label class="field-label mt-8">Uniques (3 Differentiators)</label>
+            <textarea class="field-input vto-field" data-section="marketing" data-key="uniques" rows="3" placeholder="What makes you unique?"></textarea>
+            <label class="field-label mt-8">Proven Process</label>
+            <textarea class="field-input vto-field" data-section="marketing" data-key="proven_process" rows="2" placeholder="Your signature process..."></textarea>
+            <label class="field-label mt-8">Guarantee</label>
+            <input type="text" class="field-input vto-field" data-section="marketing" data-key="guarantee" placeholder="Your guarantee..." />
+          </div>
+        </div>
+
+        <div class="vto-section card vto-card-wide">
+          <div class="card-header"><span class="card-icon">▣</span> 3-Year Picture</div>
+          <div class="card-body">
+            <p class="card-hint">What success looks like 3 years from now</p>
+            <div class="three-grid">
+              <div>
+                <label class="field-label">Target Date</label>
+                <input type="text" class="field-input vto-field" data-section="three_year" data-key="date" placeholder="e.g. March 2029" />
+              </div>
+              <div>
+                <label class="field-label">Revenue</label>
+                <input type="text" class="field-input vto-field" data-section="three_year" data-key="revenue" placeholder="e.g. $1.5M" />
+              </div>
+              <div>
+                <label class="field-label">Profit</label>
+                <input type="text" class="field-input vto-field" data-section="three_year" data-key="profit" placeholder="e.g. $450K" />
+              </div>
+            </div>
+            <label class="field-label mt-8">What does it look like?</label>
+            <textarea class="field-input vto-field" data-section="three_year" data-key="looks_like" rows="3" placeholder="Describe your business in 3 years..."></textarea>
+          </div>
+        </div>
+
+        <div class="vto-section card vto-card-wide">
+          <div class="card-header"><span class="card-icon">▷</span> 1-Year Plan</div>
+          <div class="card-body">
+            <p class="card-hint">Top priorities for the next 12 months</p>
+            <div class="three-grid">
+              <div>
+                <label class="field-label">Target Date</label>
+                <input type="text" class="field-input vto-field" data-section="one_year" data-key="date" placeholder="e.g. Dec 2026" />
+              </div>
+              <div>
+                <label class="field-label">Revenue Goal</label>
+                <input type="text" class="field-input vto-field" data-section="one_year" data-key="revenue" placeholder="e.g. $600K" />
+              </div>
+              <div>
+                <label class="field-label">Profit Goal</label>
+                <input type="text" class="field-input vto-field" data-section="one_year" data-key="profit" placeholder="e.g. $150K" />
+              </div>
+            </div>
+            <label class="field-label mt-8">What must be true?</label>
+            <textarea class="field-input vto-field" data-section="one_year" data-key="goals" rows="3" placeholder="3-7 measurable goals for the year..."></textarea>
+          </div>
+        </div>
+
+      </div>
+      </div><!-- /vto-form-content -->
+    </div>
+
+    <!-- ─────────────────────────────────────── ACCOUNTABILITY PANEL -->
+    <div class="panel hidden" id="accountability-panel">
+      <div class="panel-header">
+        <h1 class="panel-title">Accountability Chart</h1>
+        <p class="panel-subtitle">Your organizational structure — who is accountable for what</p>
+        <button class="btn btn-primary" id="add-seat-btn">+ Add Seat</button>
+      </div>
+      <div class="org-chart-container" id="org-chart">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────── ROCKS PANEL -->
+    <div class="panel hidden" id="rocks-panel">
+      <div class="panel-header">
+        <h1 class="panel-title">Goals</h1>
+        <p class="panel-subtitle">Your 3–7 most important priorities this quarter</p>
+        <div class="panel-header-actions">
+          <select class="field-select" id="quarter-select">
+            <option value="Q1 2026">Q1 2026</option>
+            <option value="Q2 2026" selected>Q2 2026</option>
+            <option value="Q3 2026">Q3 2026</option>
+            <option value="Q4 2026">Q4 2026</option>
+            <option value="Q1 2027">Q1 2027</option>
+          </select>
+          <button class="btn btn-primary" id="add-rock-btn">+ Add Goal</button>
+        </div>
+      </div>
+      <div id="rocks-progress-bar-container" class="rocks-progress-container">
+        <div class="rocks-progress-label">
+          <span id="rocks-progress-text">0 of 0 priorities complete</span>
+          <span id="rocks-progress-pct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="rocks-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+      <div id="rocks-board">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────── SCORECARD PANEL -->
+    <div class="panel hidden" id="scorecard-panel">
+      <div class="panel-header">
+        <h1 class="panel-title">Metrics</h1>
+        <p class="panel-subtitle">Weekly measurables — your company's pulse</p>
+        <button class="btn btn-primary" id="add-metric-btn">+ Add Metric</button>
+      </div>
+      <div class="scorecard-wrapper">
+        <table class="scorecard-table" id="scorecard-table">
+          <thead>
+            <tr id="scorecard-header-row">
+              <!-- populated by JS -->
+            </tr>
+          </thead>
+          <tbody id="scorecard-body">
+            <!-- populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────── Weekly Meeting PANEL -->
+    <div class="panel hidden" id="l10-panel">
+      <div class="panel-header">
+        <h1 class="panel-title">Meeting</h1>
+        <p class="panel-subtitle">Your structured weekly team meeting</p>
+        <button class="btn btn-primary" id="new-meeting-btn">+ New Meeting</button>
+      </div>
+      <div class="l10-layout">
+        <aside class="meetings-sidebar" id="meetings-sidebar">
+          <div class="sidebar-heading">Past Meetings</div>
+          <div id="meetings-list">
+            <!-- populated by JS -->
+          </div>
+        </aside>
+        <div class="meeting-detail" id="meeting-detail">
+          <div class="meeting-detail-empty" id="meeting-detail-empty">
+            <div class="empty-icon">◈</div>
+            <p>Select a meeting or create a new one</p>
+          </div>
+          <div id="meeting-detail-content" style="display:none;">
+            <!-- populated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────── ISSUES PANEL -->
+    <div class="panel hidden" id="issues-panel">
+      <div class="panel-header">
+        <h1 class="panel-title">Issues</h1>
+        <p class="panel-subtitle">Identify, Discuss, Solve — your company's issues</p>
+        <div class="panel-header-actions">
+          <select class="field-select" id="issues-owner-filter">
+            <option value="">All Owners</option>
+            <option value="Cath">Cath</option>
+            <option value="Lou">Lou</option>
+          </select>
+          <button class="btn btn-primary" id="add-issue-btn">+ Add Issue</button>
+        </div>
+      </div>
+      <div class="kanban-board" id="issues-board">
+        <div class="kanban-col" id="col-open">
+          <div class="kanban-col-header">
+            <span class="kanban-col-title">Open</span>
+            <span class="kanban-col-count" id="count-open">0</span>
+          </div>
+          <div class="kanban-cards" id="cards-open" data-status="open"></div>
+        </div>
+        <div class="kanban-col" id="col-ids">
+          <div class="kanban-col-header">
+            <span class="kanban-col-title">In Issues</span>
+            <span class="kanban-col-count" id="count-ids">0</span>
+          </div>
+          <div class="kanban-cards" id="cards-ids" data-status="issues_in_progress"></div>
+        </div>
+        <div class="kanban-col" id="col-resolved">
+          <div class="kanban-col-header">
+            <span class="kanban-col-title">Resolved</span>
+            <span class="kanban-col-count" id="count-resolved">0</span>
+          </div>
+          <div class="kanban-cards" id="cards-resolved" data-status="resolved"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────── TEAM ALIGNMENT PANEL -->
+    <div class="panel hidden" id="alignment-panel">
+
+      <div class="panel-header">
+        <div>
+          <h1 class="panel-title">Team Alignment</h1>
+          <p class="panel-subtitle">Right Person, Right Seat — quarterly people evaluation</p>
+        </div>
+        <button class="btn btn-primary" id="add-member-btn">+ Add Person</button>
+      </div>
+
+      <!-- Helper text -->
+      <div class="alignment-info-bar">
+        <span class="info-pill">🎯 Leadership team use only</span>
+        <span class="info-pill">📅 Review quarterly or when issues arise</span>
+        <span class="info-pill">🔒 Sensitive — used for objective people decisions</span>
+      </div>
+
+      <!-- No core values warning -->
+      <div class="alignment-warning hidden" id="alignment-no-values">
+        <strong>⚠ No Core Values defined yet.</strong>
+        Go to <a href="#" id="go-to-vto-link">Vision &amp; Strategy</a> and add your Core Values first.
+      </div>
+
+      <!-- SECTION 1: CORE VALUES -->
+      <div class="alignment-section" id="section-values">
+        <div class="alignment-section-header">
+          <div>
+            <h2 class="alignment-section-title">Section 1 — Right Person</h2>
+            <p class="alignment-section-sub">Does this person share and demonstrate our Core Values?</p>
+          </div>
+          <div class="rating-legend">
+            <span class="legend-item legend-plus">✓ Always</span>
+            <span class="legend-item legend-pm">± Sometimes</span>
+            <span class="legend-item legend-minus">✗ Rarely</span>
+          </div>
+        </div>
+        <div class="alignment-table-wrap">
+          <table class="alignment-table" id="values-table">
+            <thead><tr id="values-header-row"></tr></thead>
+            <tbody id="values-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SECTION 2: GWC -->
+      <div class="alignment-section" id="section-gwc">
+        <div class="alignment-section-header">
+          <div>
+            <h2 class="alignment-section-title">Section 2 — Right Seat (GWC)</h2>
+            <p class="alignment-section-sub">Does this person Get it, Want it, and have the Capacity to do their role?</p>
+          </div>
+          <div class="rating-legend">
+            <span class="legend-item legend-plus">✓ Yes</span>
+            <span class="legend-item legend-pm">± Partially</span>
+            <span class="legend-item legend-minus">✗ No</span>
+          </div>
+        </div>
+        <div class="alignment-table-wrap">
+          <table class="alignment-table" id="gwc-table">
+            <thead>
+              <tr>
+                <th class="col-name">Team Member</th>
+                <th class="col-gwc" title="Do they understand what the role requires?">
+                  <div class="gwc-th-label">Get It</div>
+                  <div class="gwc-th-sub">Understands the role</div>
+                </th>
+                <th class="col-gwc" title="Do they genuinely want to do this role?">
+                  <div class="gwc-th-label">Want It</div>
+                  <div class="gwc-th-sub">Motivated to do it</div>
+                </th>
+                <th class="col-gwc" title="Do they have the skills, time, and energy?">
+                  <div class="gwc-th-label">Capacity</div>
+                  <div class="gwc-th-sub">Capable &amp; available</div>
+                </th>
+                <th class="col-result">Right Seat?</th>
+              </tr>
+            </thead>
+            <tbody id="gwc-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SECTION 3: SUMMARY -->
+      <div class="alignment-section" id="section-summary">
+        <div class="alignment-section-header">
+          <div>
+            <h2 class="alignment-section-title">Section 3 — Team Alignment Summary</h2>
+            <p class="alignment-section-sub">Overall status for each team member</p>
+          </div>
+        </div>
+        <div class="summary-legend">
+          <div class="summary-legend-item summary-green"><span class="summary-dot"></span> Right Person + Right Seat — Keep, develop, promote</div>
+          <div class="summary-legend-item summary-yellow"><span class="summary-dot"></span> Right Person or Seat issue — Action needed (reassign or coach)</div>
+          <div class="summary-legend-item summary-red"><span class="summary-dot"></span> Wrong Person + Wrong Seat — Immediate attention required</div>
+        </div>
+        <div class="summary-grid" id="summary-grid"></div>
+      </div>
+
+    </div><!-- /alignment-panel -->
+
+    <!-- ─────────────────────────────────── GROWTH PANEL -->
+    <div class="panel hidden" id="growth-panel">
+      <div class="panel-header">
+        <h1 class="panel-title">GrowthHub</h1>
+        <p class="panel-subtitle">Individual development plans, weekly check-ins, and reflection logs</p>
+      </div>
+      <div class="growth-placeholder">
+        <div class="empty-state">
+          <div class="empty-icon">&#9651;</div>
+          <h3>Coming Soon</h3>
+          <p>GrowthHub will help you track individual development plans, run weekly check-ins, and maintain reflection logs for your team.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════════ MODALS -->
+
+  <!-- Seat Modal -->
+  <div class="modal-overlay hidden" id="seat-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="seat-modal-title">Add Seat</h3>
+        <button class="modal-close" id="seat-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="seat-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label class="field-label">Seat Title *</label>
+            <input type="text" class="field-input" id="seat-title" placeholder="e.g. Visionary" />
+          </div>
+          <div class="form-group">
+            <label class="field-label">Person in Seat</label>
+            <input type="text" class="field-input" id="seat-person" placeholder="Name" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="field-label">Reports To (Parent Seat)</label>
+          <select class="field-select" id="seat-parent">
+            <option value="">None (Top Level)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="field-label-row">
+            <label class="field-label">Responsibilities (one per line)</label>
+            <button class="btn-ai-suggest" id="ai-suggest-btn" type="button" title="Generate responsibilities using AI">✨ Generate Responsibilities</button>
+          </div>
+          <textarea class="field-input" id="seat-responsibilities" rows="5" placeholder="Type a Seat Title above then click ✨ Generate Responsibilities, or enter them manually — one per line"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="seat-modal-cancel">Cancel</button>
+        <button class="btn btn-danger hidden" id="seat-modal-delete">Delete Seat</button>
+        <button class="btn btn-primary" id="seat-modal-save">Save Seat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rock Modal -->
+  <div class="modal-overlay hidden" id="rock-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="rock-modal-title">Add Priority</h3>
+        <button class="modal-close" id="rock-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="rock-id" />
+        <div class="form-group">
+          <label class="field-label">Priority Description *</label>
+          <textarea class="field-input" id="rock-description" rows="3" placeholder="What does this priority accomplish?"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="field-label">Owner</label>
+            <input type="text" class="field-input" id="rock-owner" placeholder="Who owns this?" />
+          </div>
+          <div class="form-group">
+            <label class="field-label">Status</label>
+            <select class="field-select" id="rock-status">
+              <option value="not_started">Not Started</option>
+              <option value="on_track">On Track</option>
+              <option value="off_track">Off Track</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="field-label">Quarter</label>
+            <select class="field-select" id="rock-quarter">
+              <option value="Q1 2026">Q1 2026</option>
+              <option value="Q2 2026" selected>Q2 2026</option>
+              <option value="Q3 2026">Q3 2026</option>
+              <option value="Q4 2026">Q4 2026</option>
+              <option value="Q1 2027">Q1 2027</option>
+            </select>
+          </div>
+          <div class="form-group form-group-check">
+            <label class="checkbox-label">
+              <input type="checkbox" id="rock-company" />
+              <span>Company Priority</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="rock-modal-cancel">Cancel</button>
+        <button class="btn btn-danger hidden" id="rock-modal-delete">Delete Priority</button>
+        <button class="btn btn-primary" id="rock-modal-save">Save Priority</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Metric Modal -->
+  <div class="modal-overlay hidden" id="metric-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Add Metric</h3>
+        <button class="modal-close" id="metric-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="metric-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label class="field-label">Metric Name *</label>
+            <input type="text" class="field-input" id="metric-name" placeholder="e.g. New Leads" />
+          </div>
+          <div class="form-group">
+            <label class="field-label">Owner</label>
+            <input type="text" class="field-input" id="metric-owner" placeholder="Name" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="field-label">Weekly Goal</label>
+            <input type="text" class="field-input" id="metric-goal" placeholder="e.g. 5" />
+          </div>
+          <div class="form-group">
+            <label class="field-label">Type</label>
+            <select class="field-select" id="metric-type">
+              <option value="number">Number</option>
+              <option value="currency">Currency ($)</option>
+              <option value="percentage">Percentage (%)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="metric-modal-cancel">Cancel</button>
+        <button class="btn btn-primary" id="metric-modal-save">Save Metric</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Issue Modal -->
+  <div class="modal-overlay hidden" id="issue-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="issue-modal-title">Add Issue</h3>
+        <button class="modal-close" id="issue-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="issue-id" />
+        <div class="form-group">
+          <label class="field-label">Issue Description *</label>
+          <textarea class="field-input" id="issue-description" rows="3" placeholder="Describe the issue clearly..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="field-label">Owner</label>
+            <input type="text" class="field-input" id="issue-owner" placeholder="Who raised this?" />
+          </div>
+          <div class="form-group">
+            <label class="field-label">Priority</label>
+            <select class="field-select" id="issue-priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" id="issue-solution-group" style="display:none;">
+          <label class="field-label">Solution (required to resolve)</label>
+          <textarea class="field-input" id="issue-solution" rows="3" placeholder="How was this solved?"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="field-label">Status</label>
+          <select class="field-select" id="issue-status">
+            <option value="open">Open</option>
+            <option value="issues_in_progress">In Issues</option>
+            <option value="resolved">Resolved</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="issue-modal-cancel">Cancel</button>
+        <button class="btn btn-danger hidden" id="issue-modal-delete">Delete Issue</button>
+        <button class="btn btn-primary" id="issue-modal-save">Save Issue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Meeting Modal -->
+  <div class="modal-overlay hidden" id="meeting-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">New Weekly Meeting</h3>
+        <button class="modal-close" id="meeting-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="field-label">Meeting Date *</label>
+            <input type="date" class="field-input" id="meeting-date" />
+          </div>
+          <div class="form-group">
+            <label class="field-label">Quarter</label>
+            <select class="field-select" id="meeting-quarter">
+              <option value="Q1 2026">Q1 2026</option>
+              <option value="Q2 2026" selected>Q2 2026</option>
+              <option value="Q3 2026">Q3 2026</option>
+              <option value="Q4 2026">Q4 2026</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="meeting-modal-cancel">Cancel</button>
+        <button class="btn btn-primary" id="meeting-modal-save">Create Meeting</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scorecard Cell Edit Popover -->
+  <div class="cell-popover hidden" id="cell-popover">
+    <div class="cell-popover-inner">
+      <input type="number" class="cell-popover-input" id="cell-popover-input" placeholder="Value" step="any" />
+      <div class="cell-popover-btns">
+        <button class="btn btn-sm btn-ghost" id="cell-popover-cancel">✕</button>
+        <button class="btn btn-sm btn-primary" id="cell-popover-save">✓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- Team Member Modal -->
+  <div class="modal-overlay hidden" id="member-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="member-modal-title">Add Team Member</h3>
+        <button class="modal-close" id="member-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="member-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label class="field-label">Name *</label>
+            <input type="text" class="field-input" id="member-name" placeholder="Full name" />
+          </div>
+          <div class="form-group">
+            <label class="field-label">Seat / Role</label>
+            <select class="field-select" id="member-seat">
+              <option value="">No seat assigned</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="member-modal-cancel">Cancel</button>
+        <button class="btn btn-danger hidden" id="member-modal-delete">Remove</button>
+        <button class="btn btn-primary" id="member-modal-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manage Businesses Modal -->
+  <div class="modal-overlay hidden" id="biz-manage-modal">
+    <div class="modal modal-wide">
+      <div class="modal-header">
+        <h3 class="modal-title">Manage Businesses</h3>
+        <button class="modal-close" id="biz-manage-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">
+          The holding company sits at the top. Sub-businesses run beneath it — each with their own strategy, rocks, scorecard, and issues that roll up to the group view.
+        </p>
+        <div id="biz-manage-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+        <button class="btn btn-primary" id="biz-add-new-btn">+ Add Sub-Business</button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="biz-manage-modal-close2">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / Edit Business Modal -->
+  <div class="modal-overlay hidden" id="biz-edit-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="biz-edit-modal-title">Add Sub-Business</h3>
+        <button class="modal-close" id="biz-edit-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="biz-edit-id" />
+        <div class="form-group">
+          <label class="field-label">Business Name *</label>
+          <input type="text" class="field-input" id="biz-edit-name" placeholder="e.g. Coaching Division" />
+        </div>
+        <div class="form-group">
+          <label class="field-label">Colour</label>
+          <div class="biz-color-swatches" id="biz-color-swatches"></div>
+          <input type="hidden" id="biz-edit-color" value="#3b82f6" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="biz-edit-cancel">Cancel</button>
+        <button class="btn btn-danger hidden" id="biz-edit-delete">Delete Business</button>
+        <button class="btn btn-primary" id="biz-edit-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ AI STRATEGY COACH SIDEBAR -->
+  <button class="ai-coach-fab" id="ai-coach-fab" title="Open AI Strategy Coach">
+    💡 <span>AI Strategy Coach</span>
+  </button>
+
+  <div class="ai-coach-sidebar hidden" id="ai-coach-sidebar">
+    <div class="ai-coach-header">
+      <div class="ai-coach-header-left">
+        <span class="ai-coach-avatar">💡</span>
+        <div>
+          <div class="ai-coach-name">AI Strategy Coach</div>
+          <div class="ai-coach-status">Powered by Claude</div>
+        </div>
+      </div>
+      <button class="ai-coach-close" id="ai-coach-close">✕</button>
+    </div>
+    <div class="ai-coach-messages" id="ai-coach-messages">
+      <!-- messages populated by JS -->
+    </div>
+    <div class="ai-coach-input-area">
+      <textarea class="ai-coach-input" id="ai-coach-input" rows="2" placeholder="Ask me anything about your strategy…"></textarea>
+      <button class="ai-coach-send" id="ai-coach-send">➤</button>
+    </div>
+  </div>
+
+  <script src="/js/app-business.js"></script>
+</body>
+</html>
