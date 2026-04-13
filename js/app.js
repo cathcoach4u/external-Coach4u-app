@@ -2340,7 +2340,7 @@ async function sendAICoachMessage() {
     await window.askAI(
       text,
       'strategic',
-      'Business Strategy',
+      'business',
       null,
       (chunk) => {
         fullText += chunk;
