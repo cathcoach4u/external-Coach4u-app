@@ -1,6 +1,22 @@
 // Auth functions for plain HTML project
 // Requires window.supabaseClient from supabase.js
 
+// ─── Helper: Get proper base URL for redirects ──────────────────────────
+function getAuthRedirectUrl(page = 'dashboard') {
+  const pathname = window.location.pathname
+  let baseUrl = window.location.origin
+
+  // If in /external-Coach4u-app/ subdirectory (GitHub Pages), include it
+  if (pathname.includes('external-Coach4u-app')) {
+    const match = pathname.match(/^(.*?external-Coach4u-app)\//i)
+    if (match) {
+      baseUrl = window.location.origin + match[1]
+    }
+  }
+
+  return baseUrl + '/' + page + '.html'
+}
+
 // ─── Handle Magic Link Callback ─────────────────────────────────────────
 // When user clicks magic link in email, Supabase redirects back with token
 (async function handleMagicLinkCallback() {
@@ -26,7 +42,7 @@
       if (data.session) {
         console.log('Session confirmed, redirecting to dashboard...')
         // Redirect to dashboard
-        window.location.href = 'https://cathcoach4u.github.io/external-Coach4u-app/dashboard.html'
+        window.location.href = getAuthRedirectUrl('dashboard')
       }
     }
   } catch (err) {
@@ -44,7 +60,7 @@ window.signIn = async function(email) {
     const { error } = await window.supabaseClient.auth.signInWithOtp({
       email: email,
       options: {
-        emailRedirectTo: 'https://cathcoach4u.github.io/external-Coach4u-app/dashboard.html'
+        emailRedirectTo: getAuthRedirectUrl('dashboard')
       }
     })
 
@@ -72,7 +88,7 @@ window.signOut = async function() {
       return
     }
 
-    window.location.href = 'https://cathcoach4u.github.io/external-Coach4u-app/index.html'
+    window.location.href = getAuthRedirectUrl('index')
   } catch (err) {
     console.error('Sign out error:', err)
   }
@@ -102,7 +118,7 @@ window.requireAuth = async function() {
 
     if (!user) {
       console.warn('No authenticated user found, redirecting to login')
-      window.location.href = 'https://cathcoach4u.github.io/external-Coach4u-app/index.html'
+      window.location.href = getAuthRedirectUrl('index')
       return null
     }
 
@@ -110,7 +126,7 @@ window.requireAuth = async function() {
     return user
   } catch (err) {
     console.error('Error checking auth:', err)
-    window.location.href = 'https://cathcoach4u.github.io/external-Coach4u-app/index.html'
+    window.location.href = getAuthRedirectUrl('index')
   }
 }
 
@@ -155,7 +171,7 @@ window.supabaseClient.auth.onAuthStateChange((event, session) => {
     if (isIndexPage) {
       console.log('User signed in, redirecting to dashboard...')
       setTimeout(() => {
-        window.location.href = 'https://cathcoach4u.github.io/external-Coach4u-app/dashboard.html'
+        window.location.href = getAuthRedirectUrl('dashboard')
       }, 500)
     }
   }
