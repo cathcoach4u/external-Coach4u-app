@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found — Coach4U</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #003366 0%, #0052a3 100%);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 51, 102, 0.2);
+      padding: 60px 40px;
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .error-code {
+      font-size: 120px;
+      font-weight: 700;
+      color: #003366;
+      line-height: 1;
+      margin-bottom: 20px;
+      letter-spacing: -2px;
+    }
+
+    h1 {
+      font-size: 32px;
+      color: #003366;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    a, button {
+      padding: 12px 28px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background-color: #003366;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #002244;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 51, 102, 0.3);
+    }
+
+    .btn-secondary {
+      background-color: #f0f0f0;
+      color: #003366;
+      border: 2px solid #003366;
+    }
+
+    .btn-secondary:hover {
+      background-color: #003366;
+      color: white;
+    }
+
+    .illustration {
+      font-size: 80px;
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+
+    .footer-text {
+      font-size: 13px;
+      color: #999;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #eee;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: rgba(0, 51, 102, 0.95);
+      padding: 16px 20px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 13px;
+    }
+
+    footer a {
+      color: white;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 40px 20px;
+      }
+
+      .error-code {
+        font-size: 80px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      a, button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="illustration">🧭</div>
+    <div class="error-code">404</div>
+    <h1>Page Not Found</h1>
+    <p>Sorry, the page you're looking for doesn't exist. It might have been moved, or the link might be incorrect.</p>
+
+    <div class="button-group">
+      <a href="/index.html" class="btn-primary">← Back to Login</a>
+      <a href="/dashboard.html" class="btn-secondary">Go to Dashboard</a>
+    </div>
+
+    <div class="footer-text">
+      <p>Need help? Contact us at <a href="https://coach4u.com.au" target="_blank" style="color: #003366;">coach4u.com.au</a></p>
+    </div>
+  </div>
+
+  <footer>
+    Strengths-Based Coaching and Counselling | <a href="https://coach4u.com.au" target="_blank">coach4u.com.au</a>
+  </footer>
+</body>
+</html>
