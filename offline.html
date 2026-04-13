@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coach4U — Offline</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #003366 0%, #001a33 100%);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .offline-box {
+      max-width: 500px;
+      width: 100%;
+      background: white;
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #003366;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .info-box {
+      background-color: #f5f5f5;
+      border-left: 4px solid #001a33;
+      padding: 16px;
+      text-align: left;
+      margin-bottom: 30px;
+      border-radius: 4px;
+    }
+
+    .info-box h3 {
+      color: #003366;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .info-box ul {
+      list-style: none;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .info-box li {
+      padding: 4px 0;
+    }
+
+    .info-box li:before {
+      content: "→ ";
+      color: #001a33;
+      font-weight: 600;
+      margin-right: 8px;
+    }
+
+    button {
+      background-color: #003366;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background-color 0.3s;
+      margin-right: 12px;
+    }
+
+    button:hover {
+      background-color: #002244;
+    }
+
+    button.secondary {
+      background-color: transparent;
+      border: 2px solid #003366;
+      color: #003366;
+    }
+
+    button.secondary:hover {
+      background-color: #f5f5f5;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    footer {
+      background-color: rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+      color: white;
+      font-size: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    @media (max-width: 600px) {
+      .offline-box {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+        margin-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="offline-box">
+      <div class="icon">📡</div>
+      <h1>You're offline</h1>
+      <p class="subtitle">
+        It looks like you've lost your internet connection. But you're still able to access some Coach4U features.
+      </p>
+
+      <div class="info-box">
+        <h3>What you can do offline:</h3>
+        <ul>
+          <li>View cached coaching modules</li>
+          <li>Access previously loaded pages</li>
+          <li>Draft and prepare content</li>
+        </ul>
+      </div>
+
+      <div class="button-group">
+        <button onclick="window.location.href='/external-Coach4u-app/'">Go to home</button>
+        <button class="secondary" onclick="window.location.reload()">Try again</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Coach4U — Your personal coaching platform | <a href="https://coach4u.com.au" target="_blank" style="color: white; text-decoration: underline;">coach4u.com.au</a>
+  </footer>
+
+  <script>
+    // Auto-retry when connection is restored
+    window.addEventListener('online', () => {
+      console.log('Connection restored');
+      window.location.reload();
+    });
+
+    // Update button to show retry after delay
+    setTimeout(() => {
+      const tryAgainBtn = document.querySelector('button.secondary');
+      if (tryAgainBtn) {
+        tryAgainBtn.textContent = 'Retry';
+      }
+    }, 2000);
+  </script>
+</body>
+</html>

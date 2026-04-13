@@ -1,0 +1,52 @@
+{
+  "name": "Coach4U - Growth & Coaching Platform",
+  "short_name": "Coach4U",
+  "description": "Your personal coaching hub for business, teams, growth, and personal development",
+  "start_url": "/external-Coach4u-app/",
+  "scope": "/external-Coach4u-app/",
+  "display": "standalone",
+  "orientation": "portrait-or-landscape",
+  "background_color": "#ffffff",
+  "theme_color": "#003366",
+  "icons": [
+    {
+      "src": "/external-Coach4u-app/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/external-Coach4u-app/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/external-Coach4u-app/assets/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/external-Coach4u-app/assets/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["productivity", "education"],
+  "screenshots": [
+    {
+      "src": "/external-Coach4u-app/assets/screenshot-1.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/external-Coach4u-app/assets/screenshot-2.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+}

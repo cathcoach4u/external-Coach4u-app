@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Growth Hub</title>
+  <link rel="manifest" href="/external-Coach4u-app/manifest.json">
+  <meta name="theme-color" content="#003366">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Coach4U">
+  <link rel="apple-touch-icon" href="/external-Coach4u-app/assets/icon-192.png">
   <link rel="stylesheet" href="./css/style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -1342,6 +1348,13 @@
 <script src="./js/ai.js"></script>
 <script>
   window.requireAuth()
+
+  // Register service worker for PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/external-Coach4u-app/sw.js')
+      .then(reg => console.log('Service Worker registered'))
+      .catch(err => console.log('Service Worker registration failed:', err));
+  }
 </script>
 
 </body>
