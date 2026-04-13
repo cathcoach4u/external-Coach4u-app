@@ -428,7 +428,21 @@ async function loadVTO() {
       document.getElementById('vto-form-content').classList.remove('hidden');
       renderVTOForm(data);
     }
-  } catch (e) { showToast('Failed to load VTO: ' + e.message, 'error'); }
+  } catch (e) {
+    console.error('Failed to load VTO:', e);
+    // Use empty/demo data as fallback
+    _vtoData = {
+      core_values: {},
+      core_focus: { purpose: {}, niche: {} },
+      ten_year: { target: {} },
+      one_year: { revenue: {}, profit: {} },
+      marketing: {}
+    };
+    populateBanner(_vtoData);
+    document.getElementById('group-overview-content').classList.add('hidden');
+    document.getElementById('vto-form-content').classList.remove('hidden');
+    renderVTOForm(_vtoData);
+  }
 }
 
 function renderGroupOverview(vtoData, rollupData) {
@@ -618,7 +632,12 @@ async function loadAccountability() {
   try {
     _seats = await get('/seats');
     renderOrgChart(_seats);
-  } catch (e) { showToast('Failed to load seats: ' + e.message, 'error'); }
+  } catch (e) {
+    console.error('Failed to load seats:', e);
+    // Use empty data as fallback
+    _seats = [];
+    renderOrgChart(_seats);
+  }
 }
 
 function renderOrgChart(seats) {
@@ -804,7 +823,12 @@ async function loadRocks() {
   try {
     _rocks = await get('/rocks?quarter=' + encodeURIComponent(quarter));
     renderRocksBoard(_rocks);
-  } catch(e) { showToast('Failed to load rocks: ' + e.message, 'error'); }
+  } catch(e) {
+    console.error('Failed to load rocks:', e);
+    // Use empty data as fallback
+    _rocks = [];
+    renderRocksBoard(_rocks);
+  }
 }
 
 document.getElementById('quarter-select').addEventListener('change', loadRocks);
@@ -947,7 +971,12 @@ async function loadScorecard() {
   try {
     _scorecard = await get('/scorecard');
     renderScorecardTable(_scorecard);
-  } catch(e) { showToast('Failed to load scorecard: ' + e.message, 'error'); }
+  } catch(e) {
+    console.error('Failed to load scorecard:', e);
+    // Use empty data as fallback
+    _scorecard = { metrics: [], weeks: [] };
+    renderScorecardTable(_scorecard);
+  }
 }
 
 function renderScorecardTable({ metrics, weeks }) {
@@ -1138,7 +1167,12 @@ async function loadMeetings() {
     if (_meetings.length > 0 && !_currentMeeting) {
       await loadMeetingDetail(_meetings[0].id);
     }
-  } catch(e) { showToast('Failed to load meetings: ' + e.message, 'error'); }
+  } catch(e) {
+    console.error('Failed to load meetings:', e);
+    // Use empty data as fallback
+    _meetings = [];
+    renderMeetingsList(_meetings);
+  }
 }
 
 function renderMeetingsList(meetings) {
@@ -1842,7 +1876,12 @@ async function loadIssues() {
     if (ownerFilter) url += '?owner=' + encodeURIComponent(ownerFilter);
     _issues = await get(url);
     renderIssuesBoard(_issues);
-  } catch(e) { showToast('Failed to load issues: ' + e.message, 'error'); }
+  } catch(e) {
+    console.error('Failed to load issues:', e);
+    // Use empty data as fallback
+    _issues = [];
+    renderIssuesBoard(_issues);
+  }
 }
 
 document.getElementById('issues-owner-filter').addEventListener('change', loadIssues);
@@ -1981,7 +2020,12 @@ async function loadAlignment() {
   try {
     _alignment = await get('/alignment');
     renderAlignment();
-  } catch(e) { showToast('Failed to load alignment: ' + e.message, 'error'); }
+  } catch(e) {
+    console.error('Failed to load alignment:', e);
+    // Use empty data as fallback
+    _alignment = { members: [], core_values: [], values_ratings: [], gwc_ratings: [], seats: [] };
+    renderAlignment();
+  }
 }
 
 function getRating(memberId, valueKey) {
