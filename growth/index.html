@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Growth Hub</title>
+  <link rel="stylesheet" href="./css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ HEADER -->
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-icon">◈</span>
+      <span class="brand-name">The <span class="brand-accent">Growth</span> Hub</span>
+    </div>
+    <nav class="main-nav" id="main-nav">
+      <button class="nav-tab active" data-panel="strategy">Strategy</button>
+      <button class="nav-tab" data-panel="quarterly">Q-Plan</button>
+      <button class="nav-tab" data-panel="campaigns">Campaigns</button>
+      <button class="nav-tab" data-panel="content">Content</button>
+      <button class="nav-tab" data-panel="metrics">Metrics</button>
+      <button class="nav-tab" data-panel="personas">Personas</button>
+      <button class="nav-tab" data-panel="ai">AI Assistant</button>
+      <button class="nav-tab" data-panel="integrations">Integrations</button>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════ MISSION BANNER -->
+<div class="mission-banner" id="mission-banner">
+  <div class="mission-banner-inner">
+    <div class="mission-col">
+      <span class="mission-label">Current Quarter</span>
+      <div class="mission-value" id="banner-quarter">Q1 2026</div>
+    </div>
+    <div class="mission-divider"></div>
+    <div class="mission-col">
+      <span class="mission-label">Active Campaigns</span>
+      <div class="mission-value" id="banner-campaigns">—</div>
+    </div>
+    <div class="mission-divider"></div>
+    <div class="mission-col">
+      <span class="mission-label">MQLs This Quarter</span>
+      <div class="mission-value mission-highlight" id="banner-mqls">—</div>
+    </div>
+    <div class="mission-divider"></div>
+    <div class="mission-col">
+      <span class="mission-label">Revenue Attributed</span>
+      <div class="mission-value mission-highlight" id="banner-revenue">—</div>
+    </div>
+    <div class="mission-divider"></div>
+    <div class="mission-col">
+      <span class="mission-label">Budget Used</span>
+      <div class="mission-value" id="banner-budget">—</div>
+    </div>
+    <button class="mission-collapse-btn" id="mission-collapse-btn" title="Collapse">▲</button>
+  </div>
+</div>
+<div class="mission-banner-collapsed" id="mission-banner-collapsed" style="display:none;">
+  <button class="mission-expand-btn" id="mission-expand-btn">▼ Dashboard</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ MAIN CONTENT -->
+<main class="main-content" id="main-content">
+
+  <!-- ─────────────────────────────── STRATEGY PANEL (Part 1) -->
+  <div class="panel active" id="strategy-panel">
+    <div class="panel-header">
+      <h1 class="panel-title">Marketing Strategy</h1>
+      <p class="panel-subtitle">Translate company priorities into marketing goals</p>
+    </div>
+
+    <div class="strategy-grid">
+
+      <!-- Company Priorities -->
+      <div class="card full-width">
+        <div class="card-header">
+          <span class="card-icon">🎯</span> Company Quarterly Priorities
+          <div class="card-actions">
+            <button class="btn btn-outline btn-sm" id="import-priorities-btn">↓ Import from Strategic Hub</button>
+            <button class="btn btn-primary btn-sm" id="add-priority-btn">+ Add Priority</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="priorities-list" class="priorities-list"></div>
+        </div>
+      </div>
+
+      <!-- Marketing Objectives -->
+      <div class="card full-width">
+        <div class="card-header">
+          <span class="card-icon">📊</span> Marketing Objectives
+          <p class="card-header-sub">How marketing will deliver on each company priority</p>
+          <div class="card-actions">
+            <button class="btn btn-primary btn-sm" id="add-objective-btn">+ Add Objective</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="objectives-list"></div>
+        </div>
+      </div>
+
+      <!-- Annual Goals -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">📈</span> Annual Marketing Goals
+          <div class="card-actions">
+            <button class="btn btn-primary btn-sm" id="add-annual-goal-btn">+ Add Goal</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="annual-goals-list"></div>
+        </div>
+      </div>
+
+      <!-- Brand Positioning -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-icon">💬</span> Brand Positioning Statement
+        </div>
+        <div class="card-body" id="brand-positioning-body">
+          <div class="brand-statement" id="brand-statement-view"></div>
+          <button class="btn btn-outline btn-sm mt-12" id="edit-brand-btn">Edit Positioning</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────── Q-PLAN PANEL (Part 2) -->
+  <div class="panel" id="quarterly-panel">
+    <div class="panel-header">
+      <h1 class="panel-title">Quarterly Marketing Plan</h1>
+      <p class="panel-subtitle">Your 3–5 marketing priorities for the quarter and how they ladder to company goals</p>
+      <div class="panel-header-actions">
+        <select id="qplan-quarter-filter" class="field-select field-select-sm">
+          <option value="Q1">Q1</option><option value="Q2">Q2</option>
+          <option value="Q3">Q3</option><option value="Q4">Q4</option>
+        </select>
+        <select id="qplan-year-filter" class="field-select field-select-sm">
+          <option value="2026">2026</option><option value="2025">2025</option>
+        </select>
+        <button class="btn btn-primary btn-sm" id="add-qplan-btn">+ Add Priority</button>
+      </div>
+    </div>
+    <div id="qplan-list"></div>
+  </div>
+
+  <!-- ─────────────────────────────── CAMPAIGNS PANEL (Part 3) -->
+  <div class="panel" id="campaigns-panel">
+    <div class="panel-header">
+      <h1 class="panel-title">Campaign Tracker</h1>
+      <p class="panel-subtitle">Active campaigns with goals, performance, and ROI</p>
+      <div class="panel-header-actions">
+        <select id="camp-status-filter" class="field-select field-select-sm">
+          <option value="">All Statuses</option>
+          <option value="planning">Planning</option>
+          <option value="active">Active</option>
+          <option value="paused">Paused</option>
+          <option value="completed">Completed</option>
+        </select>
+        <button class="btn btn-outline btn-sm" id="camp-ab-view-btn">A/B Tests</button>
+        <button class="btn btn-primary btn-sm" id="add-campaign-btn">+ New Campaign</button>
+      </div>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="summary-strip" id="campaigns-summary"></div>
+
+    <!-- Campaign cards -->
+    <div id="campaigns-list"></div>
+
+    <!-- A/B Tests panel (hidden by default) -->
+    <div id="ab-tests-section" style="display:none;">
+      <div class="section-divider">
+        <span>A/B Test Results</span>
+        <button class="btn btn-primary btn-sm" id="add-ab-btn">+ New A/B Test</button>
+      </div>
+      <div id="ab-tests-list"></div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────── CONTENT PANEL (Part 4) -->
+  <div class="panel" id="content-panel">
+    <div class="panel-header">
+      <h1 class="panel-title">Content Calendar</h1>
+      <p class="panel-subtitle">Plan, schedule, and track every piece of content</p>
+      <div class="panel-header-actions">
+        <button class="btn btn-outline btn-sm" id="content-view-month" data-view="month">Month</button>
+        <button class="btn btn-outline btn-sm" id="content-view-list"  data-view="list">List</button>
+        <button class="btn btn-primary btn-sm" id="add-content-btn">+ Add Content</button>
+      </div>
+    </div>
+
+    <!-- Filters bar -->
+    <div class="filter-bar">
+      <select id="content-campaign-filter" class="field-select field-select-sm">
+        <option value="">All Campaigns</option>
+      </select>
+      <select id="content-type-filter" class="field-select field-select-sm">
+        <option value="">All Types</option>
+        <option value="blog">Blog</option>
+        <option value="social">Social</option>
+        <option value="email">Email</option>
+        <option value="video">Video</option>
+        <option value="webinar">Webinar</option>
+        <option value="ad">Ad</option>
+      </select>
+      <select id="content-assignee-filter" class="field-select field-select-sm">
+        <option value="">All Team</option>
+      </select>
+      <select id="content-status-filter" class="field-select field-select-sm">
+        <option value="">All Statuses</option>
+        <option value="ideation">Ideation</option>
+        <option value="draft">Draft</option>
+        <option value="review">Review</option>
+        <option value="scheduled">Scheduled</option>
+        <option value="published">Published</option>
+      </select>
+    </div>
+
+    <!-- Calendar navigation -->
+    <div class="calendar-nav" id="calendar-nav">
+      <button class="btn btn-outline btn-sm" id="cal-prev">‹ Prev</button>
+      <span class="calendar-month-label" id="calendar-month-label"></span>
+      <button class="btn btn-outline btn-sm" id="cal-next">Next ›</button>
+    </div>
+
+    <div id="content-calendar-view"></div>
+    <div id="content-list-view" style="display:none;"></div>
+  </div>
+
+  <!-- ─────────────────────────────── METRICS PANEL (Part 5) -->
+  <div class="panel" id="metrics-panel">
+    <div class="panel-header">
+      <h1 class="panel-title">Marketing Metrics Dashboard</h1>
+      <p class="panel-subtitle">Track performance, prove ROI, export for leadership</p>
+      <div class="panel-header-actions">
+        <button class="btn btn-outline btn-sm" id="add-metrics-btn">+ Add Snapshot</button>
+        <button class="btn btn-outline btn-sm" id="export-csv-btn">↓ Export CSV</button>
+        <button class="btn btn-outline btn-sm" id="export-pdf-btn">↓ Export PDF</button>
+      </div>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="kpi-strip" id="kpi-strip"></div>
+
+    <!-- Charts row -->
+    <div class="charts-grid">
+      <div class="card chart-card">
+        <div class="card-header"><span class="card-icon">📈</span> Website Traffic Trend</div>
+        <div class="card-body"><canvas id="chart-traffic"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <div class="card-header"><span class="card-icon">🎯</span> Lead Generation Trend</div>
+        <div class="card-body"><canvas id="chart-leads"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <div class="card-header"><span class="card-icon">📡</span> Leads by Channel</div>
+        <div class="card-body"><canvas id="chart-channels"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <div class="card-header"><span class="card-icon">💰</span> Cost Per Lead by Channel</div>
+        <div class="card-body"><canvas id="chart-cpl"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Metrics table -->
+    <div class="card mt-20">
+      <div class="card-header"><span class="card-icon">📋</span> Monthly Performance Data</div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table class="data-table" id="metrics-table">
+            <thead>
+              <tr>
+                <th>Month</th><th>Visitors</th><th>MQLs</th><th>SQLs</th>
+                <th>Conv.Rate</th><th>Ad Spend</th><th>Revenue</th><th>ROI</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="metrics-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────── PERSONAS PANEL (Part 6) -->
+  <div class="panel" id="personas-panel">
+    <div class="panel-header">
+      <h1 class="panel-title">Audience & Personas</h1>
+      <p class="panel-subtitle">Know your audience deeply — who they are, what they want, where they are</p>
+      <div class="panel-header-actions">
+        <button class="btn btn-primary btn-sm" id="add-persona-btn">+ New Persona</button>
+      </div>
+    </div>
+    <div class="personas-grid" id="personas-grid"></div>
+  </div>
+
+  <!-- ─────────────────────────────── AI PANEL (Part 7) -->
+  <div class="panel" id="ai-panel">
+    <div class="panel-header">
+      <h1 class="panel-title">AI Growth Assistant</h1>
+      <p class="panel-subtitle">Powered by Claude — generate ideas, analyse campaigns, draft strategy</p>
+    </div>
+    <div class="ai-layout">
+
+      <!-- Quick actions -->
+      <div class="ai-quick-actions">
+        <h3 class="ai-section-title">Quick Actions</h3>
+        <button class="ai-action-btn" data-action="campaign-ideas">
+          <span class="ai-action-icon">💡</span>
+          <div>
+            <div class="ai-action-label">Campaign Ideas</div>
+            <div class="ai-action-sub">Generate campaigns from priorities</div>
+          </div>
+        </button>
+        <button class="ai-action-btn" data-action="content-calendar">
+          <span class="ai-action-icon">📅</span>
+          <div>
+            <div class="ai-action-label">Content Calendar</div>
+            <div class="ai-action-sub">Draft a 4-week content plan</div>
+          </div>
+        </button>
+        <button class="ai-action-btn" data-action="content-topics">
+          <span class="ai-action-icon">✍️</span>
+          <div>
+            <div class="ai-action-label">Content Topics</div>
+            <div class="ai-action-sub">Topic ideas for your persona</div>
+          </div>
+        </button>
+        <button class="ai-action-btn" data-action="analyze-campaign">
+          <span class="ai-action-icon">🔍</span>
+          <div>
+            <div class="ai-action-label">Analyse Campaign</div>
+            <div class="ai-action-sub">Performance insights & recommendations</div>
+          </div>
+        </button>
+        <button class="ai-action-btn" data-action="generate-persona">
+          <span class="ai-action-icon">🎭</span>
+          <div>
+            <div class="ai-action-label">Generate Persona</div>
+            <div class="ai-action-sub">Create a detailed audience profile</div>
+          </div>
+        </button>
+      </div>
+
+      <!-- Chat area -->
+      <div class="ai-chat-area">
+        <!-- Dynamic form appears here for structured prompts -->
+        <div class="ai-form-area" id="ai-form-area"></div>
+
+        <!-- Conversation -->
+        <div class="ai-messages" id="ai-messages">
+          <div class="ai-message ai-message-assistant">
+            <div class="ai-message-text">
+              👋 Hi! I'm your AI Growth Assistant. I can help you:<br><br>
+              • Generate campaign ideas connected to your company priorities<br>
+              • Draft a content calendar from your campaign goals<br>
+              • Suggest content topics for your target personas<br>
+              • Analyse campaign performance and suggest optimisations<br>
+              • Generate detailed audience persona profiles<br><br>
+              Select a quick action on the left or type a question below.
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat input -->
+        <div class="ai-input-row">
+          <textarea id="ai-chat-input" class="field-input" placeholder="Ask anything about your marketing strategy..." rows="2"></textarea>
+          <button class="btn btn-primary" id="ai-send-btn">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────── INTEGRATIONS PANEL (Part 8) -->
+  <div class="panel" id="integrations-panel">
+    <div class="panel-header">
+      <h1 class="panel-title">Hub Integrations</h1>
+      <p class="panel-subtitle">How The Growth Hub connects to the rest of your business operating system</p>
+    </div>
+    <div class="integrations-grid">
+
+      <div class="card integration-card">
+        <div class="integration-icon strategic">🏛</div>
+        <div class="integration-name">The Strategic Hub</div>
+        <div class="integration-port">Port 3000</div>
+        <div class="integration-desc">Company quarterly priorities, annual targets, and scorecards</div>
+        <div class="integration-arrows">
+          <div class="integration-arrow">← Pulls company priorities into Growth Hub strategy</div>
+          <div class="integration-arrow">→ Pushes marketing metrics to company scorecard</div>
+        </div>
+        <div class="integration-status" id="strategic-hub-status">
+          <span class="status-dot status-dot-checking"></span> Checking connection…
+        </div>
+        <div class="integration-actions mt-12">
+          <button class="btn btn-outline btn-sm" onclick="window.open('http://localhost:3000','_blank')">Open Strategic Hub</button>
+          <button class="btn btn-primary btn-sm" id="import-priorities-integration-btn">Import Priorities Now</button>
+        </div>
+      </div>
+
+      <div class="card integration-card">
+        <div class="integration-icon people">👥</div>
+        <div class="integration-name">The People Hub</div>
+        <div class="integration-port">Port 3001</div>
+        <div class="integration-desc">Team roster, roles, accountability charts, and performance</div>
+        <div class="integration-arrows">
+          <div class="integration-arrow">← Pulls team member list for campaign assignment</div>
+          <div class="integration-arrow">→ Marketing workload visible in People Hub</div>
+        </div>
+        <div class="integration-status" id="people-hub-status">
+          <span class="status-dot status-dot-checking"></span> Checking connection…
+        </div>
+        <div class="integration-actions mt-12">
+          <button class="btn btn-outline btn-sm" onclick="window.open('http://localhost:3001','_blank')">Open People Hub</button>
+        </div>
+      </div>
+
+      <div class="card integration-card integration-card-wide">
+        <div class="card-header"><span class="card-icon">📊</span> Marketing → Business Impact Map</div>
+        <div class="card-body">
+          <div id="impact-map"></div>
+        </div>
+      </div>
+
+      <div class="card integration-card integration-card-wide">
+        <div class="card-header"><span class="card-icon">🔌</span> API Endpoints</div>
+        <div class="card-body">
+          <p class="text-muted mb-12">Use these endpoints to connect external tools or automate data imports.</p>
+          <div class="api-endpoints">
+            <div class="api-endpoint"><code>GET  /api/campaigns</code> — All campaigns with performance data</div>
+            <div class="api-endpoint"><code>GET  /api/metrics</code> — All marketing metrics snapshots</div>
+            <div class="api-endpoint"><code>GET  /api/quarterly-plans</code> — Current quarter marketing priorities</div>
+            <div class="api-endpoint"><code>POST /api/company-priorities/import</code> — Bulk import priorities JSON</div>
+            <div class="api-endpoint"><code>GET  /api/campaigns-summary</code> — Summary stats for dashboards</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════ MODALS -->
+
+<!-- Add/Edit Priority -->
+<div class="modal-overlay" id="priority-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="priority-modal-title">Add Company Priority</h2>
+      <button class="modal-close" data-close="priority-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="priority-id" />
+      <div class="field-group">
+        <label class="field-label">Priority Title *</label>
+        <input class="field-input" id="priority-title" placeholder="e.g. Achieve 25% Revenue Growth" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Description</label>
+        <textarea class="field-input" id="priority-desc" rows="2" placeholder="What does success look like?"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Quarter</label>
+          <select class="field-select" id="priority-quarter">
+            <option>Q1</option><option>Q2</option><option>Q3</option><option>Q4</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Year</label>
+          <input class="field-input" id="priority-year" type="number" value="2026" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Owner</label>
+          <input class="field-input" id="priority-owner" placeholder="CEO, VP Sales…" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Status</label>
+          <select class="field-select" id="priority-status">
+            <option value="on-track">On Track</option>
+            <option value="at-risk">At Risk</option>
+            <option value="off-track">Off Track</option>
+            <option value="complete">Complete</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="priority-modal">Cancel</button>
+      <button class="btn btn-primary" id="save-priority-btn">Save Priority</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import Priorities -->
+<div class="modal-overlay" id="import-modal" style="display:none;">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2 class="modal-title">Import Priorities from Strategic Hub</h2>
+      <button class="modal-close" data-close="import-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="text-muted mb-12">Copy the priorities JSON from your Strategic Hub (Quarterly Priorities → Export) and paste it below. Or manually enter priorities one at a time using the Add Priority button.</p>
+      <div class="field-group">
+        <label class="field-label">Paste JSON (array of priority objects)</label>
+        <textarea class="field-input code-input" id="import-json" rows="8"
+          placeholder='[{"title":"Grow revenue 25%","owner":"CEO","quarter":"Q1","year":2026},...]'></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Default Quarter</label>
+          <select class="field-select" id="import-quarter">
+            <option>Q1</option><option>Q2</option><option>Q3</option><option>Q4</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Default Year</label>
+          <input class="field-input" id="import-year" type="number" value="2026" />
+        </div>
+      </div>
+      <div id="import-preview" class="import-preview"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="import-modal">Cancel</button>
+      <button class="btn btn-outline" id="preview-import-btn">Preview</button>
+      <button class="btn btn-primary" id="confirm-import-btn">Import Priorities</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Objective -->
+<div class="modal-overlay" id="objective-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="objective-modal-title">Add Marketing Objective</h2>
+      <button class="modal-close" data-close="objective-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="objective-id" />
+      <div class="field-group">
+        <label class="field-label">Links to Company Priority</label>
+        <select class="field-select" id="objective-priority"></select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Marketing Objective *</label>
+        <input class="field-input" id="objective-title" placeholder="e.g. Generate 400 MQLs in Q1" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Description</label>
+        <textarea class="field-input" id="objective-desc" rows="2" placeholder="How will marketing achieve this?"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Target Value</label>
+          <input class="field-input" id="objective-target" type="number" placeholder="400" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Unit</label>
+          <input class="field-input" id="objective-unit" placeholder="MQLs, leads, %, $…" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Current Value</label>
+          <input class="field-input" id="objective-current" type="number" placeholder="0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Status</label>
+          <select class="field-select" id="objective-status">
+            <option value="on-track">On Track</option>
+            <option value="at-risk">At Risk</option>
+            <option value="off-track">Off Track</option>
+            <option value="complete">Complete</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="objective-modal">Cancel</button>
+      <button class="btn btn-primary" id="save-objective-btn">Save Objective</button>
+    </div>
+  </div>
+</div>
+
+<!-- Brand Positioning Modal -->
+<div class="modal-overlay" id="brand-modal" style="display:none;">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2 class="modal-title">Edit Brand Positioning Statement</h2>
+      <button class="modal-close" data-close="brand-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="text-muted mb-12">Fill in each part of the positioning template. The preview will update automatically.</p>
+      <div class="field-row">
+        <div class="field-group"><label class="field-label">For who</label><input class="field-input" id="bp-for-who" placeholder="B2B companies with 20–500 employees"/></div>
+        <div class="field-group"><label class="field-label">Who need</label><input class="field-input" id="bp-who-need" placeholder="A predictable, scalable pipeline"/></div>
+      </div>
+      <div class="field-row">
+        <div class="field-group"><label class="field-label">Our product/service</label><input class="field-input" id="bp-product" placeholder="[Your Company]"/></div>
+        <div class="field-group"><label class="field-label">Is a</label><input class="field-input" id="bp-is-a" placeholder="Growth intelligence platform"/></div>
+      </div>
+      <div class="field-group"><label class="field-label">That</label><input class="field-input" id="bp-that" placeholder="Connects every marketing activity directly to revenue outcomes"/></div>
+      <div class="field-group"><label class="field-label">Unlike</label><input class="field-input" id="bp-unlike" placeholder="Generic marketing tools that track activities but not results"/></div>
+      <div class="field-group"><label class="field-label">Our product/service</label><input class="field-input" id="bp-differentiator" placeholder="Gives marketing teams clarity and accountability to drive measurable growth"/></div>
+      <div class="field-group"><label class="field-label">Tagline (optional)</label><input class="field-input" id="bp-tagline" placeholder="Marketing that moves the number."/></div>
+      <div class="brand-preview mt-12" id="brand-preview"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="brand-modal">Cancel</button>
+      <button class="btn btn-primary" id="save-brand-btn">Save Positioning</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Quarterly Plan -->
+<div class="modal-overlay" id="qplan-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="qplan-modal-title">Add Marketing Priority</h2>
+      <button class="modal-close" data-close="qplan-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="qplan-id" />
+      <div class="field-group">
+        <label class="field-label">Marketing Priority Title *</label>
+        <input class="field-input" id="qplan-title" placeholder="e.g. Lead Generation Acceleration" />
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Quarter</label>
+          <select class="field-select" id="qplan-quarter-modal">
+            <option>Q1</option><option>Q2</option><option>Q3</option><option>Q4</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Year</label>
+          <input class="field-input" id="qplan-year" type="number" value="2026" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">RAG Status</label>
+          <select class="field-select" id="qplan-rag">
+            <option value="green">🟢 Green</option>
+            <option value="yellow">🟡 Yellow</option>
+            <option value="red">🔴 Red</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Company Priority</label>
+          <select class="field-select" id="qplan-priority"></select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Marketing Objective</label>
+          <select class="field-select" id="qplan-objective"></select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Budget Allocated ($)</label>
+          <input class="field-input" id="qplan-budget" type="number" placeholder="0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Budget Spent ($)</label>
+          <input class="field-input" id="qplan-spent" type="number" placeholder="0" />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Success Metric</label>
+          <input class="field-input" id="qplan-metric" placeholder="MQLs generated, leads, revenue…" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Target</label>
+          <input class="field-input" id="qplan-target" type="number" placeholder="400" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Actual</label>
+          <input class="field-input" id="qplan-actual" type="number" placeholder="0" />
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Notes</label>
+        <textarea class="field-input" id="qplan-notes" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="qplan-modal">Cancel</button>
+      <button class="btn btn-primary" id="save-qplan-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Campaign -->
+<div class="modal-overlay" id="campaign-modal" style="display:none;">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2 class="modal-title" id="campaign-modal-title">New Campaign</h2>
+      <button class="modal-close" data-close="campaign-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="campaign-id" />
+      <div class="field-row">
+        <div class="field-group flex-2">
+          <label class="field-label">Campaign Name *</label>
+          <input class="field-input" id="campaign-name" placeholder="e.g. Q1 Lead Gen Blitz" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Status</label>
+          <select class="field-select" id="campaign-status">
+            <option value="planning">Planning</option>
+            <option value="active">Active</option>
+            <option value="paused">Paused</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Channel</label>
+          <select class="field-select" id="campaign-channel">
+            <option value="">Select…</option>
+            <option>Paid Search</option><option>Paid Social</option>
+            <option>LinkedIn</option><option>Organic</option>
+            <option>Email</option><option>Events</option>
+            <option>Multi-channel</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Objective</label>
+        <textarea class="field-input" id="campaign-objective" rows="2" placeholder="What does this campaign aim to achieve?"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Company Priority</label>
+          <select class="field-select" id="campaign-priority"></select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Q-Plan Priority</label>
+          <select class="field-select" id="campaign-qplan"></select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Assigned To</label>
+          <select class="field-select" id="campaign-assignee"></select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Start Date</label>
+          <input class="field-input" id="campaign-start" type="date" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">End Date</label>
+          <input class="field-input" id="campaign-end" type="date" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Budget Allocated ($)</label>
+          <input class="field-input" id="campaign-budget" type="number" placeholder="0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Budget Spent ($)</label>
+          <input class="field-input" id="campaign-spent" type="number" placeholder="0" />
+        </div>
+      </div>
+      <div class="modal-section-title">Target vs Actual Metrics</div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Target Leads</label>
+          <input class="field-input" id="campaign-target-leads" type="number" placeholder="0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Actual Leads</label>
+          <input class="field-input" id="campaign-actual-leads" type="number" placeholder="0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Target Conversions</label>
+          <input class="field-input" id="campaign-target-conv" type="number" placeholder="0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Actual Conversions</label>
+          <input class="field-input" id="campaign-actual-conv" type="number" placeholder="0" />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Target Revenue ($)</label>
+          <input class="field-input" id="campaign-target-rev" type="number" placeholder="0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Actual Revenue ($)</label>
+          <input class="field-input" id="campaign-actual-rev" type="number" placeholder="0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Target CTR (%)</label>
+          <input class="field-input" id="campaign-target-ctr" type="number" step="0.1" placeholder="0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Actual CTR (%)</label>
+          <input class="field-input" id="campaign-actual-ctr" type="number" step="0.1" placeholder="0" />
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">What's Working — Insights</label>
+        <textarea class="field-input" id="campaign-insights" rows="2" placeholder="Key learnings from this campaign…"></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Notes</label>
+        <textarea class="field-input" id="campaign-notes" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="campaign-modal">Cancel</button>
+      <button class="btn btn-primary" id="save-campaign-btn">Save Campaign</button>
+    </div>
+  </div>
+</div>
+
+<!-- A/B Test Modal -->
+<div class="modal-overlay" id="ab-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="ab-modal-title">Add A/B Test</h2>
+      <button class="modal-close" data-close="ab-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ab-id" />
+      <div class="field-row">
+        <div class="field-group flex-2">
+          <label class="field-label">Test Name *</label>
+          <input class="field-input" id="ab-name" placeholder="e.g. Subject Line Tone Test" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Campaign</label>
+          <select class="field-select" id="ab-campaign"></select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Status</label>
+          <select class="field-select" id="ab-status">
+            <option value="running">Running</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Variant A</label>
+          <input class="field-input" id="ab-variant-a" placeholder="Control version" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Variant B</label>
+          <input class="field-input" id="ab-variant-b" placeholder="Test version" />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Metric Being Tested</label>
+          <input class="field-input" id="ab-metric" placeholder="CTR, open rate, conversion rate…" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Result A</label>
+          <input class="field-input" id="ab-result-a" type="number" step="0.01" placeholder="0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Result B</label>
+          <input class="field-input" id="ab-result-b" type="number" step="0.01" placeholder="0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Winner</label>
+          <select class="field-select" id="ab-winner">
+            <option value="">—</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="tie">Tie</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Key Insight</label>
+        <textarea class="field-input" id="ab-insight" rows="2" placeholder="What did you learn?"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="ab-modal">Cancel</button>
+      <button class="btn btn-primary" id="save-ab-btn">Save Test</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Content Item -->
+<div class="modal-overlay" id="content-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="content-modal-title">Add Content</h2>
+      <button class="modal-close" data-close="content-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="content-id" />
+      <div class="field-group">
+        <label class="field-label">Title *</label>
+        <input class="field-input" id="content-title" placeholder="e.g. 5 Ways to Accelerate B2B Lead Generation" />
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Content Type</label>
+          <select class="field-select" id="content-type">
+            <option value="blog">Blog Post</option>
+            <option value="social">Social Post</option>
+            <option value="email">Email</option>
+            <option value="video">Video</option>
+            <option value="webinar">Webinar</option>
+            <option value="ad">Ad</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Platform</label>
+          <select class="field-select" id="content-platform">
+            <option value="">Select…</option>
+            <option>Website</option><option>LinkedIn</option><option>Instagram</option>
+            <option>Twitter/X</option><option>Facebook</option><option>YouTube</option>
+            <option>HubSpot</option><option>Mailchimp</option><option>Zoom</option><option>Other</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Status</label>
+          <select class="field-select" id="content-status-modal">
+            <option value="ideation">Ideation</option>
+            <option value="draft">Draft</option>
+            <option value="review">Review</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="published">Published</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Campaign</label>
+          <select class="field-select" id="content-campaign"></select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Assigned To</label>
+          <select class="field-select" id="content-assignee"></select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Scheduled Date</label>
+          <input class="field-input" id="content-scheduled" type="date" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Published Date</label>
+          <input class="field-input" id="content-published" type="date" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Tags (comma-separated)</label>
+          <input class="field-input" id="content-tags" placeholder="seo, lead-gen, smb…" />
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Notes</label>
+        <textarea class="field-input" id="content-notes" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="content-modal">Cancel</button>
+      <button class="btn btn-primary" id="save-content-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Persona -->
+<div class="modal-overlay" id="persona-modal" style="display:none;">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2 class="modal-title" id="persona-modal-title">New Persona</h2>
+      <button class="modal-close" data-close="persona-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="persona-id" />
+      <div class="field-row">
+        <div class="field-group flex-2">
+          <label class="field-label">Persona Name *</label>
+          <input class="field-input" id="persona-name" placeholder="e.g. Alex — The Growth-Focused CEO" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Emoji / Avatar</label>
+          <input class="field-input" id="persona-emoji" placeholder="🎯" style="font-size:20px;" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Conversion Rate (%)</label>
+          <input class="field-input" id="persona-conv-rate" type="number" step="0.1" placeholder="0" />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Job Role/Title</label>
+          <input class="field-input" id="persona-role" placeholder="CEO / Founder" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Age Range</label>
+          <input class="field-input" id="persona-age" placeholder="40–55" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Company Size</label>
+          <input class="field-input" id="persona-company-size" placeholder="50–500 employees" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Industry</label>
+          <input class="field-input" id="persona-industry" placeholder="B2B Tech, Professional Services…" />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Goals (one per line)</label>
+          <textarea class="field-input" id="persona-goals" rows="3" placeholder="Scale revenue to next milestone&#10;Build market position&#10;Build team that executes"></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Pain Points (one per line)</label>
+          <textarea class="field-input" id="persona-pains" rows="3" placeholder="Pipeline is unpredictable&#10;Unclear what marketing is doing&#10;Too dependent on referrals"></textarea>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Where They Hang Out (channels)</label>
+          <textarea class="field-input" id="persona-channels" rows="3" placeholder="LinkedIn&#10;Industry podcasts&#10;Peer CEO groups"></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Messaging That Resonates</label>
+          <textarea class="field-input" id="persona-messaging" rows="3" placeholder="Lead with ROI and results&#10;Use data and case studies&#10;Proven and predictable"></textarea>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Representative Quote</label>
+        <textarea class="field-input" id="persona-quote" rows="2" placeholder='"I need marketing that drives real revenue, not just fills the pipeline."'></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="persona-modal">Cancel</button>
+      <button class="btn btn-primary" id="save-persona-btn">Save Persona</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Metrics Snapshot -->
+<div class="modal-overlay" id="metrics-modal" style="display:none;">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2 class="modal-title" id="metrics-modal-title">Add Monthly Metrics</h2>
+      <button class="modal-close" data-close="metrics-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="metrics-id" />
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Month (YYYY-MM-01) *</label>
+          <input class="field-input" id="metrics-date" type="date" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Period</label>
+          <select class="field-select" id="metrics-period">
+            <option value="month">Month</option>
+            <option value="week">Week</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-section-title">Website</div>
+      <div class="field-row">
+        <div class="field-group"><label class="field-label">Visitors</label><input class="field-input" id="m-visitors" type="number" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Sessions</label><input class="field-input" id="m-sessions" type="number" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Avg Time (min)</label><input class="field-input" id="m-time" type="number" step="0.1" placeholder="0"/></div>
+      </div>
+      <div class="modal-section-title">Lead Generation</div>
+      <div class="field-row">
+        <div class="field-group"><label class="field-label">MQLs</label><input class="field-input" id="m-mqls" type="number" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">SQLs</label><input class="field-input" id="m-sqls" type="number" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Conv. Rate (%)</label><input class="field-input" id="m-conv" type="number" step="0.01" placeholder="0"/></div>
+      </div>
+      <div class="modal-section-title">Leads by Channel</div>
+      <div class="field-row">
+        <div class="field-group"><label class="field-label">Organic</label><input class="field-input" id="m-organic" type="number" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Paid</label><input class="field-input" id="m-paid" type="number" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Social</label><input class="field-input" id="m-social" type="number" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Email</label><input class="field-input" id="m-email" type="number" placeholder="0"/></div>
+      </div>
+      <div class="modal-section-title">Cost Per Lead by Channel ($)</div>
+      <div class="field-row">
+        <div class="field-group"><label class="field-label">Organic</label><input class="field-input" id="m-cpl-organic" type="number" step="0.01" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Paid</label><input class="field-input" id="m-cpl-paid" type="number" step="0.01" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Social</label><input class="field-input" id="m-cpl-social" type="number" step="0.01" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Email</label><input class="field-input" id="m-cpl-email" type="number" step="0.01" placeholder="0"/></div>
+      </div>
+      <div class="modal-section-title">Revenue & Spend</div>
+      <div class="field-row">
+        <div class="field-group"><label class="field-label">Total Ad Spend ($)</label><input class="field-input" id="m-spend" type="number" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Revenue Attributed ($)</label><input class="field-input" id="m-revenue" type="number" placeholder="0"/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="metrics-modal">Cancel</button>
+      <button class="btn btn-primary" id="save-metrics-btn">Save Metrics</button>
+    </div>
+  </div>
+</div>
+
+<!-- Team Member Modal -->
+<div class="modal-overlay" id="team-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Manage Team Members</h2>
+      <button class="modal-close" data-close="team-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="team-list-modal" class="team-list-modal"></div>
+      <div class="field-row mt-12">
+        <div class="field-group flex-2">
+          <input class="field-input" id="new-team-name" placeholder="Name" />
+        </div>
+        <div class="field-group flex-2">
+          <input class="field-input" id="new-team-role" placeholder="Role (e.g. Content Manager)" />
+        </div>
+        <div class="field-group flex-2">
+          <input class="field-input" id="new-team-email" placeholder="Email (optional)" />
+        </div>
+        <button class="btn btn-primary" id="add-team-member-btn">Add</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" data-close="team-modal">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Action Modals -->
+<div class="modal-overlay" id="ai-campaign-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">💡 Generate Campaign Ideas</h2>
+      <button class="modal-close" data-close="ai-campaign-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label">Company Priority</label>
+        <select class="field-select" id="ai-camp-priority"></select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Marketing Objective</label>
+        <input class="field-input" id="ai-camp-objective" placeholder="Generate 400 MQLs this quarter" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Target Audience</label>
+        <input class="field-input" id="ai-camp-audience" placeholder="B2B Marketing Managers at SMBs" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Budget Range</label>
+        <input class="field-input" id="ai-camp-budget" placeholder="$10,000–$20,000" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="ai-campaign-modal">Cancel</button>
+      <button class="btn btn-primary" id="ai-campaign-generate-btn">Generate Ideas</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="ai-persona-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">🎭 Generate Persona</h2>
+      <button class="modal-close" data-close="ai-persona-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label">Describe your ideal customer</label>
+        <textarea class="field-input" id="ai-persona-desc" rows="3" placeholder="e.g. A senior decision-maker at a mid-sized B2B SaaS company who is responsible for marketing strategy and budget…"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Company Type</label>
+          <input class="field-input" id="ai-persona-company" placeholder="B2B SaaS, Professional Services…" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Your Product/Service</label>
+          <input class="field-input" id="ai-persona-product" placeholder="Marketing intelligence platform" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="ai-persona-modal">Cancel</button>
+      <button class="btn btn-primary" id="ai-persona-generate-btn">Generate Persona</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="ai-content-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">📅 Generate Content Calendar</h2>
+      <button class="modal-close" data-close="ai-content-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label">Campaign</label>
+        <select class="field-select" id="ai-content-campaign"></select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Target Persona</label>
+        <select class="field-select" id="ai-content-persona"></select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Duration (weeks)</label>
+        <select class="field-select" id="ai-content-weeks">
+          <option value="2">2 weeks</option>
+          <option value="4" selected>4 weeks</option>
+          <option value="6">6 weeks</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="ai-content-modal">Cancel</button>
+      <button class="btn btn-primary" id="ai-content-generate-btn">Generate Calendar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="ai-analyze-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">🔍 Analyse Campaign</h2>
+      <button class="modal-close" data-close="ai-analyze-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label">Select Campaign to Analyse</label>
+        <select class="field-select" id="ai-analyze-campaign"></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="ai-analyze-modal">Cancel</button>
+      <button class="btn btn-primary" id="ai-analyze-generate-btn">Analyse</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="ai-topics-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">✍️ Suggest Content Topics</h2>
+      <button class="modal-close" data-close="ai-topics-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label">Target Persona</label>
+        <select class="field-select" id="ai-topics-persona"></select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Content Goal</label>
+        <input class="field-input" id="ai-topics-goal" placeholder="Build awareness, generate leads, nurture prospects…" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="ai-topics-modal">Cancel</button>
+      <button class="btn btn-primary" id="ai-topics-generate-btn">Suggest Topics</button>
+    </div>
+  </div>
+</div>
+
+<!-- Annual Goal Modal -->
+<div class="modal-overlay" id="annual-goal-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="annual-goal-modal-title">Add Annual Goal</h2>
+      <button class="modal-close" data-close="annual-goal-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="annual-goal-id" />
+      <div class="field-row">
+        <div class="field-group flex-2">
+          <label class="field-label">Goal Title *</label>
+          <input class="field-input" id="ag-title" placeholder="Total MQLs Generated" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Year</label>
+          <input class="field-input" id="ag-year" type="number" value="2026" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Unit</label>
+          <input class="field-input" id="ag-unit" placeholder="MQLs, $, visitors…" />
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Description</label>
+        <input class="field-input" id="ag-desc" placeholder="What does this measure?" />
+      </div>
+      <div class="field-row">
+        <div class="field-group"><label class="field-label">Q1 Target</label><input class="field-input" id="ag-q1t" type="number" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Q2 Target</label><input class="field-input" id="ag-q2t" type="number" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Q3 Target</label><input class="field-input" id="ag-q3t" type="number" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Q4 Target</label><input class="field-input" id="ag-q4t" type="number" placeholder="0"/></div>
+      </div>
+      <div class="field-row">
+        <div class="field-group"><label class="field-label">Q1 Actual</label><input class="field-input" id="ag-q1a" type="number" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Q2 Actual</label><input class="field-input" id="ag-q2a" type="number" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Q3 Actual</label><input class="field-input" id="ag-q3a" type="number" placeholder="0"/></div>
+        <div class="field-group"><label class="field-label">Q4 Actual</label><input class="field-input" id="ag-q4a" type="number" placeholder="0"/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="annual-goal-modal">Cancel</button>
+      <button class="btn btn-primary" id="save-annual-goal-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete -->
+<div class="modal-overlay" id="confirm-modal" style="display:none;">
+  <div class="modal modal-sm">
+    <div class="modal-body" style="padding:24px;">
+      <p id="confirm-message">Are you sure you want to delete this?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" data-close="confirm-modal">Cancel</button>
+      <button class="btn btn-danger" id="confirm-yes-btn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../js/supabase.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/ai.js"></script>
+<script src="./js/app.js"></script>
+<script src="./js/strategy.js"></script>
+<script src="./js/quarterly.js"></script>
+<script src="./js/campaigns.js"></script>
+<script src="./js/content.js"></script>
+<script src="./js/metrics.js"></script>
+<script src="./js/ai.js"></script>
+<script>
+  window.requireAuth()
+</script>
+
+</body>
+</html>
