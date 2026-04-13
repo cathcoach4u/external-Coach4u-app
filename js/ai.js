@@ -4,6 +4,65 @@
 
 const EDGE_FUNCTION_URL = 'https://uoixetfvboevjxlkfyqy.supabase.co/functions/v1/ai-proxy'
 
+// Demo response generator (fallback when Edge Function is not available)
+function getDemoAIResponse(message, hub, onChunk) {
+  const demoResponses = {
+    strategic: `Thanks for sharing that! That's a great question for building your strategy. **Here are some thoughts:**
+
+**Key Considerations:**
+- Start by understanding your core values and what truly matters to your business
+- Think about your 10-year vision and work backwards to set 1-year targets
+- Make sure your strategy aligns with your market opportunity
+
+**Next Steps:**
+1. Define your core purpose and what makes you unique
+2. Set clear 3-5 year goals
+3. Break these into quarterly priorities (rocks)
+4. Track progress with key metrics
+
+This demo mode doesn't have full AI yet - we're setting up the AI coach backend. For now, you can still use all the forms to plan your strategy!`,
+
+    operations: `Great question about operations! **Here's what I'd suggest:**
+
+Keep your operations focused on:
+- Your top 3-5 priorities for this quarter
+- Key metrics that tell you if you're on track
+- Regular check-ins with your team
+
+The tools in this app will help you track rocks (priorities) and scorecard metrics!`,
+
+    team: `That's an important question for team development! **Consider:**
+
+- Each team member has unique strengths (GWC - Get it, Want it, Capacity)
+- Role clarity prevents confusion and builds accountability
+- Regular feedback and development conversations matter
+
+Use the Team Alignment tool to map your team members to roles!`,
+
+    leadership: `Great leadership question! **My thoughts:**
+
+- Lead with empathy and clear expectations
+- Help each person understand their strengths
+- Create psychological safety for the team to take risks
+
+Focus on developing your people, and the results will follow!`
+  };
+
+  const response = demoResponses[hub] || demoResponses.strategic;
+
+  // Simulate streaming by sending response in chunks
+  if (onChunk) {
+    const words = response.split(' ');
+    let accumulated = '';
+    for (let i = 0; i < words.length; i++) {
+      accumulated += (i === 0 ? '' : ' ') + words[i];
+      onChunk(words[i] + (i < words.length - 1 ? ' ' : ''));
+    }
+  }
+
+  return response;
+}
+
 // System prompts for each hub
 const HUB_PROMPTS = {
   strategic: `You are a warm, practical business strategy coach helping leaders get clear on direction, values and vision. Help them think through their business strategy, clarify what matters most, and set a compelling direction. Be encouraging and grounded in practical business thinking.`,
@@ -64,6 +123,10 @@ window.askAI = async function(message, hub, module, context, onChunk) {
     })
 
     if (!response.ok) {
+      // If Edge Function fails, use demo response
+      if (response.status === 500 || response.status === 404) {
+        return getDemoAIResponse(message, hub, onChunk)
+      }
       throw new Error(`API error: ${response.status} ${response.statusText}`)
     }
 
