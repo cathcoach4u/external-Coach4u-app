@@ -14,60 +14,52 @@ function escHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-// ─── AI Strategy Coach ──────────────────────────────────────────────────
+// ─── AI Coach Initialization ────────────────────────────────────────────
 
-const aiCoachMessages = []; // {role, content}
+let aiMessages = [];
 
-function openAICoach() {
-  const sidebar = document.getElementById('ai-coach-sidebar');
-  sidebar.classList.remove('hidden');
-  if (aiCoachMessages.length === 0) {
-    appendAIMessage('assistant', "Hi! I'm your AI Strategy Coach. I'm here to help you build out your Vision & Strategy — from core values to your 10-year target.\n\nLet's start simple: **what industry is your business in, and what do you do?**", false);
-  }
-  setTimeout(() => document.getElementById('ai-coach-input').focus(), 100);
-}
+function appendAIMessage(role, content) {
+  const messagesDiv = document.getElementById('ai-messages');
+  const msgDiv = document.createElement('div');
+  msgDiv.className = `ai-msg ai-msg-${role}`;
 
-function closeAICoach() {
-  document.getElementById('ai-coach-sidebar').classList.add('hidden');
-}
-
-function appendAIMessage(role, content, trackHistory = true) {
-  const messages = document.getElementById('ai-coach-messages');
-  const div = document.createElement('div');
-  div.className = `ai-msg ai-msg-${role}`;
   const html = escHtml(content)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\n/g, '<br>');
-  div.innerHTML = html;
-  messages.appendChild(div);
-  messages.scrollTop = messages.scrollHeight;
-  if (trackHistory) aiCoachMessages.push({ role, content });
-  return div;
+
+  msgDiv.innerHTML = html;
+  messagesDiv.appendChild(msgDiv);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+  aiMessages.push({ role, content });
+  return msgDiv;
 }
 
-async function sendAICoachMessage() {
-  const input = document.getElementById('ai-coach-input');
+async function handleAIMessage() {
+  const input = document.getElementById('ai-input');
   const text = input.value.trim();
+  const sendBtn = document.getElementById('ai-send');
+
   if (!text) return;
 
+  // Add user message
+  appendAIMessage('user', text);
   input.value = '';
   input.disabled = true;
-  document.getElementById('ai-coach-send').disabled = true;
+  sendBtn.disabled = true;
 
-  appendAIMessage('user', text);
-
-  // Placeholder for streaming response
-  const messages = document.getElementById('ai-coach-messages');
-  const placeholder = document.createElement('div');
-  placeholder.className = 'ai-msg ai-msg-assistant ai-msg-streaming';
-  placeholder.innerHTML = '<span class="ai-typing-dot"></span><span class="ai-typing-dot"></span><span class="ai-typing-dot"></span>';
-  messages.appendChild(placeholder);
-  messages.scrollTop = messages.scrollHeight;
+  // Show loading indicator
+  const messagesDiv = document.getElementById('ai-messages');
+  const loadingDiv = document.createElement('div');
+  loadingDiv.className = 'ai-msg ai-msg-assistant';
+  loadingDiv.innerHTML = '<span style="opacity: 0.6;">Thinking...</span>';
+  messagesDiv.appendChild(loadingDiv);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
   try {
     let fullText = '';
 
-    // Call window.askAI with streaming callback
+    // Call the AI coach with streaming
     await window.askAI(
       text,
       'strategic',
@@ -78,31 +70,45 @@ async function sendAICoachMessage() {
         const html = escHtml(fullText)
           .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
           .replace(/\n/g, '<br>');
-        placeholder.innerHTML = html;
-        messages.scrollTop = messages.scrollHeight;
+        loadingDiv.innerHTML = html;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
       }
     );
 
-    placeholder.classList.remove('ai-msg-streaming');
-    if (fullText) aiCoachMessages.push({ role: 'assistant', content: fullText });
-  } catch(err) {
-    placeholder.innerHTML = `<em style="color:var(--danger)">Error: ${escHtml(err.message)}</em>`;
+    // Move to message history
+    loadingDiv.classList.remove('ai-msg-assistant');
+    aiMessages.push({ role: 'assistant', content: fullText });
+
+  } catch (err) {
+    console.error('AI error:', err);
+    loadingDiv.innerHTML = `<em style="color: #c62828;">Error: ${escHtml(err.message || 'Failed to get response')}</em>`;
   } finally {
     input.disabled = false;
-    document.getElementById('ai-coach-send').disabled = false;
+    sendBtn.disabled = false;
     input.focus();
   }
 }
 
 // ─── Event Listeners ────────────────────────────────────────────────────
 
-document.getElementById('ai-coach-fab').addEventListener('click', openAICoach);
-document.getElementById('ai-coach-close').addEventListener('click', closeAICoach);
-document.getElementById('ai-coach-send').addEventListener('click', sendAICoachMessage);
+document.getElementById('ai-send').addEventListener('click', handleAIMessage);
 
-document.getElementById('ai-coach-input').addEventListener('keydown', (e) => {
+document.getElementById('ai-input').addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
-    sendAICoachMessage();
+    handleAIMessage();
   }
+});
+
+// Initial greeting
+window.addEventListener('DOMContentLoaded', () => {
+  const messagesDiv = document.getElementById('ai-messages');
+  const greeting = document.createElement('div');
+  greeting.className = 'ai-msg ai-msg-assistant';
+  greeting.innerHTML = `Hi! I'm your <strong>Strategy Coach</strong>. Let's build your business strategy together.<br><br>
+Start by telling me: <strong>What industry are you in and what does your company do?</strong>`;
+  messagesDiv.appendChild(greeting);
+
+  // Auto-focus input
+  setTimeout(() => document.getElementById('ai-input').focus(), 100);
 });
