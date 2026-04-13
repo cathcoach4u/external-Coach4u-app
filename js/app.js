@@ -45,6 +45,18 @@ async function initBusinesses() {
     renderBusinessSwitcher();
   } catch(e) {
     console.error('Failed to load businesses:', e);
+    // Use mock data when API is not available
+    _businesses = [
+      {
+        id: 1,
+        name: 'Demo Business',
+        type: 'primary',
+        color: '#003366'
+      }
+    ];
+    currentBusiness = _businesses[0];
+    currentBusinessId = 1;
+    renderBusinessSwitcher();
   }
 }
 
