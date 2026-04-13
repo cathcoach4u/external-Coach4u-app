@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coach4U — Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ai.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: #ffffff;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background-color: #003366;
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-left {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-email {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .sign-out-btn {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      transition: background-color 0.3s;
+    }
+
+    .sign-out-btn:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .welcome-section {
+      margin-bottom: 40px;
+    }
+
+    .welcome-heading {
+      font-size: 28px;
+      color: #003366;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .welcome-name {
+      font-size: 16px;
+      color: #666;
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .modules-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .module-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 24px;
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      background-color: #ffffff;
+    }
+
+    .module-card.active {
+      border-color: #003366;
+      box-shadow: 0 4px 12px rgba(0, 51, 102, 0.1);
+    }
+
+    .module-card.active:hover {
+      box-shadow: 0 8px 20px rgba(0, 51, 102, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .module-card.locked {
+      background-color: #f9f9f9;
+      border-color: #ddd;
+      opacity: 0.6;
+    }
+
+    .module-card.locked:hover {
+      transform: none;
+    }
+
+    .module-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: #003366;
+      margin-bottom: 8px;
+    }
+
+    .module-card.locked .module-name {
+      color: #999;
+    }
+
+    .module-description {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+      flex-grow: 1;
+      line-height: 1.5;
+    }
+
+    .module-card.locked .module-description {
+      color: #999;
+    }
+
+    .module-button {
+      background-color: #003366;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      transition: background-color 0.3s;
+      align-self: flex-start;
+    }
+
+    .module-button:hover:not(:disabled) {
+      background-color: #002244;
+    }
+
+    .module-button:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+
+    .module-card.locked .module-button {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+
+    .coming-soon {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #999;
+      font-weight: 600;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+    }
+
+    .error {
+      background-color: #ffebee;
+      border: 1px solid #ffcdd2;
+      border-radius: 4px;
+      padding: 16px;
+      color: #c62828;
+      margin: 20px;
+    }
+
+    footer {
+      background-color: #f5f5f5;
+      padding: 20px;
+      text-align: center;
+      color: #999;
+      font-size: 14px;
+      border-top: 1px solid #eee;
+    }
+
+    footer a {
+      color: #003366;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">Coach4U</div>
+    <div class="header-right">
+      <div class="user-email" id="userEmail"></div>
+      <button class="sign-out-btn" onclick="window.signOut()">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="main-content">
+    <div class="welcome-section">
+      <h1 class="welcome-heading">Welcome back</h1>
+      <p class="welcome-name" id="welcomeName"></p>
+    </div>
+
+    <div id="loadingMessage" class="loading">Loading your modules...</div>
+    <div id="errorMessage" class="error" style="display: none;"></div>
+    <div id="modulesContainer" class="modules-grid" style="display: none;"></div>
+  </div>
+
+  <footer>
+    Strengths-Based Coaching and Counselling | <a href="https://coach4u.com.au" target="_blank">coach4u.com.au</a>
+  </footer>
+
+  <script>
+    // Module definitions with their associated hubs
+    const MODULES = {
+      business: {
+        name: 'Business Coach4U',
+        description: 'Get clear on direction, priorities and metrics for your business',
+        hubs: ['strategic', 'operations', 'leadership', 'people', 'connect', 'team_goals'],
+        url: '/business/index.html'
+      },
+      teams: {
+        name: 'Teams Coach4U',
+        description: 'Develop your leadership and team capabilities',
+        hubs: ['leadership', 'people', 'connect', 'team_goals'],
+        url: '/teams/index.html'
+      },
+      relationships: {
+        name: 'Relationships Coach4U',
+        description: 'Strengthen your most important relationships',
+        hubs: ['couples', 'family', 'meeting'],
+        url: '/relationships/index.html'
+      },
+      thrivehq: {
+        name: 'ThriveHQ',
+        description: 'A complete wellbeing and strengths platform',
+        hubs: ['wellbeing', 'strengths', 'goals'],
+        url: '/thrivehq/index.html'
+      },
+      personal: {
+        name: 'Personal Coach4U',
+        description: 'Achieve your goals and build the life you want',
+        hubs: ['wellbeing', 'strengths', 'goals', 'community', 'rhythm', 'resources'],
+        url: '/personal/index.html'
+      },
+      life: {
+        name: 'Life Coach4U',
+        description: 'Coming soon',
+        hubs: [],
+        url: null,
+        comingSoon: true
+      }
+    }
+
+    async function initializeDashboard() {
+      try {
+        // Require authentication
+        const user = await window.requireAuth()
+
+        if (!user) {
+          return
+        }
+
+        // Display user email
+        document.getElementById('userEmail').textContent = user.email
+        document.getElementById('welcomeName').textContent = user.email
+
+        // Get user's modules
+        const userModules = await window.getUserModules(user.id)
+
+        // Determine which modules are active
+        const activeHubs = new Set()
+        if (userModules && Array.isArray(userModules)) {
+          userModules.forEach(module => {
+            if (module.hub && module.active) {
+              activeHubs.add(module.hub)
+            }
+          })
+        }
+
+        // Render module cards
+        const modulesContainer = document.getElementById('modulesContainer')
+        modulesContainer.innerHTML = ''
+
+        Object.entries(MODULES).forEach(([key, module]) => {
+          const hasActiveHub = module.hubs.some(hub => activeHubs.has(hub))
+          const isActive = !module.comingSoon && hasActiveHub
+          const isLocked = !module.comingSoon && !isActive
+
+          const card = document.createElement('div')
+          card.className = `module-card ${isActive ? 'active' : ''} ${isLocked ? 'locked' : ''}`
+
+          let buttonHTML = ''
+          if (module.comingSoon) {
+            buttonHTML = '<div class="coming-soon">Coming Soon</div>'
+          } else if (isActive) {
+            buttonHTML = `<button class="module-button" onclick="window.location.href = '${module.url}'">Open</button>`
+          } else {
+            buttonHTML = '<button class="module-button" disabled>Upgrade to access</button>'
+          }
+
+          card.innerHTML = `
+            <div class="module-name">${module.name}</div>
+            <div class="module-description">${module.description}</div>
+            ${buttonHTML}
+          `
+
+          modulesContainer.appendChild(card)
+        })
+
+        // Hide loading message and show modules
+        document.getElementById('loadingMessage').style.display = 'none'
+        modulesContainer.style.display = 'grid'
+      } catch (err) {
+        console.error('Error initializing dashboard:', err)
+        document.getElementById('loadingMessage').style.display = 'none'
+        document.getElementById('errorMessage').style.display = 'block'
+        document.getElementById('errorMessage').textContent = 'Error loading dashboard. Please try again.'
+      }
+    }
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', initializeDashboard)
+  </script>
+</body>
+</html>
