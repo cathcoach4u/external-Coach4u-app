@@ -1,7 +1,7 @@
 // AI functions for plain HTML project
 // Anthropic API integration for coaching across different hubs
 
-const ANTHROPIC_API_KEY = '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'
+const ANTHROPIC_API_KEY = ''
 
 // System prompts for each hub
 const HUB_PROMPTS = {
