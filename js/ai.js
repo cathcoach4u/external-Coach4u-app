@@ -1,7 +1,8 @@
 // AI functions for plain HTML project
-// Anthropic API integration for coaching across different hubs
+// Calls Supabase Edge Function which handles Anthropic API integration
 
-const ANTHROPIC_API_KEY = ''
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvaXhldGZ2Ym9ldmp4bGtmeXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NDY2ODAsImV4cCI6MjA5MDQyMjY4MH0.ZXYJVdvcj70aGMH1FAixIr0hNCaCDSYLEL93hHVCGDU'
+const EDGE_FUNCTION_URL = 'https://uoixetfvboevjxlkfyqy.supabase.co/functions/v1/ai-proxy'
 
 // System prompts for each hub
 const HUB_PROMPTS = {
@@ -46,31 +47,18 @@ const HUB_PROMPTS = {
  * @returns {Promise<string>} The complete response
  */
 window.askAI = async function(message, hub, module, context, onChunk) {
-  const systemPrompt = HUB_PROMPTS[hub] || HUB_PROMPTS.strengths
-
-  const contextString = context ? `\n\nContext: ${context}` : ''
-  const moduleString = module ? `\n\nModule: ${module}` : ''
-
-  const fullSystemPrompt = systemPrompt + contextString + moduleString
-
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch(EDGE_FUNCTION_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 1024,
-        system: fullSystemPrompt,
-        messages: [
-          {
-            role: 'user',
-            content: message
-          }
-        ],
+        message: message,
+        hub: hub,
+        module: module,
+        context: context,
         stream: true
       })
     })
@@ -132,31 +120,19 @@ window.askAI = async function(message, hub, module, context, onChunk) {
  * @returns {Promise<string>} The complete response
  */
 window.askAISimple = async function(message, hub, module, context) {
-  const systemPrompt = HUB_PROMPTS[hub] || HUB_PROMPTS.strengths
-
-  const contextString = context ? `\n\nContext: ${context}` : ''
-  const moduleString = module ? `\n\nModule: ${module}` : ''
-
-  const fullSystemPrompt = systemPrompt + contextString + moduleString
-
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch(EDGE_FUNCTION_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
       },
       body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 1024,
-        system: fullSystemPrompt,
-        messages: [
-          {
-            role: 'user',
-            content: message
-          }
-        ]
+        message: message,
+        hub: hub,
+        module: module,
+        context: context,
+        stream: false
       })
     })
 
@@ -168,6 +144,10 @@ window.askAISimple = async function(message, hub, module, context) {
 
     if (json.content && json.content.length > 0 && json.content[0].text) {
       return json.content[0].text
+    }
+
+    if (json.text) {
+      return json.text
     }
 
     throw new Error('No response text from API')
