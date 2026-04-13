@@ -101,9 +101,12 @@ window.requireAuth = async function() {
     const { data: { user } } = await window.supabaseClient.auth.getUser()
 
     if (!user) {
+      console.warn('No authenticated user found, redirecting to login')
       window.location.href = 'https://cathcoach4u.github.io/external-Coach4u-app/index.html'
+      return null
     }
 
+    console.log('User authenticated:', user.email)
     return user
   } catch (err) {
     console.error('Error checking auth:', err)
