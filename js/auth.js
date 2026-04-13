@@ -35,6 +35,7 @@
 })()
 
 // ─── Sign In Function ──────────────────────────────────────────────────
+/**
  * Sign in with magic link
  * @param {string} email - User's email address
  */
