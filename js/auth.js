@@ -109,8 +109,14 @@ window.getUserProfile = async function() {
 
 // Listen for auth state changes on page load
 window.supabaseClient.auth.onAuthStateChange((event, session) => {
-  // If user is on index.html and has a valid session, redirect to dashboard
-  if (session && window.location.pathname === '/index.html') {
-    window.location.href = '/dashboard.html'
+  // If user is on index.html and has a confirmed session with valid user, redirect to dashboard
+  const isIndexPage = window.location.pathname === '/index.html' || window.location.pathname === '/'
+  const hasConfirmedSession = session && session.user && session.user.id
+
+  if (isIndexPage && hasConfirmedSession) {
+    // Wait 500ms for page to render before redirecting
+    setTimeout(() => {
+      window.location.href = '/dashboard.html'
+    }, 500)
   }
 })
