@@ -144,7 +144,8 @@ window.getUserProfile = async function() {
 // Listen for auth state changes on page load
 window.supabaseClient.auth.onAuthStateChange((event, session) => {
   // If user is on index.html and has a confirmed session with valid user, redirect to dashboard
-  const isIndexPage = window.location.pathname === '/index.html' || window.location.pathname === '/'
+  const pathname = window.location.pathname
+  const isIndexPage = pathname.endsWith('/index.html') || pathname.endsWith('/external-Coach4u-app/') || pathname === '/'
   const hasConfirmedSession = session && session.user && session.user.id
 
   if (isIndexPage && hasConfirmedSession) {
