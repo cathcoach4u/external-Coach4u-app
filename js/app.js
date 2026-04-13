@@ -2363,6 +2363,12 @@ async function sendAICoachMessage() {
   const text = input.value.trim();
   if (!text) return;
 
+  // Check if window.askAI is available
+  if (!window.askAI || typeof window.askAI !== 'function') {
+    alert('AI Coach is not ready. Please refresh the page.');
+    return;
+  }
+
   input.value = '';
   input.disabled = true;
   document.getElementById('ai-coach-send').disabled = true;
