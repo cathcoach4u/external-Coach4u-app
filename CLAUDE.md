@@ -4,6 +4,7 @@
 - Always push changes directly to `main` branch
 - Commit with clear, descriptive messages
 - Push after every commit — do not batch pushes
+- Bump version number with EVERY change (patch: 0.3.x) in: `VERSION`, `dashboard.html` header, and `CLAUDE.md`
 
 ## Project Overview
 - Coach4U coaching portal — PWA with Supabase authentication
@@ -29,4 +30,4 @@
 - `business/`, `growth/`, `teams/`, `personal/`, `relationships/`, `thrivehq/` — Module pages
 
 ## Current Version
-v0.3.0
+v0.3.1
