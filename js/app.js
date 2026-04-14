@@ -277,9 +277,9 @@ function switchSubPanel(panel) {
 }
 
 function showPanel(panel) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   const el = document.getElementById(panel + '-panel');
-  if (el) el.classList.remove('hidden');
+  if (el) el.classList.add('active');
   activePanel = panel;
 }
 
