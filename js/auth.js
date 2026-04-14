@@ -166,9 +166,13 @@ window.supabaseClient.auth.onAuthStateChange((event, session) => {
   // Don't redirect during OTP flow (INITIAL_SESSION, USER_UPDATED, etc)
   if (event === 'SIGNED_IN' && session && session.user && session.user.id) {
     const pathname = window.location.pathname
-    const isIndexPage = pathname.endsWith('/index.html') || pathname.endsWith('/external-Coach4u-app/') || pathname === '/'
+    // Only match the ROOT index.html (login page), not module index.html files
+    const isLoginPage = pathname.match(/\/external-Coach4u-app\/index\.html$/i)
+      || pathname.match(/\/external-Coach4u-app\/?$/i)
+      || (pathname === '/index.html')
+      || (pathname === '/')
 
-    if (isIndexPage) {
+    if (isLoginPage) {
       console.log('User signed in, redirecting to dashboard...')
       setTimeout(() => {
         window.location.href = getAuthRedirectUrl('dashboard')
