@@ -12,13 +12,13 @@
 
 ## Design System
 - Primary (navy): `#003366`
-- Accent (blue-teal): `#1D9E75` — buttons, active borders, links
-- Accent dark (hover): `#0F6E56` — hover states
+- Accent (blue-teal): `#0D9488` — buttons, active borders, links
+- Accent dark (hover): `#0F766E` — hover states
 - Card borders: 2px solid, 12px border-radius
 - Font: Aptos system stack
 - Touch targets: 44px minimum height on mobile
-- Links: blue-teal (`#1D9E75`), not navy or green-teal
-- IMPORTANT: Do NOT use `#00B894` (green-teal) on the dashboard — use `#1D9E75` instead
+- Links: blue-teal (`#0D9488`), not navy or green
+- IMPORTANT: Do NOT use green-teal (`#00B894`, `#1D9E75`) on the dashboard — use `#0D9488` instead
 
 ## Key Files
 - `dashboard.html` — Main dashboard with module cards
