@@ -45,6 +45,19 @@
     .header-left {
       font-size: 24px;
       font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+    }
+
+    .header-left img {
+      height: 36px;
+      vertical-align: middle;
+    }
+
+    .header-left-text {
+      letter-spacing: -0.5px;
     }
 
     .header-right {
@@ -124,12 +137,12 @@
     }
 
     .module-card.active {
-      border-color: #003366;
-      box-shadow: 0 4px 12px rgba(0, 51, 102, 0.1);
+      border-color: #00B894;
+      box-shadow: 0 4px 12px rgba(0, 184, 148, 0.1);
     }
 
     .module-card.active:hover {
-      box-shadow: 0 8px 20px rgba(0, 51, 102, 0.15);
+      box-shadow: 0 8px 20px rgba(0, 184, 148, 0.15);
       transform: translateY(-2px);
     }
 
@@ -167,7 +180,7 @@
     }
 
     .module-button {
-      background-color: #1D9E75;
+      background-color: #00B894;
       color: white;
       padding: 10px 16px;
       border: none;
@@ -182,7 +195,7 @@
     }
 
     .module-button:hover:not(:disabled) {
-      background-color: #0F6E56;
+      background-color: #00997A;
     }
 
     .module-button:disabled {
@@ -239,7 +252,10 @@
 </head>
 <body>
   <header>
-    <div class="header-left"><img src="images/logo.svg" alt="Coach4U" style="height:36px;vertical-align:middle;"></div>
+    <div class="header-left">
+      <img src="images/logo.svg" alt="Coach4U">
+      <span class="header-left-text">Coach4U</span>
+    </div>
     <div class="header-right">
       <div class="user-email" id="userEmail"></div>
       <button class="sign-out-btn" onclick="window.signOut()">Sign Out</button>
