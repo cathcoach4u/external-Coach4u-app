@@ -30,4 +30,4 @@
 - `business/`, `growth/`, `teams/`, `personal/`, `relationships/`, `thrivehq/` — Module pages
 
 ## Current Version
-v0.3.2
+v0.3.3
