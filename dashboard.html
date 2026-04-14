@@ -38,8 +38,9 @@
       padding: 16px 20px;
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      min-height: 70px;
     }
 
     .header-left {
@@ -62,13 +63,35 @@
 
     .header-right {
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .header-top {
+      display: flex;
       gap: 16px;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .header-date {
+      opacity: 0.9;
+      font-weight: 500;
+    }
+
+    .header-version {
+      opacity: 0.8;
+      font-weight: 500;
+      font-size: 13px;
     }
 
     .user-email {
       font-size: 14px;
       opacity: 0.9;
+      display: none;
     }
 
     .sign-out-btn {
@@ -257,7 +280,10 @@
       <span class="header-left-text">Coach4U</span>
     </div>
     <div class="header-right">
-      <div class="user-email" id="userEmail"></div>
+      <div class="header-top">
+        <span class="header-date" id="headerDate"></span>
+        <span class="header-version">v0.3.0</span>
+      </div>
       <button class="sign-out-btn" onclick="window.signOut()">Sign Out</button>
     </div>
   </header>
@@ -265,7 +291,6 @@
   <div class="main-content">
     <div class="welcome-section">
       <h1 class="welcome-heading">Welcome back</h1>
-      <p class="welcome-name" id="welcomeName"></p>
     </div>
 
     <div id="loadingMessage" class="loading">Loading your modules...</div>
@@ -278,6 +303,14 @@
   </footer>
 
   <script>
+    // Format date in header
+    function formatHeaderDate() {
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+      const date = new Date()
+      return date.toLocaleDateString('en-GB', options)
+    }
+    document.getElementById('headerDate').textContent = formatHeaderDate()
+
     // Construct base URL (works both locally and on GitHub Pages)
     const getBaseUrl = () => {
       const pathname = window.location.pathname
