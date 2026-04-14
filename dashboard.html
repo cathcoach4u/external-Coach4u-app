@@ -35,45 +35,24 @@
     header {
       background-color: #003366;
       color: white;
-      padding: 16px 20px;
+      padding: 16px 24px;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      min-height: 70px;
     }
 
     .header-left {
       font-size: 24px;
       font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 12px;
       color: white;
-    }
-
-    .header-left img {
-      height: 36px;
-      vertical-align: middle;
-    }
-
-    .header-left-text {
       letter-spacing: -0.5px;
     }
 
     .header-right {
       display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 12px;
-      justify-content: space-between;
-      height: 100%;
-    }
-
-    .header-top {
-      display: flex;
-      gap: 16px;
       align-items: center;
+      gap: 20px;
       font-size: 14px;
     }
 
@@ -83,32 +62,27 @@
     }
 
     .header-version {
-      opacity: 0.8;
+      opacity: 0.7;
       font-weight: 500;
-      font-size: 13px;
-    }
-
-    .user-email {
-      font-size: 14px;
-      opacity: 0.9;
-      display: none;
+      font-size: 12px;
     }
 
     .sign-out-btn {
-      background-color: rgba(255, 255, 255, 0.2);
-      color: white;
-      padding: 8px 16px;
+      background: none;
+      color: rgba(255, 255, 255, 0.8);
+      padding: 6px 0;
       border: none;
-      border-radius: 4px;
       cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 500;
       font-family: inherit;
-      transition: background-color 0.3s;
+      transition: color 0.3s;
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
 
     .sign-out-btn:hover {
-      background-color: rgba(255, 255, 255, 0.3);
+      color: white;
     }
 
     .main-content {
@@ -130,11 +104,6 @@
       margin-bottom: 8px;
     }
 
-    .welcome-name {
-      font-size: 16px;
-      color: #666;
-    }
-
     .modules-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -149,8 +118,8 @@
     }
 
     .module-card {
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
+      border: 2px solid #ccc;
+      border-radius: 12px;
       padding: 24px;
       transition: all 0.3s;
       display: flex;
@@ -161,18 +130,19 @@
 
     .module-card.active {
       border-color: #00B894;
-      box-shadow: 0 4px 12px rgba(0, 184, 148, 0.1);
+      border-width: 2px;
+      box-shadow: 0 4px 12px rgba(0, 184, 148, 0.15);
     }
 
     .module-card.active:hover {
-      box-shadow: 0 8px 20px rgba(0, 184, 148, 0.15);
+      box-shadow: 0 8px 20px rgba(0, 184, 148, 0.25);
       transform: translateY(-2px);
     }
 
     .module-card.locked {
       background-color: #f9f9f9;
-      border-color: #ddd;
-      opacity: 0.6;
+      border-color: #d0d0d0;
+      opacity: 0.55;
     }
 
     .module-card.locked:hover {
@@ -264,26 +234,23 @@
     }
 
     footer a {
-      color: #003366;
+      color: #00B894;
       text-decoration: none;
+      font-weight: 600;
     }
 
     footer a:hover {
+      color: #00997A;
       text-decoration: underline;
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="header-left">
-      <img src="images/logo.svg" alt="Coach4U">
-      <span class="header-left-text">Coach4U</span>
-    </div>
+    <div class="header-left">Coach4U</div>
     <div class="header-right">
-      <div class="header-top">
-        <span class="header-date" id="headerDate"></span>
-        <span class="header-version">v0.3.0</span>
-      </div>
+      <span class="header-date" id="headerDate"></span>
+      <span class="header-version">v0.3.0</span>
       <button class="sign-out-btn" onclick="window.signOut()">Sign Out</button>
     </div>
   </header>
@@ -372,9 +339,7 @@
           return
         }
 
-        // Display user email
-        document.getElementById('userEmail').textContent = user.email
-        document.getElementById('welcomeName').textContent = user.email
+        // User authenticated — no email display needed
 
         // Get user's modules
         const userModules = await window.getUserModules(user.id)
