@@ -416,7 +416,7 @@ async function loadVTO() {
       document.getElementById('vto-form-content').classList.remove('hidden');
       renderVTOForm(data);
     }
-  } catch (e) { showToast('Failed to load VTO: ' + e.message, 'error'); }
+  } catch (e) { }
 }
 
 function renderGroupOverview(vtoData, rollupData) {
@@ -606,7 +606,7 @@ async function loadAccountability() {
   try {
     _seats = await get('/seats');
     renderOrgChart(_seats);
-  } catch (e) { showToast('Failed to load seats: ' + e.message, 'error'); }
+  } catch (e) { }
 }
 
 function renderOrgChart(seats) {
@@ -792,7 +792,7 @@ async function loadRocks() {
   try {
     _rocks = await get('/rocks?quarter=' + encodeURIComponent(quarter));
     renderRocksBoard(_rocks);
-  } catch(e) { showToast('Failed to load rocks: ' + e.message, 'error'); }
+  } catch(e) { }
 }
 
 document.getElementById('quarter-select').addEventListener('change', loadRocks);
@@ -935,7 +935,7 @@ async function loadScorecard() {
   try {
     _scorecard = await get('/scorecard');
     renderScorecardTable(_scorecard);
-  } catch(e) { showToast('Failed to load scorecard: ' + e.message, 'error'); }
+  } catch(e) { }
 }
 
 function renderScorecardTable({ metrics, weeks }) {
@@ -1126,7 +1126,7 @@ async function loadMeetings() {
     if (_meetings.length > 0 && !_currentMeeting) {
       await loadMeetingDetail(_meetings[0].id);
     }
-  } catch(e) { showToast('Failed to load meetings: ' + e.message, 'error'); }
+  } catch(e) { }
 }
 
 function renderMeetingsList(meetings) {
@@ -1157,7 +1157,7 @@ async function loadMeetingDetail(id) {
     _currentMeeting = meeting;
     renderMeetingsList(_meetings);
     renderMeetingDetail(meeting);
-  } catch(e) { showToast('Failed to load meeting: ' + e.message, 'error'); }
+  } catch(e) { }
 }
 
 function renderMeetingDetail(meeting) {
@@ -1830,7 +1830,7 @@ async function loadIssues() {
     if (ownerFilter) url += '?owner=' + encodeURIComponent(ownerFilter);
     _issues = await get(url);
     renderIssuesBoard(_issues);
-  } catch(e) { showToast('Failed to load issues: ' + e.message, 'error'); }
+  } catch(e) { }
 }
 
 document.getElementById('issues-owner-filter').addEventListener('change', loadIssues);
@@ -1969,7 +1969,7 @@ async function loadAlignment() {
   try {
     _alignment = await get('/alignment');
     renderAlignment();
-  } catch(e) { showToast('Failed to load alignment: ' + e.message, 'error'); }
+  } catch(e) { }
 }
 
 function getRating(memberId, valueKey) {
