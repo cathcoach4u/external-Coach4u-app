@@ -78,6 +78,15 @@ textarea { resize: vertical; }
   color: #ffffff;
   letter-spacing: -0.3px;
 }
+.version-badge {
+  font-size: 10px;
+  color: rgba(255,255,255,0.6);
+  font-weight: 500;
+  margin-left: 8px;
+  padding: 2px 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+}
 .brand-accent { color: var(--accent); }
 .brand-sub {
   font-size: 11px;

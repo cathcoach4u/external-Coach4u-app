@@ -31,3 +31,14 @@
 
 ## Current Version
 v0.5.1
+
+## Recent Fixes (v0.5.1)
+- Fixed critical bug: business/index.html was loading wrong app.js file (/js/app.js instead of js/app.js)
+- This prevented switchHub function from running, click handlers from working, and panels from displaying
+- Nav pills styled as true pills (border-radius: 28px, semi-transparent white background, active pill white with navy text)
+- Added 390px breakpoint for mobile nav pills (flex: 1 for equal width)
+
+## Outstanding Tasks
+1. Verify pills now work and content displays (v0.5.1)
+2. Comprehensive design audit - fonts, headings, spacing, overall look
+3. Ensure all functionality works: clicking tabs, loading data, switching panels
