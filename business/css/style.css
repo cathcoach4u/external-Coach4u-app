@@ -98,15 +98,15 @@ textarea { resize: vertical; }
   justify-content: center;
 }
 .nav-tab {
-  background: #ffffff;
-  border: 1px solid #E0E0E0;
-  color: var(--primary);
+  background: rgba(255,255,255,0.25);
+  border: none;
+  color: #ffffff;
   padding: 10px 20px;
   min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: 28px;
   font-size: 13px;
   font-weight: 600;
   transition: all 0.2s ease;
@@ -122,17 +122,15 @@ textarea { resize: vertical; }
 .nav-tab:hover,
 .nav-tab:active,
 .nav-tab:focus {
+  background: rgba(255,255,255,0.35);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   outline: none;
-  background: #F5F5F5;
 }
 .nav-tab.active {
-  background: #0D9488;
-  color: #ffffff;
-  border-color: #0D9488;
+  background: #ffffff;
+  color: var(--primary);
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.35);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 /* ─── Vision Banner ───────────────────────────────────────────────────── */
