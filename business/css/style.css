@@ -61,6 +61,8 @@ textarea { resize: vertical; }
   justify-content: space-between;
   padding: 0 24px;
   gap: 24px;
+  overflow: hidden;
+  flex-wrap: nowrap;
 }
 .brand {
   display: flex;
@@ -602,6 +604,24 @@ textarea { resize: vertical; }
 }
 
 @media (max-width: 768px) {
+  .header-inner {
+    padding: 0 12px;
+    gap: 8px;
+  }
+  .brand-name {
+    font-size: 16px;
+  }
+  .main-nav {
+    gap: 4px;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+  .nav-tab {
+    padding: 6px 12px;
+    min-height: 36px;
+    font-size: 12px;
+    border-radius: 20px;
+  }
   .ai-coach-fab {
     bottom: auto;
     top: 60px;
