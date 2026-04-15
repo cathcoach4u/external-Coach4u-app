@@ -47,7 +47,7 @@ textarea { resize: vertical; }
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 200;
+  z-index: 250;
   background: var(--primary);
   height: var(--header-h);
   box-shadow: 0 2px 8px rgba(0,0,0,0.25);
@@ -91,21 +91,35 @@ textarea { resize: vertical; }
 .main-nav {
   display: flex;
   gap: 2px;
+  pointer-events: auto;
 }
 .nav-tab {
   background: transparent;
   border: none;
   color: rgba(255,255,255,0.72);
   padding: 8px 16px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
   border-radius: 6px;
   font-size: 13.5px;
   font-weight: 500;
   transition: background 0.15s, color 0.15s;
   white-space: nowrap;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  position: relative;
+  z-index: 201;
+  pointer-events: auto;
 }
-.nav-tab:hover {
+.nav-tab:hover,
+.nav-tab:active,
+.nav-tab:focus {
   background: rgba(255,255,255,0.12);
   color: #fff;
+  outline: none;
 }
 .nav-tab.active {
   background: rgba(255,255,255,0.18);
@@ -576,6 +590,21 @@ textarea { resize: vertical; }
 .ai-coach-fab:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0,51,102,0.45);
+}
+
+@media (max-width: 768px) {
+  .ai-coach-fab {
+    bottom: auto;
+    top: 60px;
+    right: 8px;
+    width: auto;
+    padding: 8px 12px;
+    font-size: 12px;
+    z-index: 199;
+  }
+  .ai-coach-fab span {
+    display: none;
+  }
 }
 
 .ai-coach-sidebar {
