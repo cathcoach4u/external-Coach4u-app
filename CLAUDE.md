@@ -35,10 +35,25 @@ v0.5.1
 ## Recent Fixes (v0.5.1)
 - Fixed critical bug: business/index.html was loading wrong app.js file (/js/app.js instead of js/app.js)
 - This prevented switchHub function from running, click handlers from working, and panels from displaying
+- Pills now functional - clicking switches panels correctly
+- Removed error toasts from load functions - shows clean empty states instead
+- Added version badge (v0.5.1) to business header
 - Nav pills styled as true pills (border-radius: 28px, semi-transparent white background, active pill white with navy text)
 - Added 390px breakpoint for mobile nav pills (flex: 1 for equal width)
 
+## Current Status
+- **Functionality**: WORKING - pills click, panels switch, data attempts to load
+- **Design**: BROKEN - header layout overlapping, pills not properly positioned, inconsistent spacing/fonts
+- **Issue**: Pills overlap with content, header not responsive, needs comprehensive redesign
+
 ## Outstanding Tasks
-1. Verify pills now work and content displays (v0.5.1)
-2. Comprehensive design audit - fonts, headings, spacing, overall look
-3. Ensure all functionality works: clicking tabs, loading data, switching panels
+1. **URGENT: Comprehensive redesign of business pages**
+   - Fix header layout (pills overlapping content)
+   - Fix pill positioning and spacing
+   - Audit and fix all fonts, sizes, weights, hierarchy
+   - Audit and fix all colors, contrast
+   - Audit and fix all spacing, padding, margins
+   - Ensure responsive mobile layout (390px+)
+   - Consistent typography throughout
+2. Ensure all functionality works: clicking tabs, loading data, switching panels
+3. Visual polish and design audit
