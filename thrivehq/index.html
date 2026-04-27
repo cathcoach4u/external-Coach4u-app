@@ -183,6 +183,21 @@
       }
     }
 
+    async function checkMembership(userId) {
+      const sb = initSupabase();
+      if (!sb) return null;
+      try {
+        const { data: userData } = await sb
+          .from('users')
+          .select('membership_status')
+          .eq('id', userId)
+          .single();
+        return userData?.membership_status === 'active';
+      } catch (error) {
+        return false;
+      }
+    }
+
     async function signInWithMagicLink(email) {
       const sb = initSupabase();
       if (!sb) throw new Error('Supabase not initialized');
@@ -224,8 +239,17 @@
         .catch(err => console.log('Service Worker registration failed:', err));
     }
 
-    getCurrentUser().then(user => {
-      if (user) window.location.href = 'dashboard.html';
+    getCurrentUser().then(async user => {
+      if (user) {
+        const isMember = await checkMembership(user.id);
+        if (isMember) {
+          window.location.href = 'dashboard.html';
+        } else {
+          message.textContent = 'Your membership has expired. Contact support to renew.';
+          message.className = 'message error';
+          message.style.display = 'block';
+        }
+      }
     });
   </script>
 </body>
