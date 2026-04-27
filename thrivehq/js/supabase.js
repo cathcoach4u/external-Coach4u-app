@@ -2,7 +2,7 @@
 // Update these with your Supabase project credentials
 
 const SUPABASE_URL = 'https://eekefsuaefgpqmjdyniy.supabase.co'; // Update when Supabase is ready
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Update when Supabase is ready
+const SUPABASE_ANON_KEY = 'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y';
 
 let supabase;
 
