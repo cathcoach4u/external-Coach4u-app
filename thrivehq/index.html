@@ -158,9 +158,43 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/supabase.js"></script>
-  <script src="js/auth.js"></script>
   <script>
+    const SUPABASE_URL = 'https://eekefsuaefgpqmjdyniy.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y';
+
+    let supabase;
+
+    function initSupabase() {
+      if (typeof window.supabase === 'undefined') return null;
+      if (!supabase) {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+      return supabase;
+    }
+
+    async function getCurrentUser() {
+      const sb = initSupabase();
+      if (!sb) return null;
+      try {
+        const { data: { user } } = await sb.auth.getUser();
+        return user;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    async function signInWithMagicLink(email) {
+      const sb = initSupabase();
+      if (!sb) throw new Error('Supabase not initialized');
+      const { error } = await sb.auth.signInWithOtp({
+        email: email,
+        options: {
+          emailRedirectTo: window.location.origin + '/external-Coach4u-app/thrivehq/dashboard.html'
+        }
+      });
+      if (error) throw error;
+    }
+
     const form = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
     const submitBtn = document.getElementById('submitBtn');
@@ -172,7 +206,7 @@
       submitBtn.textContent = 'Sending...';
 
       try {
-        await window.signInWithMagicLink(emailInput.value);
+        await signInWithMagicLink(emailInput.value);
         message.textContent = 'Check your email for the magic link!';
         message.className = 'message success';
         form.reset();
@@ -185,18 +219,13 @@
       }
     });
 
-    // Register service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js')
         .catch(err => console.log('Service Worker registration failed:', err));
     }
 
-    // Check if user is already logged in
-    window.addEventListener('DOMContentLoaded', async () => {
-      const user = await window.getCurrentUser();
-      if (user) {
-        window.location.href = 'dashboard.html';
-      }
+    getCurrentUser().then(user => {
+      if (user) window.location.href = 'dashboard.html';
     });
   </script>
 </body>
