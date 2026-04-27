@@ -1,12 +1,10 @@
 // Supabase Configuration
-// Update these with your Supabase project credentials
 
-const SUPABASE_URL = 'https://eekefsuaefgpqmjdyniy.supabase.co'; // Update when Supabase is ready
+const SUPABASE_URL = 'https://eekefsuaefgpqmjdyniy.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y';
 
 let supabase;
 
-// Initialize Supabase client
 function initSupabase() {
   if (typeof window.supabase === 'undefined') {
     console.error('Supabase library not loaded');
@@ -14,10 +12,18 @@ function initSupabase() {
   }
 
   if (!supabase) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    try {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch (error) {
+      console.error('Error creating Supabase client:', error);
+      return null;
+    }
   }
   return supabase;
 }
 
-// Make Supabase available globally
-window.getSupabase = () => initSupabase();
+window.getSupabase = function() {
+  return initSupabase();
+};
+
+console.log('supabase.js loaded, window.getSupabase assigned');

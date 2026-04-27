@@ -1,6 +1,6 @@
 /* Service Worker for ThriveHQ PWA */
 
-const CACHE_VERSION = 'thrivehq-v1.0.0';
+const CACHE_VERSION = 'thrivehq-v1.0.1';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 const PAGES_CACHE = CACHE_VERSION + '-pages';
 const API_CACHE = CACHE_VERSION + '-api';
