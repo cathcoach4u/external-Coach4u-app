@@ -30,30 +30,38 @@
 - `business/`, `growth/`, `teams/`, `personal/`, `relationships/`, `thrivehq/` — Module pages
 
 ## Current Version
-v0.5.1
+v0.5.3
 
-## Recent Fixes (v0.5.1)
+## Recent Fixes (v0.5.3)
+- Built complete ThriveHQ external PWA app (Phase 1)
+- Added ThriveHQ to `/thrivehq/` with separate Supabase project
+- Configured PWA manifest and service worker for `/external-Coach4u-app/thrivehq/` path
+- Magic link authentication ready with Supabase integration
+- Brain Pulse dashboard with 4 sections (Capacity, Wellbeing, Strengths, Execution)
+- Resources hub, account page, and offline support
+
+## Previous Fixes (v0.5.2)
+- Standardized typography: all fonts now use clean scale (11px, 12px, 14px, 16px, 18px, 24px, 32px)
+- Consolidated 17 different font sizes into 7 standard sizes
+- Improved readability with consistent type hierarchy
+- Service worker cache version bumped to force refresh
+
+## Previous Fixes (v0.5.1)
 - Fixed critical bug: business/index.html was loading wrong app.js file (/js/app.js instead of js/app.js)
-- This prevented switchHub function from running, click handlers from working, and panels from displaying
 - Pills now functional - clicking switches panels correctly
-- Removed error toasts from load functions - shows clean empty states instead
+- Removed error toasts from load functions - shows clean empty states
 - Added version badge (v0.5.1) to business header
-- Nav pills styled as true pills (border-radius: 28px, semi-transparent white background, active pill white with navy text)
-- Added 390px breakpoint for mobile nav pills (flex: 1 for equal width)
+- Redesigned header to flex-direction column - pills no longer overlap content
+- Nav pills styled as true pills (border-radius: 28px, proper spacing)
 
 ## Current Status
-- **Functionality**: WORKING - pills click, panels switch, data attempts to load
-- **Design**: BROKEN - header layout overlapping, pills not properly positioned, inconsistent spacing/fonts
-- **Issue**: Pills overlap with content, header not responsive, needs comprehensive redesign
+- **Coach4U**: WORKING - pills click, panels switch, business/growth/teams/personal/relationships pages functional
+- **ThriveHQ**: READY - external PWA configured with Supabase, login page live
+- **Mobile**: Responsive at 390px breakpoint
 
 ## Outstanding Tasks
-1. **URGENT: Comprehensive redesign of business pages**
-   - Fix header layout (pills overlapping content)
-   - Fix pill positioning and spacing
-   - Audit and fix all fonts, sizes, weights, hierarchy
-   - Audit and fix all colors, contrast
-   - Audit and fix all spacing, padding, margins
-   - Ensure responsive mobile layout (390px+)
-   - Consistent typography throughout
-2. Ensure all functionality works: clicking tabs, loading data, switching panels
-3. Visual polish and design audit
+1. ✅ **ThriveHQ Phase 1** - COMPLETE
+2. Test ThriveHQ magic link authentication and dashboard
+3. Populate resources table with ADHD tools/templates
+4. Add test brain pulse assessments to see scores populate
+5. Phase 2: Group chat functionality, historical tracking, client-initiated assessments
