@@ -3,48 +3,213 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ThriveHQ</title>
-  <link rel="manifest" href="/external-Coach4u-app/manifest.json">
+  <title>ThriveHQ — Login</title>
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#003366">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Coach4U">
-  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-  <link rel="apple-touch-icon" href="../images/logo.svg">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="stylesheet" href="../css/style.css">
+  <meta name="apple-mobile-web-app-title" content="ThriveHQ">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230D9488' width='100' height='100'/><text x='50' y='65' font-size='60' fill='white' text-anchor='middle' font-weight='bold'>T</text></svg>">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #003366 0%, #0D9488 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-container {
+      background: white;
+      border-radius: 12px;
+      padding: 40px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .logo h1 {
+      font-size: 28px;
+      color: #003366;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .logo p {
+      font-size: 14px;
+      color: #6C757D;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #212529;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #DEE2E6;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #0D9488;
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #0D9488;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #0F766E;
+    }
+
+    button:disabled {
+      background: #6C757D;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 4px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .message.success {
+      background: #D4EDDA;
+      color: #155724;
+      display: block;
+    }
+
+    .message.error {
+      background: #F8D7DA;
+      color: #721C24;
+      display: block;
+    }
+
+    .divider {
+      text-align: center;
+      margin: 24px 0;
+      color: #6C757D;
+      font-size: 13px;
+    }
+
+    .info {
+      background: #EBF5FB;
+      border-left: 4px solid #0D9488;
+      padding: 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #003366;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      <div class="brand">
-        <img src="../images/logo.svg" alt="Coach4U" style="height:36px;vertical-align:middle;">
-        <span class="brand-name">ThriveHQ</span>
+  <div class="login-container">
+    <div class="logo">
+      <div class="logo-icon">🧠</div>
+      <h1>ThriveHQ</h1>
+      <p>ADHD-friendly coaching community</p>
+    </div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required placeholder="your@email.com">
       </div>
-    </div>
-  </header>
 
-  <main class="main-content">
-    <div class="empty-state">
-      <div class="empty-state-icon">🌱</div>
-      <div class="empty-state-text">ThriveHQ Coming Soon</div>
-      <p style="color: var(--text-muted); margin-bottom: 20px;">This module is being built. Check back soon!</p>
-      <a href="/" style="color: var(--accent); text-decoration: none; font-weight: 600;">← Back to Dashboard</a>
-    </div>
-  </main>
+      <button type="submit" id="submitBtn">Send Magic Link</button>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="../js/supabase.js"></script>
-  <script src="../js/auth.js"></script>
+      <div id="message" class="message"></div>
+
+      <div class="info">
+        We'll send you a magic link to sign in. No password needed.
+      </div>
+    </form>
+  </div>
+
+  <script src="js/supabase.js"></script>
+  <script src="js/auth.js"></script>
   <script>
-    window.requireAuth()
+    const form = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const submitBtn = document.getElementById('submitBtn');
+    const message = document.getElementById('message');
 
-    // Register service worker for PWA
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      try {
+        await window.signInWithMagicLink(emailInput.value);
+        message.textContent = 'Check your email for the magic link!';
+        message.className = 'message success';
+        form.reset();
+      } catch (error) {
+        message.textContent = error.message || 'Error sending link';
+        message.className = 'message error';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Magic Link';
+      }
+    });
+
+    // Register service worker
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/external-Coach4u-app/sw.js')
-        .then(reg => console.log('Service Worker registered'))
+      navigator.serviceWorker.register('sw.js')
         .catch(err => console.log('Service Worker registration failed:', err));
     }
+
+    // Check if user is already logged in
+    window.addEventListener('DOMContentLoaded', async () => {
+      const user = await window.getCurrentUser();
+      if (user) {
+        window.location.href = 'dashboard.html';
+      }
+    });
   </script>
 </body>
 </html>
