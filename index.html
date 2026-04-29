@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coach4U — Login</title>
-  <link rel="manifest" href="/external-Coach4u-app/manifest.json">
+  <link rel="manifest" href="/Coach4uapp-strategy/manifest.json">
   <meta name="theme-color" content="#003366">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -225,7 +225,7 @@
 
     // Register service worker for PWA
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/external-Coach4u-app/sw.js')
+      navigator.serviceWorker.register('/Coach4uapp-strategy/sw.js')
         .then(reg => console.log('Service Worker registered'))
         .catch(err => console.log('Service Worker registration failed:', err));
     }

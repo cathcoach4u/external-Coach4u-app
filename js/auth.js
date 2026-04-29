@@ -6,9 +6,9 @@ function getAuthRedirectUrl(page = 'dashboard') {
   const pathname = window.location.pathname
   let baseUrl = window.location.origin
 
-  // If in /external-Coach4u-app/ subdirectory (GitHub Pages), include it
-  if (pathname.includes('external-Coach4u-app')) {
-    const match = pathname.match(/^(.*?external-Coach4u-app)\//i)
+  // If in /Coach4uapp-strategy/ subdirectory (GitHub Pages), include it
+  if (pathname.includes('Coach4uapp-strategy')) {
+    const match = pathname.match(/^(.*?Coach4uapp-strategy)\//i)
     if (match) {
       baseUrl = window.location.origin + match[1]
     }
@@ -167,8 +167,8 @@ window.supabaseClient.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_IN' && session && session.user && session.user.id) {
     const pathname = window.location.pathname
     // Only match the ROOT index.html (login page), not module index.html files
-    const isLoginPage = pathname.match(/\/external-Coach4u-app\/index\.html$/i)
-      || pathname.match(/\/external-Coach4u-app\/?$/i)
+    const isLoginPage = pathname.match(/\/Coach4uapp-strategy\/index\.html$/i)
+      || pathname.match(/\/Coach4uapp-strategy\/?$/i)
       || (pathname === '/index.html')
       || (pathname === '/')
 

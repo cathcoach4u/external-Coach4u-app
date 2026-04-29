@@ -9,22 +9,22 @@ const PAGES_CACHE = CACHE_VERSION + '-pages';
 const API_CACHE = CACHE_VERSION + '-api';
 
 const STATIC_ASSETS = [
-  '/external-Coach4u-app/',
-  '/external-Coach4u-app/index.html',
-  '/external-Coach4u-app/dashboard.html',
-  '/external-Coach4u-app/offline.html',
-  '/external-Coach4u-app/manifest.json',
-  '/external-Coach4u-app/css/style.css',
-  '/external-Coach4u-app/js/app.js',
-  '/external-Coach4u-app/js/auth.js',
-  '/external-Coach4u-app/js/supabase.js',
-  '/external-Coach4u-app/js/ai.js',
-  '/external-Coach4u-app/business/index.html',
-  '/external-Coach4u-app/business/js/app.js',
-  '/external-Coach4u-app/growth/index.html',
-  '/external-Coach4u-app/growth/css/style.css',
-  '/external-Coach4u-app/growth/js/app.js',
-  '/external-Coach4u-app/growth/js/ai.js',
+  '/Coach4uapp-strategy/',
+  '/Coach4uapp-strategy/index.html',
+  '/Coach4uapp-strategy/dashboard.html',
+  '/Coach4uapp-strategy/offline.html',
+  '/Coach4uapp-strategy/manifest.json',
+  '/Coach4uapp-strategy/css/style.css',
+  '/Coach4uapp-strategy/js/app.js',
+  '/Coach4uapp-strategy/js/auth.js',
+  '/Coach4uapp-strategy/js/supabase.js',
+  '/Coach4uapp-strategy/js/ai.js',
+  '/Coach4uapp-strategy/business/index.html',
+  '/Coach4uapp-strategy/business/js/app.js',
+  '/Coach4uapp-strategy/growth/index.html',
+  '/Coach4uapp-strategy/growth/css/style.css',
+  '/Coach4uapp-strategy/growth/js/app.js',
+  '/Coach4uapp-strategy/growth/js/ai.js',
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js',
 ];
 
@@ -61,7 +61,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   // Skip cross-origin requests and non-GET
-  if (!url.pathname.includes('/external-Coach4u-app/') && url.origin !== location.origin) {
+  if (!url.pathname.includes('/Coach4uapp-strategy/') && url.origin !== location.origin) {
     return;
   }
 
@@ -107,7 +107,7 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() => {
           return caches.match(request).then((cached) => {
-            return cached || caches.match('/external-Coach4u-app/offline.html');
+            return cached || caches.match('/Coach4uapp-strategy/offline.html');
           });
         })
     );
@@ -118,7 +118,7 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(request).then((cached) => {
       return cached || fetch(request).then((response) => {
-        if (response.ok && request.url.includes('/external-Coach4u-app/')) {
+        if (response.ok && request.url.includes('/Coach4uapp-strategy/')) {
           caches.open(STATIC_CACHE).then((cache) => {
             cache.put(request, response.clone());
           });
