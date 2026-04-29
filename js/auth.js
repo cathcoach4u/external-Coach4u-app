@@ -17,7 +17,7 @@ function getAuthRedirectUrl(page = 'dashboard') {
   return baseUrl + '/' + page + '.html'
 }
 
-// ─── Handle Magic Link Callback ─────────────────────────────────────────
+// ─── Handle Magic Link Callback ───────────────────────────────────────
 // When user clicks magic link in email, Supabase redirects back with token
 (async function handleMagicLinkCallback() {
   try {
@@ -41,7 +41,6 @@ function getAuthRedirectUrl(page = 'dashboard') {
 
       if (data.session) {
         console.log('Session confirmed, redirecting to dashboard...')
-        // Redirect to dashboard
         window.location.href = getAuthRedirectUrl('dashboard')
       }
     }
@@ -50,11 +49,7 @@ function getAuthRedirectUrl(page = 'dashboard') {
   }
 })()
 
-// ─── Sign In Function ──────────────────────────────────────────────────
-/**
- * Sign in with magic link
- * @param {string} email - User's email address
- */
+// ─── Sign In Function ──────────────────────────────────────────────────────
 window.signIn = async function(email) {
   try {
     const { error } = await window.supabaseClient.auth.signInWithOtp({
@@ -69,16 +64,13 @@ window.signIn = async function(email) {
       return
     }
 
-    alert('Check your email for the magic link to sign in!')
+    alert('Check your email for the magic link to sign in.')
   } catch (err) {
     console.error('Sign in error:', err)
-    alert('An error occurred during sign in')
+    alert('An error occurred during sign in.')
   }
 }
 
-/**
- * Sign out of Supabase and redirect to home page
- */
 window.signOut = async function() {
   try {
     const { error } = await window.supabaseClient.auth.signOut()
@@ -94,10 +86,6 @@ window.signOut = async function() {
   }
 }
 
-/**
- * Get the current authenticated user
- * @returns {Promise<Object|null>} Current user object or null if not authenticated
- */
 window.getUser = async function() {
   try {
     const { data: { user } } = await window.supabaseClient.auth.getUser()
@@ -108,10 +96,6 @@ window.getUser = async function() {
   }
 }
 
-/**
- * Require authentication - redirects to home if not authenticated
- * Call this at the top of protected pages
- */
 window.requireAuth = async function() {
   try {
     const { data: { user } } = await window.supabaseClient.auth.getUser()
@@ -130,10 +114,6 @@ window.requireAuth = async function() {
   }
 }
 
-/**
- * Get current user's profile from the profiles table
- * @returns {Promise<Object|null>} User's profile object or null
- */
 window.getUserProfile = async function() {
   try {
     const user = await window.getUser()
@@ -162,11 +142,8 @@ window.getUserProfile = async function() {
 
 // Listen for auth state changes on page load
 window.supabaseClient.auth.onAuthStateChange((event, session) => {
-  // Only redirect to dashboard on actual SIGNED_IN event
-  // Don't redirect during OTP flow (INITIAL_SESSION, USER_UPDATED, etc)
   if (event === 'SIGNED_IN' && session && session.user && session.user.id) {
     const pathname = window.location.pathname
-    // Only match the ROOT index.html (login page), not module index.html files
     const isLoginPage = pathname.match(/\/external-Coach4u-app\/index\.html$/i)
       || pathname.match(/\/external-Coach4u-app\/?$/i)
       || (pathname === '/index.html')
