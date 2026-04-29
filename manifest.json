@@ -7,7 +7,7 @@
   "display": "standalone",
   "orientation": "portrait-or-landscape",
   "background_color": "#ffffff",
-  "theme_color": "#003366",
+  "theme_color": "#1B3664",
   "icons": [
     {
       "src": "/external-Coach4u-app/assets/icon-192.png",
