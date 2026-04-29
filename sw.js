@@ -3,7 +3,7 @@
    Caching strategy: Static assets (cache-first), Pages (network-first), API (network-first)
    ═══════════════════════════════════════════════════════════════ */
 
-const CACHE_VERSION = 'coach4u-v0.5.2';
+const CACHE_VERSION = 'coach4u-v0.5.3';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 const PAGES_CACHE = CACHE_VERSION + '-pages';
 const API_CACHE = CACHE_VERSION + '-api';
@@ -33,7 +33,6 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => {
       return cache.addAll(STATIC_ASSETS).catch(() => {
-        // Fail gracefully if some assets aren't available
         console.log('Some static assets could not be cached');
       });
     }).then(() => self.skipWaiting())
@@ -125,11 +124,10 @@ self.addEventListener('fetch', (event) => {
         }
         return response;
       }).catch(() => {
-        // Return a placeholder for failed image requests
         if (request.destination === 'image') {
           return new Response(
-            '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">' +
-            '<rect fill="#f0f0f0" width="100" height="100"/></svg>',
+            '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">'
+            + '<rect fill="#f0f0f0" width="100" height="100"/></svg>',
             { headers: { 'Content-Type': 'image/svg+xml' } }
           );
         }
