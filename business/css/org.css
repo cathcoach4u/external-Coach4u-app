@@ -1,0 +1,20 @@
+/* Business Hub — org chart / accountability chart */
+
+.org-chart-container { overflow-x: auto; padding-bottom: 20px; }
+.org-tree  { display: flex; flex-direction: column; align-items: center; }
+.org-row   { display: flex; gap: 20px; margin-bottom: 8px; }
+.org-group { display: flex; flex-direction: column; align-items: center; gap: 0; }
+.org-parent-line  { width: 2px; height: 24px; background: #DDDDDD; margin: 0 auto; }
+.org-children-row { display: flex; gap: 20px; position: relative; }
+.org-children-row::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); height: 2px; background: #DDDDDD; width: calc(100% - 100px); }
+.org-child-wrap { display: flex; flex-direction: column; align-items: center; }
+.org-child-line { width: 2px; height: 20px; background: #DDDDDD; }
+
+.seat-card { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid #DDDDDD; width: 200px; cursor: pointer; transition: box-shadow 0.2s, transform 0.15s; overflow: hidden; flex-shrink: 0; }
+.seat-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.10); transform: translateY(-2px); }
+.seat-card-header { background: #1B3664; color: #fff; padding: 10px 14px; }
+.seat-card-title  { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.seat-card-person { font-size: 12px; opacity: 0.75; }
+.seat-card-body   { padding: 10px 14px; }
+.seat-card-responsibilities { list-style: none; font-size: 11px; color: #6C757D; line-height: 1.8; }
+.seat-card-responsibilities li::before { content: '• '; color: #5684C4; }
