@@ -1,0 +1,28 @@
+/* Business Hub — scorecard table & cell popover */
+
+.scorecard-wrapper { overflow-x: auto; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid #DDDDDD; }
+.scorecard-table { border-collapse: collapse; width: 100%; background: #fff; font-size: 14px; min-width: 900px; }
+.scorecard-table th { background: #1B3664; color: #fff; padding: 10px; font-size: 11px; font-weight: 700; text-align: center; white-space: nowrap; letter-spacing: 0.3px; border-right: 1px solid rgba(255,255,255,0.1); }
+.scorecard-table th.col-metric { text-align: left; min-width: 180px; padding-left: 16px; }
+.scorecard-table th.col-goal   { min-width: 70px; }
+.scorecard-table th.col-owner  { min-width: 80px; }
+.scorecard-table td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; border-right: 1px solid #f0f0f0; text-align: center; vertical-align: middle; }
+.scorecard-table td.cell-metric { text-align: left; font-weight: 700; padding-left: 16px; color: #2D2D2D; font-size: 14px; min-width: 180px; }
+.scorecard-table td.cell-metric-sub { font-size: 11px; color: #6C757D; font-weight: 400; display: block; margin-top: 1px; }
+.scorecard-table td.cell-goal  { font-weight: 700; color: #6C757D; }
+.scorecard-table td.cell-owner { font-size: 12px; color: #6C757D; }
+.scorecard-table tbody tr:last-child td { border-bottom: none; }
+.scorecard-table tbody tr:hover td { background-color: #f5f8ff; }
+
+.scorecard-cell { cursor: pointer; border-radius: 4px; min-width: 52px; min-height: 32px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; transition: filter 0.1s; }
+.scorecard-cell:hover { filter: brightness(0.93); }
+.cell-green  { background: #d4edda; color: #155724; }
+.cell-red    { background: #f8d7da; color: #721c24; }
+.cell-empty  { background: #f8f9fa; color: #ADB5BD; }
+.cell-active { outline: 3px solid #5684C4; outline-offset: 1px; }
+
+.cell-popover { position: fixed; z-index: 500; background: #fff; border: 1.5px solid #5684C4; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.14); padding: 10px; min-width: 160px; }
+.cell-popover-inner { display: flex; align-items: center; gap: 7px; }
+.cell-popover-input { flex: 1; border: 1.5px solid #DDDDDD; border-radius: 5px; padding: 7px 10px; font-size: 14px; font-weight: 600; width: 90px; }
+.cell-popover-input:focus { outline: none; border-color: #5684C4; }
+.cell-popover-btns { display: flex; gap: 5px; }
