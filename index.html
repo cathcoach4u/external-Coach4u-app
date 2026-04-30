@@ -1,233 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coach4U — Login</title>
-  <link rel="manifest" href="/external-Coach4u-app/manifest.json">
-  <meta name="theme-color" content="#003366">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Coach4U">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="apple-touch-icon" href="images/logo.svg">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coach4U — Sign In</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta name="theme-color" content="#1B3664" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Coach4U" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="js/supabase.js"></script>
   <script src="js/auth.js"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background-color: #ffffff;
-      color: #333;
+      font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+      background: #f4f6fa;
+      color: #2D2D2D;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
-
     .container {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 24px;
     }
-
     .login-box {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(27,54,100,0.10);
+      padding: 40px 36px;
+      width: 100%;
       max-width: 400px;
-      width: 100%;
     }
-
     .logo {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 700;
-      color: #003366;
-      margin-bottom: 30px;
+      color: #1B3664;
       text-align: center;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
     }
-
+    .tagline {
+      font-size: 13px;
+      color: #6C757D;
+      text-align: center;
+      margin-bottom: 32px;
+    }
     h1 {
-      font-size: 28px;
-      color: #003366;
-      margin-bottom: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #1B3664;
+      margin-bottom: 24px;
       text-align: center;
-      font-weight: 600;
     }
-
-    .subtitle {
-      font-size: 16px;
-      color: #666;
-      text-align: center;
-      margin-bottom: 30px;
-      line-height: 1.5;
+    .form-group { margin-bottom: 16px; }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6C757D;
+      margin-bottom: 6px;
     }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    input[type="email"] {
+    input[type="email"],
+    input[type="password"] {
       width: 100%;
-      padding: 12px 14px;
-      font-size: 16px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      padding: 11px 14px;
+      font-size: 15px;
+      border: 1.5px solid #DDDDDD;
+      border-radius: 8px;
       font-family: inherit;
-      transition: border-color 0.3s;
+      color: #2D2D2D;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
-
-    input[type="email"]:focus {
+    input:focus {
       outline: none;
-      border-color: #003366;
-      box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+      border-color: #5684C4;
+      box-shadow: 0 0 0 3px rgba(86,132,196,0.15);
     }
-
-    button {
+    .btn {
       width: 100%;
       padding: 12px 14px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
-      background-color: #003366;
-      color: white;
+      background: #1B3664;
+      color: #fff;
       border: none;
-      border-radius: 4px;
+      border-radius: 8px;
       cursor: pointer;
       font-family: inherit;
-      transition: background-color 0.3s;
+      transition: background 0.15s;
+      margin-top: 8px;
     }
-
-    button:hover {
-      background-color: #002244;
-    }
-
-    button:active {
-      background-color: #001a33;
-    }
-
-    button:disabled {
-      background-color: #999;
-      cursor: not-allowed;
-    }
-
-    .success-message {
-      display: none;
-      background-color: #f0f9f7;
-      border: 1px solid #a3d5ce;
-      border-radius: 4px;
-      padding: 16px;
-      text-align: center;
-      color: #1a5f52;
-      font-size: 16px;
-      line-height: 1.5;
-    }
-
-    .success-message.show {
+    .btn:hover    { background: #0D1F3C; }
+    .btn:disabled { background: #a0aab4; cursor: not-allowed; }
+    .forgot-link {
       display: block;
-    }
-
-    .form-section {
-      display: block;
-    }
-
-    .form-section.hidden {
-      display: none;
-    }
-
-    footer {
-      background-color: #f5f5f5;
-      padding: 20px;
       text-align: center;
-      color: #999;
-      font-size: 14px;
-      border-top: 1px solid #eee;
-    }
-
-    footer a {
-      color: #003366;
+      margin-top: 14px;
+      font-size: 13px;
+      color: #5684C4;
       text-decoration: none;
     }
-
-    footer a:hover {
-      text-decoration: underline;
+    .forgot-link:hover { text-decoration: underline; }
+    .alert {
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 14px;
+      margin-top: 14px;
+      display: none;
     }
+    .alert-error   { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+    .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+    footer {
+      background: #f4f6fa;
+      border-top: 1px solid #DDDDDD;
+      padding: 16px;
+      text-align: center;
+      font-size: 13px;
+      color: #a0aab4;
+    }
+    footer a { color: #5684C4; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="login-box">
       <div class="logo">Coach4U</div>
+      <div class="tagline">Strengths-Based Coaching Portal</div>
+      <h1>Sign in to your account</h1>
 
-      <h1>Welcome to your coaching portal</h1>
-      <p class="subtitle">Enter your email to receive a secure login link</p>
-
-      <form id="loginForm" class="form-section">
+      <form id="login-form">
         <div class="form-group">
-          <input
-            type="email"
-            id="email"
-            placeholder="your@email.com"
-            required
-            autocomplete="email"
-          >
+          <label for="email">Email</label>
+          <input type="email" id="email" required autocomplete="username" placeholder="you@example.com" />
         </div>
-        <button type="submit">Send me a login link</button>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••" />
+        </div>
+        <div id="error-msg" class="alert alert-error"></div>
+        <button type="submit" class="btn" id="submit-btn">Sign In</button>
       </form>
 
-      <div class="success-message" id="successMessage">
-        ✓ Check your email — your login link is on its way.
-      </div>
+      <a href="forgot-password.html" class="forgot-link">Forgot password?</a>
     </div>
   </div>
 
   <footer>
-    Strengths-Based Coaching and Counselling | <a href="https://coach4u.com.au" target="_blank">coach4u.com.au</a>
+    Strengths-Based Coaching and Counselling &nbsp;|&nbsp;
+    <a href="https://coach4u.com.au" target="_blank">coach4u.com.au</a>
   </footer>
 
   <script>
-    // Handle login form submission
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault()
-
-      const email = document.getElementById('email').value
-      const button = e.target.querySelector('button')
-
-      // Disable button while processing
-      button.disabled = true
-      button.textContent = 'Sending...'
-
-      try {
-        await window.signIn(email)
-
-        // Hide form and show success message
-        document.getElementById('loginForm').classList.add('hidden')
-        document.getElementById('successMessage').classList.add('show')
-      } catch (err) {
-        // Re-enable button if there's an error
-        button.disabled = false
-        button.textContent = 'Send me a login link'
-        console.error('Error:', err)
-      }
-    })
-
-    // Check if user is already logged in
-    // If so, auth.js will redirect to dashboard.html
+    // Redirect if already logged in
     window.getUser().then(user => {
-      if (user) {
-        window.location.href = '/dashboard.html'
-      }
-    })
+      if (user) window.location.href = 'business/';
+    });
 
-    // Register service worker for PWA
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errEl    = document.getElementById('error-msg');
+      const btn      = document.getElementById('submit-btn');
+
+      btn.disabled    = true;
+      btn.textContent = 'Signing in…';
+      errEl.style.display = 'none';
+
+      const { error } = await window.signIn(email, password);
+      if (error) {
+        errEl.textContent    = error.message;
+        errEl.style.display  = 'block';
+        btn.disabled         = false;
+        btn.textContent      = 'Sign In';
+      }
+    });
+
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/external-Coach4u-app/sw.js')
-        .then(reg => console.log('Service Worker registered'))
-        .catch(err => console.log('Service Worker registration failed:', err));
+      navigator.serviceWorker.register('sw.js');
     }
   </script>
 </body>
