@@ -1,0 +1,17 @@
+/* Business Hub — kanban / issues board */
+
+.kanban-board { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
+.kanban-col { background: #fff; border-radius: 12px; border: 1px solid #DDDDDD; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; min-height: 300px; }
+.kanban-col-header { padding: 12px 16px; border-bottom: 1px solid #DDDDDD; display: flex; align-items: center; justify-content: space-between; background: #f0f4f8; }
+.kanban-col-title  { font-size: 14px; font-weight: 800; color: #1B3664; text-transform: uppercase; letter-spacing: 0.5px; }
+.kanban-col-count  { background: #1B3664; color: #fff; border-radius: 30px; padding: 1px 9px; font-size: 11px; font-weight: 700; }
+.kanban-cards { padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 60px; }
+
+.issue-card { background: #fff; border: 1px solid #DDDDDD; border-radius: 8px; padding: 12px 14px; cursor: pointer; transition: box-shadow 0.15s, transform 0.12s; border-left: 4px solid #DDDDDD; }
+.issue-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.10); transform: translateY(-1px); }
+.issue-card.priority-high   { border-left-color: #DC3545; }
+.issue-card.priority-medium { border-left-color: #FFC107; }
+.issue-card.priority-low    { border-left-color: #ADB5BD; }
+.issue-card-desc  { font-size: 14px; font-weight: 600; color: #2D2D2D; margin-bottom: 8px; line-height: 1.4; }
+.issue-card-meta  { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.issue-card-owner { font-size: 11px; color: #6C757D; background: #F8F9FA; padding: 2px 8px; border-radius: 20px; border: 1px solid #DDDDDD; }
