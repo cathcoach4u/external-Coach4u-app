@@ -1,0 +1,51 @@
+/* Business Hub — base overrides: header, vision banner, sub-nav, panel */
+
+/* ─── Header (column layout + pill nav) ─── */
+.header-inner { flex-direction: column; padding: 12px 16px; gap: 12px; }
+.brand { justify-content: space-between; width: 100%; }
+.brand-icon   { color: #5684C4; font-size: 24px; line-height: 1; }
+.brand-name   { font-size: 24px; font-weight: 800; color: #fff; letter-spacing: -0.3px; flex: 1; }
+.brand-sub    { font-size: 11px; color: rgba(255,255,255,0.55); font-weight: 400; margin-left: 2px; align-self: flex-end; margin-bottom: 2px; }
+.version-badge { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 600; padding: 4px 8px; background: rgba(255,255,255,0.15); border-radius: 4px; }
+.biz-switcher { display: flex; align-items: center; flex-shrink: 0; }
+.main-nav { justify-content: center; width: 100%; flex-wrap: wrap; }
+.nav-tab { background: rgba(255,255,255,0.22); border-radius: 28px; padding: 10px 18px; min-height: 40px; font-size: 14px; font-weight: 600; }
+.nav-tab.active { background: #fff; color: #1B3664; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
+/* ─── Vision Banner ─── */
+.vision-banner { background: linear-gradient(135deg, #0D1F3C 0%, #1B3664 100%); }
+.vision-banner-inner { max-width: 1600px; margin: 0 auto; padding: 10px 24px; display: flex; align-items: center; gap: 0; }
+.vision-col       { flex: 1; padding: 0 16px; min-width: 0; }
+.vision-col-split { display: flex; gap: 24px; }
+.vision-divider   { width: 1px; height: 36px; background: rgba(255,255,255,0.18); flex-shrink: 0; }
+.vision-label     { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.55); margin-bottom: 3px; }
+.vision-values    { font-size: 12px; color: rgba(255,255,255,0.92); display: flex; flex-wrap: wrap; gap: 5px; }
+.vision-value-pill { background: rgba(255,255,255,0.15); border-radius: 30px; padding: 2px 9px; font-size: 11px; font-weight: 500; }
+.vision-text      { font-size: 12px; color: rgba(255,255,255,0.88); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vision-highlight { font-size: 16px; font-weight: 700; color: #fff; }
+.vision-collapse-btn { background: rgba(255,255,255,0.1); border: none; color: rgba(255,255,255,0.6); width: 28px; height: 28px; border-radius: 50%; font-size: 11px; flex-shrink: 0; margin-left: 12px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+.vision-collapse-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+.vision-banner-collapsed { background: #1B3664; padding: 4px 24px; }
+.vision-expand-btn { background: transparent; border: none; color: rgba(255,255,255,0.65); font-size: 12px; padding: 4px 8px; border-radius: 4px; }
+.vision-expand-btn:hover { color: #fff; }
+
+/* ─── Sub-Nav ─── */
+.sub-nav { background: #0D1F3C; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.sub-nav.hidden { display: none; }
+.sub-nav-inner { max-width: 1600px; margin: 0 auto; padding: 0 24px; display: flex; gap: 2px; }
+.sub-tab { background: transparent; border: none; color: rgba(255,255,255,0.6); padding: 8px 18px; font-size: 14px; font-weight: 500; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; cursor: pointer; }
+.sub-tab:hover  { color: rgba(255,255,255,0.9); }
+.sub-tab.active { color: #fff; font-weight: 700; border-bottom-color: #5684C4; }
+
+/* ─── Panel (show by default, .hidden hides) ─── */
+.panel { display: block; }
+.panel.hidden { display: none; }
+
+/* ─── VTO panel header ─── */
+.vto-panel-header { padding: 8px 0 4px; margin-bottom: 28px; }
+.vto-page-title   { font-size: 24px; font-weight: 700; color: #1B3664; line-height: 1.25; letter-spacing: -0.3px; }
+
+/* ─── Field label override ─── */
+.field-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #6C757D; display: block; margin-bottom: 5px; }
+.field-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+.field-label-row .field-label { margin-bottom: 0; }
