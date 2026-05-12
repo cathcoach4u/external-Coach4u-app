@@ -3,55 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Business Coach — Sign In</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <title>Your Business Coach &mdash; Sign In</title>
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    .login-page {
-      background: linear-gradient(135deg, #003366 0%, #0D9488 100%);
-      display: flex; align-items: center; justify-content: center;
-      min-height: 100vh; padding: 20px;
-    }
-    .login-card {
-      background: white; border-radius: 12px; padding: 32px 24px;
-      max-width: 380px; width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
-    .login-logo { text-align: center; margin-bottom: 20px; }
-    .login-logo h1 { font-size: 24px; font-weight: 700; color: #003366; letter-spacing: -0.5px; }
-    .login-subtitle { font-size: 13px; color: #888; margin-bottom: 24px; line-height: 1.5; text-align: center; }
-    .login-btn {
-      width: 100%; padding: 12px 20px; background: #003366; color: white;
-      border: none; border-radius: 6px; font-size: 15px; font-weight: 600;
-      cursor: pointer; transition: background 0.2s; margin-top: 4px; font-family: inherit;
-    }
-    .login-btn:hover { background: #002244; }
-    .login-btn:disabled { opacity: 0.55; cursor: not-allowed; }
-    .login-forgot {
-      display: block; text-align: center; margin-top: 14px; font-size: 13px;
-      color: #0D9488; font-weight: 500; text-decoration: none;
-    }
-    .login-forgot:hover { color: #0F766E; text-decoration: underline; }
-    .login-message { margin-top: 12px; padding: 10px 14px; border-radius: 6px; font-size: 13px; display: none; }
-    .login-message.success { background: #D4EDDA; color: #155724; }
-    .login-message.error   { background: #F8D7DA; color: #721C24; }
-    .password-wrapper { position: relative; }
-    .toggle-password {
-      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-      background: none; border: none; cursor: pointer; color: #888; font-size: 13px; padding: 4px;
-    }
-    .toggle-password:hover { color: #0D9488; }
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
-    .form-group input[type="email"],
-    .form-group input[type="password"] {
-      width: 100%; padding: 10px 12px; border: 1px solid #ddd;
-      border-radius: 6px; font-size: 16px; font-family: inherit;
-      color: #333; background: #fff; transition: border-color 0.2s;
-    }
-    .form-group input:focus { outline: none; border-color: #0D9488; }
-  </style>
 </head>
 <body class="login-page">
 
@@ -85,7 +38,7 @@
       <a href="forgot-password.html" class="login-forgot">Forgot password?</a>
     </div>
 
-    <p style="margin-top:20px;font-family:'Montserrat',sans-serif;font-size:9pt;color:rgba(255,255,255,0.75);text-align:center;line-height:1.6;">
+    <p style="margin-top:20px;font-size:9pt;color:rgba(255,255,255,0.75);text-align:center;line-height:1.6;">
       Strengths-Based Coaching and Counselling<br>
       <a href="http://www.coach4u.com.au" style="color:rgba(255,255,255,0.75);">www.coach4u.com.au</a> |
       <a href="mailto:cath@coach4u.com.au" style="color:rgba(255,255,255,0.75);">cath@coach4u.com.au</a> |
@@ -102,7 +55,7 @@
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const { data: { session } } = await supabase.auth.getSession();
-    if (session) window.location.href = 'index.html';
+    if (session) window.location.href = 'business/index.html';
 
     const form    = document.getElementById('loginForm');
     const msgEl   = document.getElementById('message');
@@ -139,7 +92,7 @@
         btn.disabled = false;
         btn.textContent = 'Sign In';
       } else {
-        window.location.href = 'index.html';
+        window.location.href = 'business/index.html';
       }
     });
   </script>

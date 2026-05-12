@@ -1,36 +1,43 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Montserrat:wght@400;500;600&display=swap');
-
 /* ═══════════════════════════════════════════════════════════════════════
-   Coach4U Design System v1.3
+   Coach4U Design System v2.2 (Business Coach)
+   Brand variables aligned to gold standard: navy #003366, teal #0D9488, Aptos font.
    ═══════════════════════════════════════════════════════════════════════ */
+
+/* No external fonts required — uses the Aptos system font stack */
 
 /* ─── CSS Variables ─────────────────────────────────────────────────────── */
 :root {
-  --primary:        #1B3664;
-  --primary-dark:   #152952;
-  --secondary:      #5684C4;
-  --accent:         #5684C4;
-  --accent-dark:    #4070b0;
+  /* Brand Lock — must match templates/PROFILE.md */
+  --primary:        #003366;   /* navy */
+  --primary-dark:   #002244;   /* navy hover */
+  --secondary:      #0D9488;   /* teal (alias for --accent) */
+  --accent:         #0D9488;   /* teal */
+  --accent-dark:    #0F766E;   /* teal hover */
   --accent2:        #6C5CE7;
   --success:        #27AE60;
   --warning:        #F39C12;
   --danger:         #E74C3C;
-  --bg:             #F0F4F8;
+  --bg:             #ffffff;
   --bg-card:        #FFFFFF;
-  --border:         #DDDDDD;
+  --surface:        #ffffff;
+  --border:         #e2e8f0;
   --border-light:   #EEEEEE;
-  --text:           #2D2D2D;
-  --text-muted:     #6C757D;
+  --divider:        #eeeeee;
+  --text:           #333333;
+  --text-muted:     #888888;
   --text-light:     #ADB5BD;
+  --shadow:         0 2px 8px rgba(13,148,136,0.12);
   --shadow-sm:      0 1px 3px rgba(0,0,0,0.07);
-  --shadow-md:      0 4px 12px rgba(0,0,0,0.09);
-  --shadow-lg:      0 8px 24px rgba(0,0,0,0.13);
-  --radius:         8px;
+  --shadow-md:      0 4px 12px rgba(13,148,136,0.15);
+  --shadow-lg:      0 6px 16px rgba(13,148,136,0.22);
+  --radius:         10px;
   --radius-lg:      12px;
+  --radius-sm:      6px;
   --header-h:       60px;
   --banner-h:       58px;
-  --font:           'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-heading:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font:           'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body:      'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading:   'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --base-font-size: 15px;
   --min-body-size:  16px;
   --spacing-xs:     4px;
@@ -48,6 +55,12 @@
 /* ─── Reset ─────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: var(--base-font-size); scroll-behavior: smooth; }
+
+/*
+  IMPORTANT: Do NOT add display:flex or flex-direction:column to body.
+  Auth pages (login, forgot-password, reset-password) use their own
+  body layout to centre the card.
+*/
 body {
   font-family: var(--font);
   background: var(--bg);
@@ -64,6 +77,51 @@ a:hover { text-decoration: underline; }
 button { cursor: pointer; font-family: inherit; }
 input, textarea, select { font-family: inherit; }
 textarea { resize: vertical; }
+
+/* ─── Login Page ─────────────────────────────────────────────────────────── */
+.login-page {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 20px;
+}
+.login-card {
+  background: white; border-radius: 12px; padding: 32px 24px;
+  max-width: 380px; width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+.login-logo { text-align: center; margin-bottom: 20px; }
+.login-logo h1 { font-size: 24px; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
+.login-title { font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 6px; text-align: center; }
+.login-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; text-align: center; }
+.login-btn {
+  width: 100%; padding: 12px 20px; background: var(--primary); color: white;
+  border: none; border-radius: 6px; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: background 0.2s; margin-top: 4px; font-family: inherit;
+}
+.login-btn:hover { background: var(--primary-dark); }
+.login-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.login-forgot {
+  display: block; text-align: center; margin-top: 14px; font-size: 13px;
+  color: var(--accent); font-weight: 500; text-decoration: none;
+}
+.login-forgot:hover { color: var(--accent-dark); text-decoration: underline; }
+.login-message { margin-top: 12px; padding: 10px 14px; border-radius: 6px; font-size: 13px; display: none; }
+.login-message.success { background: #D4EDDA; color: #155724; }
+.login-message.error   { background: #F8D7DA; color: #721C24; }
+.password-wrapper { position: relative; }
+.toggle-password {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 13px; padding: 4px;
+}
+.toggle-password:hover { color: var(--accent); }
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
+.form-group input[type="email"],
+.form-group input[type="password"] {
+  width: 100%; padding: 10px 12px; border: 1px solid #ddd;
+  border-radius: 6px; font-size: 16px; font-family: inherit;
+  color: var(--text); background: #fff; transition: border-color 0.2s;
+}
+.form-group input:focus { outline: none; border-color: var(--accent); }
 
 /* ─── Sign Out Button ────────────────────────────────────────────────────── */
 .sign-out-btn {
@@ -87,6 +145,10 @@ textarea { resize: vertical; }
 }
 
 /* ─── Header ─────────────────────────────────────────────────────────────── */
+/*
+  Sign Out is ALWAYS top-right of the header across all apps.
+  header-inner must NEVER use flex-direction:column.
+*/
 .site-header {
   position: sticky;
   top: 0;
@@ -260,17 +322,17 @@ textarea { resize: vertical; }
 .btn-primary:hover {
   background: var(--accent-dark);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(86, 132, 196, 0.35);
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35);
 }
 .btn-secondary { background: var(--secondary); color: #fff; }
-.btn-secondary:hover { background: #4070b0; }
+.btn-secondary:hover { background: var(--accent-dark); }
 .btn-outline {
   background: transparent;
   color: var(--text-muted);
   border: 1px solid var(--border);
   padding: 8px 16px;
 }
-.btn-outline:hover { border-color: var(--secondary); color: var(--secondary); background: #EBF3FF; }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); background: rgba(13,148,136,0.06); }
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-danger:hover { background: #C0392B; }
 .btn-ghost {
@@ -313,7 +375,7 @@ textarea { resize: vertical; }
 .field-input:focus, .field-select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(86, 132, 196, 0.12);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
 }
 .field-select-sm { padding: 6px 10px; font-size: 13px; width: auto; }
 
@@ -467,7 +529,7 @@ textarea { resize: vertical; }
 .ai-coach-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(86, 132, 196, 0.12);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
 }
 .ai-coach-send {
   background: var(--accent);
@@ -644,5 +706,5 @@ textarea { resize: vertical; }
   border-top: 1px solid var(--border-light);
   line-height: 1.8;
 }
-.site-footer a { color: var(--secondary); }
+.site-footer a { color: var(--accent); }
 .site-footer a:hover { color: var(--accent-dark); text-decoration: underline; }
