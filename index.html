@@ -1,191 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coach4U — Sign In</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <meta name="theme-color" content="#1B3664" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Coach4U" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/supabase.js"></script>
-  <script src="js/auth.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1B3664">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Your Business Coach">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
-      background: #f4f6fa;
-      color: #2D2D2D;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .container {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    .login-box {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 24px rgba(27,54,100,0.10);
-      padding: 40px 36px;
-      width: 100%;
-      max-width: 400px;
-    }
-    .logo {
-      font-size: 26px;
-      font-weight: 700;
-      color: #1B3664;
-      text-align: center;
-      margin-bottom: 6px;
-      letter-spacing: -0.3px;
-    }
-    .tagline {
-      font-size: 13px;
-      color: #6C757D;
-      text-align: center;
-      margin-bottom: 32px;
-    }
-    h1 {
-      font-size: 20px;
-      font-weight: 700;
-      color: #1B3664;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-    .form-group { margin-bottom: 16px; }
-    label {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #6C757D;
-      margin-bottom: 6px;
-    }
-    input[type="email"],
-    input[type="password"] {
-      width: 100%;
-      padding: 11px 14px;
-      font-size: 15px;
-      border: 1.5px solid #DDDDDD;
-      border-radius: 8px;
-      font-family: inherit;
-      color: #2D2D2D;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    input:focus {
-      outline: none;
-      border-color: #5684C4;
-      box-shadow: 0 0 0 3px rgba(86,132,196,0.15);
-    }
-    .btn {
-      width: 100%;
-      padding: 12px 14px;
-      font-size: 15px;
-      font-weight: 600;
-      background: #1B3664;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-family: inherit;
-      transition: background 0.15s;
-      margin-top: 8px;
-    }
-    .btn:hover    { background: #0D1F3C; }
-    .btn:disabled { background: #a0aab4; cursor: not-allowed; }
-    .forgot-link {
-      display: block;
-      text-align: center;
-      margin-top: 14px;
-      font-size: 13px;
-      color: #5684C4;
-      text-decoration: none;
-    }
-    .forgot-link:hover { text-decoration: underline; }
-    .alert {
-      border-radius: 8px;
-      padding: 12px 14px;
-      font-size: 14px;
-      margin-top: 14px;
-      display: none;
-    }
-    .alert-error   { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-    .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-    footer {
-      background: #f4f6fa;
-      border-top: 1px solid #DDDDDD;
-      padding: 16px;
-      text-align: center;
-      font-size: 13px;
-      color: #a0aab4;
-    }
-    footer a { color: #5684C4; text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #f0f4f8;
+           display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #1B3664; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="login-box">
-      <div class="logo">Coach4U</div>
-      <div class="tagline">Strengths-Based Coaching Portal</div>
-      <h1>Sign in to your account</h1>
+  <div>Loading…</div>
 
-      <form id="login-form">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" required autocomplete="username" placeholder="you@example.com" />
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••" />
-        </div>
-        <div id="error-msg" class="alert alert-error"></div>
-        <button type="submit" class="btn" id="submit-btn">Sign In</button>
-      </form>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-      <a href="forgot-password.html" class="forgot-link">Forgot password?</a>
-    </div>
-  </div>
+    const SUPABASE_URL      = 'https://eekefsuaefgpqmjdyniy.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  <footer>
-    Strengths-Based Coaching and Counselling &nbsp;|&nbsp;
-    <a href="https://coach4u.com.au" target="_blank">coach4u.com.au</a>
-  </footer>
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      window.location.href = 'login.html';
+    } else {
+      const { data: profile } = await supabase
+        .from('users')
+        .select('membership_status')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profile?.membership_status === 'active') {
+        window.location.href = 'business/index.html';
+      } else {
+        window.location.href = 'inactive.html';
+      }
+    }
+  </script>
 
   <script>
-    // Redirect if already logged in
-    window.getUser().then(user => {
-      if (user) window.location.href = 'business/';
-    });
-
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email    = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const errEl    = document.getElementById('error-msg');
-      const btn      = document.getElementById('submit-btn');
-
-      btn.disabled    = true;
-      btn.textContent = 'Signing in…';
-      errEl.style.display = 'none';
-
-      const { error } = await window.signIn(email, password);
-      if (error) {
-        errEl.textContent    = error.message;
-        errEl.style.display  = 'block';
-        btn.disabled         = false;
-        btn.textContent      = 'Sign In';
-      }
-    });
-
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
     }

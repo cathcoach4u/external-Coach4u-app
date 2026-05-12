@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Business Coach — Membership Inactive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+      font-family: 'Montserrat', sans-serif;
+      background: #f4f6fa;
+      margin: 0;
+    }
+    .inactive-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .inactive-card h1 {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #003366;
+      margin-bottom: 16px;
+    }
+    .inactive-card p {
+      font-size: 1rem;
+      color: #2D2D2D;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .inactive-card p:last-of-type { margin-bottom: 32px; }
+    .sign-out-link {
+      display: inline-block;
+      padding: 12px 28px;
+      background: #003366;
+      color: #fff;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s;
+    }
+    .sign-out-link:hover { background: #002244; }
+    footer {
+      margin-top: 32px;
+      font-size: 9pt;
+      color: #2D2D2D;
+      text-align: center;
+      line-height: 1.6;
+    }
+    footer a { color: #2D2D2D; }
+  </style>
+</head>
+<body>
+
+  <div class="inactive-card">
+    <h1>Membership not active</h1>
+    <p>Your account exists but your membership isn't active yet.</p>
+    <p>If you've recently signed up, please contact Cath to get access.</p>
+    <button class="sign-out-link" id="signOutBtn">Sign out</button>
+  </div>
+
+  <footer>
+    Strengths-Based Coaching and Counselling |
+    <a href="http://www.coach4u.com.au">www.coach4u.com.au</a> |
+    <a href="mailto:cath@coach4u.com.au">cath@coach4u.com.au</a> |
+    0402 313 337
+  </footer>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const SUPABASE_URL      = 'https://eekefsuaefgpqmjdyniy.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.getElementById('signOutBtn').addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      window.location.href = 'login.html';
+    });
+  </script>
+
+</body>
+</html>

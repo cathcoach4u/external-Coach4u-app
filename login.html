@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Business Coach — Set New Password</title>
+  <title>Your Business Coach — Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <style>
     .login-page {
@@ -17,7 +20,6 @@
     }
     .login-logo { text-align: center; margin-bottom: 20px; }
     .login-logo h1 { font-size: 24px; font-weight: 700; color: #003366; letter-spacing: -0.5px; }
-    .login-title { font-size: 18px; font-weight: 700; color: #003366; margin-bottom: 6px; text-align: center; }
     .login-subtitle { font-size: 13px; color: #888; margin-bottom: 24px; line-height: 1.5; text-align: center; }
     .login-btn {
       width: 100%; padding: 12px 20px; background: #003366; color: white;
@@ -26,6 +28,11 @@
     }
     .login-btn:hover { background: #002244; }
     .login-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .login-forgot {
+      display: block; text-align: center; margin-top: 14px; font-size: 13px;
+      color: #0D9488; font-weight: 500; text-decoration: none;
+    }
+    .login-forgot:hover { color: #0F766E; text-decoration: underline; }
     .login-message { margin-top: 12px; padding: 10px 14px; border-radius: 6px; font-size: 13px; display: none; }
     .login-message.success { background: #D4EDDA; color: #155724; }
     .login-message.error   { background: #F8D7DA; color: #721C24; }
@@ -37,6 +44,7 @@
     .toggle-password:hover { color: #0D9488; }
     .form-group { margin-bottom: 14px; }
     .form-group label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
+    .form-group input[type="email"],
     .form-group input[type="password"] {
       width: 100%; padding: 10px 12px; border: 1px solid #ddd;
       border-radius: 6px; font-size: 16px; font-family: inherit;
@@ -51,27 +59,33 @@
 
     <div class="login-card">
       <div class="login-logo">
+        <img src="Assets/Your Business Coach - COACH4U (Final).jpg" alt="Coach4U" style="height:48px;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;">
         <h1>Your Business Coach</h1>
       </div>
-      <p class="login-title">Set a new password</p>
-      <p class="login-subtitle">Choose a password that's at least 8 characters.</p>
+      <p class="login-subtitle">Sign in to access your coaching resources.</p>
 
-      <form id="resetForm">
+      <form id="loginForm">
         <div class="form-group">
-          <label for="password">New password</label>
+          <label for="email">Email</label>
+          <input type="email" id="email" required autocomplete="email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
           <div class="password-wrapper">
-            <input type="password" id="password" required minlength="8" autocomplete="new-password">
+            <input type="password" id="password" required autocomplete="current-password">
             <button type="button" class="toggle-password" id="toggleBtn">Show</button>
           </div>
         </div>
 
         <div id="message" class="login-message"></div>
 
-        <button type="submit" class="login-btn" id="submitBtn">Update Password</button>
+        <button type="submit" class="login-btn" id="submitBtn">Sign In</button>
       </form>
+
+      <a href="forgot-password.html" class="login-forgot">Forgot password?</a>
     </div>
 
-    <p style="margin-top:20px;font-size:9pt;color:rgba(255,255,255,0.75);text-align:center;line-height:1.6;">
+    <p style="margin-top:20px;font-family:'Montserrat',sans-serif;font-size:9pt;color:rgba(255,255,255,0.75);text-align:center;line-height:1.6;">
       Strengths-Based Coaching and Counselling<br>
       <a href="http://www.coach4u.com.au" style="color:rgba(255,255,255,0.75);">www.coach4u.com.au</a> |
       <a href="mailto:cath@coach4u.com.au" style="color:rgba(255,255,255,0.75);">cath@coach4u.com.au</a> |
@@ -87,7 +101,10 @@
     const SUPABASE_ANON_KEY = 'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y';
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const form    = document.getElementById('resetForm');
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) window.location.href = 'index.html';
+
+    const form    = document.getElementById('loginForm');
     const msgEl   = document.getElementById('message');
     const btn     = document.getElementById('submitBtn');
     const toggle  = document.getElementById('toggleBtn');
@@ -106,22 +123,23 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       btn.disabled = true;
-      btn.textContent = 'Updating…';
+      btn.textContent = 'Signing in…';
       msgEl.style.display = 'none';
       msgEl.className = 'login-message';
 
-      const { error } = await supabase.auth.updateUser({ password: pwInput.value });
+      const email    = document.getElementById('email').value.trim();
+      const password = pwInput.value;
 
-      msgEl.style.display = 'block';
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+
       if (error) {
-        msgEl.classList.add('error');
         msgEl.textContent = error.message;
+        msgEl.classList.add('error');
+        msgEl.style.display = 'block';
         btn.disabled = false;
-        btn.textContent = 'Update Password';
+        btn.textContent = 'Sign In';
       } else {
-        msgEl.classList.add('success');
-        msgEl.textContent = 'Password updated. Taking you to sign in…';
-        setTimeout(() => window.location.href = 'login.html', 2000);
+        window.location.href = 'index.html';
       }
     });
   </script>
