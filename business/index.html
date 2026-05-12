@@ -71,7 +71,58 @@
 
   <main class="main-content" id="main-content">
 
-    <div class="panel" id="vto-panel">
+    <div class="panel hidden" id="strategic-hub-panel">
+      <div class="hub-overview-header">
+        <h1>Strategic Hub</h1>
+        <p>Your complete business operating system — click any area to open it</p>
+      </div>
+      <div class="hub-modules-grid">
+        <div class="hub-module-card" onclick="switchTab('vto')">
+          <div class="hub-module-icon">&#x2605;</div>
+          <div class="hub-module-title">Vision &amp; Strategy</div>
+          <div class="hub-module-desc">One-page strategic plan — core values, 10-year target, 3-year picture, and 1-year plan</div>
+          <span class="hub-module-link">Open Vision &#x2192;</span>
+        </div>
+        <div class="hub-module-card" onclick="switchTab('rocks')">
+          <div class="hub-module-icon">&#x25CE;</div>
+          <div class="hub-module-title">Goals</div>
+          <div class="hub-module-desc">Quarterly priorities — your 3–7 most important focus areas this quarter</div>
+          <span class="hub-module-link">Open Goals &#x2192;</span>
+        </div>
+        <div class="hub-module-card" onclick="switchTab('accountability')">
+          <div class="hub-module-icon">&#x25A3;</div>
+          <div class="hub-module-title">Accountability Chart</div>
+          <div class="hub-module-desc">Organisational structure — who is in each seat and accountable for what</div>
+          <span class="hub-module-link">Open Chart &#x2192;</span>
+        </div>
+        <div class="hub-module-card" onclick="switchTab('scorecard')">
+          <div class="hub-module-icon">&#x25C8;</div>
+          <div class="hub-module-title">Scorecard</div>
+          <div class="hub-module-desc">Weekly measurables — your company's pulse with leading indicators and targets</div>
+          <span class="hub-module-link">Open Scorecard &#x2192;</span>
+        </div>
+        <div class="hub-module-card" onclick="switchTab('l10')">
+          <div class="hub-module-icon">&#x25B7;</div>
+          <div class="hub-module-title">Meeting</div>
+          <div class="hub-module-desc">Structured weekly team meeting — agenda, check-in, scorecard review, and IDS</div>
+          <span class="hub-module-link">Open Meeting &#x2192;</span>
+        </div>
+        <div class="hub-module-card" onclick="switchTab('issues')">
+          <div class="hub-module-icon">&#x26A1;</div>
+          <div class="hub-module-title">Issues</div>
+          <div class="hub-module-desc">Identify, Discuss, Solve — capture and work through your company's obstacles</div>
+          <span class="hub-module-link">Open Issues &#x2192;</span>
+        </div>
+        <div class="hub-module-card" onclick="switchTab('alignment')">
+          <div class="hub-module-icon">&#x25C9;</div>
+          <div class="hub-module-title">Team Alignment</div>
+          <div class="hub-module-desc">Right Person, Right Seat — quarterly evaluation of core values and GWC fit</div>
+          <span class="hub-module-link">Open Alignment &#x2192;</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel hidden" id="vto-panel">
       <div id="group-overview-content" class="hidden"></div>
       <div id="vto-form-content">
         <div class="panel-header vto-panel-header"><h1 class="vto-page-title">Your company's one-page strategic plan</h1></div>

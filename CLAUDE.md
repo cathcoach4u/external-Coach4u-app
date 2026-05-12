@@ -90,12 +90,14 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.5
+v0.5.6
 
-## Recent Changes (v0.5.5)
-- Upgraded `css/style.css` to v2.2 design system (`#003366` navy, `#0D9488` teal, Aptos font, white background)
-- Standardised `login.html`, `forgot-password.html`, `reset-password.html` to gold standard (no Google Fonts, no inline styles, PWA meta)
-- Fixed post-login redirect to `business/index.html`
+## Recent Changes (v0.5.6)
+- Added Strategic Hub overview dashboard (`strategic-hub-panel`) as the default landing for the Strategic tab
+- Shows 7 module cards: Vision & Strategy, Goals, Accountability Chart, Scorecard, Meeting, Issues, Team Alignment
+- Each card navigates to its respective panel on click
+- Strategic sub-nav now shows: Overview | Vision
+- Added hub module card CSS to `misc.css`
 
 ## Current Status
 - **Business app**: WORKING — VTO, org chart, rocks, scorecard, meetings, issues, team alignment
