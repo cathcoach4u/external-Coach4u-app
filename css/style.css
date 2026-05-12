@@ -1,36 +1,40 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Montserrat:wght@400;500;600&display=swap');
-
 /* ═══════════════════════════════════════════════════════════════════════
-   Coach4U Design System v1.3
+   Coach4U Design System v2.2
    ═══════════════════════════════════════════════════════════════════════ */
 
-/* ─── CSS Variables ─────────────────────────────────────────────────────── */
+/* ─── CSS Variables ─────────────────────────────────────────────────────────────────────── */
 :root {
-  --primary:        #1B3664;
-  --primary-dark:   #152952;
-  --secondary:      #5684C4;
-  --accent:         #5684C4;
-  --accent-dark:    #4070b0;
-  --accent2:        #6C5CE7;
+  /* Brand — Coach4U v2.2 */
+  --primary:        #003366;
+  --primary-dark:   #002244;
+  --accent:         #0D9488;
+  --accent-dark:    #0F766E;
+  --secondary:      #0D9488;
   --success:        #27AE60;
   --warning:        #F39C12;
   --danger:         #E74C3C;
-  --bg:             #F0F4F8;
-  --bg-card:        #FFFFFF;
-  --border:         #DDDDDD;
-  --border-light:   #EEEEEE;
-  --text:           #2D2D2D;
-  --text-muted:     #6C757D;
+  --text:           #333333;
+  --text-muted:     #888888;
   --text-light:     #ADB5BD;
+  --divider:        #eeeeee;
+  --bg:             #ffffff;
+  --bg-card:        #ffffff;
+  --surface:        #ffffff;
+  --border:         #e2e8f0;
+  --border-light:   #eeeeee;
   --shadow-sm:      0 1px 3px rgba(0,0,0,0.07);
-  --shadow-md:      0 4px 12px rgba(0,0,0,0.09);
-  --shadow-lg:      0 8px 24px rgba(0,0,0,0.13);
+  --shadow:         0 2px 8px rgba(13,148,136,0.12);
+  --shadow-md:      0 4px 12px rgba(13,148,136,0.15);
+  --shadow-lg:      0 6px 16px rgba(13,148,136,0.22);
+  --shadow-neutral: 0 2px 8px rgba(0,0,0,0.07);
   --radius:         8px;
+  --radius-sm:      6px;
   --radius-lg:      12px;
   --header-h:       60px;
   --banner-h:       58px;
-  --font:           'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-heading:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font:           'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body:      'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading:   'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --base-font-size: 15px;
   --min-body-size:  16px;
   --spacing-xs:     4px;
@@ -42,10 +46,10 @@
   --min-touch-h:    44px;
 }
 
-/* ─── Utility ───────────────────────────────────────────────────────────── */
+/* ─── Utility ─────────────────────────────────────────────────────────────────────── */
 .hidden { display: none !important; }
 
-/* ─── Reset ─────────────────────────────────────────────────────────────── */
+/* ─── Reset ───────────────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: var(--base-font-size); scroll-behavior: smooth; }
 body {
@@ -65,7 +69,37 @@ button { cursor: pointer; font-family: inherit; }
 input, textarea, select { font-family: inherit; }
 textarea { resize: vertical; }
 
-/* ─── Sign Out Button ────────────────────────────────────────────────────── */
+/* ─── Login Page ────────────────────────────────────────────────────────────────── */
+.login-page {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 20px;
+}
+.login-card {
+  background: white; border-radius: 12px; padding: 32px 24px;
+  max-width: 380px; width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+.login-logo { text-align: center; margin-bottom: 20px; }
+.login-logo h1 { font-size: 24px; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
+.login-title { font-size: 20px; font-weight: 700; color: var(--primary); margin-bottom: 6px; text-align: center; }
+.login-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; text-align: center; }
+.login-btn {
+  width: 100%; padding: 12px 20px; background: var(--primary); color: white;
+  border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: background 0.2s; margin-top: 4px; font-family: var(--font-body);
+}
+.login-btn:hover { background: var(--primary-dark); }
+.login-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.login-forgot { display: block; text-align: center; margin-top: 14px; font-size: 13px; color: var(--accent); font-weight: 500; }
+.login-forgot:hover { color: var(--accent-dark); text-decoration: underline; }
+.login-message { margin-top: 12px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13px; display: none; }
+.login-message.success { background: #D4EDDA; color: #155724; }
+.login-message.error   { background: #F8D7DA; color: #721C24; }
+.password-wrapper { position: relative; }
+.toggle-password { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 13px; padding: 4px; }
+.toggle-password:hover { color: var(--accent); }
+
+/* ─── Sign Out Button ─────────────────────────────────────────────────────────────── */
 .sign-out-btn {
   background: transparent;
   border: 1px solid rgba(255,255,255,0.45);
@@ -86,7 +120,7 @@ textarea { resize: vertical; }
   border-color: rgba(255,255,255,0.7);
 }
 
-/* ─── Header ─────────────────────────────────────────────────────────────── */
+/* ─── Header ──────────────────────────────────────────────────────────────────────── */
 .site-header {
   position: sticky;
   top: 0;
@@ -111,7 +145,7 @@ textarea { resize: vertical; }
 .brand-accent { color: var(--accent); }
 .brand-sub { font-size: 11px; color: rgba(255,255,255,0.55); font-weight: 400; margin-left: 2px; }
 
-/* ─── Navigation ─────────────────────────────────────────────────────────── */
+/* ─── Navigation ───────────────────────────────────────────────────────────────────── */
 .main-nav {
   display: flex;
   gap: 2px;
@@ -138,7 +172,7 @@ textarea { resize: vertical; }
 .nav-tab:hover { background: rgba(255,255,255,0.1); color: #fff; }
 .nav-tab.active { background: var(--accent); color: #fff; font-weight: 600; }
 
-/* ─── Vision / Mission Banners ───────────────────────────────────────────── */
+/* ─── Vision / Mission Banners ──────────────────────────────────────────────────── */
 .vision-banner, .mission-banner {
   background: var(--primary-dark);
   border-bottom: 2px solid var(--accent);
@@ -196,10 +230,10 @@ textarea { resize: vertical; }
 }
 .vision-expand-btn:hover, .mission-expand-btn:hover { color: #fff; }
 
-/* ─── Main Content ───────────────────────────────────────────────────────── */
+/* ─── Main Content ─────────────────────────────────────────────────────────────────── */
 .main-content { max-width: 1600px; margin: 0 auto; padding: var(--spacing-2xl); }
 
-/* ─── Panels ─────────────────────────────────────────────────────────────── */
+/* ─── Panels ──────────────────────────────────────────────────────────────────────── */
 .panel { display: none; }
 .panel.active { display: block; }
 .panel-header {
@@ -213,7 +247,7 @@ textarea { resize: vertical; }
 .panel-subtitle { font-size: 13px; color: var(--text-muted); flex: 1; }
 .panel-header-actions { display: flex; gap: var(--spacing-sm); align-items: center; margin-left: auto; }
 
-/* ─── Cards ──────────────────────────────────────────────────────────────── */
+/* ─── Cards ───────────────────────────────────────────────────────────────────────── */
 .card {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
@@ -240,7 +274,7 @@ textarea { resize: vertical; }
 .card-body { padding: var(--spacing-xl); }
 .card-hint { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
 
-/* ─── Buttons ────────────────────────────────────────────────────────────── */
+/* ─── Buttons ──────────────────────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -260,17 +294,17 @@ textarea { resize: vertical; }
 .btn-primary:hover {
   background: var(--accent-dark);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(86, 132, 196, 0.35);
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35);
 }
 .btn-secondary { background: var(--secondary); color: #fff; }
-.btn-secondary:hover { background: #4070b0; }
+.btn-secondary:hover { background: var(--accent-dark); }
 .btn-outline {
   background: transparent;
   color: var(--text-muted);
   border: 1px solid var(--border);
   padding: 8px 16px;
 }
-.btn-outline:hover { border-color: var(--secondary); color: var(--secondary); background: #EBF3FF; }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); background: rgba(13, 148, 136, 0.08); }
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-danger:hover { background: #C0392B; }
 .btn-ghost {
@@ -286,7 +320,7 @@ textarea { resize: vertical; }
 .btn-sm { padding: 6px 12px; font-size: 12px; }
 .btn-icon { padding: 6px; min-width: 30px; justify-content: center; }
 
-/* ─── Forms ──────────────────────────────────────────────────────────────── */
+/* ─── Forms ───────────────────────────────────────────────────────────────────────── */
 .field-group { display: flex; flex-direction: column; gap: 4px; }
 .field-group.flex-2 { flex: 2; }
 .field-row { display: flex; gap: var(--spacing-md); }
@@ -313,11 +347,11 @@ textarea { resize: vertical; }
 .field-input:focus, .field-select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(86, 132, 196, 0.12);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
 }
 .field-select-sm { padding: 6px 10px; font-size: 13px; width: auto; }
 
-/* ─── Modals ─────────────────────────────────────────────────────────────── */
+/* ─── Modals ─────────────────────────────────────────────────────────────────────── */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -377,7 +411,7 @@ textarea { resize: vertical; }
   flex-wrap: wrap;
 }
 
-/* ─── Toast ──────────────────────────────────────────────────────────────── */
+/* ─── Toast ───────────────────────────────────────────────────────────────────────── */
 .toast {
   position: fixed;
   bottom: var(--spacing-2xl);
@@ -399,7 +433,7 @@ textarea { resize: vertical; }
 .toast.success { background: var(--success); }
 .toast.error { background: var(--danger); }
 
-/* ─── AI Coach Sidebar ───────────────────────────────────────────────────── */
+/* ─── AI Coach Sidebar ─────────────────────────────────────────────────────────────── */
 .ai-coach-sidebar { display: none; }
 .ai-coach-sidebar.visible {
   display: flex;
@@ -467,7 +501,7 @@ textarea { resize: vertical; }
 .ai-coach-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(86, 132, 196, 0.12);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
 }
 .ai-coach-send {
   background: var(--accent);
@@ -485,7 +519,7 @@ textarea { resize: vertical; }
 }
 .ai-coach-send:hover { background: var(--accent-dark); }
 
-/* ─── Utility Classes ────────────────────────────────────────────────────── */
+/* ─── Utility Classes ─────────────────────────────────────────────────────────────── */
 .mt-8  { margin-top: 8px !important; }
 .mt-12 { margin-top: 12px !important; }
 .mt-16 { margin-top: 16px !important; }
@@ -502,7 +536,7 @@ textarea { resize: vertical; }
 .flex-1 { flex: 1; }
 .nowrap { white-space: nowrap; }
 
-/* ─── VTO Section ────────────────────────────────────────────────────────── */
+/* ─── VTO Section ──────────────────────────────────────────────────────────────────── */
 .vto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .vto-section { margin: 0; }
 .vto-card-wide { grid-column: 1 / -1; }
@@ -516,7 +550,7 @@ textarea { resize: vertical; }
 .field-label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
 .mt-8 { margin-top: 8px; }
 
-/* ─── Group Overview ─────────────────────────────────────────────────────── */
+/* ─── Group Overview ────────────────────────────────────────────────────────────────── */
 .go-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
 .go-title { font-size: 26px; font-weight: 700; color: var(--primary); letter-spacing: -0.3px; }
 .go-subtitle { font-size: 14px; color: var(--text-muted); margin-top: 2px; }
@@ -567,7 +601,19 @@ textarea { resize: vertical; }
 .go-biz-targets { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--text-muted); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-light); }
 .go-empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
 
-/* ─── Mobile (< 768px) ───────────────────────────────────────────────────── */
+/* ─── Site Footer ──────────────────────────────────────────────────────────────────── */
+.site-footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 24px 20px 32px;
+  border-top: 1px solid var(--divider);
+  line-height: 1.8;
+}
+.site-footer a { color: var(--accent); }
+.site-footer a:hover { color: var(--accent-dark); text-decoration: underline; }
+
+/* ─── Mobile (< 768px) ───────────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   :root { --header-h: 56px; --base-font-size: 14px; }
   .header-inner { padding: 0 var(--spacing-lg); gap: var(--spacing-lg); }
@@ -593,7 +639,7 @@ textarea { resize: vertical; }
   .vision-text, .mission-value { white-space: normal; overflow: visible; text-overflow: clip; }
 }
 
-/* ─── Extra Small (< 390px) ──────────────────────────────────────────────── */
+/* ─── Extra Small (< 390px) ───────────────────────────────────────────────────────────── */
 @media (max-width: 390px) {
   .header-inner { padding: 0 var(--spacing-md); gap: var(--spacing-md); }
   .brand-name { font-size: 16px; }
@@ -604,19 +650,19 @@ textarea { resize: vertical; }
   .card-body { padding: var(--spacing-lg); }
 }
 
-/* ─── Medium (768px–1100px) ──────────────────────────────────────────────── */
+/* ─── Medium (768px–1100px) ──────────────────────────────────────────────────────────── */
 @media (max-width: 1100px) and (min-width: 769px) {
   .strategy-grid, .charts-grid, .integrations-grid { grid-template-columns: 1fr; }
   .campaign-body-grid { grid-template-columns: 1fr; }
 }
 
-/* ─── Tablet (768px–1024px) ──────────────────────────────────────────────── */
+/* ─── Tablet (768px–1024px) ──────────────────────────────────────────────────────────── */
 @media (min-width: 769px) and (max-width: 1024px) {
   .header-inner { padding: 0 var(--spacing-xl); }
   .personas-grid { grid-template-columns: repeat(2,1fr); }
 }
 
-/* ─── Group Overview Responsive ─────────────────────────────────────────── */
+/* ─── Group Overview Responsive ───────────────────────────────────────────────────────═ */
 @media (max-width: 1000px) { .go-strategic-section { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) {
   .go-strategic-section { grid-template-columns: 1fr; }
@@ -624,7 +670,7 @@ textarea { resize: vertical; }
   .go-header { flex-direction: column; }
 }
 
-/* ─── Print ──────────────────────────────────────────────────────────────── */
+/* ─── Print ───────────────────────────────────────────────────────────────────────── */
 @media print {
   .site-header, .vision-banner, .mission-banner, .panel-header-actions,
   .btn, .card-actions, .campaign-card-actions, .priority-actions,
