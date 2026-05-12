@@ -10,19 +10,19 @@
 ## Project Overview
 - Coach4U business strategy portal — PWA with Supabase authentication
 - Hosted on GitHub Pages at `/external-Coach4u-app/`
-- Uses magic link (OTP) sign-in via Supabase
+- Uses email + password sign-in via Supabase
 
-## Design System (v1.3)
-- Primary (navy): `#1B3664`
-- Primary dark: `#0D1F3C` — hover states, dark headers
-- Secondary / accent: `#5684C4` — buttons, active borders, links
-- Text: `#2D2D2D`
-- Border: `#DDDDDD`
-- Font headings: Inter 700 (via Google Fonts)
-- Font body: Montserrat 400/500/600 (via Google Fonts)
+## Design System (v2.2)
+- Primary (navy): `#003366`
+- Primary dark: `#002244` — hover states, dark headers
+- Accent (teal): `#0D9488` — buttons, active borders, links
+- Accent dark (hover): `#0F766E`
+- Background: `#ffffff`
+- Text: `#333333`
+- Text muted: `#888888`
+- Font: Aptos system stack — **no Google Fonts**
 - Touch targets: 44px minimum height on mobile
 - Card border-radius: 12px
-- IMPORTANT: Do NOT use old colours (`#003366`, `#0D9488`, `#FF6B35`)
 
 ## File Structure
 ```
@@ -43,12 +43,16 @@ business/
     └── app.js              — main app logic
 
 css/
-└── style.css               — shared design system (variables, reset, cards, buttons, forms, modals, toast)
+└── style.css               — shared design system v2.2 (variables, reset, cards, buttons, forms, login)
 
 js/
-├── auth.js                 — authentication (magic link, redirects)
-├── supabase.js             — Supabase client config
+├── auth.js                 — authentication (email+password, redirects)
+├── supabase.js             — Supabase client config (points to business Supabase project)
 └── ai.js                   — AI coach (Claude API)
+
+login.html                  — gold standard login (no inline styles, no Google Fonts, PWA meta)
+forgot-password.html        — gold standard forgot password
+reset-password.html         — gold standard reset password
 ```
 
 ## Key Rules
@@ -57,27 +61,52 @@ js/
 - Panel visibility: `.panel { display: block }` + `.panel.hidden { display: none }` (business override)
 - Shared CSS uses opposite pattern: `.panel { display: none }` + `.panel.active { display: block }`
 
+## Login Page Standard (Gold Standard v2.2)
+
+`login.html` uses gold standard — no inline `<style>` blocks, no Google Fonts, `css/style.css` handles all login styling.
+
+Required `<head>` structure:
+```html
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#003366">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Your Business Coach">
+<link rel="stylesheet" href="css/style.css">
+```
+
+Post-login redirect: `business/index.html` (not `index.html`)
+
 ## Supabase
-- URL: `https://uoixetfvboevjxlkfyqy.supabase.co`
-- Anon key: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvaXhldGZ2Ym9ldmp4bGtmeXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NDY2ODAsImV4cCI6MjA5MDQyMjY4MH0.ZXYJVdvcj70aGMH1FAixIr0hNCaCDSYLEL93hHVCGDU`
+- **Auth pages** (login.html, forgot-password.html, reset-password.html):
+  - URL: `https://eekefsuaefgpqmjdyniy.supabase.co`
+  - Anon key: `sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y`
+- **Dashboard app** (`js/supabase.js`):
+  - URL: `https://uoixetfvboevjxlkfyqy.supabase.co`
+
+Always use unversioned import:
+```js
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+```
 
 ## Current Version
-v0.5.4
+v0.5.5
 
-## Recent Changes (v0.5.4)
-- Updated to v1.3 design system (`#1B3664`, `#5684C4`, `#2D2D2D`, `#DDDDDD`)
-- Split `business/css/style.css` into 9 focused files (avoids push timeouts)
-- Extracted all modals + AI coach UI into `business/js/modals.js`
-- Slimmed `business/index.html` from ~600 to ~300 lines
-- Deleted unused `growth/` module and `Prototypes-coach4Uexternal/` folder
-- Deleted old monolithic `business/css/style.css`
+## Recent Changes (v0.5.5)
+- Upgraded `css/style.css` to v2.2 design system (`#003366` navy, `#0D9488` teal, Aptos font, white background)
+- Standardised `login.html`, `forgot-password.html`, `reset-password.html` to gold standard (no Google Fonts, no inline styles, PWA meta)
+- Fixed post-login redirect to `business/index.html`
 
 ## Current Status
 - **Business app**: WORKING — VTO, org chart, rocks, scorecard, meetings, issues, team alignment
 - **Mobile**: Responsive at 390px and 768px breakpoints
+- **Login**: Gold standard v2.2
 
-## Outstanding Tasks
-1. Test business app in browser after v1.3 CSS rollout
-2. Update `index.html` (login page) to v1.3 colours and fonts
-3. Update `css/style.css` shared design system if not yet on v1.3
-4. Add sign-out button to authenticated pages
+## Add a New Member (SQL)
+
+```sql
+INSERT INTO users (id, email, membership_status)
+SELECT id, email, 'active'
+FROM auth.users
+WHERE LOWER(email) = LOWER('email@here.com');
+```
