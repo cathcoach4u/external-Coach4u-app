@@ -210,12 +210,12 @@ function showToast(msg, type = 'default') {
 
 // ─── Hub Navigation ─────────────────────────────────────────────────────────────
 
-let activePanel = 'vto';
+let activePanel = 'strategic-hub';
 let activeHub   = 'strategic';
 
 // Hub → panel mapping. First panel in each array is the default.
 const HUB_PANELS = {
-  strategic:  ['vto'],
+  strategic:  ['strategic-hub', 'vto'],
   operations: ['rocks', 'scorecard', 'l10', 'issues'],
   team:       ['accountability', 'alignment'],
   growth:     ['growth'],
@@ -223,6 +223,8 @@ const HUB_PANELS = {
 
 // Sub-tab labels for hubs with multiple panels
 const SUB_TAB_LABELS = {
+  'strategic-hub': 'Overview',
+  vto:            'Vision',
   rocks:          'Goals',
   scorecard:      'Metrics',
   l10:            'Meeting',
@@ -272,6 +274,7 @@ function showPanel(panel) {
 }
 
 function loadPanel(panel) {
+  if (panel === 'strategic-hub')  return; // static dashboard, no load needed
   if (panel === 'vto')            loadVTO();
   if (panel === 'accountability') loadAccountability();
   if (panel === 'rocks')          loadRocks();
