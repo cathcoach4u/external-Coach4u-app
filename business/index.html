@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Strategic Hub</title>
+  <style>body { opacity: 0; transition: opacity 0.2s ease; }</style>
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/alignment.css" />
@@ -17,9 +18,9 @@
 </head>
 <body>
 
-  <!-- ═══ HEADER ═══════════════════════════════════════════════════════ -->
   <header class="site-header" id="site-header">
     <div class="header-inner">
+      <a href="https://cathcoach4u.github.io/yourcoachingportal/" class="header-back">← Portal</a>
       <div class="brand">
         <span class="brand-name">The Strategic Hub</span>
         <span class="version-badge">v0.5.4</span>
@@ -46,33 +47,19 @@
     </div>
   </header>
 
-  <!-- ═══ SUB-NAV ══════════════════════════════════════════════════════ -->
   <div class="sub-nav hidden" id="sub-nav">
     <div class="sub-nav-inner" id="sub-nav-tabs"></div>
   </div>
 
-  <!-- ═══ VISION BANNER ════════════════════════════════════════════════ -->
   <div class="vision-banner" id="vision-banner">
     <div class="vision-banner-inner">
-      <div class="vision-col">
-        <span class="vision-label">Core Values</span>
-        <div class="vision-values" id="banner-values">—</div>
-      </div>
+      <div class="vision-col"><span class="vision-label">Core Values</span><div class="vision-values" id="banner-values">—</div></div>
       <div class="vision-divider"></div>
-      <div class="vision-col">
-        <span class="vision-label">10-Year Target</span>
-        <div class="vision-text" id="banner-10yr">—</div>
-      </div>
+      <div class="vision-col"><span class="vision-label">10-Year Target</span><div class="vision-text" id="banner-10yr">—</div></div>
       <div class="vision-divider"></div>
       <div class="vision-col vision-col-split">
-        <div>
-          <span class="vision-label">1-Year Revenue</span>
-          <div class="vision-text vision-highlight" id="banner-revenue">—</div>
-        </div>
-        <div>
-          <span class="vision-label">1-Year Profit</span>
-          <div class="vision-text vision-highlight" id="banner-profit">—</div>
-        </div>
+        <div><span class="vision-label">1-Year Revenue</span><div class="vision-text vision-highlight" id="banner-revenue">—</div></div>
+        <div><span class="vision-label">1-Year Profit</span><div class="vision-text vision-highlight" id="banner-profit">—</div></div>
       </div>
       <button class="vision-collapse-btn" id="vision-collapse-btn" title="Collapse">&#x25B2;</button>
     </div>
@@ -81,312 +68,39 @@
     <button class="vision-expand-btn" id="vision-expand-btn">&#x25BC; Vision</button>
   </div>
 
-  <!-- ═══ MAIN CONTENT ═════════════════════════════════════════════════ -->
   <main class="main-content" id="main-content">
 
-    <!-- VTO PANEL -->
     <div class="panel" id="vto-panel">
       <div id="group-overview-content" class="hidden"></div>
       <div id="vto-form-content">
-        <div class="panel-header vto-panel-header">
-          <h1 class="vto-page-title">Your company's one-page strategic plan</h1>
-        </div>
+        <div class="panel-header vto-panel-header"><h1 class="vto-page-title">Your company’s one-page strategic plan</h1></div>
         <div class="vto-grid">
-          <div class="vto-section card">
-            <div class="card-header"><span class="card-icon">&#x2605;</span> Core Values</div>
-            <div class="card-body">
-              <p class="card-hint">The 3–5 fundamental beliefs that guide how your company operates</p>
-              <div class="vto-field-group" id="vto-core-values"></div>
-            </div>
-          </div>
-          <div class="vto-section card">
-            <div class="card-header"><span class="card-icon">&#x25CE;</span> Core Focus</div>
-            <div class="card-body">
-              <label class="field-label">Purpose / Cause / Passion</label>
-              <p class="card-hint">Why your company exists and what problem you solve</p>
-              <textarea class="field-input vto-field" data-section="core_focus" data-key="purpose" rows="2" placeholder="Why does your company exist?"></textarea>
-              <label class="field-label mt-8">Niche</label>
-              <p class="card-hint">What you do better than anyone else</p>
-              <textarea class="field-input vto-field" data-section="core_focus" data-key="niche" rows="2" placeholder="What is your unique niche?"></textarea>
-            </div>
-          </div>
-          <div class="vto-section card">
-            <div class="card-header"><span class="card-icon">&#x25C9;</span> 10-Year Target</div>
-            <div class="card-body">
-              <p class="card-hint">Your big, audacious long-term vision</p>
-              <textarea class="field-input vto-field" data-section="ten_year" data-key="target" rows="3" placeholder="Where will you be in 10 years?"></textarea>
-            </div>
-          </div>
-          <div class="vto-section card">
-            <div class="card-header"><span class="card-icon">&#x25C8;</span> Marketing Strategy</div>
-            <div class="card-body">
-              <p class="card-hint">How we go to market</p>
-              <label class="field-label">Target Market</label>
-              <textarea class="field-input vto-field" data-section="marketing" data-key="target_market" rows="2" placeholder="Who is your ideal client?"></textarea>
-              <label class="field-label mt-8">Uniques (3 Differentiators)</label>
-              <textarea class="field-input vto-field" data-section="marketing" data-key="uniques" rows="3" placeholder="What makes you unique?"></textarea>
-              <label class="field-label mt-8">Proven Process</label>
-              <textarea class="field-input vto-field" data-section="marketing" data-key="proven_process" rows="2" placeholder="Your signature process..."></textarea>
-              <label class="field-label mt-8">Guarantee</label>
-              <input type="text" class="field-input vto-field" data-section="marketing" data-key="guarantee" placeholder="Your guarantee..." />
-            </div>
-          </div>
-          <div class="vto-section card vto-card-wide">
-            <div class="card-header"><span class="card-icon">&#x25A3;</span> 3-Year Picture</div>
-            <div class="card-body">
-              <p class="card-hint">What success looks like 3 years from now</p>
-              <div class="three-grid">
-                <div>
-                  <label class="field-label">Target Date</label>
-                  <input type="text" class="field-input vto-field" data-section="three_year" data-key="date" placeholder="e.g. March 2029" />
-                </div>
-                <div>
-                  <label class="field-label">Revenue</label>
-                  <input type="text" class="field-input vto-field" data-section="three_year" data-key="revenue" placeholder="e.g. $1.5M" />
-                </div>
-                <div>
-                  <label class="field-label">Profit</label>
-                  <input type="text" class="field-input vto-field" data-section="three_year" data-key="profit" placeholder="e.g. $450K" />
-                </div>
-              </div>
-              <label class="field-label mt-8">What does it look like?</label>
-              <textarea class="field-input vto-field" data-section="three_year" data-key="looks_like" rows="3" placeholder="Describe your business in 3 years..."></textarea>
-            </div>
-          </div>
-          <div class="vto-section card vto-card-wide">
-            <div class="card-header"><span class="card-icon">&#x25B7;</span> 1-Year Plan</div>
-            <div class="card-body">
-              <p class="card-hint">Top priorities for the next 12 months</p>
-              <div class="three-grid">
-                <div>
-                  <label class="field-label">Target Date</label>
-                  <input type="text" class="field-input vto-field" data-section="one_year" data-key="date" placeholder="e.g. Dec 2026" />
-                </div>
-                <div>
-                  <label class="field-label">Revenue Goal</label>
-                  <input type="text" class="field-input vto-field" data-section="one_year" data-key="revenue" placeholder="e.g. $600K" />
-                </div>
-                <div>
-                  <label class="field-label">Profit Goal</label>
-                  <input type="text" class="field-input vto-field" data-section="one_year" data-key="profit" placeholder="e.g. $150K" />
-                </div>
-              </div>
-              <label class="field-label mt-8">What must be true?</label>
-              <textarea class="field-input vto-field" data-section="one_year" data-key="goals" rows="3" placeholder="3-7 measurable goals for the year..."></textarea>
-            </div>
-          </div>
+          <div class="vto-section card"><div class="card-header"><span class="card-icon">&#x2605;</span> Core Values</div><div class="card-body"><p class="card-hint">The 3–5 fundamental beliefs that guide how your company operates</p><div class="vto-field-group" id="vto-core-values"></div></div></div>
+          <div class="vto-section card"><div class="card-header"><span class="card-icon">&#x25CE;</span> Core Focus</div><div class="card-body"><label class="field-label">Purpose / Cause / Passion</label><p class="card-hint">Why your company exists and what problem you solve</p><textarea class="field-input vto-field" data-section="core_focus" data-key="purpose" rows="2" placeholder="Why does your company exist?"></textarea><label class="field-label mt-8">Niche</label><p class="card-hint">What you do better than anyone else</p><textarea class="field-input vto-field" data-section="core_focus" data-key="niche" rows="2" placeholder="What is your unique niche?"></textarea></div></div>
+          <div class="vto-section card"><div class="card-header"><span class="card-icon">&#x25C9;</span> 10-Year Target</div><div class="card-body"><p class="card-hint">Your big, audacious long-term vision</p><textarea class="field-input vto-field" data-section="ten_year" data-key="target" rows="3" placeholder="Where will you be in 10 years?"></textarea></div></div>
+          <div class="vto-section card"><div class="card-header"><span class="card-icon">&#x25C8;</span> Marketing Strategy</div><div class="card-body"><p class="card-hint">How we go to market</p><label class="field-label">Target Market</label><textarea class="field-input vto-field" data-section="marketing" data-key="target_market" rows="2" placeholder="Who is your ideal client?"></textarea><label class="field-label mt-8">Uniques (3 Differentiators)</label><textarea class="field-input vto-field" data-section="marketing" data-key="uniques" rows="3" placeholder="What makes you unique?"></textarea><label class="field-label mt-8">Proven Process</label><textarea class="field-input vto-field" data-section="marketing" data-key="proven_process" rows="2" placeholder="Your signature process..."></textarea><label class="field-label mt-8">Guarantee</label><input type="text" class="field-input vto-field" data-section="marketing" data-key="guarantee" placeholder="Your guarantee..." /></div></div>
+          <div class="vto-section card vto-card-wide"><div class="card-header"><span class="card-icon">&#x25A3;</span> 3-Year Picture</div><div class="card-body"><p class="card-hint">What success looks like 3 years from now</p><div class="three-grid"><div><label class="field-label">Target Date</label><input type="text" class="field-input vto-field" data-section="three_year" data-key="date" placeholder="e.g. March 2029" /></div><div><label class="field-label">Revenue</label><input type="text" class="field-input vto-field" data-section="three_year" data-key="revenue" placeholder="e.g. $1.5M" /></div><div><label class="field-label">Profit</label><input type="text" class="field-input vto-field" data-section="three_year" data-key="profit" placeholder="e.g. $450K" /></div></div><label class="field-label mt-8">What does it look like?</label><textarea class="field-input vto-field" data-section="three_year" data-key="looks_like" rows="3" placeholder="Describe your business in 3 years..."></textarea></div></div>
+          <div class="vto-section card vto-card-wide"><div class="card-header"><span class="card-icon">&#x25B7;</span> 1-Year Plan</div><div class="card-body"><p class="card-hint">Top priorities for the next 12 months</p><div class="three-grid"><div><label class="field-label">Target Date</label><input type="text" class="field-input vto-field" data-section="one_year" data-key="date" placeholder="e.g. Dec 2026" /></div><div><label class="field-label">Revenue Goal</label><input type="text" class="field-input vto-field" data-section="one_year" data-key="revenue" placeholder="e.g. $600K" /></div><div><label class="field-label">Profit Goal</label><input type="text" class="field-input vto-field" data-section="one_year" data-key="profit" placeholder="e.g. $150K" /></div></div><label class="field-label mt-8">What must be true?</label><textarea class="field-input vto-field" data-section="one_year" data-key="goals" rows="3" placeholder="3-7 measurable goals for the year..."></textarea></div></div>
         </div>
       </div>
     </div>
 
-    <!-- ACCOUNTABILITY PANEL -->
-    <div class="panel hidden" id="accountability-panel">
-      <div class="panel-header">
-        <h1 class="panel-title">Accountability Chart</h1>
-        <p class="panel-subtitle">Your organizational structure — who is accountable for what</p>
-        <button class="btn btn-primary" id="add-seat-btn">+ Add Seat</button>
-      </div>
-      <div class="org-chart-container" id="org-chart"></div>
-    </div>
-
-    <!-- ROCKS PANEL -->
-    <div class="panel hidden" id="rocks-panel">
-      <div class="panel-header">
-        <h1 class="panel-title">Goals</h1>
-        <p class="panel-subtitle">Your 3–7 most important priorities this quarter</p>
-        <div class="panel-header-actions">
-          <select class="field-select" id="quarter-select">
-            <option value="Q1 2026">Q1 2026</option>
-            <option value="Q2 2026" selected>Q2 2026</option>
-            <option value="Q3 2026">Q3 2026</option>
-            <option value="Q4 2026">Q4 2026</option>
-            <option value="Q1 2027">Q1 2027</option>
-          </select>
-          <button class="btn btn-primary" id="add-rock-btn">+ Add Goal</button>
-        </div>
-      </div>
-      <div class="rocks-progress-container">
-        <div class="rocks-progress-label">
-          <span id="rocks-progress-text">0 of 0 priorities complete</span>
-          <span id="rocks-progress-pct">0%</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill" id="rocks-progress-fill" style="width:0%"></div>
-        </div>
-      </div>
-      <div id="rocks-board"></div>
-    </div>
-
-    <!-- SCORECARD PANEL -->
-    <div class="panel hidden" id="scorecard-panel">
-      <div class="panel-header">
-        <h1 class="panel-title">Metrics</h1>
-        <p class="panel-subtitle">Weekly measurables — your company's pulse</p>
-        <button class="btn btn-primary" id="add-metric-btn">+ Add Metric</button>
-      </div>
-      <div class="scorecard-wrapper">
-        <table class="scorecard-table" id="scorecard-table">
-          <thead><tr id="scorecard-header-row"></tr></thead>
-          <tbody id="scorecard-body"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- L10 PANEL -->
-    <div class="panel hidden" id="l10-panel">
-      <div class="panel-header">
-        <h1 class="panel-title">Meeting</h1>
-        <p class="panel-subtitle">Your structured weekly team meeting</p>
-        <button class="btn btn-primary" id="new-meeting-btn">+ New Meeting</button>
-      </div>
-      <div class="l10-layout">
-        <aside class="meetings-sidebar" id="meetings-sidebar">
-          <div class="sidebar-heading">Past Meetings</div>
-          <div id="meetings-list"></div>
-        </aside>
-        <div class="meeting-detail" id="meeting-detail">
-          <div class="meeting-detail-empty" id="meeting-detail-empty">
-            <div class="empty-icon">&#x25C8;</div>
-            <p>Select a meeting or create a new one</p>
-          </div>
-          <div id="meeting-detail-content" style="display:none;"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ISSUES PANEL -->
-    <div class="panel hidden" id="issues-panel">
-      <div class="panel-header">
-        <h1 class="panel-title">Issues</h1>
-        <p class="panel-subtitle">Identify, Discuss, Solve — your company's issues</p>
-        <div class="panel-header-actions">
-          <select class="field-select" id="issues-owner-filter">
-            <option value="">All Owners</option>
-          </select>
-          <button class="btn btn-primary" id="add-issue-btn">+ Add Issue</button>
-        </div>
-      </div>
-      <div class="kanban-board" id="issues-board">
-        <div class="kanban-col" id="col-open">
-          <div class="kanban-col-header">
-            <span class="kanban-col-title">Open</span>
-            <span class="kanban-col-count" id="count-open">0</span>
-          </div>
-          <div class="kanban-cards" id="cards-open" data-status="open"></div>
-        </div>
-        <div class="kanban-col" id="col-ids">
-          <div class="kanban-col-header">
-            <span class="kanban-col-title">In IDS</span>
-            <span class="kanban-col-count" id="count-ids">0</span>
-          </div>
-          <div class="kanban-cards" id="cards-ids" data-status="ids_in_progress"></div>
-        </div>
-        <div class="kanban-col" id="col-resolved">
-          <div class="kanban-col-header">
-            <span class="kanban-col-title">Resolved</span>
-            <span class="kanban-col-count" id="count-resolved">0</span>
-          </div>
-          <div class="kanban-cards" id="cards-resolved" data-status="resolved"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TEAM ALIGNMENT PANEL -->
-    <div class="panel hidden" id="alignment-panel">
-      <div class="panel-header">
-        <div>
-          <h1 class="panel-title">Team Alignment</h1>
-          <p class="panel-subtitle">Right Person, Right Seat — quarterly people evaluation</p>
-        </div>
-        <button class="btn btn-primary" id="add-member-btn">+ Add Person</button>
-      </div>
-      <div class="alignment-info-bar">
-        <span class="info-pill">&#x1F3AF; Leadership team use only</span>
-        <span class="info-pill">&#x1F4C5; Review quarterly or when issues arise</span>
-        <span class="info-pill">&#x1F512; Sensitive — used for objective people decisions</span>
-      </div>
-      <div class="alignment-warning hidden" id="alignment-no-values">
-        <strong>&#x26A0; No Core Values defined yet.</strong>
-        Go to <a href="#" id="go-to-vto-link">Vision &amp; Strategy</a> and add your Core Values first.
-      </div>
-      <div class="alignment-section" id="section-values">
-        <div class="alignment-section-header">
-          <div>
-            <h2 class="alignment-section-title">Section 1 — Right Person</h2>
-            <p class="alignment-section-sub">Does this person share and demonstrate our Core Values?</p>
-          </div>
-          <div class="rating-legend">
-            <span class="legend-item legend-plus">&#x2713; Always</span>
-            <span class="legend-item legend-pm">&#x00B1; Sometimes</span>
-            <span class="legend-item legend-minus">&#x2717; Rarely</span>
-          </div>
-        </div>
-        <div class="alignment-table-wrap">
-          <table class="alignment-table" id="values-table">
-            <thead><tr id="values-header-row"></tr></thead>
-            <tbody id="values-body"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="alignment-section" id="section-gwc">
-        <div class="alignment-section-header">
-          <div>
-            <h2 class="alignment-section-title">Section 2 — Right Seat (GWC)</h2>
-            <p class="alignment-section-sub">Does this person Get it, Want it, and have the Capacity to do their role?</p>
-          </div>
-          <div class="rating-legend">
-            <span class="legend-item legend-plus">&#x2713; Yes</span>
-            <span class="legend-item legend-pm">&#x00B1; Partially</span>
-            <span class="legend-item legend-minus">&#x2717; No</span>
-          </div>
-        </div>
-        <div class="alignment-table-wrap">
-          <table class="alignment-table" id="gwc-table">
-            <thead>
-              <tr>
-                <th class="col-name">Team Member</th>
-                <th class="col-gwc"><div class="gwc-th-label">Get It</div><div class="gwc-th-sub">Understands the role</div></th>
-                <th class="col-gwc"><div class="gwc-th-label">Want It</div><div class="gwc-th-sub">Motivated to do it</div></th>
-                <th class="col-gwc"><div class="gwc-th-label">Capacity</div><div class="gwc-th-sub">Capable &amp; available</div></th>
-                <th class="col-result">Right Seat?</th>
-              </tr>
-            </thead>
-            <tbody id="gwc-body"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="alignment-section" id="section-summary">
-        <div class="alignment-section-header">
-          <div>
-            <h2 class="alignment-section-title">Section 3 — Team Alignment Summary</h2>
-            <p class="alignment-section-sub">Overall status for each team member</p>
-          </div>
-        </div>
-        <div class="summary-legend">
-          <div class="summary-legend-item summary-green"><span class="summary-dot"></span> Right Person + Right Seat</div>
-          <div class="summary-legend-item summary-yellow"><span class="summary-dot"></span> Action needed</div>
-          <div class="summary-legend-item summary-red"><span class="summary-dot"></span> Immediate attention required</div>
-        </div>
-        <div class="summary-grid" id="summary-grid"></div>
-      </div>
-    </div>
-
-    <!-- GROWTH PANEL -->
-    <div class="panel hidden" id="growth-panel">
-      <div class="panel-header">
-        <h1 class="panel-title">GrowthHub</h1>
-        <p class="panel-subtitle">Individual development plans, weekly check-ins, and reflection logs</p>
-      </div>
-      <div class="growth-placeholder">
-        <div class="empty-state">
-          <div class="empty-icon">&#x25B3;</div>
-          <h3>Coming Soon</h3>
-          <p>GrowthHub will help you track individual development plans, run weekly check-ins, and maintain reflection logs for your team.</p>
-        </div>
-      </div>
-    </div>
+    <div class="panel hidden" id="accountability-panel"><div class="panel-header"><h1 class="panel-title">Accountability Chart</h1><p class="panel-subtitle">Your organizational structure — who is accountable for what</p><button class="btn btn-primary" id="add-seat-btn">+ Add Seat</button></div><div class="org-chart-container" id="org-chart"></div></div>
+    <div class="panel hidden" id="rocks-panel"><div class="panel-header"><h1 class="panel-title">Goals</h1><p class="panel-subtitle">Your 3–7 most important priorities this quarter</p><div class="panel-header-actions"><select class="field-select" id="quarter-select"><option value="Q1 2026">Q1 2026</option><option value="Q2 2026" selected>Q2 2026</option><option value="Q3 2026">Q3 2026</option><option value="Q4 2026">Q4 2026</option><option value="Q1 2027">Q1 2027</option></select><button class="btn btn-primary" id="add-rock-btn">+ Add Goal</button></div></div><div class="rocks-progress-container"><div class="rocks-progress-label"><span id="rocks-progress-text">0 of 0 priorities complete</span><span id="rocks-progress-pct">0%</span></div><div class="progress-track"><div class="progress-fill" id="rocks-progress-fill" style="width:0%"></div></div></div><div id="rocks-board"></div></div>
+    <div class="panel hidden" id="scorecard-panel"><div class="panel-header"><h1 class="panel-title">Metrics</h1><p class="panel-subtitle">Weekly measurables — your company’s pulse</p><button class="btn btn-primary" id="add-metric-btn">+ Add Metric</button></div><div class="scorecard-wrapper"><table class="scorecard-table" id="scorecard-table"><thead><tr id="scorecard-header-row"></tr></thead><tbody id="scorecard-body"></tbody></table></div></div>
+    <div class="panel hidden" id="l10-panel"><div class="panel-header"><h1 class="panel-title">Meeting</h1><p class="panel-subtitle">Your structured weekly team meeting</p><button class="btn btn-primary" id="new-meeting-btn">+ New Meeting</button></div><div class="l10-layout"><aside class="meetings-sidebar" id="meetings-sidebar"><div class="sidebar-heading">Past Meetings</div><div id="meetings-list"></div></aside><div class="meeting-detail" id="meeting-detail"><div class="meeting-detail-empty" id="meeting-detail-empty"><div class="empty-icon">&#x25C8;</div><p>Select a meeting or create a new one</p></div><div id="meeting-detail-content" style="display:none;"></div></div></div></div>
+    <div class="panel hidden" id="issues-panel"><div class="panel-header"><h1 class="panel-title">Issues</h1><p class="panel-subtitle">Identify, Discuss, Solve — your company’s issues</p><div class="panel-header-actions"><select class="field-select" id="issues-owner-filter"><option value="">All Owners</option></select><button class="btn btn-primary" id="add-issue-btn">+ Add Issue</button></div></div><div class="kanban-board" id="issues-board"><div class="kanban-col" id="col-open"><div class="kanban-col-header"><span class="kanban-col-title">Open</span><span class="kanban-col-count" id="count-open">0</span></div><div class="kanban-cards" id="cards-open" data-status="open"></div></div><div class="kanban-col" id="col-ids"><div class="kanban-col-header"><span class="kanban-col-title">In IDS</span><span class="kanban-col-count" id="count-ids">0</span></div><div class="kanban-cards" id="cards-ids" data-status="ids_in_progress"></div></div><div class="kanban-col" id="col-resolved"><div class="kanban-col-header"><span class="kanban-col-title">Resolved</span><span class="kanban-col-count" id="count-resolved">0</span></div><div class="kanban-cards" id="cards-resolved" data-status="resolved"></div></div></div></div>
+    <div class="panel hidden" id="alignment-panel"><div class="panel-header"><div><h1 class="panel-title">Team Alignment</h1><p class="panel-subtitle">Right Person, Right Seat — quarterly people evaluation</p></div><button class="btn btn-primary" id="add-member-btn">+ Add Person</button></div><div class="alignment-info-bar"><span class="info-pill">&#x1F3AF; Leadership team use only</span><span class="info-pill">&#x1F4C5; Review quarterly or when issues arise</span><span class="info-pill">&#x1F512; Sensitive — used for objective people decisions</span></div><div class="alignment-warning hidden" id="alignment-no-values"><strong>&#x26A0; No Core Values defined yet.</strong> Go to <a href="#" id="go-to-vto-link">Vision &amp; Strategy</a> and add your Core Values first.</div><div class="alignment-section" id="section-values"><div class="alignment-section-header"><div><h2 class="alignment-section-title">Section 1 — Right Person</h2><p class="alignment-section-sub">Does this person share and demonstrate our Core Values?</p></div><div class="rating-legend"><span class="legend-item legend-plus">&#x2713; Always</span><span class="legend-item legend-pm">&#x00B1; Sometimes</span><span class="legend-item legend-minus">&#x2717; Rarely</span></div></div><div class="alignment-table-wrap"><table class="alignment-table" id="values-table"><thead><tr id="values-header-row"></tr></thead><tbody id="values-body"></tbody></table></div></div><div class="alignment-section" id="section-gwc"><div class="alignment-section-header"><div><h2 class="alignment-section-title">Section 2 — Right Seat (GWC)</h2><p class="alignment-section-sub">Does this person Get it, Want it, and have the Capacity to do their role?</p></div><div class="rating-legend"><span class="legend-item legend-plus">&#x2713; Yes</span><span class="legend-item legend-pm">&#x00B1; Partially</span><span class="legend-item legend-minus">&#x2717; No</span></div></div><div class="alignment-table-wrap"><table class="alignment-table" id="gwc-table"><thead><tr><th class="col-name">Team Member</th><th class="col-gwc"><div class="gwc-th-label">Get It</div><div class="gwc-th-sub">Understands the role</div></th><th class="col-gwc"><div class="gwc-th-label">Want It</div><div class="gwc-th-sub">Motivated to do it</div></th><th class="col-gwc"><div class="gwc-th-label">Capacity</div><div class="gwc-th-sub">Capable &amp; available</div></th><th class="col-result">Right Seat?</th></tr></thead><tbody id="gwc-body"></tbody></table></div></div><div class="alignment-section" id="section-summary"><div class="alignment-section-header"><div><h2 class="alignment-section-title">Section 3 — Team Alignment Summary</h2><p class="alignment-section-sub">Overall status for each team member</p></div></div><div class="summary-legend"><div class="summary-legend-item summary-green"><span class="summary-dot"></span> Right Person + Right Seat</div><div class="summary-legend-item summary-yellow"><span class="summary-dot"></span> Action needed</div><div class="summary-legend-item summary-red"><span class="summary-dot"></span> Immediate attention required</div></div><div class="summary-grid" id="summary-grid"></div></div></div>
+    <div class="panel hidden" id="growth-panel"><div class="panel-header"><h1 class="panel-title">GrowthHub</h1><p class="panel-subtitle">Individual development plans, weekly check-ins, and reflection logs</p></div><div class="growth-placeholder"><div class="empty-state"><div class="empty-icon">&#x25B3;</div><h3>Coming Soon</h3><p>GrowthHub will help you track individual development plans, run weekly check-ins, and maintain reflection logs for your team.</p></div></div></div>
 
   </main>
+
+  <footer class="site-footer">
+    Strengths-Based Coaching and Counselling<br>
+    <a href="http://www.coach4u.com.au">www.coach4u.com.au</a> |
+    <a href="mailto:cath@coach4u.com.au">cath@coach4u.com.au</a> |
+    0402 313 337
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../js/supabase.js"></script>
