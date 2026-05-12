@@ -208,60 +208,15 @@ function showToast(msg, type = 'default') {
   toastTimer = setTimeout(() => { el.className = 'toast hidden'; }, 2800);
 }
 
-// ─── Hub Navigation ─────────────────────────────────────────────────────────────
+// ─── Panel Navigation ────────────────────────────────────────────────────────────
 
 let activePanel = 'strategic-hub';
-let activeHub   = 'strategic';
 
-// Hub → panel mapping. First panel in each array is the default.
-const HUB_PANELS = {
-  strategic:  ['strategic-hub', 'vto'],
-  operations: ['rocks', 'scorecard', 'l10', 'issues'],
-  team:       ['accountability', 'alignment'],
-  growth:     ['growth'],
-};
-
-// Sub-tab labels for hubs with multiple panels
-const SUB_TAB_LABELS = {
-  'strategic-hub': 'Overview',
-  vto:            'Vision',
-  rocks:          'Goals',
-  scorecard:      'Metrics',
-  l10:            'Meeting',
-  issues:         'Issues',
-  accountability: 'Org Chart',
-  alignment:      'Team Members',
-};
-
-function switchHub(hub, subPanel) {
-  activeHub = hub;
-  const panels = HUB_PANELS[hub];
-  const targetPanel = subPanel && panels.includes(subPanel) ? subPanel : panels[0];
-
-  // Update hub tabs
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.hub === hub));
-
-  // Show/hide sub-nav
-  const subNav = document.getElementById('sub-nav');
-  const subNavTabs = document.getElementById('sub-nav-tabs');
-  if (panels.length > 1) {
-    subNav.classList.remove('hidden');
-    subNavTabs.innerHTML = panels.map(p =>
-      `<button class="sub-tab${p === targetPanel ? ' active' : ''}" data-panel="${p}">${SUB_TAB_LABELS[p] || p}</button>`
-    ).join('');
-    subNavTabs.querySelectorAll('.sub-tab').forEach(btn => {
-      btn.addEventListener('click', () => switchSubPanel(btn.dataset.panel));
-    });
-  } else {
-    subNav.classList.add('hidden');
-  }
-
-  showPanel(targetPanel);
-  loadPanel(targetPanel);
+function goHome() {
+  showPanel('strategic-hub');
 }
 
-function switchSubPanel(panel) {
-  document.querySelectorAll('.sub-tab').forEach(t => t.classList.toggle('active', t.dataset.panel === panel));
+function switchTab(panel) {
   showPanel(panel);
   loadPanel(panel);
 }
@@ -271,10 +226,20 @@ function showPanel(panel) {
   const el = document.getElementById(panel + '-panel');
   if (el) el.classList.remove('hidden');
   activePanel = panel;
+
+  const homeBtn   = document.getElementById('btn-home-back');
+  const portalBtn = document.getElementById('portal-back');
+  if (panel === 'strategic-hub') {
+    homeBtn.classList.add('hidden');
+    portalBtn.classList.remove('hidden');
+  } else {
+    homeBtn.classList.remove('hidden');
+    portalBtn.classList.add('hidden');
+  }
 }
 
 function loadPanel(panel) {
-  if (panel === 'strategic-hub')  return; // static dashboard, no load needed
+  if (panel === 'strategic-hub')  return;
   if (panel === 'vto')            loadVTO();
   if (panel === 'accountability') loadAccountability();
   if (panel === 'rocks')          loadRocks();
@@ -283,23 +248,6 @@ function loadPanel(panel) {
   if (panel === 'issues')         loadIssues();
   if (panel === 'alignment')      loadAlignment();
 }
-
-// Keep switchTab for backwards compat (e.g. go-to-vto-link)
-function switchTab(panel) {
-  // Find which hub owns this panel
-  for (const [hub, panels] of Object.entries(HUB_PANELS)) {
-    if (panels.includes(panel)) {
-      switchHub(hub, panel);
-      return;
-    }
-  }
-}
-
-document.getElementById('main-nav').addEventListener('click', (e) => {
-  const tab = e.target.closest('.nav-tab');
-  if (!tab) return;
-  switchHub(tab.dataset.hub);
-});
 
 // ─── Vision Banner ─────────────────────────────────────────────────────────────
 
@@ -2364,7 +2312,8 @@ document.getElementById('ai-coach-input').addEventListener('keydown', (e) => {
 
 async function init() {
   await initBusinesses();
-  switchHub('strategic');
+  showPanel('strategic-hub');
+  loadVTO(); // pre-load VTO data for vision banner
 }
 
 init().catch(console.error);

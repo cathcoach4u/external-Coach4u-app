@@ -22,7 +22,8 @@
   <header class="site-header" id="site-header">
     <div class="header-inner">
       <div class="header-left">
-        <a href="https://cathcoach4u.github.io/yourcoachingportal/" class="header-back">← Portal</a>
+        <a href="https://cathcoach4u.github.io/yourcoachingportal/" class="header-back" id="portal-back">← Portal</a>
+        <button class="header-back hidden" id="btn-home-back" onclick="goHome()">← Home</button>
         <span class="header-title">Your Business Coach</span>
       </div>
       <div class="biz-switcher" id="biz-switcher">
@@ -38,19 +39,11 @@
           </div>
         </div>
       </div>
-      <nav class="main-nav" id="main-nav">
-        <button class="nav-tab active" data-hub="strategic">Strategic</button>
-        <button class="nav-tab" data-hub="operations">Operations</button>
-        <button class="nav-tab" data-hub="team">Team</button>
-        <button class="nav-tab" data-hub="growth">Growth</button>
-      </nav>
       <button class="sign-out-btn" onclick="window.signOut &amp;&amp; window.signOut()">Sign Out</button>
     </div>
   </header>
 
-  <div class="sub-nav hidden" id="sub-nav">
-    <div class="sub-nav-inner" id="sub-nav-tabs"></div>
-  </div>
+
 
   <div class="vision-banner" id="vision-banner">
     <div class="vision-banner-inner">
@@ -71,10 +64,10 @@
 
   <main class="main-content" id="main-content">
 
-    <div class="panel hidden" id="strategic-hub-panel">
+    <div class="panel" id="strategic-hub-panel">
       <div class="hub-overview-header">
-        <h1>Strategic Hub</h1>
-        <p>Your complete business operating system — click any area to open it</p>
+        <h1>Your Business Tools</h1>
+        <p>Select an area to get started</p>
       </div>
       <div class="hub-modules-grid">
         <div class="hub-module-card" onclick="switchTab('vto')">
