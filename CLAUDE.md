@@ -90,7 +90,7 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.9
+v0.5.10
 
 ## Recent Changes (v0.5.9)
 - Restored root `index.html` as the primary portal page (one card: Strategic Hub)
