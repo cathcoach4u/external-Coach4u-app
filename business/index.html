@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Strategic Hub</title>
+  <title>Your Business Coach</title>
   <style>body { opacity: 0; transition: opacity 0.2s ease; }</style>
   <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="css/spa.css" />
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/alignment.css" />
   <link rel="stylesheet" href="css/org.css" />
@@ -20,10 +21,9 @@
 
   <header class="site-header" id="site-header">
     <div class="header-inner">
-      <a href="https://cathcoach4u.github.io/yourcoachingportal/" class="header-back">← Portal</a>
-      <div class="brand">
-        <span class="brand-name">The Strategic Hub</span>
-        <span class="version-badge">v0.5.4</span>
+      <div class="header-left">
+        <a href="https://cathcoach4u.github.io/yourcoachingportal/" class="header-back">← Portal</a>
+        <span class="header-title">Your Business Coach</span>
       </div>
       <div class="biz-switcher" id="biz-switcher">
         <button class="biz-switcher-btn" id="biz-switcher-btn">
@@ -44,6 +44,7 @@
         <button class="nav-tab" data-hub="team">Team</button>
         <button class="nav-tab" data-hub="growth">Growth</button>
       </nav>
+      <button class="sign-out-btn" onclick="window.signOut &amp;&amp; window.signOut()">Sign Out</button>
     </div>
   </header>
 
