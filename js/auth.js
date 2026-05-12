@@ -29,7 +29,7 @@ window.signIn = async function (email, password) {
     return { error: { message: 'Your account is not active. Please contact support.' } };
   }
 
-  window.location.href = getSiteRoot() + '/business/';
+  window.location.href = getSiteRoot() + '/';
   return {};
 }
 

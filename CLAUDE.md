@@ -90,9 +90,15 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.7
+v0.5.8
 
-## Recent Changes (v0.5.7)
+## Recent Changes (v0.5.8)
+- Root `index.html` is now the full business app (replaces old portal landing page)
+- `business/index.html` is now a redirect to root for old bookmarks
+- Auth post-login redirect updated from `/business/` to `/`
+- App URL: `https://cathcoach4u.github.io/yourbusinesscoach/`
+
+## Previous (v0.5.7)
 - Removed hub tab navigation (Strategic / Operations / Team / Growth)
 - Dashboard is now the home screen — shows all module cards on load
 - Inside a tool, header shows `← Home` button; on dashboard shows `← Portal`
