@@ -1,44 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Your Business Coach</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1B3664">
+  <meta name="theme-color" content="#003366">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Your Business Coach">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <style>
-    body { margin: 0; font-family: system-ui, sans-serif; background: #f0f4f8;
-           display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #1B3664; }
-  </style>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>body { opacity: 0; transition: opacity 0.2s ease; }</style>
 </head>
 <body>
-  <div>Loading…</div>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="https://cathcoach4u.github.io/yourcoachingportal/" class="header-back">← Portal</a>
+        <span class="header-title">Your Business Coach</span>
+      </div>
+      <button id="signOutBtn" class="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="membership-card">
+      <div class="member-name" id="memberName">—</div>
+    </div>
+
+    <div class="app-section-header">
+      <span class="app-section-title">Your Tools</span>
+      <span class="app-section-count">1 available</span>
+    </div>
+
+    <div class="app-grid">
+      <div class="app-card">
+        <div class="app-card-icon">🏛️</div>
+        <div class="app-card-title">Strategic Hub</div>
+        <div class="app-card-desc">Vision, strategy, goals, accountability, scorecard, meetings and issues.</div>
+        <a href="business/index.html" class="btn btn-primary">Open</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    Strengths-Based Coaching and Counselling<br>
+    <a href="http://www.coach4u.com.au">www.coach4u.com.au</a> |
+    <a href="mailto:cath@coach4u.com.au">cath@coach4u.com.au</a> |
+    0402 313 337
+  </footer>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-    const SUPABASE_URL      = 'https://eekefsuaefgpqmjdyniy.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y';
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      window.location.href = 'login.html';
-    } else {
+    const supabase = createClient(
+      'https://eekefsuaefgpqmjdyniy.supabase.co',
+      'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+    );
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (!user || error) { window.location.href = 'login.html'; }
+    else {
       const { data: profile } = await supabase
-        .from('users')
-        .select('membership_status')
-        .eq('id', session.user.id)
-        .single();
-
-      if (profile?.membership_status === 'active') {
-        window.location.href = 'business/index.html';
-      } else {
+        .from('users').select('membership_status, name').eq('id', user.id).single();
+      if (!profile || profile.membership_status !== 'active') {
         window.location.href = 'inactive.html';
+      } else {
+        document.getElementById('memberName').textContent =
+          profile.name || user.user_metadata?.name || user.email;
+        document.body.style.opacity = '1';
+        document.getElementById('signOutBtn').addEventListener('click', async () => {
+          await supabase.auth.signOut();
+          window.location.href = 'login.html';
+        });
       }
     }
   </script>
