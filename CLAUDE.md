@@ -12,23 +12,43 @@
 - Hosted on GitHub Pages at `/external-Coach4u-app/`
 - Uses email + password sign-in via Supabase
 
-## Design System (v2.2)
+## Design System
+
+Two designs are used in this project. **Do not mix them.**
+Both stylesheets are copied from `coach4u-shared/templates/css/` — that repo is a reference only, never modified directly.
+
+### Design 1 — Dashboard & Login (`css/style.css` v2.2)
+Applies to: `index.html` (portal homepage), `login.html`, `forgot-password.html`, `reset-password.html`, header, membership card, app card grid, footer.
+
 - Primary (navy): `#003366`
-- Primary dark: `#002244` — hover states, dark headers
-- Accent (teal): `#0D9488` — buttons, active borders, links
-- Accent dark (hover): `#0F766E`
-- Background: `#ffffff`
-- Text: `#333333`
-- Text muted: `#888888`
+- Primary dark: `#002244` — hover states
+- Accent (teal): `#0D9488` — buttons, borders, links
+- Accent dark: `#0F766E` — hover
+- Text: `#333333` | Muted: `#888888`
 - Font: Aptos system stack — **no Google Fonts**
-- Touch targets: 44px minimum height on mobile
-- Card border-radius: 12px
+- Card border: `2px solid var(--accent)` (teal)
+- Border-radius: `10px`
+- App card icon bg: `rgba(13,148,136,0.1)` (teal tint)
+
+### Design 2 — Activity Pages (`css/activity.css` v1.0)
+Applies to: all tool and activity pages — e.g. `business/vision-strategy.html`, any worksheet, builder, or exercise.
+
+- Primary: `#1B3664` (darker navy)
+- Accent: `#5684C4` (blue)
+- Body text: `#2D2D2D`
+- Font: Inter (headings) + Montserrat (body) — loaded via Google Fonts
+- Card border: `1px solid #DDDDDD`, clean white background
+- Border-radius: `16px`
+- Input focus border: `#5684C4`
+- Sticky save bar at bottom of page
+- Uses `body.activity-page` class
 
 ## File Structure
 ```
 business/
 ├── index.html              — slim ~300 lines (panels only, no modals)
 ├── css/
+│   ├── activity.css        — activity/worksheet design system (Design 2)
 │   ├── base.css            — header overrides, vision banner, sub-nav, panel
 │   ├── alignment.css       — team alignment & GWC
 │   ├── org.css             — org chart / accountability chart
@@ -43,7 +63,7 @@ business/
     └── app.js              — main app logic
 
 css/
-└── style.css               — shared design system v2.2 (variables, reset, cards, buttons, forms, login)
+└── style.css               — shared design system v2.2 (Design 1)
 
 js/
 ├── auth.js                 — authentication (email+password, redirects)
@@ -60,6 +80,7 @@ reset-password.html         — gold standard reset password
 - Modals are NOT in index.html — they are injected by `business/js/modals.js`
 - Panel visibility: `.panel { display: block }` + `.panel.hidden { display: none }` (business override)
 - Shared CSS uses opposite pattern: `.panel { display: none }` + `.panel.active { display: block }`
+- Activity pages load: `../css/style.css` (for header/footer) + `css/activity.css` (for content)
 
 ## Login Page Standard (Gold Standard v2.2)
 
@@ -90,9 +111,18 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.10
+v0.5.11
 
-## Recent Changes (v0.5.9)
+## Recent Changes (v0.5.11)
+- Added Vision & Strategy standalone activity page (`business/vision-strategy.html`)
+- Added `business/css/activity.css` (copied from coach4u-shared, Design 2)
+- Updated CLAUDE.md to document two-design system
+- Portal Vision & Strategy card now links to `business/vision-strategy.html`
+
+## Previous (v0.5.10)
+- Version bump
+
+## Previous (v0.5.9)
 - Restored root `index.html` as the primary portal page (one card: Strategic Hub)
 - Restored `business/index.html` as the full business app (7-tool module dashboard)
 - Auth post-login redirect restored to `/business/`
@@ -102,19 +132,9 @@ v0.5.10
 - Portal (primary): `https://cathcoach4u.github.io/yourbusinesscoach/`
 - Strategic Hub: `https://cathcoach4u.github.io/yourbusinesscoach/business/`
 
-## Previous (v0.5.7)
-- Removed hub tab navigation (Strategic / Operations / Team / Growth)
-- Dashboard is now the home screen — shows all module cards on load
-- Inside a tool, header shows `← Home` button; on dashboard shows `← Portal`
-- Removed sub-nav entirely
-- Flat navigation: Dashboard → Tool → Dashboard
-
-## Previous (v0.5.6)
-- Added Strategic Hub overview dashboard as Strategic tab default
-- 7 module cards: Vision, Goals, Accountability Chart, Scorecard, Meeting, Issues, Team Alignment
-
 ## Current Status
 - **Business app**: WORKING — VTO, org chart, rocks, scorecard, meetings, issues, team alignment
+- **Vision & Strategy activity page**: NEW — standalone worksheet at `business/vision-strategy.html`
 - **Mobile**: Responsive at 390px and 768px breakpoints
 - **Login**: Gold standard v2.2
 
