@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Core Values | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1B3664">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/activity.css" />
+  <style>
+    body { opacity: 0; transition: opacity 0.2s ease; }
+
+    .vto-input {
+      width: 100%; border: 1.5px solid #DDDDDD; border-radius: 8px;
+      padding: 10px 14px; font-family: 'Montserrat', sans-serif;
+      font-size: 0.93rem; color: #2D2D2D; background: white;
+      transition: border-color 0.15s; box-sizing: border-box;
+    }
+    .vto-input:focus { outline: none; border-color: #5684C4; }
+    .vto-label { font-family: 'Inter', sans-serif; font-weight: 600; color: #1B3664; font-size: 0.88rem; margin-bottom: 6px; display: block; }
+    .cv-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .cv-num { font-family: 'Inter', sans-serif; font-weight: 700; color: #5684C4; font-size: 0.9rem; min-width: 20px; text-align: right; flex-shrink: 0; }
+
+    .val-block { background: #F5F7FB; border: 1px solid #DDDDDD; border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+    .val-block-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .val-name-display { font-family: 'Inter', sans-serif; font-weight: 700; color: #1B3664; font-size: 0.95rem; }
+    .val-name-empty { color: #AAAAAA; font-style: italic; font-weight: 400; }
+
+    .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .card-header-main { flex: 1; }
+    .card-done-badge {
+      display: none; align-items: center; gap: 4px; background: #d1fae5; color: #065f46;
+      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.75rem;
+      padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; margin-top: 4px;
+    }
+    .act-card.is-complete .card-done-badge { display: flex; }
+    .act-card.is-complete { border-color: #6ee7b7; }
+
+    .completion-pill {
+      display: inline-flex; align-items: center; gap: 10px; background: #F5F7FB;
+      border: 1px solid #DDDDDD; border-radius: 20px; padding: 7px 16px;
+      font-family: 'Inter', sans-serif; font-size: 0.85rem; color: #1B3664; font-weight: 600; margin-top: 14px;
+    }
+    .pill-bar { width: 80px; height: 6px; background: #DDDDDD; border-radius: 3px; overflow: hidden; }
+    .pill-fill { height: 100%; background: #5684C4; border-radius: 3px; transition: width 0.4s ease; }
+
+    .mode-toggle-bar {
+      display: flex; justify-content: center; gap: 4px; margin-bottom: 28px;
+      background: #F5F7FB; border-radius: 10px; padding: 4px;
+      max-width: 300px; margin-left: auto; margin-right: auto;
+    }
+    .mode-toggle-btn {
+      flex: 1; padding: 9px 16px; border: none; border-radius: 8px;
+      font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem;
+      cursor: pointer; transition: all 0.2s; background: transparent; color: #888;
+    }
+    .mode-toggle-btn.active { background: white; color: #1B3664; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+    .act-nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; padding-top: 20px; border-top: 1px solid #DDDDDD; }
+    .step-counter { font-family: 'Inter', sans-serif; font-size: 0.85rem; color: #888; font-weight: 600; }
+
+    .val-complete-banner {
+      background: linear-gradient(135deg, #1B3664 0%, #5684C4 100%);
+      color: white; padding: 36px 28px; border-radius: 16px; text-align: center; margin-bottom: 28px;
+    }
+    .val-complete-banner .complete-icon { font-size: 2.5rem; margin-bottom: 14px; }
+    .val-complete-banner h2 { font-family: 'Inter', sans-serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; }
+    .val-complete-banner p { opacity: 0.9; font-size: 0.95rem; margin-bottom: 20px; }
+
+    .act-progress-step { cursor: pointer; }
+    .act-progress-step:hover .num { opacity: 0.8; }
+    @media (max-width: 580px) { .act-progress-step span { display: none; } .act-progress-divider { width: 12px; } }
+
+    @media print {
+      .site-header, .act-save-bar, .act-footer,
+      .mode-toggle-bar, .act-nav-row, .act-progress,
+      .completion-pill, .val-complete-banner { display: none !important; }
+      body { opacity: 1 !important; background: white !important; }
+      .act-container { padding-top: 0; }
+      .act-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; margin-bottom: 14px; display: block !important; }
+      .act-step-hint { display: none; }
+    }
+  </style>
+</head>
+<body class="activity-page">
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="./" class="header-back">&#x2190; Home</a>
+        <span class="header-title">Core Values</span>
+      </div>
+      <button class="sign-out-btn" id="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="act-container">
+
+    <header class="act-header">
+      <h1>Your Company&#x2019;s Core Values</h1>
+      <p>Identify, define, and bring your values to life. Great core values guide every hire, decision, and client interaction.</p>
+      <div class="completion-pill">
+        <div class="pill-bar"><div class="pill-fill" id="pill-fill" style="width:0%"></div></div>
+        <span id="completion-text">0 of 3 steps complete</span>
+      </div>
+    </header>
+
+    <div class="act-progress">
+      <div class="act-progress-step" data-step="1"><div class="num">1</div><span>Identify</span></div>
+      <div class="act-progress-divider"></div>
+      <div class="act-progress-step" data-step="2"><div class="num">2</div><span>Define</span></div>
+      <div class="act-progress-divider"></div>
+      <div class="act-progress-step" data-step="3"><div class="num">3</div><span>In Action</span></div>
+    </div>
+
+    <div class="mode-toggle-bar">
+      <button class="mode-toggle-btn active" id="btn-guided" onclick="setMode('guided')">&#x279C; Step-by-step</button>
+      <button class="mode-toggle-btn" id="btn-worksheet" onclick="setMode('worksheet')">&#x25A4; Full worksheet</button>
+    </div>
+
+    <div class="val-complete-banner act-hidden" id="complete-banner">
+      <div class="complete-icon">&#x2728;</div>
+      <h2>Values defined!</h2>
+      <p>Your core values are now documented and ready to guide your team. Share them, post them, and hire by them.</p>
+      <button class="act-btn" style="background:rgba(255,255,255,0.2);color:white;border:1.5px solid rgba(255,255,255,0.4);" onclick="window.print()">&#x1F5A8;&nbsp; Print / Export PDF</button>
+    </div>
+
+    <div class="act-card" data-step="1" id="section-1">
+      <div class="card-header">
+        <div class="card-header-main">
+          <div class="act-step-label">&#x2605; Step 1 &#x2014; Identify</div>
+          <h2 class="act-step-title">Name your 3&#x2013;6 core values</h2>
+        </div>
+        <div class="card-done-badge">&#x2713; Complete</div>
+      </div>
+      <p class="act-step-prompt">Core values are the non-negotiables &#x2014; the beliefs that guide how your company operates, regardless of who&#x2019;s watching.</p>
+      <p class="act-step-hint">Tip: 3&#x2013;5 values is ideal. Fewer is better &#x2014; too many means none of them are truly non-negotiable.</p>
+      <div id="cv-name-list"></div>
+      <div class="act-nav-row guided-only act-hidden">
+        <span class="step-counter">Step 1 of 3</span>
+        <button class="act-btn act-btn-primary" onclick="nextStep()">Next &#x2192;</button>
+      </div>
+    </div>
+
+    <div class="act-card" data-step="2" id="section-2">
+      <div class="card-header">
+        <div class="card-header-main">
+          <div class="act-step-label">&#x270E; Step 2 &#x2014; Define</div>
+          <h2 class="act-step-title">What does each value mean to your company?</h2>
+        </div>
+        <div class="card-done-badge">&#x2713; Complete</div>
+      </div>
+      <p class="act-step-prompt">Write a short, specific definition for each value in your own words &#x2014; not dictionary definitions, but what it means here.</p>
+      <p class="act-step-hint">Tip: A good definition is 1&#x2013;2 sentences that a new team member would immediately understand.</p>
+      <div id="cv-def-list"></div>
+      <div class="act-nav-row guided-only act-hidden">
+        <button class="act-btn act-btn-secondary" onclick="prevStep()">&#x2190; Back</button>
+        <span class="step-counter">Step 2 of 3</span>
+        <button class="act-btn act-btn-primary" onclick="nextStep()">Next &#x2192;</button>
+      </div>
+    </div>
+
+    <div class="act-card" data-step="3" id="section-3">
+      <div class="card-header">
+        <div class="card-header-main">
+          <div class="act-step-label">&#x25CE; Step 3 &#x2014; Values in Action</div>
+          <h2 class="act-step-title">What do your values look like in daily work?</h2>
+        </div>
+        <div class="card-done-badge">&#x2713; Complete</div>
+      </div>
+      <p class="act-step-prompt">For each value, describe the behaviours you&#x2019;d expect to see. This makes values observable and actionable &#x2014; not just words on a wall.</p>
+      <p class="act-step-hint">Tip: Think about how you&#x2019;d explain each value to a new team member on their first day. What would you point to?</p>
+      <div id="cv-action-list"></div>
+      <div class="act-nav-row guided-only act-hidden">
+        <button class="act-btn act-btn-secondary" onclick="prevStep()">&#x2190; Back</button>
+        <span class="step-counter">Step 3 of 3</span>
+        <button class="act-btn act-btn-primary" onclick="finishGuided()" style="background:#065f46;">&#x2713; Finish</button>
+      </div>
+    </div>
+
+    <div class="act-save-bar">
+      <span class="act-save-status" id="save-status">Loading&#x2026;</span>
+      <button class="act-btn act-btn-secondary" onclick="window.print()" style="font-size:0.85rem;">&#x1F5A8;&nbsp; Print / Export PDF</button>
+    </div>
+
+    <footer class="act-footer">
+      Strengths-Based Coaching and Counselling |
+      <a href="https://www.coach4u.com.au" target="_blank">coach4u.com.au</a>
+    </footer>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+  'use strict';
+
+  const _sb = window.supabase.createClient(
+    'https://eekefsuaefgpqmjdyniy.supabase.co',
+    'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+  );
+
+  document.getElementById('sign-out-btn').addEventListener('click', async () => {
+    await _sb.auth.signOut();
+    window.location.href = 'login.html';
+  });
+
+  let currentBusinessId = 1;
+  let _saveTimer        = null;
+  let currentMode       = 'guided';
+  let currentStep       = 1;
+  const TOTAL_STEPS     = 3;
+  const VALUE_COUNT     = 6;
+
+  function setStatus(msg, type) {
+    const el = document.getElementById('save-status');
+    el.textContent = msg;
+    el.className = 'act-save-status' + (type ? ' ' + type : '');
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  async function apiGet(path) {
+    const res = await fetch('/api' + path);
+    if (!res.ok) { const e = await res.json().catch(()=>({error:res.statusText})); throw new Error(e.error||res.statusText); }
+    return res.json();
+  }
+
+  async function apiPut(path, body) {
+    const res = await fetch('/api' + path, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    if (!res.ok) { const e = await res.json().catch(()=>({error:res.statusText})); throw new Error(e.error||res.statusText); }
+    return res.json();
+  }
+
+  function renderNameList(cv) {
+    const c = document.getElementById('cv-name-list');
+    c.innerHTML = '';
+    for (let i = 1; i <= VALUE_COUNT; i++) {
+      const key = 'value_' + i;
+      const val = cv[key]?.value ?? '';
+      const row = document.createElement('div');
+      row.className = 'cv-row';
+      row.innerHTML = `<span class="cv-num">${i}.</span><input type="text" class="vto-field vto-input" data-section="core_values" data-key="${key}" value="${escHtml(val)}" placeholder="Core value ${i}…" />`;
+      c.appendChild(row);
+    }
+  }
+
+  function renderDefList(cv) {
+    const c = document.getElementById('cv-def-list');
+    c.innerHTML = '';
+    for (let i = 1; i <= VALUE_COUNT; i++) {
+      const name = cv['value_' + i]?.value?.trim() || '';
+      const def  = cv['value_' + i + '_def']?.value ?? '';
+      const b = document.createElement('div');
+      b.className = 'val-block';
+      b.innerHTML = `<div class="val-block-header"><span class="cv-num">${i}.</span><span class="val-name-display${name?'':' val-name-empty'}" data-val="${i}">${escHtml(name)||'Value '+i+' — not named yet'}</span></div><label class="vto-label">What does this value mean to your company?</label><textarea class="vto-field vto-input" style="min-height:70px;resize:vertical;" data-section="core_values" data-key="value_${i}_def" rows="2" placeholder="In our company, this means…">${escHtml(def)}</textarea>`;
+      c.appendChild(b);
+    }
+  }
+
+  function renderActionList(cv) {
+    const c = document.getElementById('cv-action-list');
+    c.innerHTML = '';
+    for (let i = 1; i <= VALUE_COUNT; i++) {
+      const name   = cv['value_' + i]?.value?.trim() || '';
+      const action = cv['value_' + i + '_action']?.value ?? '';
+      const b = document.createElement('div');
+      b.className = 'val-block';
+      b.innerHTML = `<div class="val-block-header"><span class="cv-num">${i}.</span><span class="val-name-display${name?'':' val-name-empty'}" data-val="${i}">${escHtml(name)||'Value '+i+' — not named yet'}</span></div><label class="vto-label">When someone is living this value, you would see…</label><textarea class="vto-field vto-input" style="min-height:70px;resize:vertical;" data-section="core_values" data-key="value_${i}_action" rows="2" placeholder="Describe specific behaviours, decisions, or moments…">${escHtml(action)}</textarea>`;
+      c.appendChild(b);
+    }
+  }
+
+  function syncNameLabels() {
+    for (let i = 1; i <= VALUE_COUNT; i++) {
+      const input = document.querySelector(`[data-section="core_values"][data-key="value_${i}"]`);
+      if (!input) continue;
+      const name = input.value.trim();
+      document.querySelectorAll(`.val-name-display[data-val="${i}"]`).forEach(el => {
+        el.textContent = name || ('Value ' + i + ' — not named yet');
+        el.classList.toggle('val-name-empty', !name);
+      });
+    }
+  }
+
+  function populateForm(data) {
+    const cv = data.core_values || {};
+    renderNameList(cv);
+    renderDefList(cv);
+    renderActionList(cv);
+    document.querySelectorAll('.vto-field').forEach(el => {
+      el.addEventListener('input', onFieldInput);
+      el.addEventListener('blur',  onFieldBlur);
+    });
+    setStatus('All changes saved', 'saved');
+    updateCompletion();
+    const hasData = Array.from(document.querySelectorAll('.vto-field')).some(f => f.value.trim() !== '');
+    setMode(hasData ? 'worksheet' : 'guided');
+  }
+
+  function onFieldInput(e) {
+    setStatus('Unsaved changes…');
+    if (/^value_\d+$/.test(e.target.dataset.key || '')) syncNameLabels();
+    updateCompletion();
+    clearTimeout(_saveTimer);
+    _saveTimer = setTimeout(() => saveField(e.target), 1200);
+  }
+
+  function onFieldBlur(e) { clearTimeout(_saveTimer); saveField(e.target); }
+
+  async function saveField(el) {
+    const { section, key } = el.dataset;
+    if (!section || !key) return;
+    setStatus('Saving…');
+    try {
+      await apiPut(`/vto/${section}/${key}`, { value: el.value, business_id: currentBusinessId });
+      setStatus(`Saved at ${new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'})}`, 'saved');
+    } catch (err) { setStatus('Save failed — ' + err.message, 'error'); }
+  }
+
+  function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('btn-guided').classList.toggle('active', mode === 'guided');
+    document.getElementById('btn-worksheet').classList.toggle('active', mode === 'worksheet');
+    if (mode === 'guided') {
+      document.querySelectorAll('.guided-only').forEach(r => r.classList.remove('act-hidden'));
+      showStep(currentStep);
+    } else {
+      document.querySelectorAll('.guided-only').forEach(r => r.classList.add('act-hidden'));
+      document.querySelectorAll('.act-card[data-step]').forEach(c => c.classList.remove('act-hidden'));
+      updateProgressStepper();
+    }
+  }
+
+  function showStep(n) {
+    currentStep = Math.max(1, Math.min(TOTAL_STEPS, n));
+    document.querySelectorAll('.act-card[data-step]').forEach(c => {
+      c.classList.toggle('act-hidden', parseInt(c.dataset.step) !== currentStep);
+    });
+    updateProgressStepper();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextStep() { if (currentStep < TOTAL_STEPS) showStep(currentStep + 1); }
+  function prevStep() { if (currentStep > 1) showStep(currentStep - 1); }
+
+  function finishGuided() {
+    updateCompletion();
+    setMode('worksheet');
+    const b = document.getElementById('complete-banner');
+    if (!b.classList.contains('act-hidden')) setTimeout(() => b.scrollIntoView({behavior:'smooth',block:'center'}), 100);
+  }
+
+  function updateProgressStepper() {
+    document.querySelectorAll('.act-progress-step').forEach(el => {
+      const step = parseInt(el.dataset.step);
+      const card = document.querySelector(`.act-card[data-step="${step}"]`);
+      const isDone = card && card.classList.contains('is-complete');
+      const isActive = currentMode === 'guided' && step === currentStep;
+      el.classList.toggle('active', isActive);
+      el.classList.toggle('done', isDone && !isActive);
+    });
+  }
+
+  document.querySelectorAll('.act-progress-step').forEach(el => {
+    el.addEventListener('click', () => {
+      const step = parseInt(el.dataset.step);
+      if (currentMode === 'guided') showStep(step);
+      else document.getElementById('section-' + step)?.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
+
+  function checkSectionComplete(n) {
+    const card = document.querySelector(`.act-card[data-step="${n}"]`);
+    return card ? Array.from(card.querySelectorAll('.vto-field')).some(f => f.value.trim() !== '') : false;
+  }
+
+  function updateCompletion() {
+    let complete = 0;
+    for (let i = 1; i <= TOTAL_STEPS; i++) {
+      const done = checkSectionComplete(i);
+      document.querySelector(`.act-card[data-step="${i}"]`)?.classList.toggle('is-complete', done);
+      if (done) complete++;
+    }
+    document.getElementById('pill-fill').style.width = Math.round(complete / TOTAL_STEPS * 100) + '%';
+    document.getElementById('completion-text').textContent =
+      complete === TOTAL_STEPS ? 'All 3 steps complete ✓' : `${complete} of ${TOTAL_STEPS} steps complete`;
+    document.getElementById('complete-banner').classList.toggle('act-hidden', complete < TOTAL_STEPS);
+    updateProgressStepper();
+  }
+
+  (async () => {
+    const { data: { user } } = await _sb.auth.getUser();
+    if (!user) { window.location.href = 'login.html'; return; }
+    try {
+      const businesses = await apiGet('/businesses');
+      const biz = businesses.find(b => b.type === 'holding') || businesses[0];
+      if (biz) currentBusinessId = biz.id;
+      const vtoData = await apiGet(`/vto?business_id=${currentBusinessId}`);
+      populateForm(vtoData);
+    } catch (err) {
+      console.error('Core Values load error:', err);
+      setStatus('Could not load saved data', 'error');
+      setMode('guided');
+    }
+    document.body.style.opacity = '1';
+  })();
+  </script>
+
+</body>
+</html>
