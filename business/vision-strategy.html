@@ -24,7 +24,7 @@
     }
     @media (max-width: 640px) { .vto-3col { grid-template-columns: 1fr; } }
 
-    /* Shared text input that matches act-textarea look */
+    /* Shared text input */
     .vto-input {
       width: 100%;
       border: 1.5px solid #DDDDDD;
@@ -39,7 +39,6 @@
     }
     .vto-input:focus { outline: none; border-color: #5684C4; }
 
-    /* Label above each field */
     .vto-label {
       font-family: 'Inter', sans-serif;
       font-weight: 600;
@@ -49,7 +48,6 @@
       display: block;
     }
 
-    /* Core-value numbered row */
     .cv-row {
       display: flex;
       align-items: center;
@@ -65,15 +63,153 @@
       text-align: right;
     }
 
-    /* Section divider within a card */
     .vto-sub-section { margin-top: 20px; }
 
-    /* Print: strip chrome, keep content */
+    /* === Card header with completion badge === */
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .card-header-main { flex: 1; }
+    .card-done-badge {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      background: #d1fae5;
+      color: #065f46;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .act-card.is-complete .card-done-badge { display: flex; }
+    .act-card.is-complete { border-color: #6ee7b7; }
+
+    /* === Completion pill under heading === */
+    .completion-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #F5F7FB;
+      border: 1px solid #DDDDDD;
+      border-radius: 20px;
+      padding: 7px 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      color: #1B3664;
+      font-weight: 600;
+      margin-top: 14px;
+    }
+    .pill-bar {
+      width: 80px;
+      height: 6px;
+      background: #DDDDDD;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .pill-fill {
+      height: 100%;
+      background: #5684C4;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    /* === Mode toggle === */
+    .mode-toggle-bar {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 28px;
+      background: #F5F7FB;
+      border-radius: 10px;
+      padding: 4px;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .mode-toggle-btn {
+      flex: 1;
+      padding: 9px 16px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+      color: #888;
+    }
+    .mode-toggle-btn.active {
+      background: white;
+      color: #1B3664;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    /* === Guided nav row (Prev / Next inside each card) === */
+    .act-nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid #DDDDDD;
+    }
+    .step-counter {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      color: #888;
+      font-weight: 600;
+    }
+
+    /* === All-done banner === */
+    .vto-complete-banner {
+      background: linear-gradient(135deg, #1B3664 0%, #5684C4 100%);
+      color: white;
+      padding: 36px 28px;
+      border-radius: 16px;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .vto-complete-banner .complete-icon { font-size: 2.5rem; margin-bottom: 14px; }
+    .vto-complete-banner h2 {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .vto-complete-banner p { opacity: 0.9; font-size: 0.95rem; margin-bottom: 20px; }
+
+    /* Hide stepper text labels on very small screens */
+    @media (max-width: 580px) {
+      .act-progress-step span { display: none; }
+      .act-progress-divider { width: 12px; }
+    }
+
+    /* Stepper dots are clickable */
+    .act-progress-step { cursor: pointer; }
+    .act-progress-step:hover .num { opacity: 0.8; }
+
+    /* Print */
     @media print {
-      .site-header, .act-save-bar, .act-footer { display: none !important; }
+      .site-header, .act-save-bar, .act-footer,
+      .mode-toggle-bar, .act-nav-row, .act-progress,
+      .completion-pill, .vto-complete-banner { display: none !important; }
       body { opacity: 1 !important; background: white !important; }
       .act-container { padding-top: 0; }
-      .act-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; margin-bottom: 14px; }
+      .act-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ccc;
+        margin-bottom: 14px;
+        display: block !important;
+      }
       .act-step-hint { display: none; }
     }
   </style>
@@ -95,29 +231,75 @@
     <header class="act-header">
       <h1>Your Company&#x2019;s One-Page Strategic Plan</h1>
       <p>Clarify where you&#x2019;re going and how you&#x2019;ll get there. Every field saves automatically as you type.</p>
+      <div class="completion-pill">
+        <div class="pill-bar"><div class="pill-fill" id="pill-fill" style="width:0%"></div></div>
+        <span id="completion-text">0 of 6 sections complete</span>
+      </div>
     </header>
+
+    <!-- Progress stepper: 6 clickable steps -->
+    <div class="act-progress" id="progress-bar">
+      <div class="act-progress-step" data-step="1"><div class="num">1</div><span>Values</span></div>
+      <div class="act-progress-divider"></div>
+      <div class="act-progress-step" data-step="2"><div class="num">2</div><span>Focus</span></div>
+      <div class="act-progress-divider"></div>
+      <div class="act-progress-step" data-step="3"><div class="num">3</div><span>10-Year</span></div>
+      <div class="act-progress-divider"></div>
+      <div class="act-progress-step" data-step="4"><div class="num">4</div><span>Marketing</span></div>
+      <div class="act-progress-divider"></div>
+      <div class="act-progress-step" data-step="5"><div class="num">5</div><span>3-Year</span></div>
+      <div class="act-progress-divider"></div>
+      <div class="act-progress-step" data-step="6"><div class="num">6</div><span>1-Year</span></div>
+    </div>
+
+    <!-- Mode toggle -->
+    <div class="mode-toggle-bar">
+      <button class="mode-toggle-btn active" id="btn-guided" onclick="setMode('guided')">&#x279C; Step-by-step</button>
+      <button class="mode-toggle-btn" id="btn-worksheet" onclick="setMode('worksheet')">&#x25A4; Full worksheet</button>
+    </div>
+
+    <!-- All-done banner (hidden until all 6 sections have content) -->
+    <div class="vto-complete-banner act-hidden" id="complete-banner">
+      <div class="complete-icon">&#x1F3AF;</div>
+      <h2>Your VTO is complete!</h2>
+      <p>Your One-Page Strategic Plan is ready. Print it, share it with your team, and revisit it quarterly.</p>
+      <button class="act-btn" style="background:rgba(255,255,255,0.2);color:white;border:1.5px solid rgba(255,255,255,0.4);" onclick="window.print()">
+        &#x1F5A8;&nbsp; Print / Export PDF
+      </button>
+    </div>
 
     <!-- ═══════════════════════════════════════════════════════
          SECTION 1 — CORE VALUES
-         Saved as: core_values / value_1 … value_6
     ════════════════════════════════════════════════════════ -->
-    <div class="act-card">
-      <div class="act-step-label">&#x2605; Core Values</div>
-      <h2 class="act-step-title">The 3&#x2013;5 fundamental beliefs that guide how your company operates</h2>
-      <p class="act-step-prompt">These are the non-negotiables — the behaviours you&#x2019;d hire and fire for, not aspirational words on a poster.</p>
+    <div class="act-card" data-step="1" id="section-1">
+      <div class="card-header">
+        <div class="card-header-main">
+          <div class="act-step-label">&#x2605; Core Values</div>
+          <h2 class="act-step-title">The 3&#x2013;5 fundamental beliefs that guide how your company operates</h2>
+        </div>
+        <div class="card-done-badge">&#x2713; Complete</div>
+      </div>
+      <p class="act-step-prompt">These are the non-negotiables &#x2014; the behaviours you&#x2019;d hire and fire for, not aspirational words on a poster.</p>
       <p class="act-step-hint">Tip: Great core values are specific enough that you could point to someone living them vs. ignoring them.</p>
       <div id="cv-list"></div>
+      <div class="act-nav-row guided-only act-hidden">
+        <span class="step-counter">Step 1 of 6</span>
+        <button class="act-btn act-btn-primary" onclick="nextStep()">Next &#x2192;</button>
+      </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════
          SECTION 2 — CORE FOCUS
-         Saved as: core_focus / purpose, niche
     ════════════════════════════════════════════════════════ -->
-    <div class="act-card">
-      <div class="act-step-label">&#x25CE; Core Focus</div>
-      <h2 class="act-step-title">Why does your company exist?</h2>
-      <p class="act-step-prompt">Your purpose, cause, or passion — and the niche you serve better than anyone else.</p>
-
+    <div class="act-card" data-step="2" id="section-2">
+      <div class="card-header">
+        <div class="card-header-main">
+          <div class="act-step-label">&#x25CE; Core Focus</div>
+          <h2 class="act-step-title">Why does your company exist?</h2>
+        </div>
+        <div class="card-done-badge">&#x2713; Complete</div>
+      </div>
+      <p class="act-step-prompt">Your purpose, cause, or passion &#x2014; and the niche you serve better than anyone else.</p>
       <div class="act-reflect-prompts">
         <div>
           <div class="act-section-title">Purpose / Cause / Passion</div>
@@ -136,15 +318,24 @@
             placeholder="What is your unique niche?"></textarea>
         </div>
       </div>
+      <div class="act-nav-row guided-only act-hidden">
+        <button class="act-btn act-btn-secondary" onclick="prevStep()">&#x2190; Back</button>
+        <span class="step-counter">Step 2 of 6</span>
+        <button class="act-btn act-btn-primary" onclick="nextStep()">Next &#x2192;</button>
+      </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════
          SECTION 3 — 10-YEAR TARGET
-         Saved as: ten_year / target
     ════════════════════════════════════════════════════════ -->
-    <div class="act-card">
-      <div class="act-step-label">&#x25C9; 10-Year Target</div>
-      <h2 class="act-step-title">Your big, audacious long-term vision</h2>
+    <div class="act-card" data-step="3" id="section-3">
+      <div class="card-header">
+        <div class="card-header-main">
+          <div class="act-step-label">&#x25C9; 10-Year Target</div>
+          <h2 class="act-step-title">Your big, audacious long-term vision</h2>
+        </div>
+        <div class="card-done-badge">&#x2713; Complete</div>
+      </div>
       <p class="act-step-prompt">Specific enough to inspire, bold enough to stretch. Write it as if it has already happened.</p>
       <p class="act-step-hint">Tip: A strong 10-year target feels almost out of reach today but achievable with focus and consistent execution.</p>
       <div class="act-reflect-prompts">
@@ -155,17 +346,25 @@
             placeholder="Where will you be in 10 years?"></textarea>
         </div>
       </div>
+      <div class="act-nav-row guided-only act-hidden">
+        <button class="act-btn act-btn-secondary" onclick="prevStep()">&#x2190; Back</button>
+        <span class="step-counter">Step 3 of 6</span>
+        <button class="act-btn act-btn-primary" onclick="nextStep()">Next &#x2192;</button>
+      </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════
          SECTION 4 — MARKETING STRATEGY
-         Saved as: marketing / target_market, uniques, proven_process, guarantee
     ════════════════════════════════════════════════════════ -->
-    <div class="act-card">
-      <div class="act-step-label">&#x25C8; Marketing Strategy</div>
-      <h2 class="act-step-title">How we go to market</h2>
+    <div class="act-card" data-step="4" id="section-4">
+      <div class="card-header">
+        <div class="card-header-main">
+          <div class="act-step-label">&#x25C8; Marketing Strategy</div>
+          <h2 class="act-step-title">How we go to market</h2>
+        </div>
+        <div class="card-done-badge">&#x2713; Complete</div>
+      </div>
       <p class="act-step-prompt">Define exactly who you serve, what makes you different, how you deliver results, and the promise you make.</p>
-
       <div class="act-reflect-prompts">
         <div>
           <div class="act-section-title">Target Market</div>
@@ -196,17 +395,25 @@
             placeholder="Your guarantee&#x2026;" />
         </div>
       </div>
+      <div class="act-nav-row guided-only act-hidden">
+        <button class="act-btn act-btn-secondary" onclick="prevStep()">&#x2190; Back</button>
+        <span class="step-counter">Step 4 of 6</span>
+        <button class="act-btn act-btn-primary" onclick="nextStep()">Next &#x2192;</button>
+      </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════
          SECTION 5 — 3-YEAR PICTURE
-         Saved as: three_year / date, revenue, profit, looks_like
     ════════════════════════════════════════════════════════ -->
-    <div class="act-card">
-      <div class="act-step-label">&#x25A3; 3-Year Picture</div>
-      <h2 class="act-step-title">What success looks like 3 years from now</h2>
-      <p class="act-step-prompt">Paint a vivid, specific picture — financials, team size, client base, culture, and capabilities.</p>
-
+    <div class="act-card" data-step="5" id="section-5">
+      <div class="card-header">
+        <div class="card-header-main">
+          <div class="act-step-label">&#x25A3; 3-Year Picture</div>
+          <h2 class="act-step-title">What success looks like 3 years from now</h2>
+        </div>
+        <div class="card-done-badge">&#x2713; Complete</div>
+      </div>
+      <p class="act-step-prompt">Paint a vivid, specific picture &#x2014; financials, team size, client base, culture, and capabilities.</p>
       <div class="vto-3col">
         <div>
           <label class="vto-label">Target Date</label>
@@ -227,7 +434,6 @@
             placeholder="e.g. $450K" />
         </div>
       </div>
-
       <div class="act-reflect-prompts" style="margin-top:20px;">
         <div>
           <label class="vto-label">What does it look like?</label>
@@ -236,18 +442,26 @@
             placeholder="Describe your business in 3 years&#x2026;"></textarea>
         </div>
       </div>
+      <div class="act-nav-row guided-only act-hidden">
+        <button class="act-btn act-btn-secondary" onclick="prevStep()">&#x2190; Back</button>
+        <span class="step-counter">Step 5 of 6</span>
+        <button class="act-btn act-btn-primary" onclick="nextStep()">Next &#x2192;</button>
+      </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════
          SECTION 6 — 1-YEAR PLAN
-         Saved as: one_year / date, revenue, profit, goals
     ════════════════════════════════════════════════════════ -->
-    <div class="act-card">
-      <div class="act-step-label">&#x25B7; 1-Year Plan</div>
-      <h2 class="act-step-title">Top priorities for the next 12 months</h2>
+    <div class="act-card" data-step="6" id="section-6">
+      <div class="card-header">
+        <div class="card-header-main">
+          <div class="act-step-label">&#x25B7; 1-Year Plan</div>
+          <h2 class="act-step-title">Top priorities for the next 12 months</h2>
+        </div>
+        <div class="card-done-badge">&#x2713; Complete</div>
+      </div>
       <p class="act-step-prompt">Choose the 3&#x2013;7 things that must happen this year to stay on track toward your 3-year picture.</p>
       <p class="act-step-hint">Tip: Start with revenue and profit goals, then ask &#x2014; what must be true for those numbers to happen?</p>
-
       <div class="vto-3col">
         <div>
           <label class="vto-label">Target Date</label>
@@ -268,7 +482,6 @@
             placeholder="e.g. $150K" />
         </div>
       </div>
-
       <div class="act-reflect-prompts" style="margin-top:20px;">
         <div>
           <label class="vto-label">What must be true?</label>
@@ -277,11 +490,16 @@
             placeholder="3-7 measurable goals for the year&#x2026;"></textarea>
         </div>
       </div>
+      <div class="act-nav-row guided-only act-hidden">
+        <button class="act-btn act-btn-secondary" onclick="prevStep()">&#x2190; Back</button>
+        <span class="step-counter">Step 6 of 6</span>
+        <button class="act-btn act-btn-primary" onclick="finishGuided()" style="background:#065f46;">
+          &#x2713; Finish Plan
+        </button>
+      </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════════════════
-         STICKY SAVE BAR
-    ════════════════════════════════════════════════════════ -->
+    <!-- Sticky save bar -->
     <div class="act-save-bar">
       <span class="act-save-status" id="save-status">Loading&#x2026;</span>
       <button class="act-btn act-btn-secondary" onclick="window.print()" style="font-size:0.85rem;">
@@ -305,6 +523,9 @@
   /* ── State ── */
   let currentBusinessId = 1;
   let _saveTimer        = null;
+  let currentMode       = 'guided';
+  let currentStep       = 1;
+  const TOTAL_STEPS     = 6;
 
   /* ── Helpers ── */
 
@@ -367,10 +588,8 @@
   }
 
   function populateForm(data) {
-    /* 1. Core values — rendered dynamically */
     renderCoreValues(data.core_values || {});
 
-    /* 2. All other static fields */
     document.querySelectorAll('.vto-field:not([data-section="core_values"])').forEach(el => {
       const section   = el.dataset.section;
       const key       = el.dataset.key;
@@ -379,26 +598,29 @@
       if (fieldData && fieldData.value != null) el.value = fieldData.value;
     });
 
-    /* 3. Attach save listeners to every field (including newly created CV inputs) */
     document.querySelectorAll('.vto-field').forEach(el => {
       el.addEventListener('input', onFieldInput);
       el.addEventListener('blur',  onFieldBlur);
     });
 
     setStatus('All changes saved', 'saved');
+    updateCompletion();
+
+    /* Returning client with data -> worksheet; new client -> guided */
+    const hasData = Array.from(document.querySelectorAll('.vto-field')).some(f => f.value.trim() !== '');
+    setMode(hasData ? 'worksheet' : 'guided');
   }
 
-  /* ── Save logic ── */
+  /* ── Save ── */
 
   function onFieldInput(e) {
     setStatus('Unsaved changes…');
+    updateCompletion();
     clearTimeout(_saveTimer);
-    /* Debounce: save 1.2 s after the user stops typing */
     _saveTimer = setTimeout(() => saveField(e.target), 1200);
   }
 
   function onFieldBlur(e) {
-    /* Immediate save when focus leaves the field */
     clearTimeout(_saveTimer);
     saveField(e.target);
   }
@@ -418,22 +640,120 @@
     }
   }
 
+  /* ── Mode & Step Management ── */
+
+  function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('btn-guided').classList.toggle('active', mode === 'guided');
+    document.getElementById('btn-worksheet').classList.toggle('active', mode === 'worksheet');
+
+    const navRows = document.querySelectorAll('.guided-only');
+    const cards   = document.querySelectorAll('.act-card[data-step]');
+
+    if (mode === 'guided') {
+      navRows.forEach(r => r.classList.remove('act-hidden'));
+      showStep(currentStep);
+    } else {
+      navRows.forEach(r => r.classList.add('act-hidden'));
+      cards.forEach(c => c.classList.remove('act-hidden'));
+      updateProgressStepper();
+    }
+  }
+
+  function showStep(n) {
+    currentStep = Math.max(1, Math.min(TOTAL_STEPS, n));
+    document.querySelectorAll('.act-card[data-step]').forEach(card => {
+      card.classList.toggle('act-hidden', parseInt(card.dataset.step) !== currentStep);
+    });
+    updateProgressStepper();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextStep() {
+    if (currentStep < TOTAL_STEPS) showStep(currentStep + 1);
+  }
+
+  function prevStep() {
+    if (currentStep > 1) showStep(currentStep - 1);
+  }
+
+  function finishGuided() {
+    updateCompletion();
+    setMode('worksheet');
+    const banner = document.getElementById('complete-banner');
+    if (!banner.classList.contains('act-hidden')) {
+      setTimeout(() => banner.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+    }
+  }
+
+  /* ── Progress stepper ── */
+
+  function updateProgressStepper() {
+    document.querySelectorAll('.act-progress-step').forEach(el => {
+      const step     = parseInt(el.dataset.step);
+      const card     = document.querySelector(`.act-card[data-step="${step}"]`);
+      const isDone   = card && card.classList.contains('is-complete');
+      const isActive = (currentMode === 'guided') && step === currentStep;
+      el.classList.toggle('active', isActive);
+      el.classList.toggle('done',   isDone && !isActive);
+    });
+  }
+
+  /* Clicking a stepper dot jumps to that step or scrolls to that section */
+  document.querySelectorAll('.act-progress-step').forEach(el => {
+    el.addEventListener('click', () => {
+      const step = parseInt(el.dataset.step);
+      if (currentMode === 'guided') {
+        showStep(step);
+      } else {
+        const card = document.getElementById('section-' + step);
+        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  /* ── Completion tracking ── */
+
+  function checkSectionComplete(stepNum) {
+    const card = document.querySelector(`.act-card[data-step="${stepNum}"]`);
+    if (!card) return false;
+    return Array.from(card.querySelectorAll('.vto-field')).some(f => f.value.trim() !== '');
+  }
+
+  function updateCompletion() {
+    let complete = 0;
+    for (let i = 1; i <= TOTAL_STEPS; i++) {
+      const isDone = checkSectionComplete(i);
+      const card   = document.querySelector(`.act-card[data-step="${i}"]`);
+      if (card) card.classList.toggle('is-complete', isDone);
+      if (isDone) complete++;
+    }
+
+    document.getElementById('pill-fill').style.width = Math.round((complete / TOTAL_STEPS) * 100) + '%';
+    document.getElementById('completion-text').textContent =
+      complete === TOTAL_STEPS
+        ? 'All 6 sections complete ✓'
+        : `${complete} of ${TOTAL_STEPS} sections complete`;
+
+    document.getElementById('complete-banner').classList.toggle('act-hidden', complete < TOTAL_STEPS);
+    updateProgressStepper();
+  }
+
   /* ── Boot: auth → businesses → VTO data ── */
 
   window.requireAuth().then(async (user) => {
     if (!user) return;
     try {
-      /* Resolve the active business so every save uses the right business_id */
       const businesses = await apiGet('/businesses');
       const biz = businesses.find(b => b.type === 'holding') || businesses[0];
       if (biz) currentBusinessId = biz.id;
 
-      /* Load existing VTO answers */
       const vtoData = await apiGet(`/vto?business_id=${currentBusinessId}`);
       populateForm(vtoData);
     } catch (err) {
       console.error('Vision & Strategy load error:', err);
       setStatus('Could not load saved data', 'error');
+      setMode('guided');
     }
     document.body.style.opacity = '1';
   });
