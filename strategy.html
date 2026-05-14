@@ -14,24 +14,207 @@
   <style>
     body { opacity: 0; transition: opacity 0.2s ease; }
 
-    .modules-grid {
+    /* ── Layout ── */
+    .container { padding-bottom: 80px; }
+    .section-heading {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 0 0 4px;
+    }
+    .section-sub {
+      font-size: 0.85rem;
+      color: #666;
+      margin: 0 0 20px;
+    }
+
+    /* ── Section 1: Activity Cards ── */
+    .activities-section { padding: 24px 16px 0; }
+
+    .activity-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 32px;
+      gap: 10px;
+      margin-bottom: 20px;
     }
-    .module-card {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 11px; border-radius: 8px;
-      border: 1px solid var(--border); background: #fafafa;
-      text-decoration: none;
-      transition: box-shadow 0.15s, border-color 0.15s, background 0.15s;
+    @media (max-width: 480px) {
+      .activity-grid { grid-template-columns: 1fr; }
     }
-    .module-card:hover { background: white; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border-color: #ccc; text-decoration: none; }
-    .mod-icon { width: 30px; height: 30px; border-radius: 6px; background: rgba(13,148,136,0.1); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
-    .mod-name { font-size: 12px; font-weight: 700; color: var(--primary); line-height: 1.3; flex: 1; }
-    .mod-arrow { font-size: 12px; color: #ccc; flex-shrink: 0; }
 
+    .activity-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--accent);
+      background: white;
+      text-decoration: none;
+      transition: box-shadow 0.15s, background 0.15s;
+    }
+    .activity-card:hover {
+      background: #f0fdfa;
+      box-shadow: 0 2px 8px rgba(13,148,136,0.12);
+      text-decoration: none;
+    }
+    .act-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: rgba(13,148,136,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .act-text { flex: 1; min-width: 0; }
+    .act-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.3;
+      margin-bottom: 2px;
+    }
+    .act-desc {
+      font-size: 0.76rem;
+      color: #666;
+      line-height: 1.35;
+    }
+    .act-arrow {
+      font-size: 16px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .view-plan-btn {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s;
+      margin-bottom: 8px;
+    }
+    .view-plan-btn:hover { background: var(--accent-dark); }
+
+    /* ── Section 2: One-Page Plan ── */
+    .plan-section {
+      padding: 32px 16px 0;
+    }
+    .plan-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+    .plan-print-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border: 1.5px solid var(--accent);
+      background: white;
+      color: var(--accent);
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s;
+    }
+    .plan-print-btn:hover { background: var(--accent); color: white; }
+
+    /* Plan document styles */
+    .plan-doc {
+      background: white;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 28px 24px;
+      margin-top: 20px;
+    }
+
+    .plan-group {
+      margin-bottom: 28px;
+    }
+    .plan-group:last-child { margin-bottom: 0; }
+
+    .plan-group-heading {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      border-left: 3px solid var(--accent);
+      padding-left: 10px;
+      margin-bottom: 18px;
+      font-variant: small-caps;
+    }
+
+    .plan-field {
+      margin-bottom: 16px;
+    }
+    .plan-field:last-child { margin-bottom: 0; }
+
+    .plan-field-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .plan-field-value {
+      font-size: 0.97rem;
+      color: #333333;
+      line-height: 1.6;
+    }
+
+    .plan-field-link {
+      font-size: 0.88rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .plan-field-link:hover { text-decoration: underline; }
+
+    .plan-divider {
+      border: none;
+      border-top: 1px solid #e5e7eb;
+      margin: 24px 0;
+    }
+
+    /* Core values pills */
+    .values-pills { display: flex; flex-wrap: wrap; gap: 7px; }
+    .value-pill {
+      background: rgba(13,148,136,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(13,148,136,0.3);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    /* 3-col row for financials */
+    .plan-row-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    @media (max-width: 480px) {
+      .plan-row-3 { grid-template-columns: 1fr; }
+      .plan-doc { padding: 20px 16px; }
+    }
+
+    /* ── Bottom Nav ── */
     .bottom-nav {
       position: fixed;
       bottom: 0; left: 0; right: 0;
@@ -52,7 +235,49 @@
     }
     .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
     .bottom-nav-icon { font-size: 20px; line-height: 1; }
-    .container { padding-bottom: 80px; }
+
+    /* ── Print ── */
+    @media print {
+      .site-header,
+      .activities-section,
+      .bottom-nav,
+      .plan-print-btn,
+      .plan-header-row .section-heading,
+      .plan-header-row .section-sub { display: none !important; }
+
+      body { opacity: 1 !important; background: white !important; }
+      .container { padding: 0 !important; }
+
+      .plan-section {
+        padding: 0 !important;
+      }
+      .plan-section .plan-header-row { display: none !important; }
+      .plan-section .section-sub { display: none !important; }
+
+      .plan-print-title {
+        display: block !important;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #003366;
+        margin-bottom: 4px;
+      }
+      .plan-print-sub {
+        display: block !important;
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 24px;
+      }
+
+      .plan-doc {
+        border: none;
+        padding: 0;
+        border-radius: 0;
+      }
+
+      .plan-field-link { color: #666 !important; }
+    }
+    .plan-print-title { display: none; }
+    .plan-print-sub { display: none; }
   </style>
 </head>
 <body>
@@ -67,29 +292,189 @@
   </header>
 
   <div class="container">
-    <div class="modules-grid">
-      <a class="module-card" href="business/vision-strategy.html">
-        <div class="mod-icon">&#x1F9ED;</div>
-        <div class="mod-name">Core Focus</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
-      <a class="module-card" href="values.html">
-        <div class="mod-icon">&#x2B50;</div>
-        <div class="mod-name">Core Values</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
-      <a class="module-card" href="marketing.html">
-        <div class="mod-icon">&#x1F4E3;</div>
-        <div class="mod-name">Marketing Strategy</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
-      <a class="module-card" href="targeting.html">
-        <div class="mod-icon">&#x1F3AF;</div>
-        <div class="mod-name">Targets</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
+
+    <!-- SECTION 1: ACTIVITIES -->
+    <div class="activities-section">
+      <h2 class="section-heading">Build Your Strategy</h2>
+      <p class="section-sub">Complete each activity to build your one-page business plan</p>
+
+      <div class="activity-grid">
+        <a class="activity-card" href="strategy/core-values.html">
+          <div class="act-icon">&#x2B50;</div>
+          <div class="act-text">
+            <div class="act-name">Core Values</div>
+            <div class="act-desc">Discover the non-negotiables that guide every decision</div>
+          </div>
+          <span class="act-arrow">&#x203A;</span>
+        </a>
+        <a class="activity-card" href="strategy/core-focus.html">
+          <div class="act-icon">&#x1F9ED;</div>
+          <div class="act-text">
+            <div class="act-name">Core Focus</div>
+            <div class="act-desc">Define why your business exists and what you do best</div>
+          </div>
+          <span class="act-arrow">&#x203A;</span>
+        </a>
+        <a class="activity-card" href="strategy/targets.html">
+          <div class="act-icon">&#x1F3AF;</div>
+          <div class="act-text">
+            <div class="act-name">Targets</div>
+            <div class="act-desc">Set your 10-year vision, 3-year picture and 1-year plan</div>
+          </div>
+          <span class="act-arrow">&#x203A;</span>
+        </a>
+        <a class="activity-card" href="strategy/marketing-strategy.html">
+          <div class="act-icon">&#x1F4E3;</div>
+          <div class="act-text">
+            <div class="act-name">Marketing Strategy</div>
+            <div class="act-desc">Define who you serve and what makes you different</div>
+          </div>
+          <span class="act-arrow">&#x203A;</span>
+        </a>
+      </div>
+
+      <button class="view-plan-btn" onclick="document.getElementById('one-page-plan').scrollIntoView({behavior:'smooth'})">
+        &#x1F4CB;&nbsp; View One-Page Plan
+      </button>
     </div>
-  </div>
+
+    <!-- SECTION 2: ONE-PAGE BUSINESS PLAN -->
+    <div class="plan-section" id="one-page-plan">
+      <div class="plan-header-row">
+        <div>
+          <h2 class="section-heading">Your One-Page Business Plan</h2>
+          <p class="section-sub">Updated as you complete each activity above</p>
+        </div>
+        <button class="plan-print-btn" onclick="window.print()">
+          &#x1F5A8; Print / PDF
+        </button>
+      </div>
+
+      <!-- Print-only title -->
+      <span class="plan-print-title">One-Page Business Plan</span>
+      <span class="plan-print-sub">Your Business Coach &mdash; coach4u.com.au</span>
+
+      <div class="plan-doc">
+
+        <!-- WHO WE ARE -->
+        <div class="plan-group">
+          <div class="plan-group-heading">Who We Are</div>
+
+          <div class="plan-field">
+            <span class="plan-field-label">Core Values</span>
+            <div class="values-pills">
+              <span class="value-pill">Integrity</span>
+              <span class="value-pill">Growth mindset</span>
+              <span class="value-pill">Client first</span>
+              <span class="value-pill">Accountability</span>
+            </div>
+          </div>
+
+          <hr class="plan-divider">
+
+          <div class="plan-field">
+            <span class="plan-field-label">Purpose</span>
+            <div class="plan-field-value">To help business owners build thriving, self-managing businesses so they can achieve freedom and fulfilment.</div>
+          </div>
+
+          <div class="plan-field">
+            <span class="plan-field-label">Niche</span>
+            <div class="plan-field-value">Strengths-based business coaching for small and medium businesses across Australia.</div>
+          </div>
+        </div>
+
+        <!-- WHERE WE ARE GOING -->
+        <div class="plan-group">
+          <div class="plan-group-heading">Where We Are Going</div>
+
+          <div class="plan-field">
+            <span class="plan-field-label">10-Year Vision</span>
+            <div class="plan-field-value">Australia's most trusted business coaching practice, with 500 thriving client businesses and a team of 10 coaches delivering measurable results.</div>
+          </div>
+
+          <hr class="plan-divider">
+
+          <div class="plan-field">
+            <span class="plan-field-label">3-Year Picture</span>
+            <div class="plan-row-3">
+              <div>
+                <span class="plan-field-label">Target Date</span>
+                <div class="plan-field-value">June 2028</div>
+              </div>
+              <div>
+                <span class="plan-field-label">Revenue</span>
+                <div class="plan-field-value">$1.2M</div>
+              </div>
+              <div>
+                <span class="plan-field-label">Profit</span>
+                <div class="plan-field-value">$360K</div>
+              </div>
+            </div>
+            <div class="plan-field-value">A team of 4 coaches, 80 active clients, systemised delivery with a signature 12-month program, recurring revenue model established.</div>
+          </div>
+
+          <hr class="plan-divider">
+
+          <div class="plan-field">
+            <span class="plan-field-label">1-Year Plan</span>
+            <div class="plan-row-3">
+              <div>
+                <span class="plan-field-label">Target Date</span>
+                <div class="plan-field-value">Dec 2025</div>
+              </div>
+              <div>
+                <span class="plan-field-label">Revenue Goal</span>
+                <div class="plan-field-value">$420K</div>
+              </div>
+              <div>
+                <span class="plan-field-label">Profit Goal</span>
+                <div class="plan-field-value">$105K</div>
+              </div>
+            </div>
+            <div class="plan-field-value" style="white-space: pre-line;">1. Sign 20 new clients through referral and speaking strategy
+2. Launch group coaching program (min. 8 participants)
+3. Hire first associate coach by Q3
+4. Complete and publish Signature Program workbook</div>
+          </div>
+        </div>
+
+        <!-- HOW WE GO TO MARKET -->
+        <div class="plan-group">
+          <div class="plan-group-heading">How We Go to Market</div>
+
+          <div class="plan-field">
+            <span class="plan-field-label">Target Market</span>
+            <div class="plan-field-value">Business owners with 2&ndash;20 employees in professional services, trades, and health sectors, revenue $500K&ndash;$5M, who feel stuck or overwhelmed.</div>
+          </div>
+
+          <hr class="plan-divider">
+
+          <div class="plan-field">
+            <span class="plan-field-label">What Makes Us Different</span>
+            <div class="plan-field-value" style="white-space: pre-line;">1. Strengths-based methodology — we build on what's already working
+2. Structured accountability — weekly check-ins and measurable outcomes
+3. Real-world experience — founded by a former business owner</div>
+          </div>
+
+          <hr class="plan-divider">
+
+          <div class="plan-field">
+            <span class="plan-field-label">Our Process</span>
+            <div class="plan-field-value">The Coach4U 4-Step System: Clarity → Strategy → Execution → Momentum. Delivered over 12 months with monthly 1:1 sessions and weekly check-ins.</div>
+          </div>
+
+          <hr class="plan-divider">
+
+          <div class="plan-field">
+            <span class="plan-field-label">Our Guarantee</span>
+            <div class="plan-field-value">If you don't see measurable progress in your first 90 days, we'll refund your last month's coaching fee &mdash; no questions asked.</div>
+          </div>
+        </div>
+
+      </div><!-- /.plan-doc -->
+    </div><!-- /.plan-section -->
+
+  </div><!-- /.container -->
 
   <nav class="bottom-nav">
     <a class="bottom-nav-item" href="index.html">
@@ -112,21 +497,22 @@
       'https://eekefsuaefgpqmjdyniy.supabase.co',
       'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
     );
-    const { data: { user }, error } = await supabase.auth.getUser();
-    if (!user || error) { window.location.href = 'login.html'; }
-    else {
+
+    async function init() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (!user || error) { window.location.href = 'login.html'; return; }
       const { data: profile } = await supabase
         .from('users').select('membership_status').eq('id', user.id).single();
       if (!profile || profile.membership_status !== 'active') {
-        window.location.href = 'inactive.html';
-      } else {
-        document.body.style.opacity = '1';
-        document.getElementById('signOutBtn').addEventListener('click', async () => {
-          await supabase.auth.signOut();
-          window.location.href = 'login.html';
-        });
+        window.location.href = 'inactive.html'; return;
       }
+      document.body.style.opacity = '1';
+      document.getElementById('signOutBtn').addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = 'login.html';
+      });
     }
+    init();
   </script>
 </body>
 </html>
