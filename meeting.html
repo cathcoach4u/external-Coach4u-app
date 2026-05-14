@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Meeting | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1B3664">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/activity.css"/>
+  <style>
+    body{opacity:0;transition:opacity .2s ease}
+    .page-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+    .meeting-layout{display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:start}
+    @media(max-width:720px){.meeting-layout{grid-template-columns:1fr}}
+    .meetings-sidebar{background:white;border:1px solid var(--act-light-grey);border-radius:12px;overflow:hidden}
+    .sidebar-heading{padding:14px 16px;background:var(--act-soft);font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:.88rem;border-bottom:1px solid var(--act-light-grey)}
+    .meeting-item{padding:12px 16px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .12s}
+    .meeting-item:hover{background:#f8faff}
+    .meeting-item.active{background:#eff6ff;border-left:3px solid var(--act-light-blue)}
+    .meeting-item-date{font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:.9rem}
+    .meeting-item-meta{font-size:.78rem;color:#888;margin-top:2px;display:flex;gap:8px;align-items:center}
+    .status-pill{font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:20px}
+    .sp-scheduled{background:#fef3c7;color:#92400e}
+    .sp-in_progress{background:#dbeafe;color:#1e40af}
+    .sp-completed{background:#d1fae5;color:#065f46}
+    .meeting-detail{background:white;border:1px solid var(--act-light-grey);border-radius:12px;padding:24px}
+    .meeting-empty{text-align:center;padding:48px 20px;color:#aaa;font-family:var(--act-font-heading)}
+    .meeting-detail-heading{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+    .meeting-detail-title{font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:1.15rem}
+    .field-select{border:1.5px solid var(--act-light-grey);border-radius:8px;padding:7px 12px;font-family:var(--act-font-heading);font-size:.85rem;color:var(--act-dark-blue);background:white;cursor:pointer}
+    .agenda-section{border:1px solid var(--act-light-grey);border-radius:10px;margin-bottom:10px;overflow:hidden}
+    .agenda-toggle{width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--act-soft);border:none;cursor:pointer;text-align:left;transition:background .12s}
+    .agenda-toggle:hover{background:#eef2fa}
+    .agenda-num{width:26px;height:26px;border-radius:50%;background:var(--act-dark-blue);color:white;display:grid;place-items:center;font-family:var(--act-font-heading);font-weight:700;font-size:.82rem;flex-shrink:0}
+    .agenda-title-text{font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:.93rem;flex:1}
+    .agenda-time{font-size:.78rem;color:var(--act-light-blue);font-family:var(--act-font-heading);font-weight:600}
+    .agenda-arrow{margin-left:8px;font-size:.8rem;color:#aaa;transition:transform .2s}
+    .agenda-toggle.open .agenda-arrow{transform:rotate(180deg)}
+    .agenda-content{display:none;padding:16px}
+    .agenda-content.open{display:block}
+    .item-list{list-style:none;margin:0 0 12px;padding:0}
+    .item-list li{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border:1px solid #f0f0f0;border-radius:8px;margin-bottom:6px;font-size:.88rem;font-family:var(--act-font-heading)}
+    .item-list li .item-text{flex:1;color:var(--act-dark-grey)}
+    .item-list li .item-meta{font-size:.75rem;color:#aaa;white-space:nowrap}
+    .item-del-btn{background:none;border:none;cursor:pointer;color:#ccc;font-size:1rem;padding:0 4px;line-height:1}
+    .item-del-btn:hover{color:#991b1b}
+    .item-add-row{display:flex;gap:8px}
+    .item-add-input{flex:1;border:1.5px solid var(--act-light-grey);border-radius:8px;padding:8px 12px;font-family:var(--act-font-body);font-size:.88rem;color:var(--act-dark-grey)}
+    .item-add-input:focus{outline:none;border-color:var(--act-light-blue)}
+    .meeting-timer-bar{display:flex;align-items:center;gap:12px;background:var(--act-soft);border-radius:8px;padding:10px 14px;margin-bottom:16px}
+    .timer-btn{font-family:var(--act-font-heading);font-weight:700;font-size:.85rem;padding:6px 14px;border-radius:6px;cursor:pointer;border:1.5px solid var(--act-light-blue);background:white;color:var(--act-dark-blue);transition:all .15s}
+    .timer-btn.running{border-color:#991b1b;color:#991b1b;background:#fff5f5}
+    .timer-elapsed{font-family:var(--act-font-heading);font-weight:700;font-size:1rem;color:var(--act-dark-blue);font-variant-numeric:tabular-nums}
+    .rating-btns{display:flex;gap:8px;flex-wrap:wrap}
+    .rating-btn{width:40px;height:40px;border-radius:8px;border:2px solid var(--act-light-grey);background:white;cursor:pointer;font-family:var(--act-font-heading);font-weight:700;font-size:.9rem;transition:all .15s}
+    .rating-btn.selected{background:var(--act-dark-blue);color:white;border-color:var(--act-dark-blue)}
+    .notes-textarea{width:100%;border:1.5px solid var(--act-light-grey);border-radius:8px;padding:10px 14px;font-family:var(--act-font-body);font-size:.88rem;resize:vertical;min-height:80px;box-sizing:border-box}
+    .notes-textarea:focus{outline:none;border-color:var(--act-light-blue)}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+    .modal-overlay.hidden{display:none}
+    .modal{background:white;border-radius:16px;padding:28px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+    .modal-title{font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:1.1rem}
+    .modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:#888;line-height:1;padding:0 4px}
+    .modal-field{margin-bottom:16px}
+    .modal-label{font-family:var(--act-font-heading);font-weight:600;color:var(--act-dark-blue);font-size:.88rem;margin-bottom:6px;display:block}
+    .modal-input,.modal-select{width:100%;border:1.5px solid var(--act-light-grey);border-radius:8px;padding:10px 14px;font-family:var(--act-font-body);font-size:.93rem;color:var(--act-dark-grey);background:white;box-sizing:border-box}
+    .modal-input:focus,.modal-select:focus{outline:none;border-color:var(--act-light-blue)}
+    .modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+    .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-family:var(--act-font-heading);font-weight:600;font-size:.88rem;z-index:2000;transition:opacity .3s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+    .toast-hidden{opacity:0;pointer-events:none}
+    .toast-success{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
+    .toast-error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+    .hidden{display:none!important}
+    .label-sm{font-family:var(--act-font-heading);font-weight:600;color:var(--act-dark-blue);font-size:.85rem;margin-bottom:8px;display:block}
+  </style>
+</head>
+<body class="activity-page">
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="./" class="header-back">&#x2190; Home</a>
+        <span class="header-title">Meeting</span>
+      </div>
+      <button class="sign-out-btn" id="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="act-container" style="max-width:1000px;">
+    <header class="act-header">
+      <h1>Weekly Meeting</h1>
+      <p>Structured weekly team meeting &#x2014; agenda, check-in, scorecard review, and IDS.</p>
+    </header>
+
+    <div class="page-controls">
+      <span class="act-step-hint" style="margin:0;">Select a meeting to view its agenda, or create a new one.</span>
+      <button class="act-btn act-btn-primary" id="new-meeting-btn">+ New Meeting</button>
+    </div>
+
+    <div class="meeting-layout">
+      <div>
+        <div class="meetings-sidebar">
+          <div class="sidebar-heading">Past Meetings</div>
+          <div id="meetings-list"><div style="padding:20px;color:#aaa;font-size:.85rem;font-family:var(--act-font-heading);">No meetings yet.</div></div>
+        </div>
+      </div>
+      <div id="meeting-detail">
+        <div class="meeting-detail meeting-empty" id="meeting-empty">Select a meeting or create a new one to get started.</div>
+        <div id="meeting-content" class="hidden"></div>
+      </div>
+    </div>
+
+    <footer class="act-footer" style="margin-top:32px;">
+      Strengths-Based Coaching and Counselling |
+      <a href="https://www.coach4u.com.au" target="_blank">coach4u.com.au</a>
+    </footer>
+  </div>
+
+  <div class="modal-overlay hidden" id="new-meeting-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">New Meeting</span>
+        <button class="modal-close" id="nm-modal-close">&times;</button>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Meeting Date *</label>
+        <input type="date" class="modal-input" id="nm-date"/>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Quarter</label>
+        <select class="modal-select" id="nm-quarter">
+          <option value="Q1 2026">Q1 2026</option>
+          <option value="Q2 2026" selected>Q2 2026</option>
+          <option value="Q3 2026">Q3 2026</option>
+          <option value="Q4 2026">Q4 2026</option>
+          <option value="Q1 2027">Q1 2027</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="act-btn act-btn-secondary" id="nm-modal-cancel">Cancel</button>
+        <button class="act-btn act-btn-primary" id="nm-modal-save">Create Meeting</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast toast-hidden" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+  'use strict';
+  const _sb=window.supabase.createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
+  document.getElementById('sign-out-btn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
+  let currentBusinessId=1,_meetings=[],_currentMeeting=null,_timerInterval=null,_timerStart=null;
+  function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
+  async function api(method,path,body){const opts={method,headers:{'Content-Type':'application/json'}};if(body!==undefined)opts.body=JSON.stringify(body);const res=await fetch('/api'+path,opts);if(!res.ok){const e=await res.json().catch(()=>({error:res.statusText}));throw new Error(e.error||res.statusText)}return res.json()}
+  const get=p=>api('GET',p),post=(p,b)=>api('POST',p,b),put=(p,b)=>api('PUT',p,b),del=p=>api('DELETE',p);
+  function fmtDate(d){if(!d)return '';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}
+  const STATUS_LABEL={scheduled:'Scheduled',in_progress:'In Progress',completed:'Completed'};
+  const STATUS_CLASS={scheduled:'sp-scheduled',in_progress:'sp-in_progress',completed:'sp-completed'};
+  async function loadMeetings(){
+    try{
+      _meetings=await get('/meetings?business_id='+currentBusinessId);
+      renderMeetingsList();
+      if(_meetings.length&&!_currentMeeting)await loadDetail(_meetings[0].id);
+    }catch(e){showToast('Could not load meetings','error')}
+  }
+  function renderMeetingsList(){
+    const list=document.getElementById('meetings-list');
+    if(!_meetings.length){list.innerHTML='<div style="padding:20px;color:#aaa;font-size:.85rem;font-family:var(--act-font-heading);">No meetings yet.</div>';return;}
+    list.innerHTML=_meetings.map(m=>`<div class="meeting-item ${_currentMeeting&&_currentMeeting.id===m.id?'active':''}" data-id="${m.id}"><div class="meeting-item-date">${fmtDate(m.meeting_date)}</div><div class="meeting-item-meta"><span class="status-pill ${STATUS_CLASS[m.status]||'sp-scheduled'}">${STATUS_LABEL[m.status]||m.status}</span>${m.quarter?escHtml(m.quarter):''}${m.rating?' &middot; '+m.rating+'/10':''}</div></div>`).join('');
+    list.querySelectorAll('.meeting-item').forEach(el=>el.addEventListener('click',()=>loadDetail(parseInt(el.dataset.id))));
+  }
+  async function loadDetail(id){
+    try{
+      const m=await get('/meetings/'+id);
+      _currentMeeting=m;renderMeetingsList();renderDetail(m);
+    }catch(e){showToast('Could not load meeting','error')}
+  }
+  function renderDetail(m){
+    document.getElementById('meeting-empty').classList.add('hidden');
+    const c=document.getElementById('meeting-content');c.classList.remove('hidden');
+    if(_timerInterval){clearInterval(_timerInterval);_timerInterval=null;_timerStart=null;}
+    c.innerHTML=`
+      <div class="meeting-detail">
+        <div class="meeting-detail-heading">
+          <div><div class="meeting-detail-title">&#x1F5D3; ${fmtDate(m.meeting_date)}</div></div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <select class="field-select" id="meeting-status">
+              <option value="scheduled" ${m.status==='scheduled'?'selected':''}>Scheduled</option>
+              <option value="in_progress" ${m.status==='in_progress'?'selected':''}>In Progress</option>
+              <option value="completed" ${m.status==='completed'?'selected':''}>Completed</option>
+            </select>
+          </div>
+        </div>
+        <div class="meeting-timer-bar">
+          <button class="timer-btn" id="timer-btn">&#x25B6; Start Meeting</button>
+          <span class="timer-elapsed hidden" id="timer-elapsed">0:00</span>
+          <span style="font-size:.8rem;color:#888;font-family:var(--act-font-heading);">L10 target: 90 min</span>
+        </div>
+        <div id="agenda-accordion">
+          ${agendaSection(1,'Segue &#x2014; Good News','5 min',renderSegue(m))}
+          ${agendaSection(2,'Scorecard Review','5 min','<p style="font-size:.88rem;color:#888;font-family:var(--act-font-heading);">Review your weekly metrics. <a href="scorecard.html" style="color:var(--act-light-blue);">Open Scorecard &#x2192;</a></p>')}
+          ${agendaSection(3,'Goal / Rock Review','5 min','<p style="font-size:.88rem;color:#888;font-family:var(--act-font-heading);">Review quarterly goals. <a href="goals.html" style="color:var(--act-light-blue);">Open Goals &#x2192;</a></p>')}
+          ${agendaSection(4,'Customer &amp; Employee Headlines','5 min',renderHeadlines(m))}
+          ${agendaSection(5,'To-Do List','5 min',renderTodos(m))}
+          ${agendaSection(6,'IDS &#x2014; Identify, Discuss, Solve','60 min','<p style="font-size:.88rem;color:#888;font-family:var(--act-font-heading);">Work through your issues list. <a href="issues.html" style="color:var(--act-light-blue);">Open Issues &#x2192;</a></p>')}
+          ${agendaSection(7,'Conclude &amp; Rate','5 min',renderConclude(m))}
+        </div>
+      </div>
+    `;
+    c.querySelector('#meeting-status').addEventListener('change',async e=>{
+      try{await put('/meetings/'+m.id,{...m,status:e.target.value});_currentMeeting.status=e.target.value;showToast('Status updated','success');renderMeetingsList()}
+      catch(err){showToast('Update failed','error')}
+    });
+    const timerBtn=c.querySelector('#timer-btn'),timerEl=c.querySelector('#timer-elapsed');
+    timerBtn.addEventListener('click',async()=>{
+      if(!_timerStart){
+        _timerStart=Date.now();timerEl.classList.remove('hidden');timerBtn.textContent='&#x23F9; End Meeting';timerBtn.classList.add('running');
+        _timerInterval=setInterval(()=>{const s=Math.floor((Date.now()-_timerStart)/1000);const mm=Math.floor(s/60),ss=s%60;timerEl.textContent=mm+':'+(ss<10?'0':'')+ss;},1000);
+        try{await put('/meetings/'+m.id,{...m,status:'in_progress'});c.querySelector('#meeting-status').value='in_progress';_currentMeeting.status='in_progress';renderMeetingsList()}catch(_){}
+      }else{
+        clearInterval(_timerInterval);_timerInterval=null;_timerStart=null;
+        timerEl.classList.add('hidden');timerBtn.textContent='&#x25B6; Start Meeting';timerBtn.classList.remove('running');
+        try{await put('/meetings/'+m.id,{...m,status:'completed'});c.querySelector('#meeting-status').value='completed';_currentMeeting.status='completed';renderMeetingsList()}catch(_){}
+      }
+    });
+    c.querySelectorAll('.agenda-toggle').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const content=btn.nextElementSibling;
+        const isOpen=content.classList.contains('open');
+        btn.classList.toggle('open',!isOpen);
+        content.classList.toggle('open',!isOpen);
+      });
+    });
+    wireHeadlines(m,c);wireTodos(m,c);wireConclude(m,c);
+  }
+  function agendaSection(num,title,time,content){
+    return `<div class="agenda-section"><button class="agenda-toggle"><div class="agenda-num">${num}</div><div class="agenda-title-text">${title}</div><span class="agenda-time">${time}</span><span class="agenda-arrow">&#x25BC;</span></button><div class="agenda-content">${content}</div></div>`;
+  }
+  function renderSegue(m){
+    return `<p style="font-size:.88rem;color:#666;font-family:var(--act-font-heading);">Start with 1 minute each: share a piece of good news &#x2014; personal or professional.</p>`;
+  }
+  function renderHeadlines(m){
+    const items=(m.headlines||[]);
+    return `<ul class="item-list" id="headlines-list">${items.length?items.map(h=>`<li><span class="item-text">${escHtml(h.description)}</span><span class="item-meta">${h.type==='good_news'?'&#x1F4A1;':'&#x26A0;'}</span><button class="item-del-btn" data-hid="${h.id}">&times;</button></li>`).join(''):'<li style="color:#aaa;font-style:italic;">No headlines yet.</li>'}</ul><div class="item-add-row"><select class="field-select" id="headline-type" style="flex-shrink:0;padding:7px 10px;"><option value="good_news">&#x1F4A1; Good News</option><option value="headline">&#x26A0; Headline</option></select><input type="text" class="item-add-input" id="headline-input" placeholder="Add a headline..."/><button class="act-btn act-btn-primary" id="add-headline-btn" style="padding:8px 14px;">Add</button></div>`;
+  }
+  function renderTodos(m){
+    const items=(m.todos||[]);
+    return `<ul class="item-list" id="todos-list">${items.length?items.map(t=>`<li><input type="checkbox" ${t.done?'checked':''} data-tid="${t.id}" style="flex-shrink:0;"/><span class="item-text" style="${t.done?'text-decoration:line-through;color:#aaa':''}">${escHtml(t.description)}</span><span class="item-meta">${t.owner?escHtml(t.owner):''}</span><button class="item-del-btn" data-tid="${t.id}">&times;</button></li>`).join(''):'<li style="color:#aaa;font-style:italic;">No todos yet.</li>'}</ul><div class="item-add-row"><input type="text" class="item-add-input" id="todo-input" placeholder="Add a to-do..."/><input type="text" class="item-add-input" id="todo-owner" placeholder="Owner" style="max-width:120px;"/><button class="act-btn act-btn-primary" id="add-todo-btn" style="padding:8px 14px;">Add</button></div>`;
+  }
+  function renderConclude(m){
+    return `<div style="margin-bottom:16px;"><span class="label-sm">Meeting Rating (1&#x2013;10)</span><div class="rating-btns">${[...Array(10)].map((_,i)=>`<button class="rating-btn ${m.rating===(i+1)?'selected':''}" data-rating="${i+1}">${i+1}</button>`).join('')}</div></div><div><span class="label-sm">Notes / Cascading Messages</span><textarea class="notes-textarea" id="meeting-notes" placeholder="Any action items or messages to cascade to the team...">${escHtml(m.notes||'')}</textarea><button class="act-btn act-btn-secondary" id="save-notes-btn" style="margin-top:8px;">Save Notes</button></div>`;
+  }
+  function wireHeadlines(m,c){
+    c.querySelector('#add-headline-btn')&&c.querySelector('#add-headline-btn').addEventListener('click',async()=>{
+      const desc=c.querySelector('#headline-input').value.trim();
+      const type=c.querySelector('#headline-type').value;
+      if(!desc)return;
+      try{await post('/meetings/'+m.id+'/headlines',{type,description:desc,business_id:currentBusinessId});showToast('Added','success');await loadDetail(m.id)}
+      catch(e){showToast('Failed','error')}
+    });
+    c.querySelectorAll('.item-del-btn[data-hid]').forEach(btn=>btn.addEventListener('click',async()=>{
+      try{await del('/meetings/headlines/'+btn.dataset.hid);await loadDetail(m.id)}catch(e){showToast('Failed','error')}
+    }));
+  }
+  function wireTodos(m,c){
+    c.querySelector('#add-todo-btn')&&c.querySelector('#add-todo-btn').addEventListener('click',async()=>{
+      const desc=c.querySelector('#todo-input').value.trim();
+      const owner=c.querySelector('#todo-owner').value.trim();
+      if(!desc)return;
+      try{await post('/meetings/'+m.id+'/todos',{description:desc,owner,done:false,business_id:currentBusinessId});showToast('Added','success');await loadDetail(m.id)}
+      catch(e){showToast('Failed','error')}
+    });
+    c.querySelectorAll('input[type=checkbox][data-tid]').forEach(cb=>cb.addEventListener('change',async()=>{
+      const todo=(m.todos||[]).find(t=>t.id===parseInt(cb.dataset.tid));
+      if(!todo)return;
+      try{await put('/meetings/todos/'+cb.dataset.tid,{...todo,done:cb.checked});}
+      catch(e){cb.checked=!cb.checked;showToast('Failed','error')}
+    }));
+    c.querySelectorAll('.item-del-btn[data-tid]').forEach(btn=>btn.addEventListener('click',async()=>{
+      try{await del('/meetings/todos/'+btn.dataset.tid);await loadDetail(m.id)}catch(e){showToast('Failed','error')}
+    }));
+  }
+  function wireConclude(m,c){
+    c.querySelectorAll('.rating-btn').forEach(btn=>btn.addEventListener('click',async()=>{
+      const rating=parseInt(btn.dataset.rating);
+      try{await put('/meetings/'+m.id,{...m,rating});_currentMeeting.rating=rating;c.querySelectorAll('.rating-btn').forEach(b=>b.classList.toggle('selected',parseInt(b.dataset.rating)===rating));showToast('Rating saved','success');renderMeetingsList()}
+      catch(e){showToast('Failed','error')}
+    }));
+    const notesBtn=c.querySelector('#save-notes-btn');
+    notesBtn&&notesBtn.addEventListener('click',async()=>{
+      const notes=c.querySelector('#meeting-notes').value;
+      try{await put('/meetings/'+m.id,{...m,notes});showToast('Notes saved','success')}
+      catch(e){showToast('Failed','error')}
+    });
+  }
+  document.getElementById('new-meeting-btn').addEventListener('click',()=>{
+    document.getElementById('nm-date').value=new Date().toISOString().slice(0,10);
+    document.getElementById('new-meeting-modal').classList.remove('hidden');
+  });
+  const closeNMModal=()=>document.getElementById('new-meeting-modal').classList.add('hidden');
+  document.getElementById('nm-modal-close').addEventListener('click',closeNMModal);
+  document.getElementById('nm-modal-cancel').addEventListener('click',closeNMModal);
+  document.getElementById('nm-modal-save').addEventListener('click',async()=>{
+    const meeting_date=document.getElementById('nm-date').value;
+    const quarter=document.getElementById('nm-quarter').value;
+    if(!meeting_date){showToast('Date is required','error');return}
+    try{
+      const m=await post('/meetings',{meeting_date,quarter,status:'scheduled',business_id:currentBusinessId});
+      showToast('Meeting created','success');closeNMModal();
+      await loadMeetings();
+      await loadDetail(m.id);
+    }catch(e){showToast('Create failed: '+e.message,'error')}
+  });
+  (async()=>{
+    const{data:{user}}=await _sb.auth.getUser();
+    if(!user){window.location.href='login.html';return}
+    try{
+      const businesses=await get('/businesses');
+      const biz=businesses.find(b=>b.type==='holding')||businesses[0];
+      if(biz)currentBusinessId=biz.id;
+      await loadMeetings();
+    }catch(e){console.error(e)}
+    document.body.style.opacity='1';
+  })();
+  </script>
+</body>
+</html>
