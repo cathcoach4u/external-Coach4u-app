@@ -111,13 +111,18 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.13
+v0.5.34
 
-## Recent Changes (v0.5.13)
-- Renamed `vision-strategy.html` page header from "Vision & Strategy" to "Core Focus"
-- Added section 7 "Targets" to `business/vision-strategy.html`
-- Added section 8 "Marketing" to `business/vision-strategy.html`
-- Updated TOTAL_STEPS from 6 to 8 and all step counters accordingly
+## Recent Changes (v0.5.34)
+- Redesigned `strategy.html` with two sections on same page
+- Section 1: "Build Your Strategy" — 2x2 activity cards (Core Values, Core Focus, Targets, Marketing Strategy) with description and teal border; "View One-Page Plan" scroll button
+- Section 2: "Your One-Page Business Plan" — clean document layout with placeholder data; print button; print CSS hides Section 1 for A4 output
+- Activity cards now link to `strategy/core-values.html`, `strategy/core-focus.html`, `strategy/targets.html`, `strategy/marketing-strategy.html`
+- Three groups: WHO WE ARE, WHERE WE ARE GOING, HOW WE GO TO MARKET
+- Auth wrapped in async init() function (no top-level return)
+
+## Previous (v0.5.33)
+- Redesign dashboard with placeholder sections: This Week, This Quarter, Core Focus, Business Pulse
 
 ## Previous (v0.5.12)
 - Removed `organisation.chart.html` (Accountability Chart) — moved to `yourteamcoach`
