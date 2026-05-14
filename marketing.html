@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Strategy | Your Business Coach</title>
+  <title>Marketing | Your Business Coach</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#003366">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -24,55 +24,68 @@
     .page-hero h1 { font-size: 1.4rem; font-weight: 800; margin: 0 0 6px; }
     .page-hero p  { font-size: 0.88rem; opacity: 0.85; margin: 0; line-height: 1.5; }
 
-    .section-heading {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: var(--text-muted);
-      margin: 20px 0 8px;
-    }
-
-    .modules-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 32px;
-    }
-
-    .module-card {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 11px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: #fafafa;
-      text-decoration: none;
-      transition: box-shadow 0.15s, border-color 0.15s, background 0.15s;
-    }
-    .module-card:hover {
+    .content-card {
       background: white;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      border-color: #ccc;
-      text-decoration: none;
+      border-radius: 10px;
+      border: 2px solid var(--accent);
+      padding: 20px;
+      margin-bottom: 16px;
     }
-    .mod-icon {
-      width: 30px; height: 30px; border-radius: 6px;
-      background: rgba(13,148,136,0.1);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px; flex-shrink: 0;
+    .content-card h2 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 0 0 12px;
     }
-    .mod-name { font-size: 12px; font-weight: 700; color: var(--primary); line-height: 1.3; flex: 1; }
-    .mod-arrow { font-size: 12px; color: #ccc; flex-shrink: 0; }
+    .content-card label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 6px;
+      margin-top: 14px;
+    }
+    .content-card label:first-of-type { margin-top: 0; }
+    .content-card textarea {
+      width: 100%;
+      min-height: 100px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      resize: vertical;
+      box-sizing: border-box;
+      color: #333;
+    }
+    .content-card textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(13,148,136,0.15);
+    }
+
+    .save-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 4px;
+      transition: background 0.15s;
+    }
+    .save-btn:hover { background: var(--accent-dark); }
   </style>
 </head>
 <body>
   <header class="site-header">
     <div class="header-inner">
       <div class="header-left">
-        <a href="index.html" class="header-back">&#x2190; Home</a>
-        <span class="header-title">Strategy</span>
+        <a href="strategy.html" class="header-back">&#x2190; Strategy</a>
+        <span class="header-title">Marketing</span>
       </div>
       <button id="signOutBtn" class="sign-out-btn">Sign Out</button>
     </div>
@@ -81,38 +94,21 @@
   <div class="container">
 
     <div class="page-hero">
-      <h1>Strategy</h1>
-      <p>Define where your business is going and how you&#x2019;ll get there.</p>
+      <h1>Marketing</h1>
+      <p>How you attract and retain your ideal clients.</p>
     </div>
 
-    <div class="section-heading">Strategy Tools</div>
-    <div class="modules-grid">
+    <div class="content-card">
+      <h2>Marketing Strategy</h2>
 
-      <a class="module-card" href="business/vision-strategy.html">
-        <div class="mod-icon">&#x25CE;</div>
-        <div class="mod-name">Core Focus</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
+      <label for="channels">Marketing channels &amp; approach</label>
+      <textarea id="channels" placeholder="Describe the channels and methods you use to reach your ideal clients..."></textarea>
 
-      <a class="module-card" href="values.html">
-        <div class="mod-icon">&#x2605;</div>
-        <div class="mod-name">Core Values</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
-
-      <a class="module-card" href="marketing.html">
-        <div class="mod-icon">&#x25C8;</div>
-        <div class="mod-name">Marketing</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
-
-      <a class="module-card" href="targeting.html">
-        <div class="mod-icon">&#x1F3AF;</div>
-        <div class="mod-name">Targeting</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
-
+      <label for="messages">Key messages</label>
+      <textarea id="messages" placeholder="What are the core messages that resonate with your target audience..."></textarea>
     </div>
+
+    <button class="save-btn" id="saveBtn">Save</button>
 
   </div>
 
@@ -141,6 +137,9 @@
         document.getElementById('signOutBtn').addEventListener('click', async () => {
           await supabase.auth.signOut();
           window.location.href = 'login.html';
+        });
+        document.getElementById('saveBtn').addEventListener('click', () => {
+          alert('Saved! (persistence coming soon)');
         });
       }
     }
