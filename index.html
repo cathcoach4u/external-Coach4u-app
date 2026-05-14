@@ -14,13 +14,6 @@
   <style>
     body { opacity: 0; transition: opacity 0.2s ease; }
 
-    .member-biz {
-      font-size: 11px;
-      color: rgba(255,255,255,0.65);
-      margin-top: 3px;
-      font-weight: 500;
-    }
-
     .section-heading {
       font-size: 11px;
       font-weight: 800;
@@ -113,7 +106,6 @@
   <div class="container">
     <div class="membership-card">
       <div class="member-name" id="memberName">&#x2014;</div>
-      <div class="member-biz" id="memberBiz"></div>
     </div>
 
     <div class="section-heading">Where would you like to work?</div>
@@ -201,78 +193,80 @@
       'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
     );
     const { data: { user }, error } = await supabase.auth.getUser();
-    if (!user || error) { window.location.href = 'login.html'; }
-    else {
-      // Only query columns guaranteed to exist
-      const { data: profile, error: profileErr } = await supabase
-        .from('users').select('membership_status, email').eq('id', user.id).single();
-      if (!profile || profileErr || profile.membership_status !== 'active') {
-        window.location.href = 'inactive.html';
-      } else {
-        // Show name from auth metadata, fall back to email
-        document.getElementById('memberName').textContent =
-          user.user_metadata?.full_name || user.user_metadata?.name || user.email;
-        document.body.style.opacity = '1';
-        document.getElementById('signOutBtn').addEventListener('click', async () => {
-          await supabase.auth.signOut();
-          window.location.href = 'login.html';
-        });
+    if (!user || error) { window.location.href = 'login.html'; return; }
 
-        // VTO data
-        try {
-          const { data: vto } = await supabase
-            .from('vto').select('core_focus, one_year_plan, core_values')
-            .eq('user_id', user.id).limit(1).single();
-          if (vto) {
-            if (vto.core_focus) { const el = document.getElementById('snapCoreFocus'); el.textContent = vto.core_focus; el.classList.remove('muted'); }
-            if (vto.one_year_plan) { const el = document.getElementById('snap1yr'); el.textContent = vto.one_year_plan; el.classList.remove('muted'); }
-            if (vto.core_values) { const el = document.getElementById('snapValues'); const vals = Array.isArray(vto.core_values) ? vto.core_values.slice(0,4).join(' · ') : vto.core_values; el.textContent = vals; el.classList.remove('muted'); }
-          }
-        } catch(e) {}
+    const { data: profile, error: profileErr } = await supabase
+      .from('users')
+      .select('membership_status')
+      .eq('id', user.id)
+      .single();
 
-        // Active goals count
-        try {
-          const { count } = await supabase
-            .from('rocks').select('id', { count: 'exact', head: true })
-            .eq('user_id', user.id).eq('status', 'on_track');
-          if (count !== null) document.getElementById('metricGoals').textContent = count;
-        } catch(e) {
-          try {
-            const { count } = await supabase
-              .from('goals').select('id', { count: 'exact', head: true })
-              .eq('user_id', user.id).eq('status', 'active');
-            if (count !== null) document.getElementById('metricGoals').textContent = count;
-          } catch(e2) {}
-        }
-
-        // Open issues count
-        try {
-          const { count } = await supabase
-            .from('issues').select('id', { count: 'exact', head: true })
-            .eq('user_id', user.id).eq('resolved', false);
-          if (count !== null) document.getElementById('metricIssues').textContent = count;
-        } catch(e) {}
-
-        // Next meeting
-        try {
-          const now = new Date().toISOString();
-          const { data: meetings } = await supabase
-            .from('meetings').select('meeting_date')
-            .eq('user_id', user.id).gte('meeting_date', now)
-            .order('meeting_date', { ascending: true }).limit(1);
-          if (meetings && meetings.length > 0) {
-            const d = new Date(meetings[0].meeting_date);
-            const diffDays = Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
-            const el = document.getElementById('metricMeeting');
-            if (diffDays === 0) { el.textContent = 'Today'; }
-            else if (diffDays === 1) { el.textContent = 'Tomorrow'; }
-            else if (diffDays <= 7) { el.textContent = diffDays + 'd'; }
-            else { el.textContent = d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }); }
-            el.classList.remove('muted');
-          }
-        } catch(e) {}
-      }
+    if (profileErr || !profile || profile.membership_status !== 'active') {
+      window.location.href = 'inactive.html';
+      return;
     }
+
+    document.getElementById('memberName').textContent = user.email;
+    document.body.style.opacity = '1';
+
+    document.getElementById('signOutBtn').addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      window.location.href = 'login.html';
+    });
+
+    // VTO data
+    try {
+      const { data: vto } = await supabase
+        .from('vto').select('core_focus, one_year_plan, core_values')
+        .eq('user_id', user.id).limit(1).single();
+      if (vto) {
+        if (vto.core_focus) { const el = document.getElementById('snapCoreFocus'); el.textContent = vto.core_focus; el.classList.remove('muted'); }
+        if (vto.one_year_plan) { const el = document.getElementById('snap1yr'); el.textContent = vto.one_year_plan; el.classList.remove('muted'); }
+        if (vto.core_values) { const el = document.getElementById('snapValues'); const vals = Array.isArray(vto.core_values) ? vto.core_values.slice(0,4).join(' · ') : vto.core_values; el.textContent = vals; el.classList.remove('muted'); }
+      }
+    } catch(e) {}
+
+    // Active goals count
+    try {
+      const { count } = await supabase
+        .from('rocks').select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id).eq('status', 'on_track');
+      if (count !== null) document.getElementById('metricGoals').textContent = count;
+    } catch(e) {
+      try {
+        const { count } = await supabase
+          .from('goals').select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id).eq('status', 'active');
+        if (count !== null) document.getElementById('metricGoals').textContent = count;
+      } catch(e2) {}
+    }
+
+    // Open issues count
+    try {
+      const { count } = await supabase
+        .from('issues').select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id).eq('resolved', false);
+      if (count !== null) document.getElementById('metricIssues').textContent = count;
+    } catch(e) {}
+
+    // Next meeting
+    try {
+      const now = new Date().toISOString();
+      const { data: meetings } = await supabase
+        .from('meetings').select('meeting_date')
+        .eq('user_id', user.id).gte('meeting_date', now)
+        .order('meeting_date', { ascending: true }).limit(1);
+      if (meetings && meetings.length > 0) {
+        const d = new Date(meetings[0].meeting_date);
+        const diffDays = Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
+        const el = document.getElementById('metricMeeting');
+        if (diffDays === 0) { el.textContent = 'Today'; }
+        else if (diffDays === 1) { el.textContent = 'Tomorrow'; }
+        else if (diffDays <= 7) { el.textContent = diffDays + 'd'; }
+        else { el.textContent = d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }); }
+        el.classList.remove('muted');
+      }
+    } catch(e) {}
   </script>
   <script>
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
