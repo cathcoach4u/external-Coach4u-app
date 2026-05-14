@@ -20,11 +20,11 @@
       border: 1px solid var(--border);
       overflow: hidden;
       box-shadow: var(--shadow-neutral);
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
     .snapshot-header {
       background: #0D9488;
-      padding: 14px 18px 12px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -43,20 +43,17 @@
       text-decoration: none;
     }
     .snapshot-link:hover { color: white; text-decoration: underline; }
-    .snapshot-body {
-      background: white;
-      padding: 14px;
-    }
+    .snapshot-body { background: white; padding: 12px; }
     .snapshot-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 8px;
     }
     .snap-item {
       background: #fafafa;
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 10px 12px;
+      padding: 9px 11px;
     }
     .snap-item.snap-wide { grid-column: 1 / -1; }
     .snap-key {
@@ -65,7 +62,7 @@
       text-transform: uppercase;
       letter-spacing: 0.8px;
       color: var(--text-muted);
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
     .snap-val {
       font-size: 12px;
@@ -75,108 +72,62 @@
     }
     .snap-val.muted { color: #bbb; font-style: italic; }
 
-    /* ── Pillar grid ── */
-    .pillars-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    /* ── Module grid ── */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
       margin-bottom: 32px;
     }
 
-    .pillar {
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      overflow: hidden;
-      box-shadow: var(--shadow-neutral);
-    }
-
-    .pillar-header {
-      padding: 14px 18px 12px;
+    .module-card {
       display: flex;
       align-items: center;
-    }
-    .pillar-label {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: white;
-    }
-
-    .pillar-strategic .pillar-header  { background: #0D9488; }
-    .pillar-operations .pillar-header { background: #0F766E; }
-    .pillar-leadership .pillar-header { background: #115E59; }
-    .pillar-financial  .pillar-header { background: #134E4A; }
-
-    .pillar-body {
-      padding: 14px;
-      background: white;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .tool-card {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 13px;
+      gap: 10px;
+      padding: 10px 11px;
       border-radius: 8px;
       border: 1px solid var(--border);
       background: #fafafa;
-      cursor: pointer;
-      transition: box-shadow 0.15s, border-color 0.15s, background 0.15s;
       text-decoration: none;
+      transition: box-shadow 0.15s, border-color 0.15s, background 0.15s;
     }
-    .tool-card:hover {
+    .module-card:hover {
       background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
       border-color: #ccc;
       text-decoration: none;
     }
-    .tool-card.coming-soon {
+    .module-card.coming-soon {
       cursor: default;
       pointer-events: none;
+      opacity: 0.55;
     }
 
-    .tool-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
+    .mod-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
       background: rgba(13,148,136,0.1);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 15px;
       flex-shrink: 0;
     }
 
-    .tool-info { flex: 1; min-width: 0; }
-    .tool-name {
-      font-size: 13px;
+    .mod-name {
+      font-size: 12px;
       font-weight: 700;
       color: var(--primary);
       line-height: 1.3;
+      flex: 1;
+      min-width: 0;
     }
-    .tool-name.muted { color: #aaa; }
-    .tool-desc {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 1px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    .mod-name.muted { color: #aaa; }
 
-    .tool-arrow {
-      font-size: 13px;
-      color: #bbb;
-      flex-shrink: 0;
-    }
-    .tool-soon {
-      font-size: 10px;
-      font-weight: 600;
-      color: #bbb;
+    .mod-arrow {
+      font-size: 12px;
+      color: #ccc;
       flex-shrink: 0;
     }
   </style>
@@ -221,114 +172,61 @@
       </div>
     </div>
 
-    <div class="pillars-grid">
+    <!-- MODULES -->
+    <div class="modules-grid">
 
-      <!-- STRATEGIC -->
-      <div class="pillar pillar-strategic">
-        <div class="pillar-header">
-          <span class="pillar-label">Strategic</span>
-        </div>
-        <div class="pillar-body">
-          <a class="tool-card" href="vision-strategy.html">
-            <div class="tool-icon">&#x2B50;</div>
-            <div class="tool-info">
-              <div class="tool-name">Vision &amp; Strategy</div>
-              <div class="tool-desc">10-year target, 3-year picture, 1-year plan</div>
-            </div>
-            <span class="tool-arrow">&#x203A;</span>
-          </a>
-          <a class="tool-card" href="values.html">
-            <div class="tool-icon">&#x1F4A1;</div>
-            <div class="tool-info">
-              <div class="tool-name">Core Values</div>
-              <div class="tool-desc">Non-negotiables that guide every decision</div>
-            </div>
-            <span class="tool-arrow">&#x203A;</span>
-          </a>
-        </div>
-      </div>
+      <a class="module-card" href="vision-strategy.html">
+        <div class="mod-icon">&#x2B50;</div>
+        <div class="mod-name">Vision &amp; Strategy</div>
+        <span class="mod-arrow">&#x203A;</span>
+      </a>
 
-      <!-- OPERATIONS -->
-      <div class="pillar pillar-operations">
-        <div class="pillar-header">
-          <span class="pillar-label">Operations</span>
-        </div>
-        <div class="pillar-body">
-          <a class="tool-card" href="goals.html">
-            <div class="tool-icon">&#x1F3AF;</div>
-            <div class="tool-info">
-              <div class="tool-name">Goals</div>
-              <div class="tool-desc">Quarterly priorities &mdash; 3&ndash;7 focus areas</div>
-            </div>
-            <span class="tool-arrow">&#x203A;</span>
-          </a>
-          <a class="tool-card" href="scorecard.html">
-            <div class="tool-icon">&#x1F4CA;</div>
-            <div class="tool-info">
-              <div class="tool-name">Scorecard</div>
-              <div class="tool-desc">Weekly measurables &amp; leading indicators</div>
-            </div>
-            <span class="tool-arrow">&#x203A;</span>
-          </a>
-          <a class="tool-card" href="meeting.html">
-            <div class="tool-icon">&#x1F5D3;&#xFE0F;</div>
-            <div class="tool-info">
-              <div class="tool-name">Meeting</div>
-              <div class="tool-desc">Structured weekly leadership meeting</div>
-            </div>
-            <span class="tool-arrow">&#x203A;</span>
-          </a>
-          <a class="tool-card" href="issues.html">
-            <div class="tool-icon">&#x26A1;</div>
-            <div class="tool-info">
-              <div class="tool-name">Issues</div>
-              <div class="tool-desc">Capture and work through business obstacles</div>
-            </div>
-            <span class="tool-arrow">&#x203A;</span>
-          </a>
-        </div>
-      </div>
+      <a class="module-card" href="values.html">
+        <div class="mod-icon">&#x1F4A1;</div>
+        <div class="mod-name">Core Values</div>
+        <span class="mod-arrow">&#x203A;</span>
+      </a>
 
-      <!-- LEADERSHIP -->
-      <div class="pillar pillar-leadership">
-        <div class="pillar-header">
-          <span class="pillar-label">Leadership</span>
-        </div>
-        <div class="pillar-body">
-          <a class="tool-card" href="organisation.chart.html">
-            <div class="tool-icon">&#x1F4CB;</div>
-            <div class="tool-info">
-              <div class="tool-name">Accountability Chart</div>
-              <div class="tool-desc">Who is in each seat &amp; accountable for what</div>
-            </div>
-            <span class="tool-arrow">&#x203A;</span>
-          </a>
-          <a class="tool-card" href="team-alignment.html">
-            <div class="tool-icon">&#x1F465;</div>
-            <div class="tool-info">
-              <div class="tool-name">Team Alignment</div>
-              <div class="tool-desc">Are your people in the right roles</div>
-            </div>
-            <span class="tool-arrow">&#x203A;</span>
-          </a>
-        </div>
-      </div>
+      <a class="module-card" href="goals.html">
+        <div class="mod-icon">&#x1F3AF;</div>
+        <div class="mod-name">Goals</div>
+        <span class="mod-arrow">&#x203A;</span>
+      </a>
 
-      <!-- FINANCIAL -->
-      <div class="pillar pillar-financial">
-        <div class="pillar-header">
-          <span class="pillar-label">Financial</span>
-        </div>
-        <div class="pillar-body">
-          <div class="tool-card coming-soon">
-            <div class="tool-icon">&#x1F4B0;</div>
-            <div class="tool-info">
-              <div class="tool-name muted">Financial Overview</div>
-              <div class="tool-desc">Track revenue, profit and cash flow against your goals</div>
-            </div>
-            <span class="tool-soon">Coming soon</span>
-          </div>
-        </div>
+      <a class="module-card" href="scorecard.html">
+        <div class="mod-icon">&#x1F4CA;</div>
+        <div class="mod-name">Scorecard</div>
+        <span class="mod-arrow">&#x203A;</span>
+      </a>
+
+      <a class="module-card" href="meeting.html">
+        <div class="mod-icon">&#x1F5D3;&#xFE0F;</div>
+        <div class="mod-name">Meeting</div>
+        <span class="mod-arrow">&#x203A;</span>
+      </a>
+
+      <a class="module-card" href="issues.html">
+        <div class="mod-icon">&#x26A1;</div>
+        <div class="mod-name">Issues</div>
+        <span class="mod-arrow">&#x203A;</span>
+      </a>
+
+      <a class="module-card" href="organisation.chart.html">
+        <div class="mod-icon">&#x1F4CB;</div>
+        <div class="mod-name">Accountability Chart</div>
+        <span class="mod-arrow">&#x203A;</span>
+      </a>
+
+      <a class="module-card" href="team-alignment.html">
+        <div class="mod-icon">&#x1F465;</div>
+        <div class="mod-name">Team Alignment</div>
+        <span class="mod-arrow">&#x203A;</span>
+      </a>
+
+      <div class="module-card coming-soon">
+        <div class="mod-icon">&#x1F4B0;</div>
+        <div class="mod-name muted">Financial Overview</div>
+        <span class="mod-arrow" style="font-size:10px;color:#ccc;">Soon</span>
       </div>
 
     </div>
