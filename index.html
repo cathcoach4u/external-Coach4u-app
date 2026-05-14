@@ -15,12 +15,11 @@
     body { opacity: 0; transition: opacity 0.2s ease; }
 
     .pillars-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 20px;
       margin-bottom: 32px;
     }
-    @media (max-width: 720px) { .pillars-grid { grid-template-columns: 1fr; } }
 
     .pillar {
       border-radius: 12px;
@@ -33,7 +32,6 @@
       padding: 14px 18px 12px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
     }
     .pillar-label {
       font-size: 11px;
@@ -42,16 +40,11 @@
       letter-spacing: 1.2px;
       color: white;
     }
-    .pillar-count {
-      font-size: 11px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.75);
-    }
 
-    /* Teal colour family — dark to mid to light */
-    .pillar-strategic .pillar-header  { background: #0D9488; } /* base teal */
-    .pillar-operations .pillar-header { background: #0F766E; } /* teal-dark */
-    .pillar-leadership .pillar-header { background: #115E59; } /* teal-deepest */
+    .pillar-strategic .pillar-header  { background: #0D9488; }
+    .pillar-operations .pillar-header { background: #0F766E; }
+    .pillar-leadership .pillar-header { background: #115E59; }
+    .pillar-financial  .pillar-header { background: #134E4A; }
 
     .pillar-body {
       padding: 14px;
@@ -79,6 +72,10 @@
       border-color: #ccc;
       text-decoration: none;
     }
+    .tool-card.coming-soon {
+      cursor: default;
+      pointer-events: none;
+    }
 
     .tool-icon {
       width: 36px;
@@ -99,6 +96,7 @@
       color: var(--primary);
       line-height: 1.3;
     }
+    .tool-name.muted { color: #aaa; }
     .tool-desc {
       font-size: 11px;
       color: var(--text-muted);
@@ -110,6 +108,12 @@
 
     .tool-arrow {
       font-size: 13px;
+      color: #bbb;
+      flex-shrink: 0;
+    }
+    .tool-soon {
+      font-size: 10px;
+      font-weight: 600;
       color: #bbb;
       flex-shrink: 0;
     }
@@ -137,7 +141,6 @@
       <div class="pillar pillar-strategic">
         <div class="pillar-header">
           <span class="pillar-label">Strategic</span>
-          <span class="pillar-count">2 tools</span>
         </div>
         <div class="pillar-body">
           <a class="tool-card" href="vision-strategy.html">
@@ -163,7 +166,6 @@
       <div class="pillar pillar-operations">
         <div class="pillar-header">
           <span class="pillar-label">Operations</span>
-          <span class="pillar-count">4 tools</span>
         </div>
         <div class="pillar-body">
           <a class="tool-card" href="goals.html">
@@ -186,7 +188,7 @@
             <div class="tool-icon">&#x1F5D3;&#xFE0F;</div>
             <div class="tool-info">
               <div class="tool-name">Meeting</div>
-              <div class="tool-desc">Structured L10 weekly team meeting</div>
+              <div class="tool-desc">Structured weekly leadership meeting</div>
             </div>
             <span class="tool-arrow">&#x203A;</span>
           </a>
@@ -194,7 +196,7 @@
             <div class="tool-icon">&#x26A1;</div>
             <div class="tool-info">
               <div class="tool-name">Issues</div>
-              <div class="tool-desc">Identify, Discuss, Solve obstacles</div>
+              <div class="tool-desc">Capture and work through business obstacles</div>
             </div>
             <span class="tool-arrow">&#x203A;</span>
           </a>
@@ -205,7 +207,6 @@
       <div class="pillar pillar-leadership">
         <div class="pillar-header">
           <span class="pillar-label">Leadership</span>
-          <span class="pillar-count">2 tools</span>
         </div>
         <div class="pillar-body">
           <a class="tool-card" href="organisation.chart.html">
@@ -220,10 +221,27 @@
             <div class="tool-icon">&#x1F465;</div>
             <div class="tool-info">
               <div class="tool-name">Team Alignment</div>
-              <div class="tool-desc">Right Person, Right Seat &mdash; GWC evaluation</div>
+              <div class="tool-desc">Are your people in the right roles</div>
             </div>
             <span class="tool-arrow">&#x203A;</span>
           </a>
+        </div>
+      </div>
+
+      <!-- FINANCIAL -->
+      <div class="pillar pillar-financial">
+        <div class="pillar-header">
+          <span class="pillar-label">Financial</span>
+        </div>
+        <div class="pillar-body">
+          <div class="tool-card coming-soon">
+            <div class="tool-icon">&#x1F4B0;</div>
+            <div class="tool-info">
+              <div class="tool-name muted">Financial Overview</div>
+              <div class="tool-desc">Track revenue, profit and cash flow against your goals</div>
+            </div>
+            <span class="tool-soon">Coming soon</span>
+          </div>
         </div>
       </div>
 
