@@ -11,7 +11,126 @@
   <meta name="apple-mobile-web-app-title" content="Your Business Coach">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css" />
-  <style>body { opacity: 0; transition: opacity 0.2s ease; }</style>
+  <style>
+    body { opacity: 0; transition: opacity 0.2s ease; }
+
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 720px) { .pillars-grid { grid-template-columns: 1fr; } }
+
+    .pillar {
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-neutral);
+    }
+
+    .pillar-header {
+      padding: 14px 18px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .pillar-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: white;
+    }
+    .pillar-count {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .pillar-strategic .pillar-header { background: #003366; }
+    .pillar-operations .pillar-header { background: #0D9488; }
+    .pillar-leadership .pillar-header { background: #7851A9; }
+    .pillar-financial  .pillar-header { background: #B45309; }
+
+    .pillar-body {
+      padding: 14px;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tool-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 13px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fafafa;
+      cursor: pointer;
+      transition: box-shadow 0.15s, border-color 0.15s, background 0.15s;
+      text-decoration: none;
+    }
+    .tool-card:hover {
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+      border-color: #ccc;
+      text-decoration: none;
+    }
+    .tool-card.coming-soon {
+      opacity: 0.55;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .tool-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(13,148,136,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .pillar-leadership .tool-icon { background: rgba(120,81,169,0.1); }
+    .pillar-financial  .tool-icon { background: rgba(180,83,9,0.1); }
+    .pillar-strategic  .tool-icon { background: rgba(0,51,102,0.08); }
+
+    .tool-info { flex: 1; min-width: 0; }
+    .tool-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.3;
+    }
+    .tool-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tool-arrow {
+      font-size: 13px;
+      color: #bbb;
+      flex-shrink: 0;
+    }
+    .tool-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 20px;
+      background: #fef3c7;
+      color: #92400e;
+      flex-shrink: 0;
+    }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -29,60 +148,136 @@
       <div class="member-name" id="memberName">&#x2014;</div>
     </div>
 
-    <div class="app-section-header">
-      <span class="app-section-title">Your Tools</span>
-      <span class="app-section-count">8 available</span>
-    </div>
+    <div class="pillars-grid">
 
-    <div class="app-grid">
-      <div class="app-card" onclick="window.location.href='vision-strategy.html'" style="cursor:pointer;">
-        <div class="app-card-icon">&#x2B50;</div>
-        <div class="app-card-title">Vision &amp; Strategy</div>
-        <div class="app-card-desc">One-page strategic plan &#x2014; core values, 10-year target, 3-year picture, and 1-year plan.</div>
-        <button class="btn btn-primary" style="margin-top:auto;">Open</button>
+      <!-- STRATEGIC -->
+      <div class="pillar pillar-strategic">
+        <div class="pillar-header">
+          <span class="pillar-label">Strategic</span>
+          <span class="pillar-count">2 tools</span>
+        </div>
+        <div class="pillar-body">
+          <a class="tool-card" href="vision-strategy.html">
+            <div class="tool-icon">&#x2B50;</div>
+            <div class="tool-info">
+              <div class="tool-name">Vision &amp; Strategy</div>
+              <div class="tool-desc">10-year target, 3-year picture, 1-year plan</div>
+            </div>
+            <span class="tool-arrow">&#x203A;</span>
+          </a>
+          <a class="tool-card" href="values.html">
+            <div class="tool-icon">&#x1F4A1;</div>
+            <div class="tool-info">
+              <div class="tool-name">Core Values</div>
+              <div class="tool-desc">Non-negotiables that guide every decision</div>
+            </div>
+            <span class="tool-arrow">&#x203A;</span>
+          </a>
+        </div>
       </div>
-      <div class="app-card" onclick="window.location.href='values.html'" style="cursor:pointer;">
-        <div class="app-card-icon">&#x1F4A1;</div>
-        <div class="app-card-title">Core Values</div>
-        <div class="app-card-desc">Identify, define, and bring your values to life &#x2014; the non-negotiables that guide every hire and decision.</div>
-        <button class="btn btn-primary" style="margin-top:auto;">Open</button>
+
+      <!-- OPERATIONS -->
+      <div class="pillar pillar-operations">
+        <div class="pillar-header">
+          <span class="pillar-label">Operations</span>
+          <span class="pillar-count">4 tools</span>
+        </div>
+        <div class="pillar-body">
+          <a class="tool-card" href="goals.html">
+            <div class="tool-icon">&#x1F3AF;</div>
+            <div class="tool-info">
+              <div class="tool-name">Goals</div>
+              <div class="tool-desc">Quarterly priorities &mdash; 3&ndash;7 focus areas</div>
+            </div>
+            <span class="tool-arrow">&#x203A;</span>
+          </a>
+          <a class="tool-card" href="scorecard.html">
+            <div class="tool-icon">&#x1F4CA;</div>
+            <div class="tool-info">
+              <div class="tool-name">Scorecard</div>
+              <div class="tool-desc">Weekly measurables &amp; leading indicators</div>
+            </div>
+            <span class="tool-arrow">&#x203A;</span>
+          </a>
+          <a class="tool-card" href="meeting.html">
+            <div class="tool-icon">&#x1F5D3;&#xFE0F;</div>
+            <div class="tool-info">
+              <div class="tool-name">Meeting</div>
+              <div class="tool-desc">Structured L10 weekly team meeting</div>
+            </div>
+            <span class="tool-arrow">&#x203A;</span>
+          </a>
+          <a class="tool-card" href="issues.html">
+            <div class="tool-icon">&#x26A1;</div>
+            <div class="tool-info">
+              <div class="tool-name">Issues</div>
+              <div class="tool-desc">Identify, Discuss, Solve obstacles</div>
+            </div>
+            <span class="tool-arrow">&#x203A;</span>
+          </a>
+        </div>
       </div>
-      <div class="app-card" onclick="window.location.href='goals.html'" style="cursor:pointer;">
-        <div class="app-card-icon">&#x1F3AF;</div>
-        <div class="app-card-title">Goals</div>
-        <div class="app-card-desc">Quarterly priorities &#x2014; your 3&#x2013;7 most important focus areas this quarter.</div>
-        <button class="btn btn-primary" style="margin-top:auto;">Open</button>
+
+      <!-- LEADERSHIP -->
+      <div class="pillar pillar-leadership">
+        <div class="pillar-header">
+          <span class="pillar-label">Leadership</span>
+          <span class="pillar-count">2 tools</span>
+        </div>
+        <div class="pillar-body">
+          <a class="tool-card" href="organisation.chart.html">
+            <div class="tool-icon">&#x1F4CB;</div>
+            <div class="tool-info">
+              <div class="tool-name">Accountability Chart</div>
+              <div class="tool-desc">Who is in each seat &amp; accountable for what</div>
+            </div>
+            <span class="tool-arrow">&#x203A;</span>
+          </a>
+          <a class="tool-card" href="team-alignment.html">
+            <div class="tool-icon">&#x1F465;</div>
+            <div class="tool-info">
+              <div class="tool-name">Team Alignment</div>
+              <div class="tool-desc">Right Person, Right Seat &mdash; GWC evaluation</div>
+            </div>
+            <span class="tool-arrow">&#x203A;</span>
+          </a>
+        </div>
       </div>
-      <div class="app-card" onclick="window.location.href='organisation.chart.html'" style="cursor:pointer;">
-        <div class="app-card-icon">&#x1F4CB;</div>
-        <div class="app-card-title">Accountability Chart</div>
-        <div class="app-card-desc">Organisational structure &#x2014; who is in each seat and accountable for what.</div>
-        <button class="btn btn-primary" style="margin-top:auto;">Open</button>
+
+      <!-- FINANCIAL -->
+      <div class="pillar pillar-financial">
+        <div class="pillar-header">
+          <span class="pillar-label">Financial</span>
+          <span class="pillar-count">Coming soon</span>
+        </div>
+        <div class="pillar-body">
+          <div class="tool-card coming-soon">
+            <div class="tool-icon">&#x1F4B0;</div>
+            <div class="tool-info">
+              <div class="tool-name">Revenue Tracking</div>
+              <div class="tool-desc">Monthly revenue vs target</div>
+            </div>
+            <span class="tool-badge">Soon</span>
+          </div>
+          <div class="tool-card coming-soon">
+            <div class="tool-icon">&#x1F3AF;</div>
+            <div class="tool-info">
+              <div class="tool-name">Financial Goals</div>
+              <div class="tool-desc">Revenue, profit &amp; growth targets</div>
+            </div>
+            <span class="tool-badge">Soon</span>
+          </div>
+          <div class="tool-card coming-soon">
+            <div class="tool-icon">&#x1F4B5;</div>
+            <div class="tool-info">
+              <div class="tool-name">Cash Flow Check-in</div>
+              <div class="tool-desc">Weekly cash position &amp; runway</div>
+            </div>
+            <span class="tool-badge">Soon</span>
+          </div>
+        </div>
       </div>
-      <div class="app-card" onclick="window.location.href='scorecard.html'" style="cursor:pointer;">
-        <div class="app-card-icon">&#x1F4CA;</div>
-        <div class="app-card-title">Scorecard</div>
-        <div class="app-card-desc">Weekly measurables &#x2014; your company&#x2019;s pulse with leading indicators and targets.</div>
-        <button class="btn btn-primary" style="margin-top:auto;">Open</button>
-      </div>
-      <div class="app-card" onclick="window.location.href='meeting.html'" style="cursor:pointer;">
-        <div class="app-card-icon">&#x1F5D3;&#xFE0F;</div>
-        <div class="app-card-title">Meeting</div>
-        <div class="app-card-desc">Structured weekly team meeting &#x2014; agenda, check-in, scorecard review, and IDS.</div>
-        <button class="btn btn-primary" style="margin-top:auto;">Open</button>
-      </div>
-      <div class="app-card" onclick="window.location.href='issues.html'" style="cursor:pointer;">
-        <div class="app-card-icon">&#x26A1;</div>
-        <div class="app-card-title">Issues</div>
-        <div class="app-card-desc">Identify, Discuss, Solve &#x2014; capture and work through your company&#x2019;s obstacles.</div>
-        <button class="btn btn-primary" style="margin-top:auto;">Open</button>
-      </div>
-      <div class="app-card" onclick="window.location.href='team-alignment.html'" style="cursor:pointer;">
-        <div class="app-card-icon">&#x1F465;</div>
-        <div class="app-card-title">Team Alignment</div>
-        <div class="app-card-desc">Right Person, Right Seat &#x2014; quarterly evaluation of core values and GWC fit.</div>
-        <button class="btn btn-primary" style="margin-top:auto;">Open</button>
-      </div>
+
     </div>
   </div>
 
