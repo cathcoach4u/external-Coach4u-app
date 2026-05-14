@@ -203,26 +203,20 @@
     const { data: { user }, error } = await supabase.auth.getUser();
     if (!user || error) { window.location.href = 'login.html'; }
     else {
-      // Critical check — only safe known columns
-      const { data: profile } = await supabase
-        .from('users').select('membership_status, name').eq('id', user.id).single();
-      if (!profile || profile.membership_status !== 'active') {
+      // Only query columns guaranteed to exist
+      const { data: profile, error: profileErr } = await supabase
+        .from('users').select('membership_status, email').eq('id', user.id).single();
+      if (!profile || profileErr || profile.membership_status !== 'active') {
         window.location.href = 'inactive.html';
       } else {
+        // Show name from auth metadata, fall back to email
         document.getElementById('memberName').textContent =
-          profile.name || user.user_metadata?.name || user.email;
+          user.user_metadata?.full_name || user.user_metadata?.name || user.email;
         document.body.style.opacity = '1';
         document.getElementById('signOutBtn').addEventListener('click', async () => {
           await supabase.auth.signOut();
           window.location.href = 'login.html';
         });
-
-        // Optional: business name (safe, won't break auth)
-        try {
-          const { data: biz } = await supabase
-            .from('users').select('business_name').eq('id', user.id).single();
-          if (biz?.business_name) document.getElementById('memberBiz').textContent = biz.business_name;
-        } catch(e) {}
 
         // VTO data
         try {
