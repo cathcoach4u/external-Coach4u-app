@@ -118,7 +118,8 @@ v0.5.35
 - 3-column layout: Who We Are / Where We Are Going / How We Go to Market
 - Navy header bar, teal column headings, compact typography for single-page fit
 - Print CSS uses `@page { size: A4 landscape; }` to force correct orientation
-- "View One-Page Plan" button on strategy.html now links to this page
+- “View One-Page Plan” button on strategy.html now links to this page
+- strategy.html simplified — Section 2 (inline plan) removed, now just activity cards + link
 
 ## Previous (v0.5.34)
 - Redesigned `strategy.html` with two sections on same page
