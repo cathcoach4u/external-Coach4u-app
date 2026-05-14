@@ -14,6 +14,68 @@
   <style>
     body { opacity: 0; transition: opacity 0.2s ease; }
 
+    /* ── Snapshot card ── */
+    .snapshot-card {
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-neutral);
+      margin-bottom: 20px;
+    }
+    .snapshot-header {
+      background: #0D9488;
+      padding: 14px 18px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .snapshot-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: white;
+    }
+    .snapshot-link {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+    }
+    .snapshot-link:hover { color: white; text-decoration: underline; }
+    .snapshot-body {
+      background: white;
+      padding: 14px;
+    }
+    .snapshot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .snap-item {
+      background: #fafafa;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .snap-item.snap-wide { grid-column: 1 / -1; }
+    .snap-key {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .snap-val {
+      font-size: 12px;
+      color: var(--primary);
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .snap-val.muted { color: #bbb; font-style: italic; }
+
+    /* ── Pillar grid ── */
     .pillars-grid {
       display: flex;
       flex-direction: column;
@@ -133,6 +195,30 @@
   <div class="container">
     <div class="membership-card">
       <div class="member-name" id="memberName">&#x2014;</div>
+    </div>
+
+    <!-- BUSINESS SNAPSHOT -->
+    <div class="snapshot-card">
+      <div class="snapshot-header">
+        <span class="snapshot-label">Business Snapshot</span>
+        <a class="snapshot-link" href="business/index.html">Full Dashboard &#x203A;</a>
+      </div>
+      <div class="snapshot-body">
+        <div class="snapshot-grid">
+          <div class="snap-item">
+            <div class="snap-key">10-Year Target</div>
+            <div class="snap-val muted" id="snap10yr">Not set</div>
+          </div>
+          <div class="snap-item">
+            <div class="snap-key">1-Year Plan</div>
+            <div class="snap-val muted" id="snap1yr">Not set</div>
+          </div>
+          <div class="snap-item snap-wide">
+            <div class="snap-key">Core Values</div>
+            <div class="snap-val muted" id="snapValues">Not set</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="pillars-grid">
@@ -261,6 +347,7 @@
       'https://eekefsuaefgpqmjdyniy.supabase.co',
       'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
     );
+
     const { data: { user }, error } = await supabase.auth.getUser();
     if (!user || error) { window.location.href = 'login.html'; }
     else {
@@ -276,6 +363,36 @@
           await supabase.auth.signOut();
           window.location.href = 'login.html';
         });
+
+        // Load Business Snapshot
+        try {
+          const { data: vto } = await supabase
+            .from('vto')
+            .select('ten_year_target, one_year_plan, core_values')
+            .eq('user_id', user.id)
+            .limit(1)
+            .single();
+          if (vto) {
+            if (vto.ten_year_target) {
+              const el = document.getElementById('snap10yr');
+              el.textContent = vto.ten_year_target;
+              el.classList.remove('muted');
+            }
+            if (vto.one_year_plan) {
+              const el = document.getElementById('snap1yr');
+              el.textContent = vto.one_year_plan;
+              el.classList.remove('muted');
+            }
+            if (vto.core_values) {
+              const el = document.getElementById('snapValues');
+              const vals = Array.isArray(vto.core_values)
+                ? vto.core_values.slice(0, 5).join(' · ')
+                : vto.core_values;
+              el.textContent = vals;
+              el.classList.remove('muted');
+            }
+          }
+        } catch (e) { /* silent — snapshot fields stay as "Not set" */ }
       }
     }
   </script>
