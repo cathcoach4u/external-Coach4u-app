@@ -14,7 +14,6 @@
   <style>
     body { opacity: 0; transition: opacity 0.2s ease; }
 
-    /* ── Snapshot card ── */
     .snapshot-card {
       border-radius: 12px;
       border: 1px solid var(--border);
@@ -72,12 +71,22 @@
     }
     .snap-val.muted { color: #bbb; font-style: italic; }
 
+    /* ── Section heading ── */
+    .section-heading {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-muted);
+      margin: 20px 0 8px;
+    }
+
     /* ── Module grid ── */
     .modules-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-      margin-bottom: 32px;
+      margin-bottom: 16px;
     }
 
     .module-card {
@@ -172,52 +181,24 @@
       </div>
     </div>
 
-    <!-- MODULES -->
+    <!-- STRATEGY & OPERATIONS -->
+    <div class="section-heading">Where would you like to work?</div>
     <div class="modules-grid">
 
-      <a class="module-card" href="vision-strategy.html">
-        <div class="mod-icon">&#x2B50;</div>
-        <div class="mod-name">Vision &amp; Strategy</div>
+      <a class="module-card" href="strategy.html">
+        <div class="mod-icon">&#x1F9ED;</div>
+        <div class="mod-name">Strategy</div>
         <span class="mod-arrow">&#x203A;</span>
       </a>
 
-      <a class="module-card" href="values.html">
-        <div class="mod-icon">&#x1F4A1;</div>
-        <div class="mod-name">Core Values</div>
+      <a class="module-card" href="operations.html">
+        <div class="mod-icon">&#x2699;&#xFE0F;</div>
+        <div class="mod-name">Operations</div>
         <span class="mod-arrow">&#x203A;</span>
       </a>
-
-      <a class="module-card" href="goals.html">
-        <div class="mod-icon">&#x1F3AF;</div>
-        <div class="mod-name">Goals</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
-
-      <a class="module-card" href="scorecard.html">
-        <div class="mod-icon">&#x1F4CA;</div>
-        <div class="mod-name">Scorecard</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
-
-      <a class="module-card" href="meeting.html">
-        <div class="mod-icon">&#x1F5D3;&#xFE0F;</div>
-        <div class="mod-name">Meeting</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
-
-      <a class="module-card" href="issues.html">
-        <div class="mod-icon">&#x26A1;</div>
-        <div class="mod-name">Issues</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
-
-      <div class="module-card coming-soon">
-        <div class="mod-icon">&#x1F4B0;</div>
-        <div class="mod-name muted">Financial Overview</div>
-        <span class="mod-arrow" style="font-size:10px;color:#ccc;">Soon</span>
-      </div>
 
     </div>
+
   </div>
 
   <footer class="site-footer">
@@ -250,7 +231,6 @@
           window.location.href = 'login.html';
         });
 
-        // Load Business Snapshot
         try {
           const { data: vto } = await supabase
             .from('vto')
@@ -278,7 +258,7 @@
               el.classList.remove('muted');
             }
           }
-        } catch (e) { /* silent — snapshot fields stay as "Not set" */ }
+        } catch (e) { /* silent */ }
       }
     }
   </script>
