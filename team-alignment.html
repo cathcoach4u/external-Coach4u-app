@@ -84,7 +84,7 @@
   <div class="act-container" style="max-width:1000px;">
     <header class="act-header">
       <h1>Team Alignment</h1>
-      <p>Right Person, Right Seat &#x2014; quarterly evaluation of core values fit and role capability.</p>
+      <p>Right Person, Right Role &#x2014; quarterly evaluation of core values fit and role capability.</p>
     </header>
 
     <div class="info-pills">
@@ -119,8 +119,8 @@
 
     <div class="act-card" style="margin-bottom:20px;">
       <div class="align-section-header">
-        <div class="align-section-title">Section 2 &#x2014; Right Seat (GWC)</div>
-        <div class="align-section-sub">Does this person Get it, Want it, and have the Capacity to do their role?</div>
+        <div class="align-section-title">Section 2 &#x2014; Right Role</div>
+        <div class="align-section-sub">Does this person Understand the role, are Motivated to do it, and are Capable of doing it?</div>
       </div>
       <div style="margin-bottom:10px;display:flex;gap:14px;font-size:.8rem;font-family:var(--act-font-heading);font-weight:600;">
         <span style="color:#065f46;">&#x2713; Yes</span>
@@ -131,10 +131,10 @@
         <table class="align-table">
           <thead><tr>
             <th class="col-name">Team Member</th>
-            <th class="gwc-th"><div class="gwc-th-label">Get It</div><div class="gwc-th-sub">Understands the role</div></th>
-            <th class="gwc-th"><div class="gwc-th-label">Want It</div><div class="gwc-th-sub">Motivated to do it</div></th>
-            <th class="gwc-th"><div class="gwc-th-label">Capacity</div><div class="gwc-th-sub">Capable &amp; available</div></th>
-            <th>Right Seat?</th>
+            <th class="gwc-th"><div class="gwc-th-label">Understands</div><div class="gwc-th-sub">the role</div></th>
+            <th class="gwc-th"><div class="gwc-th-label">Motivated</div><div class="gwc-th-sub">to do it</div></th>
+            <th class="gwc-th"><div class="gwc-th-label">Capable</div><div class="gwc-th-sub">of doing it</div></th>
+            <th>Right Role?</th>
           </tr></thead>
           <tbody id="gwc-body"></tbody>
         </table>
@@ -286,7 +286,7 @@
     grid.innerHTML=_data.members.map(m=>{
       const rp=isRightPerson(m.id),rs=isRightSeat(m.id);
       let cls,status;
-      if(rp===true&&rs===true){cls='summary-green';status='&#x2713; Right Person + Right Seat';}
+      if(rp===true&&rs===true){cls='summary-green';status='&#x2713; Right Person + Right Role';}
       else if(rp===false||rs===false){cls='summary-red';status='&#x2717; Needs immediate attention';}
       else if(rp===null&&rs===null){cls='summary-grey';status='&#x2014; Not yet rated';}
       else{cls='summary-yellow';status='&#x26A0; Action may be needed';}

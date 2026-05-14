@@ -92,7 +92,7 @@
   <div class="act-container" style="max-width:1000px;">
     <header class="act-header">
       <h1>Weekly Meeting</h1>
-      <p>Structured weekly team meeting &#x2014; agenda, check-in, scorecard review, and IDS.</p>
+      <p>Structured weekly team meeting &#x2014; agenda, check-in, scorecard review, and Issues.</p>
     </header>
 
     <div class="page-controls">
@@ -194,15 +194,15 @@
         <div class="meeting-timer-bar">
           <button class="timer-btn" id="timer-btn">&#x25B6; Start Meeting</button>
           <span class="timer-elapsed hidden" id="timer-elapsed">0:00</span>
-          <span style="font-size:.8rem;color:#888;font-family:var(--act-font-heading);">L10 target: 90 min</span>
+          <span style="font-size:.8rem;color:#888;font-family:var(--act-font-heading);">Target: 90 min</span>
         </div>
         <div id="agenda-accordion">
           ${agendaSection(1,'Segue &#x2014; Good News','5 min',renderSegue(m))}
           ${agendaSection(2,'Scorecard Review','5 min','<p style="font-size:.88rem;color:#888;font-family:var(--act-font-heading);">Review your weekly metrics. <a href="scorecard.html" style="color:var(--act-light-blue);">Open Scorecard &#x2192;</a></p>')}
-          ${agendaSection(3,'Goal / Rock Review','5 min','<p style="font-size:.88rem;color:#888;font-family:var(--act-font-heading);">Review quarterly goals. <a href="goals.html" style="color:var(--act-light-blue);">Open Goals &#x2192;</a></p>')}
+          ${agendaSection(3,'Priorities Review','5 min','<p style="font-size:.88rem;color:#888;font-family:var(--act-font-heading);">Review quarterly goals. <a href="goals.html" style="color:var(--act-light-blue);">Open Goals &#x2192;</a></p>')}
           ${agendaSection(4,'Customer &amp; Employee Headlines','5 min',renderHeadlines(m))}
           ${agendaSection(5,'To-Do List','5 min',renderTodos(m))}
-          ${agendaSection(6,'IDS &#x2014; Identify, Discuss, Solve','60 min','<p style="font-size:.88rem;color:#888;font-family:var(--act-font-heading);">Work through your issues list. <a href="issues.html" style="color:var(--act-light-blue);">Open Issues &#x2192;</a></p>')}
+          ${agendaSection(6,'Issues &#x2014; Identify, Discuss, Solve','60 min','<p style="font-size:.88rem;color:#888;font-family:var(--act-font-heading);">Work through your issues list. <a href="issues.html" style="color:var(--act-light-blue);">Open Issues &#x2192;</a></p>')}
           ${agendaSection(7,'Conclude &amp; Rate','5 min',renderConclude(m))}
         </div>
       </div>
