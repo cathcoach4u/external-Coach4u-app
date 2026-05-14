@@ -14,6 +14,13 @@
   <style>
     body { opacity: 0; transition: opacity 0.2s ease; }
 
+    .member-biz {
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 3px;
+      font-weight: 500;
+    }
+
     .snapshot-card {
       border-radius: 12px;
       border: 1px solid var(--border);
@@ -97,28 +104,43 @@
       text-decoration: none;
     }
     .mod-icon {
-      width: 30px;
-      height: 30px;
-      border-radius: 6px;
+      width: 30px; height: 30px; border-radius: 6px;
       background: rgba(13,148,136,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; flex-shrink: 0;
+    }
+    .mod-name { font-size: 12px; font-weight: 700; color: var(--primary); line-height: 1.3; flex: 1; }
+    .mod-arrow { font-size: 12px; color: #ccc; flex-shrink: 0; }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: white;
+      border-top: 1px solid #e5e7eb;
       display: flex;
+      z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+    }
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
-      flex-shrink: 0;
-    }
-    .mod-name {
-      font-size: 12px;
+      padding: 8px 0 6px;
+      text-decoration: none;
+      color: #aaa;
+      font-size: 10px;
       font-weight: 700;
-      color: var(--primary);
-      line-height: 1.3;
-      flex: 1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      gap: 3px;
+      transition: color 0.15s;
     }
-    .mod-arrow {
-      font-size: 12px;
-      color: #ccc;
-      flex-shrink: 0;
-    }
+    .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
+    .bottom-nav-icon { font-size: 20px; line-height: 1; }
+    .container { padding-bottom: 80px; }
   </style>
 </head>
 <body>
@@ -135,9 +157,9 @@
   <div class="container">
     <div class="membership-card">
       <div class="member-name" id="memberName">&#x2014;</div>
+      <div class="member-biz" id="memberBiz"></div>
     </div>
 
-    <!-- WHERE TO WORK -->
     <div class="section-heading">Where would you like to work?</div>
     <div class="modules-grid">
       <a class="module-card" href="strategy.html">
@@ -152,7 +174,6 @@
       </a>
     </div>
 
-    <!-- BUSINESS SNAPSHOT -->
     <div class="snapshot-card">
       <div class="snapshot-header">
         <span class="snapshot-label">Business Snapshot</span>
@@ -178,8 +199,22 @@
         </div>
       </div>
     </div>
-
   </div>
+
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item active" href="index.html">
+      <span class="bottom-nav-icon">&#x1F3E0;</span>
+      <span>Home</span>
+    </a>
+    <a class="bottom-nav-item" href="strategy.html">
+      <span class="bottom-nav-icon">&#x1F9ED;</span>
+      <span>Strategy</span>
+    </a>
+    <a class="bottom-nav-item" href="operations.html">
+      <span class="bottom-nav-icon">&#x2699;&#xFE0F;</span>
+      <span>Operations</span>
+    </a>
+  </nav>
 
   <footer class="site-footer">
     Strengths-Based Coaching and Counselling<br>
@@ -198,12 +233,15 @@
     if (!user || error) { window.location.href = 'login.html'; }
     else {
       const { data: profile } = await supabase
-        .from('users').select('membership_status, name').eq('id', user.id).single();
+        .from('users').select('membership_status, name, business_name').eq('id', user.id).single();
       if (!profile || profile.membership_status !== 'active') {
         window.location.href = 'inactive.html';
       } else {
         document.getElementById('memberName').textContent =
           profile.name || user.user_metadata?.name || user.email;
+        if (profile.business_name) {
+          document.getElementById('memberBiz').textContent = profile.business_name;
+        }
         document.body.style.opacity = '1';
         document.getElementById('signOutBtn').addEventListener('click', async () => {
           await supabase.auth.signOut();
@@ -214,10 +252,9 @@
             .from('vto')
             .select('core_focus, one_year_plan, core_values')
             .eq('user_id', user.id)
-            .limit(1)
-            .single();
+            .limit(1).single();
           if (vto) {
-            if (vto.core_focus)  { const el = document.getElementById('snapCoreFocus'); el.textContent = vto.core_focus; el.classList.remove('muted'); }
+            if (vto.core_focus)    { const el = document.getElementById('snapCoreFocus'); el.textContent = vto.core_focus; el.classList.remove('muted'); }
             if (vto.one_year_plan) { const el = document.getElementById('snap1yr'); el.textContent = vto.one_year_plan; el.classList.remove('muted'); }
             if (vto.core_values)   { const el = document.getElementById('snapValues'); const vals = Array.isArray(vto.core_values) ? vto.core_values.slice(0,5).join(' · ') : vto.core_values; el.textContent = vals; el.classList.remove('muted'); }
           }
@@ -225,12 +262,9 @@
         try {
           const now = new Date().toISOString();
           const { data: meetings } = await supabase
-            .from('meetings')
-            .select('meeting_date')
-            .eq('user_id', user.id)
-            .gte('meeting_date', now)
-            .order('meeting_date', { ascending: true })
-            .limit(1);
+            .from('meetings').select('meeting_date')
+            .eq('user_id', user.id).gte('meeting_date', now)
+            .order('meeting_date', { ascending: true }).limit(1);
           if (meetings && meetings.length > 0) {
             const el = document.getElementById('snapNextMeeting');
             const d = new Date(meetings[0].meeting_date);

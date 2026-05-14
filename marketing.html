@@ -16,68 +16,44 @@
 
     .page-hero {
       background: linear-gradient(135deg, #003366 0%, #0D9488 100%);
-      border-radius: 12px;
-      padding: 24px 20px;
-      margin-bottom: 20px;
-      color: white;
+      border-radius: 12px; padding: 24px 20px; margin-bottom: 20px; color: white;
     }
     .page-hero h1 { font-size: 1.4rem; font-weight: 800; margin: 0 0 6px; }
     .page-hero p  { font-size: 0.88rem; opacity: 0.85; margin: 0; line-height: 1.5; }
 
     .content-card {
-      background: white;
-      border-radius: 10px;
-      border: 2px solid var(--accent);
-      padding: 20px;
-      margin-bottom: 16px;
+      background: white; border-radius: 10px;
+      border: 2px solid var(--accent); padding: 20px; margin-bottom: 16px;
     }
-    .content-card h2 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin: 0 0 12px;
-    }
-    .content-card label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #555;
-      margin-bottom: 6px;
-      margin-top: 14px;
-    }
+    .content-card h2 { font-size: 0.95rem; font-weight: 700; color: var(--primary); margin: 0 0 12px; }
+    .content-card label { display: block; font-size: 0.82rem; font-weight: 600; color: #555; margin-bottom: 6px; margin-top: 14px; }
     .content-card label:first-of-type { margin-top: 0; }
-    .content-card textarea {
-      width: 100%;
-      min-height: 100px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 10px;
-      font-size: 0.88rem;
-      font-family: inherit;
-      resize: vertical;
-      box-sizing: border-box;
-      color: #333;
-    }
-    .content-card textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(13,148,136,0.15);
-    }
-
-    .save-btn {
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 12px 24px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 4px;
-      transition: background 0.15s;
-    }
+    .content-card textarea { width: 100%; min-height: 100px; border: 1px solid #ddd; border-radius: 6px; padding: 10px; font-size: 0.88rem; font-family: inherit; resize: vertical; box-sizing: border-box; color: #333; }
+    .content-card textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(13,148,136,0.15); }
+    .save-btn { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 12px 24px; font-size: 0.9rem; font-weight: 700; cursor: pointer; width: 100%; margin-top: 4px; transition: background 0.15s; }
     .save-btn:hover { background: var(--accent-dark); }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+    }
+    .bottom-nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 8px 0 6px; text-decoration: none;
+      color: #aaa; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      gap: 3px; transition: color 0.15s;
+    }
+    .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
+    .bottom-nav-icon { font-size: 20px; line-height: 1; }
+    .container { padding-bottom: 80px; }
   </style>
 </head>
 <body>
@@ -92,32 +68,34 @@
   </header>
 
   <div class="container">
-
     <div class="page-hero">
       <h1>Marketing</h1>
       <p>How you attract and retain your ideal clients.</p>
     </div>
-
     <div class="content-card">
       <h2>Marketing Strategy</h2>
-
       <label for="channels">Marketing channels &amp; approach</label>
       <textarea id="channels" placeholder="Describe the channels and methods you use to reach your ideal clients..."></textarea>
-
       <label for="messages">Key messages</label>
       <textarea id="messages" placeholder="What are the core messages that resonate with your target audience..."></textarea>
     </div>
-
     <button class="save-btn" id="saveBtn">Save</button>
-
   </div>
 
-  <footer class="site-footer">
-    Strengths-Based Coaching and Counselling<br>
-    <a href="http://www.coach4u.com.au">www.coach4u.com.au</a> |
-    <a href="mailto:cath@coach4u.com.au">cath@coach4u.com.au</a> |
-    0402 313 337
-  </footer>
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item" href="index.html">
+      <span class="bottom-nav-icon">&#x1F3E0;</span>
+      <span>Home</span>
+    </a>
+    <a class="bottom-nav-item active" href="strategy.html">
+      <span class="bottom-nav-icon">&#x1F9ED;</span>
+      <span>Strategy</span>
+    </a>
+    <a class="bottom-nav-item" href="operations.html">
+      <span class="bottom-nav-icon">&#x2699;&#xFE0F;</span>
+      <span>Operations</span>
+    </a>
+  </nav>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
