@@ -159,13 +159,6 @@
     </a>
   </nav>
 
-  <footer class="site-footer">
-    Strengths-Based Coaching and Counselling<br>
-    <a href="http://www.coach4u.com.au">www.coach4u.com.au</a> |
-    <a href="mailto:cath@coach4u.com.au">cath@coach4u.com.au</a> |
-    0402 313 337
-  </footer>
-
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
     const supabase = createClient(
@@ -192,7 +185,6 @@
         window.location.href = 'login.html';
       });
 
-      // VTO data
       try {
         const { data: vto } = await supabase
           .from('vto').select('core_focus, one_year_plan, core_values')
@@ -204,7 +196,6 @@
         }
       } catch(e) {}
 
-      // Active goals
       try {
         const { count } = await supabase.from('rocks').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'on_track');
         if (count !== null) document.getElementById('metricGoals').textContent = count;
@@ -215,13 +206,11 @@
         } catch(e2) {}
       }
 
-      // Open issues
       try {
         const { count } = await supabase.from('issues').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('resolved', false);
         if (count !== null) document.getElementById('metricIssues').textContent = count;
       } catch(e) {}
 
-      // Next meeting
       try {
         const now = new Date().toISOString();
         const { data: meetings } = await supabase.from('meetings').select('meeting_date')
