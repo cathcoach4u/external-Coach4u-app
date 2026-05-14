@@ -95,124 +95,11 @@
       font-weight: 700;
       cursor: pointer;
       text-align: center;
+      text-decoration: none;
       transition: background 0.15s;
       margin-bottom: 8px;
     }
-    .view-plan-btn:hover { background: var(--accent-dark); }
-
-    /* ── Section 2: One-Page Plan ── */
-    .plan-section {
-      padding: 32px 16px 0;
-    }
-    .plan-header-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 4px;
-    }
-    .plan-print-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 14px;
-      border: 1.5px solid var(--accent);
-      background: white;
-      color: var(--accent);
-      border-radius: 8px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-      transition: background 0.15s, color 0.15s;
-    }
-    .plan-print-btn:hover { background: var(--accent); color: white; }
-
-    /* Plan document styles */
-    .plan-doc {
-      background: white;
-      border-radius: 10px;
-      border: 1px solid #e5e7eb;
-      padding: 28px 24px;
-      margin-top: 20px;
-    }
-
-    .plan-group {
-      margin-bottom: 28px;
-    }
-    .plan-group:last-child { margin-bottom: 0; }
-
-    .plan-group-heading {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--accent);
-      border-left: 3px solid var(--accent);
-      padding-left: 10px;
-      margin-bottom: 18px;
-      font-variant: small-caps;
-    }
-
-    .plan-field {
-      margin-bottom: 16px;
-    }
-    .plan-field:last-child { margin-bottom: 0; }
-
-    .plan-field-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--primary);
-      margin-bottom: 5px;
-      display: block;
-    }
-
-    .plan-field-value {
-      font-size: 0.97rem;
-      color: #333333;
-      line-height: 1.6;
-    }
-
-    .plan-field-link {
-      font-size: 0.88rem;
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .plan-field-link:hover { text-decoration: underline; }
-
-    .plan-divider {
-      border: none;
-      border-top: 1px solid #e5e7eb;
-      margin: 24px 0;
-    }
-
-    /* Core values pills */
-    .values-pills { display: flex; flex-wrap: wrap; gap: 7px; }
-    .value-pill {
-      background: rgba(13,148,136,0.1);
-      color: var(--accent);
-      border: 1px solid rgba(13,148,136,0.3);
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: 0.82rem;
-      font-weight: 600;
-    }
-
-    /* 3-col row for financials */
-    .plan-row-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    @media (max-width: 480px) {
-      .plan-row-3 { grid-template-columns: 1fr; }
-      .plan-doc { padding: 20px 16px; }
-    }
+    .view-plan-btn:hover { background: var(--accent-dark); color: white; text-decoration: none; }
 
     /* ── Bottom Nav ── */
     .bottom-nav {
@@ -235,44 +122,6 @@
     }
     .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
     .bottom-nav-icon { font-size: 20px; line-height: 1; }
-
-    /* ── Print ── */
-    @media print {
-      .site-header,
-      .activities-section,
-      .bottom-nav,
-      .plan-print-btn,
-      .plan-header-row { display: none !important; }
-
-      body { opacity: 1 !important; background: white !important; }
-      .container { padding: 0 !important; }
-
-      .plan-section { padding: 0 !important; }
-
-      .plan-print-title {
-        display: block !important;
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: #003366;
-        margin-bottom: 4px;
-      }
-      .plan-print-sub {
-        display: block !important;
-        font-size: 0.9rem;
-        color: #666;
-        margin-bottom: 24px;
-      }
-
-      .plan-doc {
-        border: none;
-        padding: 0;
-        border-radius: 0;
-      }
-
-      .plan-field-link { color: #666 !important; }
-    }
-    .plan-print-title { display: none; }
-    .plan-print-sub { display: none; }
   </style>
 </head>
 <body>
@@ -287,8 +136,6 @@
   </header>
 
   <div class="container">
-
-    <!-- SECTION 1: ACTIVITIES -->
     <div class="activities-section">
       <h2 class="section-heading">Build Your Strategy</h2>
       <p class="section-sub">Complete each activity to build your one-page business plan</p>
@@ -328,148 +175,11 @@
         </a>
       </div>
 
-      <button class="view-plan-btn" onclick="document.getElementById('one-page-plan').scrollIntoView({behavior:'smooth'})">
+      <a class="view-plan-btn" href="strategy/one-page-plan.html">
         &#x1F4CB;&nbsp; View One-Page Plan
-      </button>
+      </a>
     </div>
-
-    <!-- SECTION 2: ONE-PAGE BUSINESS PLAN -->
-    <div class="plan-section" id="one-page-plan">
-      <div class="plan-header-row">
-        <div>
-          <h2 class="section-heading">Your One-Page Business Plan</h2>
-          <p class="section-sub">Updated as you complete each activity above</p>
-        </div>
-        <button class="plan-print-btn" onclick="window.print()">
-          &#x1F5A8; Print / PDF
-        </button>
-      </div>
-
-      <!-- Print-only title -->
-      <span class="plan-print-title">One-Page Business Plan</span>
-      <span class="plan-print-sub">Your Business Coach &mdash; coach4u.com.au</span>
-
-      <div class="plan-doc">
-
-        <!-- WHO WE ARE -->
-        <div class="plan-group">
-          <div class="plan-group-heading">Who We Are</div>
-
-          <div class="plan-field">
-            <span class="plan-field-label">Core Values</span>
-            <div class="values-pills">
-              <span class="value-pill">Integrity</span>
-              <span class="value-pill">Growth mindset</span>
-              <span class="value-pill">Client first</span>
-              <span class="value-pill">Accountability</span>
-            </div>
-          </div>
-
-          <hr class="plan-divider">
-
-          <div class="plan-field">
-            <span class="plan-field-label">Purpose</span>
-            <div class="plan-field-value">To help business owners build thriving, self-managing businesses so they can achieve freedom and fulfilment.</div>
-          </div>
-
-          <div class="plan-field">
-            <span class="plan-field-label">Niche</span>
-            <div class="plan-field-value">Strengths-based business coaching for small and medium businesses across Australia.</div>
-          </div>
-        </div>
-
-        <!-- WHERE WE ARE GOING -->
-        <div class="plan-group">
-          <div class="plan-group-heading">Where We Are Going</div>
-
-          <div class="plan-field">
-            <span class="plan-field-label">10-Year Vision</span>
-            <div class="plan-field-value">Australia&#x2019;s most trusted business coaching practice, with 500 thriving client businesses and a team of 10 coaches delivering measurable results.</div>
-          </div>
-
-          <hr class="plan-divider">
-
-          <div class="plan-field">
-            <span class="plan-field-label">3-Year Picture</span>
-            <div class="plan-row-3">
-              <div>
-                <span class="plan-field-label">Target Date</span>
-                <div class="plan-field-value">June 2028</div>
-              </div>
-              <div>
-                <span class="plan-field-label">Revenue</span>
-                <div class="plan-field-value">$1.2M</div>
-              </div>
-              <div>
-                <span class="plan-field-label">Profit</span>
-                <div class="plan-field-value">$360K</div>
-              </div>
-            </div>
-            <div class="plan-field-value">A team of 4 coaches, 80 active clients, systemised delivery with a signature 12-month program, recurring revenue model established.</div>
-          </div>
-
-          <hr class="plan-divider">
-
-          <div class="plan-field">
-            <span class="plan-field-label">1-Year Plan</span>
-            <div class="plan-row-3">
-              <div>
-                <span class="plan-field-label">Target Date</span>
-                <div class="plan-field-value">Dec 2025</div>
-              </div>
-              <div>
-                <span class="plan-field-label">Revenue Goal</span>
-                <div class="plan-field-value">$420K</div>
-              </div>
-              <div>
-                <span class="plan-field-label">Profit Goal</span>
-                <div class="plan-field-value">$105K</div>
-              </div>
-            </div>
-            <div class="plan-field-value" style="white-space: pre-line;">1. Sign 20 new clients through referral and speaking strategy
-2. Launch group coaching program (min. 8 participants)
-3. Hire first associate coach by Q3
-4. Complete and publish Signature Program workbook</div>
-          </div>
-        </div>
-
-        <!-- HOW WE GO TO MARKET -->
-        <div class="plan-group">
-          <div class="plan-group-heading">How We Go to Market</div>
-
-          <div class="plan-field">
-            <span class="plan-field-label">Target Market</span>
-            <div class="plan-field-value">Business owners with 2&ndash;20 employees in professional services, trades, and health sectors, revenue $500K&ndash;$5M, who feel stuck or overwhelmed.</div>
-          </div>
-
-          <hr class="plan-divider">
-
-          <div class="plan-field">
-            <span class="plan-field-label">What Makes Us Different</span>
-            <div class="plan-field-value" style="white-space: pre-line;">1. Strengths-based methodology &#x2014; we build on what&#x2019;s already working
-2. Structured accountability &#x2014; weekly check-ins and measurable outcomes
-3. Real-world experience &#x2014; founded by a former business owner</div>
-          </div>
-
-          <hr class="plan-divider">
-
-          <div class="plan-field">
-            <span class="plan-field-label">Our Process</span>
-            <div class="plan-field-value">The Coach4U 4-Step System: Clarity &#x2192; Strategy &#x2192; Execution &#x2192; Momentum. Delivered over 12 months with monthly 1:1 sessions and weekly check-ins.</div>
-          </div>
-
-          <hr class="plan-divider">
-
-          <div class="plan-field">
-            <span class="plan-field-label">Our Guarantee</span>
-            <div class="plan-field-value">If you don&#x2019;t see measurable progress in your first 90 days, we&#x2019;ll refund your last month&#x2019;s coaching fee &mdash; no questions asked.</div>
-          </div>
-        </div>
-
-      </div><!-- /.plan-doc -->
-    </div><!-- /.plan-section -->
-
-  </div><!-- /.container -->
+  </div>
 
   <nav class="bottom-nav">
     <a class="bottom-nav-item" href="index.html">

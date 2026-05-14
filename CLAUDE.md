@@ -111,9 +111,17 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.34
+v0.5.35
 
-## Recent Changes (v0.5.34)
+## Recent Changes (v0.5.35)
+- Created `strategy/one-page-plan.html` — standalone landscape A4 one-page business plan
+- 3-column layout: Who We Are / Where We Are Going / How We Go to Market
+- Navy header bar, teal column headings, compact typography for single-page fit
+- Print CSS uses `@page { size: A4 landscape; }` to force correct orientation
+- “View One-Page Plan” button on strategy.html now links to this page
+- strategy.html simplified — Section 2 (inline plan) removed, now just activity cards + link
+
+## Previous (v0.5.34)
 - Redesigned `strategy.html` with two sections on same page
 - Section 1: "Build Your Strategy" — 2x2 activity cards (Core Values, Core Focus, Targets, Marketing Strategy) with description and teal border; "View One-Page Plan" scroll button
 - Section 2: "Your One-Page Business Plan" — clean document layout with placeholder data; print button; print CSS hides Section 1 for A4 output
