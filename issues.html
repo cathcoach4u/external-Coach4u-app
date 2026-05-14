@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Issues | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1B3664">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/activity.css"/>
+  <style>
+    body{opacity:0;transition:opacity .2s ease}
+    .page-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+    .page-controls-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .field-select{border:1.5px solid var(--act-light-grey);border-radius:8px;padding:8px 12px;font-family:var(--act-font-heading);font-size:.88rem;color:var(--act-dark-blue);background:white;cursor:pointer}
+    .kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
+    @media(max-width:700px){.kanban{grid-template-columns:1fr}}
+    .kanban-col{background:var(--act-soft);border-radius:12px;padding:16px}
+    .kanban-col-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .kanban-col-title{font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:.93rem}
+    .kanban-count{background:white;color:var(--act-dark-blue);font-family:var(--act-font-heading);font-weight:700;font-size:.78rem;padding:2px 8px;border-radius:20px;border:1px solid var(--act-light-grey)}
+    .issue-card{background:white;border:1px solid var(--act-light-grey);border-radius:10px;padding:14px;margin-bottom:10px;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+    .issue-card:hover{box-shadow:0 2px 8px rgba(27,54,100,.1);border-color:var(--act-light-blue)}
+    .issue-card.priority-high{border-left:3px solid #ef4444}
+    .issue-card.priority-medium{border-left:3px solid #f59e0b}
+    .issue-card.priority-low{border-left:3px solid #10b981}
+    .issue-desc{font-family:var(--act-font-heading);font-weight:600;color:var(--act-dark-grey);font-size:.88rem;margin-bottom:6px;line-height:1.4}
+    .issue-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .priority-badge{font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:20px}
+    .pb-high{background:#fee2e2;color:#991b1b}
+    .pb-medium{background:#fef3c7;color:#92400e}
+    .pb-low{background:#d1fae5;color:#065f46}
+    .issue-owner{font-size:.78rem;color:#888}
+    .solved-tag{font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:20px;background:#e0e7ff;color:#3730a3}
+    .kanban-empty{text-align:center;padding:24px 10px;color:#bbb;font-family:var(--act-font-heading);font-size:.82rem}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+    .modal-overlay.hidden{display:none}
+    .modal{background:white;border-radius:16px;padding:28px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+    .modal-title{font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:1.15rem}
+    .modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:#888;line-height:1;padding:0 4px}
+    .modal-field{margin-bottom:16px}
+    .modal-label{font-family:var(--act-font-heading);font-weight:600;color:var(--act-dark-blue);font-size:.88rem;margin-bottom:6px;display:block}
+    .modal-input,.modal-select,.modal-textarea{width:100%;border:1.5px solid var(--act-light-grey);border-radius:8px;padding:10px 14px;font-family:var(--act-font-body);font-size:.93rem;color:var(--act-dark-grey);background:white;box-sizing:border-box}
+    .modal-input:focus,.modal-select:focus,.modal-textarea:focus{outline:none;border-color:var(--act-light-blue)}
+    .modal-textarea{resize:vertical}
+    .modal-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .modal-footer{display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:10px}
+    .modal-footer-right{display:flex;gap:10px}
+    .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-family:var(--act-font-heading);font-weight:600;font-size:.88rem;z-index:2000;transition:opacity .3s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+    .toast-hidden{opacity:0;pointer-events:none}
+    .toast-success{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
+    .toast-error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+    .hidden{display:none!important}
+  </style>
+</head>
+<body class="activity-page">
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="./" class="header-back">&#x2190; Home</a>
+        <span class="header-title">Issues</span>
+      </div>
+      <button class="sign-out-btn" id="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="act-container" style="max-width:1000px;">
+    <header class="act-header">
+      <h1>Issues</h1>
+      <p>Identify, Discuss, Solve &#x2014; capture and work through your company&#x2019;s obstacles.</p>
+    </header>
+
+    <div class="page-controls">
+      <div class="page-controls-left">
+        <span style="font-family:var(--act-font-heading);font-weight:600;color:var(--act-dark-blue);font-size:.9rem;">Owner:</span>
+        <select class="field-select" id="owner-filter"><option value="">All Owners</option></select>
+      </div>
+      <button class="act-btn act-btn-primary" id="add-issue-btn">+ Add Issue</button>
+    </div>
+
+    <div class="kanban">
+      <div class="kanban-col">
+        <div class="kanban-col-header"><span class="kanban-col-title">&#x1F7E1; Open</span><span class="kanban-count" id="count-open">0</span></div>
+        <div id="cards-open"></div>
+      </div>
+      <div class="kanban-col">
+        <div class="kanban-col-header"><span class="kanban-col-title">&#x1F7E0; In IDS</span><span class="kanban-count" id="count-ids">0</span></div>
+        <div id="cards-ids"></div>
+      </div>
+      <div class="kanban-col">
+        <div class="kanban-col-header"><span class="kanban-col-title">&#x2705; Resolved</span><span class="kanban-count" id="count-resolved">0</span></div>
+        <div id="cards-resolved"></div>
+      </div>
+    </div>
+
+    <footer class="act-footer">
+      Strengths-Based Coaching and Counselling |
+      <a href="https://www.coach4u.com.au" target="_blank">coach4u.com.au</a>
+    </footer>
+  </div>
+
+  <div class="modal-overlay hidden" id="issue-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" id="issue-modal-title">Add Issue</span>
+        <button class="modal-close" id="issue-modal-close">&times;</button>
+      </div>
+      <input type="hidden" id="issue-id"/>
+      <div class="modal-field">
+        <label class="modal-label">Issue Description *</label>
+        <textarea class="modal-textarea" id="issue-description" rows="3" placeholder="What is the issue?"></textarea>
+      </div>
+      <div class="modal-2col">
+        <div class="modal-field">
+          <label class="modal-label">Owner</label>
+          <input type="text" class="modal-input" id="issue-owner" placeholder="Who raised this?"/>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Priority</label>
+          <select class="modal-select" id="issue-priority">
+            <option value="high">High</option>
+            <option value="medium" selected>Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Status</label>
+        <select class="modal-select" id="issue-status">
+          <option value="open">Open</option>
+          <option value="ids_in_progress">In IDS</option>
+          <option value="resolved">Resolved</option>
+        </select>
+      </div>
+      <div class="modal-field" id="solution-field">
+        <label class="modal-label">Solution *</label>
+        <textarea class="modal-textarea" id="issue-solution" rows="2" placeholder="How was this resolved?"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="act-btn hidden" id="issue-modal-delete" style="color:#991b1b;border:1.5px solid #fca5a5;background:white;">Delete</button>
+        <div class="modal-footer-right">
+          <button class="act-btn act-btn-secondary" id="issue-modal-cancel">Cancel</button>
+          <button class="act-btn act-btn-primary" id="issue-modal-save">Save Issue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast toast-hidden" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+  'use strict';
+  const _sb=window.supabase.createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
+  document.getElementById('sign-out-btn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
+  let currentBusinessId=1,_issues=[];
+  function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
+  async function api(method,path,body){const opts={method,headers:{'Content-Type':'application/json'}};if(body!==undefined)opts.body=JSON.stringify(body);const res=await fetch('/api'+path,opts);if(!res.ok){const e=await res.json().catch(()=>({error:res.statusText}));throw new Error(e.error||res.statusText)}return res.json()}
+  const get=p=>api('GET',p),post=(p,b)=>api('POST',p,b),put=(p,b)=>api('PUT',p,b),del=p=>api('DELETE',p);
+  async function loadIssues(){
+    const owner=document.getElementById('owner-filter').value;
+    let url='/issues?business_id='+currentBusinessId;
+    if(owner)url+='&owner='+encodeURIComponent(owner);
+    try{_issues=await get(url);renderBoard(_issues);}
+    catch(e){showToast('Could not load issues','error')}
+  }
+  function renderBoard(issues){
+    const open=issues.filter(i=>i.status==='open');
+    const ids=issues.filter(i=>i.status==='ids_in_progress');
+    const resolved=issues.filter(i=>i.status==='resolved');
+    document.getElementById('count-open').textContent=open.length;
+    document.getElementById('count-ids').textContent=ids.length;
+    document.getElementById('count-resolved').textContent=resolved.length;
+    renderCards('cards-open',open);renderCards('cards-ids',ids);renderCards('cards-resolved',resolved);
+    populateOwnerFilter(issues);
+  }
+  function populateOwnerFilter(issues){
+    const owners=[...new Set(issues.map(i=>i.owner).filter(Boolean))];
+    const sel=document.getElementById('owner-filter');const cur=sel.value;
+    sel.innerHTML='<option value="">All Owners</option>'+owners.map(o=>`<option value="${escHtml(o)}" ${o===cur?'selected':''}>${escHtml(o)}</option>`).join('');
+  }
+  function renderCards(containerId,issues){
+    const c=document.getElementById(containerId);
+    if(!issues.length){c.innerHTML='<div class="kanban-empty">None</div>';return;}
+    c.innerHTML=issues.map(i=>`<div class="issue-card priority-${i.priority||'medium'}" data-id="${i.id}"><div class="issue-desc">${escHtml(i.description)}</div><div class="issue-meta"><span class="priority-badge pb-${i.priority||'medium'}">${i.priority||'medium'}</span>${i.owner?`<span class="issue-owner">${escHtml(i.owner)}</span>`:''} ${i.solution?'<span class="solved-tag">Solved</span>':''}</div></div>`).join('');
+    c.querySelectorAll('.issue-card').forEach(card=>card.addEventListener('click',()=>openModal(_issues.find(x=>x.id===parseInt(card.dataset.id)))));
+  }
+  document.getElementById('owner-filter').addEventListener('change',loadIssues);
+  document.getElementById('add-issue-btn').addEventListener('click',()=>openModal(null));
+  const statusSel=document.getElementById('issue-status');
+  const solutionField=document.getElementById('solution-field');
+  statusSel.addEventListener('change',()=>solutionField.style.display=statusSel.value==='resolved'?'':'none');
+  function openModal(issue){
+    const isNew=!issue;
+    document.getElementById('issue-modal-title').textContent=isNew?'Add Issue':'Edit Issue';
+    document.getElementById('issue-id').value=isNew?'':issue.id;
+    document.getElementById('issue-description').value=isNew?'':(issue.description||'');
+    document.getElementById('issue-owner').value=isNew?'':(issue.owner||'');
+    document.getElementById('issue-priority').value=isNew?'medium':(issue.priority||'medium');
+    statusSel.value=isNew?'open':(issue.status||'open');
+    document.getElementById('issue-solution').value=isNew?'':(issue.solution||'');
+    solutionField.style.display=statusSel.value==='resolved'?'':'none';
+    document.getElementById('issue-modal-delete').classList.toggle('hidden',isNew);
+    document.getElementById('issue-modal').classList.remove('hidden');
+  }
+  function closeModal(){document.getElementById('issue-modal').classList.add('hidden')}
+  document.getElementById('issue-modal-close').addEventListener('click',closeModal);
+  document.getElementById('issue-modal-cancel').addEventListener('click',closeModal);
+  document.getElementById('issue-modal').addEventListener('click',e=>{if(e.target===document.getElementById('issue-modal'))closeModal()});
+  document.getElementById('issue-modal-save').addEventListener('click',async()=>{
+    const id=document.getElementById('issue-id').value;
+    const description=document.getElementById('issue-description').value.trim();
+    const owner=document.getElementById('issue-owner').value.trim();
+    const priority=document.getElementById('issue-priority').value;
+    const status=statusSel.value;
+    const solution=document.getElementById('issue-solution').value.trim();
+    if(!description){showToast('Description is required','error');return}
+    if(status==='resolved'&&!solution){showToast('A solution is required to resolve an issue','error');return}
+    try{
+      if(id){await put('/issues/'+id,{description,owner,priority,status,solution});showToast('Issue updated','success')}
+      else{await post('/issues',{description,owner,priority,status,solution,business_id:currentBusinessId});showToast('Issue created','success')}
+      closeModal();await loadIssues();
+    }catch(e){showToast('Save failed: '+e.message,'error')}
+  });
+  document.getElementById('issue-modal-delete').addEventListener('click',async()=>{
+    const id=document.getElementById('issue-id').value;
+    if(!id||!confirm('Delete this issue?'))return;
+    try{await del('/issues/'+id);showToast('Deleted','success');closeModal();await loadIssues()}
+    catch(e){showToast('Delete failed','error')}
+  });
+  (async()=>{
+    const{data:{user}}=await _sb.auth.getUser();
+    if(!user){window.location.href='login.html';return}
+    try{
+      const businesses=await get('/businesses');
+      const biz=businesses.find(b=>b.type==='holding')||businesses[0];
+      if(biz)currentBusinessId=biz.id;
+      await loadIssues();
+    }catch(e){console.error(e)}
+    document.body.style.opacity='1';
+  })();
+  </script>
+</body>
+</html>
