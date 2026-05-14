@@ -14,31 +14,151 @@
   <style>
     body { opacity: 0; transition: opacity 0.2s ease; }
 
-    .dash-card { border-radius: 12px; border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow-neutral); margin-bottom: 24px; }
-    .dash-header { background: #003366; padding: 12px 16px; }
-    .dash-header-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: white; }
-    .dash-body { background: white; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+    /* ── Section cards ── */
+    .dash-section {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .dash-section-header {
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .dash-section-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 0 0 2px;
+    }
+    .dash-section-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+    .dash-section-body { padding: 12px 16px 14px; }
 
-    .dash-metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-    .dash-metric { background: #f8f9fa; border-radius: 10px; padding: 12px 6px 10px; text-align: center; border-top: 3px solid #e5e7eb; }
-    .dash-metric.m-teal  { border-top-color: #0D9488; }
-    .dash-metric.m-amber { border-top-color: #F59E0B; }
-    .dash-metric.m-blue  { border-top-color: #3B82F6; }
-    .dash-metric-val { font-size: 1.5rem; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 5px; }
-    .dash-metric-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); line-height: 1.3; }
+    /* ── This Week — to-do list ── */
+    .todo-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+    .todo-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .todo-check {
+      width: 18px; height: 18px; border-radius: 4px;
+      border: 2px solid #ccc; flex-shrink: 0; margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: white;
+    }
+    .todo-check.done { background: #0D9488; border-color: #0D9488; }
+    .todo-check.done::after { content: '✓'; }
+    .todo-body { flex: 1; }
+    .todo-desc {
+      font-size: 0.82rem; font-weight: 600; color: var(--primary);
+      line-height: 1.35;
+    }
+    .todo-desc.done { text-decoration: line-through; color: #aaa; }
+    .todo-meta {
+      font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;
+    }
+    .empty-state {
+      font-size: 0.82rem; color: #aaa; font-style: italic;
+      padding: 4px 0;
+    }
+    .empty-state a { color: #0D9488; text-decoration: none; font-style: normal; font-weight: 600; }
 
-    .dash-focus { display: flex; align-items: flex-start; gap: 12px; background: linear-gradient(135deg, #003366 0%, #0D9488 100%); border-radius: 10px; padding: 14px; }
-    .dash-focus-icon { font-size: 22px; flex-shrink: 0; line-height: 1; margin-top: 1px; }
-    .dash-focus-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
-    .dash-focus-val { font-size: 13px; font-weight: 600; color: white; line-height: 1.4; }
-    .dash-focus-val.muted { color: rgba(255,255,255,0.4); font-style: italic; font-weight: 400; }
+    /* ── This Quarter — rocks ── */
+    .progress-bar-wrap {
+      background: #f0f0f0; border-radius: 99px;
+      height: 6px; margin-bottom: 4px; overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%; border-radius: 99px; background: #0D9488;
+      transition: width 0.4s ease;
+    }
+    .progress-label {
+      font-size: 0.72rem; color: var(--text-muted); margin-bottom: 12px;
+    }
+    .rock-list { display: flex; flex-direction: column; gap: 8px; }
+    .rock-row {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .rock-info { flex: 1; }
+    .rock-desc { font-size: 0.82rem; font-weight: 600; color: var(--primary); line-height: 1.3; }
+    .rock-owner { font-size: 0.72rem; color: var(--text-muted); }
+    .status-pill {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; padding: 3px 8px; border-radius: 99px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .pill-green  { background: #D1FAE5; color: #059669; }
+    .pill-amber  { background: #FEF3C7; color: #D97706; }
+    .pill-red    { background: #FEE2E2; color: #DC2626; }
+    .pill-grey   { background: #F3F4F6; color: #6B7280; }
 
-    .dash-info { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .dash-info-item { background: #fafafa; border: 1px solid var(--border); border-radius: 8px; padding: 10px 11px; }
-    .dash-info-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-muted); margin-bottom: 4px; }
-    .dash-info-val { font-size: 12px; color: var(--primary); font-weight: 500; line-height: 1.4; }
-    .dash-info-val.muted { color: #bbb; font-style: italic; }
+    /* ── Core Focus ── */
+    .core-focus-card {
+      border: 2px solid #0D9488;
+      border-radius: 10px;
+      padding: 14px 16px;
+      background: #F0FDFA;
+    }
+    .core-focus-label {
+      font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.8px; color: #0D9488; margin-bottom: 6px;
+    }
+    .core-focus-text {
+      font-size: 0.9rem; font-weight: 600; color: var(--primary);
+      line-height: 1.5;
+    }
+    .core-focus-text.muted { color: #aaa; font-style: italic; font-weight: 400; }
 
+    /* ── Business Pulse ── */
+    .pulse-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .pulse-row:last-child { border-bottom: none; }
+    .pulse-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .dot-green { background: #10B981; }
+    .dot-amber { background: #F59E0B; }
+    .dot-red   { background: #EF4444; }
+    .pulse-metric-name { flex: 1; font-size: 0.82rem; font-weight: 600; color: var(--primary); }
+    .pulse-metric-val  { font-size: 0.8rem; color: var(--text-muted); }
+    .pulse-link {
+      display: block; font-size: 0.78rem; font-weight: 700;
+      color: #0D9488; text-decoration: none; margin-top: 10px;
+    }
+    .pulse-link:hover { text-decoration: underline; }
+
+    .pulse-count-row {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .pulse-count {
+      font-size: 1.6rem; font-weight: 900; color: var(--primary); line-height: 1;
+    }
+    .pulse-count-label {
+      font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;
+    }
+
+    .next-meeting-date {
+      font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 2px;
+    }
+    .next-meeting-note {
+      font-size: 0.75rem; color: var(--text-muted);
+    }
+
+    .pulse-divider {
+      border: none; border-top: 1px solid #f0f0f0; margin: 12px 0;
+    }
+
+    /* ── Bottom nav ── */
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0;
       background: white; border-top: 1px solid #e5e7eb;
@@ -75,44 +195,145 @@
       <div class="member-name" id="memberName">&#x2014;</div>
     </div>
 
-    <div class="dash-card">
-      <div class="dash-header">
-        <div class="dash-header-title">&#x1F4CA; Business Dashboard</div>
+    <!-- THIS WEEK -->
+    <div class="dash-section">
+      <div class="dash-section-header">
+        <div class="dash-section-title">This Week</div>
+        <div class="dash-section-sub">Actions from your last meeting</div>
       </div>
-      <div class="dash-body">
-        <div class="dash-metrics">
-          <div class="dash-metric m-teal">
-            <div class="dash-metric-val" id="metricGoals">&#x2014;</div>
-            <div class="dash-metric-label">Active Goals</div>
-          </div>
-          <div class="dash-metric m-amber">
-            <div class="dash-metric-val" id="metricIssues">&#x2014;</div>
-            <div class="dash-metric-label">Open Issues</div>
-          </div>
-          <div class="dash-metric m-blue">
-            <div class="dash-metric-val" id="metricMeeting">&#x2014;</div>
-            <div class="dash-metric-label">Next Meeting</div>
-          </div>
-        </div>
-        <div class="dash-focus">
-          <div class="dash-focus-icon">&#x1F9ED;</div>
-          <div>
-            <div class="dash-focus-label">Core Focus</div>
-            <div class="dash-focus-val muted" id="snapCoreFocus">Not set &mdash; go to Strategy to define your core focus</div>
-          </div>
-        </div>
-        <div class="dash-info">
-          <div class="dash-info-item">
-            <div class="dash-info-label">&#x1F4C5; 1-Year Plan</div>
-            <div class="dash-info-val muted" id="snap1yr">Not set</div>
-          </div>
-          <div class="dash-info-item">
-            <div class="dash-info-label">&#x2B50; Core Values</div>
-            <div class="dash-info-val muted" id="snapValues">Not set</div>
-          </div>
-        </div>
+      <div class="dash-section-body">
+        <ul class="todo-list">
+          <li class="todo-item">
+            <div class="todo-check"></div>
+            <div class="todo-body">
+              <div class="todo-desc">Review Q2 financials with accountant</div>
+              <div class="todo-meta">Sarah &middot; Due 20 May</div>
+            </div>
+          </li>
+          <li class="todo-item">
+            <div class="todo-check"></div>
+            <div class="todo-body">
+              <div class="todo-desc">Send client proposal draft</div>
+              <div class="todo-meta">John &middot; Due 19 May</div>
+            </div>
+          </li>
+          <li class="todo-item">
+            <div class="todo-check done"></div>
+            <div class="todo-body">
+              <div class="todo-desc done">Weekly team check-in</div>
+              <div class="todo-meta">All &middot; Due 15 May</div>
+            </div>
+          </li>
+        </ul>
+        <!-- Empty state (hidden when todos exist):
+        <p class="empty-state">No meeting run yet &mdash; <a href="execution/meeting.html">go to Meeting to get started</a></p>
+        -->
       </div>
     </div>
+
+    <!-- THIS QUARTER -->
+    <div class="dash-section">
+      <div class="dash-section-header">
+        <div class="dash-section-title">This Quarter</div>
+        <div class="dash-section-sub">How your priorities are tracking</div>
+      </div>
+      <div class="dash-section-body">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" style="width: 50%"></div>
+        </div>
+        <div class="progress-label">2 of 4 priorities on track</div>
+        <div class="rock-list">
+          <div class="rock-row">
+            <div class="rock-info">
+              <div class="rock-desc">Launch new service offering</div>
+              <div class="rock-owner">Sarah</div>
+            </div>
+            <span class="status-pill pill-green">On Track</span>
+          </div>
+          <div class="rock-row">
+            <div class="rock-info">
+              <div class="rock-desc">Increase monthly revenue 20%</div>
+              <div class="rock-owner">John</div>
+            </div>
+            <span class="status-pill pill-amber">At Risk</span>
+          </div>
+          <div class="rock-row">
+            <div class="rock-info">
+              <div class="rock-desc">Hire 2 new team members</div>
+              <div class="rock-owner">Sarah</div>
+            </div>
+            <span class="status-pill pill-red">Off Track</span>
+          </div>
+          <div class="rock-row">
+            <div class="rock-info">
+              <div class="rock-desc">Redesign client onboarding</div>
+              <div class="rock-owner">John</div>
+            </div>
+            <span class="status-pill pill-grey">Not Started</span>
+          </div>
+        </div>
+        <!-- Empty state (hidden when rocks exist):
+        <p class="empty-state">No priorities set &mdash; <a href="execution/goals.html">go to Goals to get started</a></p>
+        -->
+      </div>
+    </div>
+
+    <!-- CORE FOCUS -->
+    <div class="core-focus-card">
+      <div class="core-focus-label">&#x1F9ED; Core Focus</div>
+      <div class="core-focus-text muted" id="snapCoreFocus">Not set &mdash; go to Strategy to define your core focus</div>
+    </div>
+
+    <!-- BUSINESS PULSE -->
+    <div class="dash-section" style="margin-top: 16px;">
+      <div class="dash-section-header">
+        <div class="dash-section-title">Business Pulse</div>
+        <div class="dash-section-sub">Scorecard, issues &amp; upcoming meeting</div>
+      </div>
+      <div class="dash-section-body">
+
+        <!-- Scorecard -->
+        <div style="margin-bottom: 4px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted);">Scorecard</div>
+        <div class="pulse-row">
+          <div class="pulse-dot dot-green"></div>
+          <div class="pulse-metric-name">Monthly Revenue</div>
+          <div class="pulse-metric-val">$42k / $40k</div>
+        </div>
+        <div class="pulse-row">
+          <div class="pulse-dot dot-amber"></div>
+          <div class="pulse-metric-name">New Clients</div>
+          <div class="pulse-metric-val">4 / 5</div>
+        </div>
+        <div class="pulse-row">
+          <div class="pulse-dot dot-red"></div>
+          <div class="pulse-metric-name">Client Satisfaction</div>
+          <div class="pulse-metric-val">7.2 / 9</div>
+        </div>
+        <a class="pulse-link" href="execution/scorecard.html">View Scorecard &#x203A;</a>
+
+        <hr class="pulse-divider">
+
+        <!-- Open Issues -->
+        <div style="margin-bottom: 8px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted);">Open Issues</div>
+        <div class="pulse-count-row">
+          <div>
+            <div class="pulse-count">3</div>
+            <div class="pulse-count-label">issues open</div>
+          </div>
+          <a class="pulse-link" href="execution/issues.html" style="margin-top:0;">View Issues &#x203A;</a>
+        </div>
+
+        <hr class="pulse-divider">
+
+        <!-- Next Meeting -->
+        <div style="margin-bottom: 8px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted);">Next Meeting</div>
+        <div class="next-meeting-date">Mon 19 May 2026</div>
+        <div class="next-meeting-note">Weekly L10</div>
+        <a class="pulse-link" href="execution/meeting.html">Go to Meeting &#x203A;</a>
+
+      </div>
+    </div>
+
   </div>
 
   <nav class="bottom-nav">
@@ -156,44 +377,14 @@
         window.location.href = 'login.html';
       });
 
+      // Core Focus (live — from vto table)
       try {
         const { data: vto } = await supabase
-          .from('vto').select('core_focus, one_year_plan, core_values')
+          .from('vto').select('core_focus')
           .eq('user_id', user.id).limit(1).single();
-        if (vto) {
-          if (vto.core_focus) { const el = document.getElementById('snapCoreFocus'); el.textContent = vto.core_focus; el.classList.remove('muted'); }
-          if (vto.one_year_plan) { const el = document.getElementById('snap1yr'); el.textContent = vto.one_year_plan; el.classList.remove('muted'); }
-          if (vto.core_values) { const el = document.getElementById('snapValues'); const vals = Array.isArray(vto.core_values) ? vto.core_values.slice(0,4).join(' · ') : vto.core_values; el.textContent = vals; el.classList.remove('muted'); }
-        }
-      } catch(e) {}
-
-      try {
-        const { count } = await supabase.from('rocks').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'on_track');
-        if (count !== null) document.getElementById('metricGoals').textContent = count;
-      } catch(e) {
-        try {
-          const { count } = await supabase.from('goals').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'active');
-          if (count !== null) document.getElementById('metricGoals').textContent = count;
-        } catch(e2) {}
-      }
-
-      try {
-        const { count } = await supabase.from('issues').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('resolved', false);
-        if (count !== null) document.getElementById('metricIssues').textContent = count;
-      } catch(e) {}
-
-      try {
-        const now = new Date().toISOString();
-        const { data: meetings } = await supabase.from('meetings').select('meeting_date')
-          .eq('user_id', user.id).gte('meeting_date', now).order('meeting_date', { ascending: true }).limit(1);
-        if (meetings && meetings.length > 0) {
-          const d = new Date(meetings[0].meeting_date);
-          const diffDays = Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
-          const el = document.getElementById('metricMeeting');
-          if (diffDays === 0) el.textContent = 'Today';
-          else if (diffDays === 1) el.textContent = 'Tomorrow';
-          else if (diffDays <= 7) el.textContent = diffDays + 'd';
-          else el.textContent = d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+        if (vto?.core_focus) {
+          const el = document.getElementById('snapCoreFocus');
+          el.textContent = vto.core_focus;
           el.classList.remove('muted');
         }
       } catch(e) {}
