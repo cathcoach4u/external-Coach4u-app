@@ -111,16 +111,18 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.11
+v0.5.12
 
-## Recent Changes (v0.5.11)
+## Recent Changes (v0.5.12)
+- Removed `organisation.chart.html` (Accountability Chart) — moved to `yourteamcoach`
+- Removed `team-alignment.html` (Team Alignment) — moved to `yourteamcoach`
+- Updated `index.html` to remove both module cards
+
+## Previous (v0.5.11)
 - Added Vision & Strategy standalone activity page (`business/vision-strategy.html`)
 - Added `business/css/activity.css` (copied from coach4u-shared, Design 2)
 - Updated CLAUDE.md to document two-design system
 - Portal Vision & Strategy card now links to `business/vision-strategy.html`
-
-## Previous (v0.5.10)
-- Version bump
 
 ## Previous (v0.5.9)
 - Restored root `index.html` as the primary portal page (one card: Strategic Hub)
@@ -133,8 +135,9 @@ v0.5.11
 - Strategic Hub: `https://cathcoach4u.github.io/yourbusinesscoach/business/`
 
 ## Current Status
-- **Business app**: WORKING — VTO, org chart, rocks, scorecard, meetings, issues, team alignment
-- **Vision & Strategy activity page**: NEW — standalone worksheet at `business/vision-strategy.html`
+- **Business app**: WORKING — VTO, rocks, scorecard, meetings, issues
+- **Vision & Strategy activity page**: WORKING — standalone worksheet at `business/vision-strategy.html`
+- **Accountability Chart & Team Alignment**: MOVED to `yourteamcoach`
 - **Mobile**: Responsive at 390px and 768px breakpoints
 - **Login**: Gold standard v2.2
 
