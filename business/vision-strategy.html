@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vision &amp; Strategy | Your Business Coach</title>
+  <title>Core Focus | Your Business Coach</title>
   <link rel="manifest" href="../manifest.json">
   <meta name="theme-color" content="#1B3664">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -220,7 +220,7 @@
     <div class="header-inner">
       <div class="header-left">
         <a href="../" class="header-back">&#x2190; Home</a>
-        <span class="header-title">Vision &amp; Strategy</span>
+        <span class="header-title">Core Focus</span>
       </div>
       <button class="sign-out-btn" onclick="window.signOut && window.signOut()">Sign Out</button>
     </div>
@@ -233,7 +233,7 @@
       <p>Clarify where you&#x2019;re going and how you&#x2019;ll get there. Every field saves automatically as you type.</p>
       <div class="completion-pill">
         <div class="pill-bar"><div class="pill-fill" id="pill-fill" style="width:0%"></div></div>
-        <span id="completion-text">0 of 6 sections complete</span>
+        <span id="completion-text">0 of 8 sections complete</span>
       </div>
     </header>
 
@@ -250,6 +250,10 @@
       <div class="act-progress-step" data-step="5"><div class="num">5</div><span>3-Year</span></div>
       <div class="act-progress-divider"></div>
       <div class="act-progress-step" data-step="6"><div class="num">6</div><span>1-Year</span></div>
+      <div class="act-progress-divider"></div>
+      <div class="act-progress-step" data-step="7"><div class="num">7</div><span>Targets</span></div>
+      <div class="act-progress-divider"></div>
+      <div class="act-progress-step" data-step="8"><div class="num">8</div><span>Marketing</span></div>
     </div>
 
     <!-- Mode toggle -->
@@ -281,7 +285,7 @@
       <p class="act-step-hint">Tip: Great core values are specific enough that you could point to someone living them vs. ignoring them.</p>
       <div id="cv-list"></div>
       <div class="act-nav-row guided-only act-hidden">
-        <span class="step-counter">Step 1 of 6</span>
+        <span class="step-counter">Step 1 of 8</span>
         <button class="act-btn act-btn-primary" onclick="nextStep()">Next &#x2192;</button>
       </div>
     </div>
@@ -316,7 +320,7 @@
       </div>
       <div class="act-nav-row guided-only act-hidden">
         <button class="act-btn act-btn-secondary" onclick="prevStep()">&#x2190; Back</button>
-        <span class="step-counter">Step 2 of 6</span>
+        <span class="step-counter">Step 2 of 8</span>
         <button class="act-btn act-btn-primary" onclick="nextStep()">Next &#x2192;</button>
       </div>
     </div>
@@ -342,7 +346,7 @@
       </div>
       <div class="act-nav-row guided-only act-hidden">
         <button class="act-btn act-btn-secondary" onclick="prevStep()">&#x2190; Back</button>
-        <span class="step-counter">Step 3 of 6</span>
+        <span class="step-counter">Step 3 of 8</span>
         <button class="act-btn act-btn-primary" onclick="nextStep()">Next &#x2192;</button>
       </div>
     </div>
@@ -389,7 +393,7 @@
       </div>
       <div class="act-nav-row guided-only act-hidden">
         <button class="act-btn act-btn-secondary" onclick="prevStep()">&#x2190; Back</button>
-        <span class="step-counter">Step 4 of 6</span>
+        <span class="step-counter">Step 4 of 8</span>
         <button class="act-btn act-btn-primary" onclick="nextStep()">Next &#x2192;</button>
       </div>
     </div>
@@ -434,7 +438,7 @@
       </div>
       <div class="act-nav-row guided-only act-hidden">
         <button class="act-btn act-btn-secondary" onclick="prevStep()">&#x2190; Back</button>
-        <span class="step-counter">Step 5 of 6</span>
+        <span class="step-counter">Step 5 of 8</span>
         <button class="act-btn act-btn-primary" onclick="nextStep()">Next &#x2192;</button>
       </div>
     </div>
@@ -480,7 +484,65 @@
       </div>
       <div class="act-nav-row guided-only act-hidden">
         <button class="act-btn act-btn-secondary" onclick="prevStep()">&#x2190; Back</button>
-        <span class="step-counter">Step 6 of 6</span>
+        <span class="step-counter">Step 6 of 8</span>
+        <button class="act-btn act-btn-primary" onclick="nextStep()">Next &#x2192;</button>
+      </div>
+    </div>
+
+    <!-- SECTION 7 — TARGETS -->
+    <div class="act-card" data-step="7" id="section-7">
+      <div class="card-header">
+        <div class="card-header-main">
+          <div class="act-step-label">&#x25CE; Targets</div>
+          <h2 class="act-step-title">The key targets driving your business forward</h2>
+        </div>
+        <div class="card-done-badge">&#x2713; Complete</div>
+      </div>
+      <p class="act-step-prompt">Define the measurable targets that will tell you whether your strategy is working.</p>
+      <p class="act-step-hint">Tip: Good targets are specific, time-bound, and owned by someone on your team.</p>
+      <div class="act-reflect-prompts">
+        <div>
+          <label class="vto-label">What are your key targets?</label>
+          <textarea class="vto-field vto-input" style="min-height:120px;resize:vertical;"
+            data-section="targets" data-key="key_targets" rows="4"
+            placeholder="List your key targets&#x2026;"></textarea>
+        </div>
+      </div>
+      <div class="act-nav-row guided-only act-hidden">
+        <button class="act-btn act-btn-secondary" onclick="prevStep()">&#x2190; Back</button>
+        <span class="step-counter">Step 7 of 8</span>
+        <button class="act-btn act-btn-primary" onclick="nextStep()">Next &#x2192;</button>
+      </div>
+    </div>
+
+    <!-- SECTION 8 — MARKETING -->
+    <div class="act-card" data-step="8" id="section-8">
+      <div class="card-header">
+        <div class="card-header-main">
+          <div class="act-step-label">&#x25C8; Marketing</div>
+          <h2 class="act-step-title">How you attract and retain your ideal clients</h2>
+        </div>
+        <div class="card-done-badge">&#x2713; Complete</div>
+      </div>
+      <p class="act-step-prompt">Outline your marketing approach — channels, messages, and the actions that generate leads and build your brand.</p>
+      <p class="act-step-hint">Tip: Focus on the 1&#x2013;2 channels that reach your ideal client most effectively, rather than spreading thin.</p>
+      <div class="act-reflect-prompts">
+        <div>
+          <label class="vto-label">Marketing channels &amp; approach</label>
+          <textarea class="vto-field vto-input" style="min-height:120px;resize:vertical;"
+            data-section="marketing_plan" data-key="channels" rows="4"
+            placeholder="Describe your marketing channels and approach&#x2026;"></textarea>
+        </div>
+        <div class="vto-sub-section">
+          <label class="vto-label">Key messages</label>
+          <textarea class="vto-field vto-input" style="min-height:80px;resize:vertical;"
+            data-section="marketing_plan" data-key="messages" rows="3"
+            placeholder="What are the key messages you want to communicate?"></textarea>
+        </div>
+      </div>
+      <div class="act-nav-row guided-only act-hidden">
+        <button class="act-btn act-btn-secondary" onclick="prevStep()">&#x2190; Back</button>
+        <span class="step-counter">Step 8 of 8</span>
         <button class="act-btn act-btn-primary" onclick="finishGuided()" style="background:#065f46;">
           &#x2713; Finish Plan
         </button>
@@ -513,7 +575,7 @@
   let _saveTimer        = null;
   let currentMode       = 'guided';
   let currentStep       = 1;
-  const TOTAL_STEPS     = 6;
+  const TOTAL_STEPS     = 8;
 
   /* ── Helpers ── */
 
@@ -720,7 +782,7 @@
     document.getElementById('pill-fill').style.width = Math.round((complete / TOTAL_STEPS) * 100) + '%';
     document.getElementById('completion-text').textContent =
       complete === TOTAL_STEPS
-        ? 'All 6 sections complete ✓'
+        ? 'All 8 sections complete ✓'
         : `${complete} of ${TOTAL_STEPS} sections complete`;
 
     document.getElementById('complete-banner').classList.toggle('act-hidden', complete < TOTAL_STEPS);

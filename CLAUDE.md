@@ -111,9 +111,15 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.12
+v0.5.13
 
-## Recent Changes (v0.5.12)
+## Recent Changes (v0.5.13)
+- Renamed `vision-strategy.html` page header from "Vision & Strategy" to "Core Focus"
+- Added section 7 "Targets" to `business/vision-strategy.html`
+- Added section 8 "Marketing" to `business/vision-strategy.html`
+- Updated TOTAL_STEPS from 6 to 8 and all step counters accordingly
+
+## Previous (v0.5.12)
 - Removed `organisation.chart.html` (Accountability Chart) — moved to `yourteamcoach`
 - Removed `team-alignment.html` (Team Alignment) — moved to `yourteamcoach`
 - Updated `index.html` to remove both module cards
