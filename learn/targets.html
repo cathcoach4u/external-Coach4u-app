@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Targets | Your Business Coach</title>
-  <link rel="manifest" href="../../manifest.json">
+  <link rel="manifest" href="../manifest.json">
   <meta name="theme-color" content="#003366">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-  <link rel="stylesheet" href="../../css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="../css/style.css" />
   <style>
     body { opacity: 0; transition: opacity 0.2s ease; }
     .container { padding-bottom: 140px; }
@@ -41,7 +41,7 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="header-left">
-        <a href="../../strategy.html" class="header-back">&#x2190; Strategy</a>
+        <a href="../strategy.html" class="header-back">&#x2190; Strategy</a>
         <span class="header-title">Targets</span>
       </div>
       <button id="signOutBtn" class="sign-out-btn">Sign Out</button>
@@ -56,7 +56,7 @@
     <div class="ws-hint">
       Strong targets stretch your team without breaking them. Write your 10-year vision in the present tense, as if it&#x2019;s already real. Then work backwards: a vivid 3-year picture, and 3 to 7 things this year that genuinely move the needle. Specific numbers beat vague aspirations every time.
       <br><br>
-      <a href="../../learning-vault.html" style="color:var(--accent);font-weight:700;">Explore vision &amp; targets exercises in the Learning Vault &#x2192;</a>
+      <a href="../learning-vault.html" style="color:var(--accent);font-weight:700;">Explore vision &amp; targets exercises in the Learning Vault &#x2192;</a>
     </div>
 
     <div class="ws-card">
@@ -90,24 +90,24 @@
   </div>
   <div class="ws-save-bar">
     <span class="save-status" id="saveStatus">Changes will save automatically</span>
-    <button class="ws-btn" onclick="window.location.href='../../strategy.html'">Done &#x2713;</button>
+    <button class="ws-btn" onclick="window.location.href='../strategy.html'">Done &#x2713;</button>
   </div>
   <nav class="bottom-nav">
-    <a class="bottom-nav-item" href="../../index.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
-    <a class="bottom-nav-item active" href="../../strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
-    <a class="bottom-nav-item" href="../../operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
-    <a class="bottom-nav-item" href="../../learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
+    <a class="bottom-nav-item" href="../index.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
+    <a class="bottom-nav-item active" href="../strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
+    <a class="bottom-nav-item" href="../operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
+    <a class="bottom-nav-item" href="../learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
   </nav>
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
     const supabase = createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
     async function init() {
       const { data: { user }, error } = await supabase.auth.getUser();
-      if (!user || error) { window.location.href = '../../login.html'; return; }
+      if (!user || error) { window.location.href = '../login.html'; return; }
       const { data: profile } = await supabase.from('users').select('membership_status').eq('id', user.id).single();
-      if (!profile || profile.membership_status !== 'active') { window.location.href = '../../inactive.html'; return; }
+      if (!profile || profile.membership_status !== 'active') { window.location.href = '../inactive.html'; return; }
       document.body.style.opacity = '1';
-      document.getElementById('signOutBtn').addEventListener('click', async () => { await supabase.auth.signOut(); window.location.href = '../../login.html'; });
+      document.getElementById('signOutBtn').addEventListener('click', async () => { await supabase.auth.signOut(); window.location.href = '../login.html'; });
     }
     init();
   </script>

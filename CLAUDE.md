@@ -45,18 +45,16 @@ offline.html            — service-worker offline fallback
 scorecard.html, goals.html, meeting.html, issues.html
                         — Operations static info pages
 
-learn/                  — all activities and interactive tools live here
+learn/                  — all activities and interactive tools (flat)
 ├── values-discovery.html       — guided 3-step values exercise (localStorage)
-├── strategy/                   — Strategy worksheets
-│   ├── core-values.html
-│   ├── core-focus.html
-│   ├── targets.html
-│   └── marketing-strategy.html
-└── operations/                 — Operations interactive tools
-    ├── scorecard.html
-    ├── goals.html
-    ├── meeting.html
-    └── issues.html
+├── core-values.html            — Strategy worksheet
+├── core-focus.html             — Strategy worksheet
+├── targets.html                — Strategy worksheet
+├── marketing-strategy.html     — Strategy worksheet
+├── scorecard.html              — Operations tool
+├── goals.html                  — Operations tool
+├── meeting.html                — Operations tool
+└── issues.html                 — Operations tool
 
 css/
 ├── style.css           — Design 1 system v2.2
@@ -69,10 +67,10 @@ js/
 
 ## Key Rules
 - All HTML pages use Design 1 (`css/style.css`) — no exceptions
-- `css/activity.css` is supplementary; only the 4 `learn/operations/*` tools and `learn/values-discovery.html` load it. It uses Design 1 colours and the Aptos font stack — no Google Fonts anywhere
-- Every interactive activity lives in `learn/<section>/`. No page outside the Learning Vault should link directly to a specific activity
-- Strategy worksheets in `learn/strategy/*` save bar is visual only (no save logic wired up yet)
-- Operations tools in `learn/operations/*` call `/api/...` endpoints that don't exist; they authenticate via Supabase correctly but persistence is broken until the data layer is rebuilt on top of the existing tables
+- `css/activity.css` is supplementary; only the 4 Operations tools (`learn/scorecard.html`, `learn/goals.html`, `learn/meeting.html`, `learn/issues.html`) and `learn/values-discovery.html` load it. It uses Design 1 colours and the Aptos font stack — no Google Fonts anywhere
+- Every interactive activity lives flat in `learn/`. No page outside the Learning Vault should link directly to a specific activity
+- Strategy worksheets save bar is visual only (no save logic wired up yet)
+- Operations tools call `/api/...` endpoints that don't exist; they authenticate via Supabase correctly but persistence is broken until the data layer is rebuilt on top of the existing tables
 - Bottom nav order is always: Home / Strategy / Operations / Learn — active item gets `.active` class
 
 ## Login Page Standard (Gold Standard v2.2)
@@ -102,13 +100,16 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.44
+v0.5.45
 
-## Recent Changes (v0.5.44)
-- **Consolidated activity hierarchy under `learn/`.** Strategy worksheets moved from `strategy/` → `learn/strategy/`; Operations tools moved from `learn/` → `learn/operations/`. The standalone `strategy/` directory is deleted. `strategy/one-page-plan.html` moved to root `one-page-plan.html` (it's a printable report, not an activity). `learn/values-discovery.html` kept flat at the top of `learn/`.
-- **Single design system.** `css/activity.css` rewritten so its `--act-*` variables now point to Design 1 colours (`#003366` navy, `#0D9488` teal) and the Aptos system stack — Design 2 is gone. Google Fonts `<link>` tags removed from the 4 Operations tools.
-- **All inbound links repointed:** `strategy.html`, `index.html`, `learning-vault.html`, and the 4 Operations static info pages now point to the new locations.
-- CLAUDE.md "Design System" and "File Structure" rewritten to reflect the single-design, single-activity-folder reality.
+## Recent Changes (v0.5.45)
+- **Flattened `learn/`.** Removed the `learn/strategy/` and `learn/operations/` subdirectories — all activity files now sit directly in `learn/`. `one-page-plan.html` stays at root (it's a printable report, not an activity).
+- All inbound links updated: `strategy.html`, `index.html`, `learning-vault.html`, and the Operations static info pages now point to `learn/<file>.html` directly.
+- Paths inside moved files: `../../X` → `../X`.
+
+## Previous (v0.5.44)
+- Consolidated activity hierarchy under `learn/` (initial restructure, with `learn/strategy/` and `learn/operations/` subdirectories — now flattened in v0.5.45)
+- Single design system — `css/activity.css` rewritten to use Design 1 colours and Aptos; Google Fonts removed from the 4 Operations tools
 
 ## Previous (v0.5.42)
 - Removed the footer block on `login.html` (Strengths-Based Coaching tagline + website + email + phone)
