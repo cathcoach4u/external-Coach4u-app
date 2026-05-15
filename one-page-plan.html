@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>One-Page Business Plan | Your Business Coach</title>
-  <link rel="manifest" href="../manifest.json">
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#003366">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Your Business Coach">
-  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css" />
   <style>
     body {
       opacity: 0;
@@ -206,7 +206,7 @@
 
   <div class="screen-toolbar">
     <div class="toolbar-left">
-      <a href="../strategy.html" class="toolbar-back">&#x2190; Strategy</a>
+      <a href="strategy.html" class="toolbar-back">&#x2190; Strategy</a>
       <span class="toolbar-title">One-Page Business Plan</span>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
@@ -335,11 +335,11 @@
     );
     async function init() {
       const { data: { user }, error } = await supabase.auth.getUser();
-      if (!user || error) { window.location.href = '../login.html'; return; }
+      if (!user || error) { window.location.href = 'login.html'; return; }
       const { data: profile } = await supabase
         .from('users').select('membership_status').eq('id', user.id).single();
       if (!profile || profile.membership_status !== 'active') {
-        window.location.href = '../inactive.html'; return;
+        window.location.href = 'inactive.html'; return;
       }
       document.body.style.opacity = '1';
     }
