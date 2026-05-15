@@ -71,8 +71,7 @@ css/
 
 js/
 ├── auth.js                 — authentication (email+password, redirects)
-├── supabase.js             — Supabase client config
-└── ai.js                   — AI coach (Claude API)
+└── supabase.js             — Supabase client config
 ```
 
 ## Key Rules
@@ -97,11 +96,9 @@ Required `<head>` structure:
 Post-login redirect: `index.html` (root portal)
 
 ## Supabase
-- **Auth pages** (login.html, forgot-password.html, reset-password.html):
-  - URL: `https://eekefsuaefgpqmjdyniy.supabase.co`
-  - Anon key: `sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y`
-- **Dashboard app** (`js/supabase.js`):
-  - URL: `https://uoixetfvboevjxlkfyqy.supabase.co`
+Single project for auth + database. Every page (login, auth flows, dashboard, worksheets) uses the same client:
+- URL: `https://eekefsuaefgpqmjdyniy.supabase.co`
+- Anon key: `sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y`
 
 Always use unversioned import:
 ```js
@@ -109,9 +106,16 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.39
+v0.5.40
 
-## Recent Changes (v0.5.39)
+## Recent Changes (v0.5.40)
+- Consolidated to a single Supabase project. The app now exclusively uses `eekefsuaefgpqmjdyniy.supabase.co` — the old `uoixetfvboevjxlkfyqy.supabase.co` project (which only hosted the AI proxy Edge Function for the now-deleted /business/ Strategic Hub) is no longer referenced anywhere
+- Deleted orphan JS files: `js/ai.js` (AI coach client, only used by deleted business/index.html), `js/app.js` and `js/app-business.js` (both orphaned by the /business/ removal)
+- Cleaned `sw.js` precache list — removed entries for `js/ai.js`, `js/app.js`, and three non-existent `growth/*` files
+- Updated CLAUDE.md Supabase section to reflect the single-project reality; dropped `js/ai.js` from the File Structure block
+- AI coach integration will be rebuilt fresh when reintroduced; not part of the current root app
+
+## Previous (v0.5.39)
 - Removed legacy `business/` directory entirely — `business/index.html` (Strategic Hub SPA), `business/values.html`, `business/vision-strategy.html`, all of `business/css/` and `business/js/`
 - Repointed post-login redirect: `login.html` and `js/auth.js` now send users to root `index.html` instead of `business/index.html`
 - Removed `business/index.html` and `business/js/app.js` from `sw.js` precache list
