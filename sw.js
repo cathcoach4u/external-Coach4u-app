@@ -19,8 +19,6 @@ const STATIC_ASSETS = [
   '/external-Coach4u-app/js/auth.js',
   '/external-Coach4u-app/js/supabase.js',
   '/external-Coach4u-app/js/ai.js',
-  '/external-Coach4u-app/business/index.html',
-  '/external-Coach4u-app/business/js/app.js',
   '/external-Coach4u-app/growth/index.html',
   '/external-Coach4u-app/growth/css/style.css',
   '/external-Coach4u-app/growth/js/app.js',

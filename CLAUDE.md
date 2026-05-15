@@ -31,7 +31,7 @@ Applies to: `index.html` (portal homepage), `login.html`, `forgot-password.html`
 - App card icon bg: `rgba(13,148,136,0.1)` (teal tint)
 
 ### Design 2 — Activity Pages (`css/activity.css` v1.0)
-Applies to: all tool and activity pages — e.g. `business/vision-strategy.html`, any worksheet, builder, or exercise.
+Applies to: all tool and activity pages — e.g. `scorecard.html`, `goals.html`, `meeting.html`, `issues.html`, any worksheet, builder, or exercise.
 
 - Primary: `#1B3664` (darker navy)
 - Accent: `#5684C4` (blue)
@@ -45,42 +45,40 @@ Applies to: all tool and activity pages — e.g. `business/vision-strategy.html`
 
 ## File Structure
 ```
-business/
-├── index.html              — slim ~300 lines (panels only, no modals)
-├── css/
-│   ├── activity.css        — activity/worksheet design system (Design 2)
-│   ├── base.css            — header overrides, vision banner, sub-nav, panel
-│   ├── alignment.css       — team alignment & GWC
-│   ├── org.css             — org chart / accountability chart
-│   ├── rocks.css           — rocks / quarterly priorities
-│   ├── scorecard.css       — scorecard table & cell popover
-│   ├── meeting.css         — L10 meeting
-│   ├── issues.css          — kanban / issues board
-│   ├── ai.css              — AI coach FAB + floating sidebar
-│   └── misc.css            — badges, forms, timer, group overview, responsive
-└── js/
-    ├── modals.js           — all modals + AI coach UI injected by JS
-    └── app.js              — main app logic
-
-css/
-└── style.css               — shared design system v2.2 (Design 1)
-
-js/
-├── auth.js                 — authentication (email+password, redirects)
-├── supabase.js             — Supabase client config (points to business Supabase project)
-└── ai.js                   — AI coach (Claude API)
-
+index.html                  — root portal / dashboard
+strategy.html               — Strategy hub (Build Your Strategy)
+operations.html             — Operations hub (Run Your Operations)
+learning-vault.html         — Learning Vault (guided activities)
 login.html                  — gold standard login (no inline styles, no Google Fonts, PWA meta)
 forgot-password.html        — gold standard forgot password
 reset-password.html         — gold standard reset password
+
+strategy/                   — Strategy worksheet sub-pages (Design 1 — Aptos)
+├── core-values.html
+├── core-focus.html
+├── targets.html
+├── marketing-strategy.html
+└── one-page-plan.html
+
+learn/                      — Learning Vault exercises
+└── values-discovery.html
+
+scorecard.html, goals.html, meeting.html, issues.html   — Operations sub-pages (Design 2)
+
+css/
+├── style.css               — shared design system v2.2 (Design 1)
+└── activity.css            — activity-page design system (Design 2)
+
+js/
+├── auth.js                 — authentication (email+password, redirects)
+├── supabase.js             — Supabase client config
+└── ai.js                   — AI coach (Claude API)
 ```
 
 ## Key Rules
-- `business/index.html` loads: `css/style.css` (shared) + all 9 `business/css/*.css` files
-- Modals are NOT in index.html — they are injected by `business/js/modals.js`
-- Panel visibility: `.panel { display: block }` + `.panel.hidden { display: none }` (business override)
-- Shared CSS uses opposite pattern: `.panel { display: none }` + `.panel.active { display: block }`
-- Activity pages load: `../css/style.css` (for header/footer) + `css/activity.css` (for content)
+- Root hub pages (`index.html`, `strategy.html`, `operations.html`, `learning-vault.html`) load only `css/style.css` (Design 1 — Aptos)
+- Operations sub-pages (`scorecard.html`, `goals.html`, `meeting.html`, `issues.html`) load `css/style.css` + `css/activity.css` + Google Fonts (Design 2)
+- Strategy worksheets (`strategy/*.html`) currently load only `css/style.css` — kept on Design 1 by convention
 
 ## Login Page Standard (Gold Standard v2.2)
 
@@ -96,7 +94,7 @@ Required `<head>` structure:
 <link rel="stylesheet" href="css/style.css">
 ```
 
-Post-login redirect: `business/index.html` (not `index.html`)
+Post-login redirect: `index.html` (root portal)
 
 ## Supabase
 - **Auth pages** (login.html, forgot-password.html, reset-password.html):
@@ -111,9 +109,16 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.38
+v0.5.39
 
-## Recent Changes (v0.5.38)
+## Recent Changes (v0.5.39)
+- Removed legacy `business/` directory entirely — `business/index.html` (Strategic Hub SPA), `business/values.html`, `business/vision-strategy.html`, all of `business/css/` and `business/js/`
+- Repointed post-login redirect: `login.html` and `js/auth.js` now send users to root `index.html` instead of `business/index.html`
+- Removed `business/index.html` and `business/js/app.js` from `sw.js` precache list
+- Cleaned `CLAUDE.md` of all `business/` references (file structure, key rules, app URLs, current status)
+- The 8-tool Strategic Hub previously at `/business/` is superseded by the root dashboard + `strategy.html` + `operations.html`; Accountability Chart and Team Alignment already moved to `yourteamcoach` (per v0.5.12)
+
+## Previous (v0.5.38)
 - Added Learning Vault tip box to `strategy/core-focus.html`, `strategy/targets.html`, `strategy/marketing-strategy.html` — mirrors the pattern already on `strategy/core-values.html`
 - Each tip contains a short practical insight and a teal "Explore [topic] exercises in the Learning Vault →" link to `learning-vault.html`
 - Added `.ws-hint` CSS rule to `targets.html` and `marketing-strategy.html` (it was missing); reused existing rule on `core-focus.html`
@@ -169,11 +174,11 @@ v0.5.38
 
 ## App URLs
 - Portal (primary): `https://cathcoach4u.github.io/yourbusinesscoach/`
-- Strategic Hub: `https://cathcoach4u.github.io/yourbusinesscoach/business/`
 
 ## Current Status
-- **Business app**: WORKING — VTO, rocks, scorecard, meetings, issues
-- **Vision & Strategy activity page**: WORKING — standalone worksheet at `business/vision-strategy.html`
+- **Root dashboard**: WORKING — index.html, strategy.html, operations.html, learning-vault.html
+- **Strategy worksheets**: WORKING — `strategy/*.html` (core-values, core-focus, targets, marketing-strategy, one-page-plan)
+- **Operations sub-pages**: WORKING — scorecard, goals, meeting, issues
 - **Accountability Chart & Team Alignment**: MOVED to `yourteamcoach`
 - **Mobile**: Responsive at 390px and 768px breakpoints
 - **Login**: Gold standard v2.2
