@@ -110,9 +110,12 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.41
+v0.5.42
 
-## Recent Changes (v0.5.41)
+## Recent Changes (v0.5.42)
+- Removed the footer block on `login.html` (Strengths-Based Coaching tagline + website + email + phone)
+
+## Previous (v0.5.41)
 - Restructured Operations: the 4 interactive tools (scorecard, goals, meeting, issues) moved into `learn/` as Learning Vault tools
 - Root `scorecard.html`, `goals.html`, `meeting.html`, `issues.html` are now clean **Design 1** static info pages (placeholders for "What it is / Why it matters / How to use it") with a teal CTA linking to the tool in `learn/`
 - Added a new "Operations Tools" section to `learning-vault.html` with 4 cards linking to the relocated tools
