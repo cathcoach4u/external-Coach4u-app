@@ -18,17 +18,17 @@
       transition: opacity 0.2s ease;
       background: #e8edf2;
       min-height: 100vh;
-      padding-bottom: 32px;
+      padding-bottom: 24px;
     }
 
     .screen-toolbar {
       background: white;
       border-bottom: 1px solid #e5e7eb;
-      padding: 10px 20px;
+      padding: 10px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
       position: sticky;
       top: 0;
       z-index: 50;
@@ -37,51 +37,70 @@
     .toolbar-left {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
+      min-width: 0;
     }
     .toolbar-back {
       font-size: 0.82rem;
       font-weight: 700;
       color: #0D9488;
       text-decoration: none;
+      white-space: nowrap;
     }
     .toolbar-back:hover { text-decoration: underline; }
     .toolbar-title {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: #003366;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .toolbar-hint {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: #999;
     }
+    @media (max-width: 600px) { .toolbar-hint { display: none; } }
+
     .print-btn {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 8px 18px;
+      gap: 5px;
+      padding: 8px 14px;
       background: #0D9488;
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 700;
       cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
       transition: background 0.15s;
     }
     .print-btn:hover { background: #0F766E; }
 
-    /* ── Document preview wrapper ── */
+    /* ── Mobile hint ── */
+    .mobile-hint {
+      display: none;
+      background: #f0fdfa;
+      border-bottom: 1px solid #d1fae5;
+      padding: 8px 16px;
+      font-size: 0.75rem;
+      color: #065f46;
+    }
+    @media (max-width: 900px) { .mobile-hint { display: block; } }
+
+    /* ── Document preview wrapper — scrollable on mobile ── */
     .doc-preview {
-      padding: 24px 16px;
-      display: flex;
-      justify-content: center;
+      padding: 16px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
-    /* ── The document itself ── */
+    /* ── The document itself — fixed minimum width so columns don't collapse ── */
     .plan-page {
-      width: 100%;
-      max-width: 1050px;
+      min-width: 760px;
       background: white;
       box-shadow: 0 4px 24px rgba(0,0,0,0.14);
       border-radius: 4px;
@@ -93,30 +112,30 @@
     .doc-header {
       background: #003366;
       color: white;
-      padding: 14px 24px;
+      padding: 11px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
     .doc-company {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 800;
       letter-spacing: 0.3px;
     }
     .doc-company-sub {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       opacity: 0.7;
       margin-top: 1px;
     }
     .doc-plan-title {
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 2px;
       opacity: 0.9;
     }
     .doc-year {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       opacity: 0.6;
       margin-top: 2px;
       text-align: right;
@@ -125,65 +144,65 @@
     /* ── 3-column content grid ── */
     .doc-body {
       display: grid;
-      grid-template-columns: 1fr 1.4fr 1fr;
+      grid-template-columns: 1fr 1.45fr 1fr;
     }
 
     .doc-col {
-      padding: 18px 20px;
+      padding: 14px 16px;
       border-right: 1px solid #e5e7eb;
     }
     .doc-col:last-child { border-right: none; }
 
     .col-heading {
-      font-size: 0.64rem;
+      font-size: 0.6rem;
       font-weight: 800;
       letter-spacing: 1.8px;
       text-transform: uppercase;
       color: #0D9488;
       border-left: 3px solid #0D9488;
-      padding-left: 8px;
-      margin-bottom: 16px;
+      padding-left: 7px;
+      margin-bottom: 12px;
     }
 
     /* ── Field blocks ── */
-    .field { margin-bottom: 14px; }
+    .field { margin-bottom: 10px; }
     .field:last-child { margin-bottom: 0; }
 
     .field-label {
-      font-size: 0.6rem;
+      font-size: 0.56rem;
       font-weight: 800;
-      letter-spacing: 1px;
+      letter-spacing: 0.9px;
       text-transform: uppercase;
       color: #003366;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       display: block;
     }
 
     .field-value {
-      font-size: 0.8rem;
+      font-size: 0.76rem;
       color: #2d2d2d;
-      line-height: 1.55;
+      line-height: 1.5;
     }
 
     .field-divider {
       border: none;
       border-top: 1px solid #f0f0f0;
-      margin: 14px 0;
+      margin: 10px 0;
     }
 
     /* ── Core values pills ── */
     .values-pills {
       display: flex;
       flex-wrap: wrap;
-      gap: 5px;
+      gap: 4px;
     }
     .value-pill {
       background: rgba(13,148,136,0.08);
       color: #0D9488;
       border: 1px solid rgba(13,148,136,0.25);
       border-radius: 20px;
-      padding: 3px 10px;
-      font-size: 0.72rem;
+      padding: 2px 9px;
+      font-size: 0.68rem;
       font-weight: 700;
     }
 
@@ -191,11 +210,11 @@
     .fin-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 8px;
+      gap: 6px;
+      margin-bottom: 6px;
     }
-    .fin-cell .field-label { margin-bottom: 2px; }
-    .fin-cell .field-value { font-weight: 700; font-size: 0.82rem; color: #003366; }
+    .fin-cell .field-label { margin-bottom: 1px; }
+    .fin-cell .field-value { font-weight: 700; font-size: 0.78rem; color: #003366; }
 
     /* ── Numbered list ── */
     .num-list {
@@ -204,38 +223,39 @@
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
     }
     .num-list li {
       display: flex;
-      gap: 6px;
-      font-size: 0.78rem;
+      gap: 5px;
+      font-size: 0.73rem;
       color: #2d2d2d;
       line-height: 1.4;
     }
     .num-list li .n {
       color: #0D9488;
       font-weight: 800;
-      font-size: 0.72rem;
-      min-width: 14px;
+      font-size: 0.68rem;
+      min-width: 13px;
       padding-top: 1px;
+      flex-shrink: 0;
     }
 
     /* ── Document footer ── */
     .doc-footer {
       background: #f8f9fa;
       border-top: 1px solid #e5e7eb;
-      padding: 8px 24px;
+      padding: 6px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
     .doc-footer-text {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       color: #aaa;
     }
     .doc-footer-tagline {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       color: #0D9488;
       font-weight: 700;
     }
@@ -243,7 +263,7 @@
     /* ── Print ── */
     @page {
       size: A4 landscape;
-      margin: 8mm 10mm;
+      margin: 7mm 9mm;
     }
 
     @media print {
@@ -253,22 +273,37 @@
         padding: 0 !important;
       }
 
-      .screen-toolbar { display: none !important; }
-      .doc-preview { padding: 0 !important; }
+      .screen-toolbar,
+      .mobile-hint { display: none !important; }
+
+      .doc-preview {
+        padding: 0 !important;
+        overflow: visible !important;
+      }
 
       .plan-page {
-        max-width: none !important;
+        min-width: 0 !important;
         width: 100% !important;
         box-shadow: none !important;
         border-radius: 0 !important;
         page-break-inside: avoid;
+        break-inside: avoid;
       }
 
-      .doc-body { page-break-inside: avoid; }
+      .doc-body {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
 
-      .doc-col { padding: 14px 16px; }
-      .field { margin-bottom: 10px; }
-      .field-divider { margin: 10px 0; }
+      /* Slightly tighter for print to guarantee single page */
+      .doc-header { padding: 9px 18px; }
+      .doc-col { padding: 11px 14px; }
+      .col-heading { margin-bottom: 9px; }
+      .field { margin-bottom: 8px; }
+      .field-divider { margin: 8px 0; }
+      .field-value { line-height: 1.4; }
+      .num-list li { line-height: 1.35; }
+      .doc-footer { padding: 5px 18px; }
     }
   </style>
 </head>
@@ -279,10 +314,14 @@
       <a href="../strategy.html" class="toolbar-back">&#x2190; Strategy</a>
       <span class="toolbar-title">One-Page Business Plan</span>
     </div>
-    <div style="display:flex;align-items:center;gap:12px;">
-      <span class="toolbar-hint">Print or save as PDF for a clean A4 landscape copy</span>
-      <button class="print-btn" onclick="window.print()">&#x1F5A8;&nbsp; Print / Save PDF</button>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+      <span class="toolbar-hint">Scroll to see full plan &middot; Print for landscape A4</span>
+      <button class="print-btn" onclick="window.print()">&#x1F5A8;&nbsp; Print / PDF</button>
     </div>
+  </div>
+
+  <div class="mobile-hint">
+    &#x21C4; Scroll right to see the full plan &nbsp;&middot;&nbsp; Use Print / PDF for the best result
   </div>
 
   <div class="doc-preview">
