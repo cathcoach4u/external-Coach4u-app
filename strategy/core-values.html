@@ -13,20 +13,11 @@
   <style>
     body { opacity: 0; transition: opacity 0.2s ease; }
     .container { padding-bottom: 80px; }
-
-    .ws-header {
-      padding: 20px 16px 0;
-    }
-    .ws-title {
-      font-size: 1.15rem; font-weight: 800; color: var(--primary); margin: 0 0 4px;
-    }
-    .ws-sub {
-      font-size: 0.83rem; color: #666; margin: 0 0 20px; line-height: 1.45;
-    }
-
+    .ws-header { padding: 20px 16px 0; }
+    .ws-title { font-size: 1.15rem; font-weight: 800; color: var(--primary); margin: 0 0 4px; }
+    .ws-sub { font-size: 0.83rem; color: #666; margin: 0 0 20px; line-height: 1.45; }
     .ws-card {
-      background: white; border-radius: 10px;
-      border: 1px solid var(--border);
+      background: white; border-radius: 10px; border: 1px solid var(--border);
       padding: 18px 16px; margin: 0 16px 12px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.05);
     }
@@ -34,35 +25,21 @@
       font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
       letter-spacing: 0.8px; color: var(--accent); margin-bottom: 14px;
     }
-
-    .value-row {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
-    }
+    .value-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
     .value-row:last-child { margin-bottom: 0; }
-    .value-num {
-      font-size: 0.85rem; font-weight: 800; color: var(--accent);
-      min-width: 20px; text-align: right; flex-shrink: 0;
-    }
+    .value-num { font-size: 0.85rem; font-weight: 800; color: var(--accent); min-width: 20px; text-align: right; flex-shrink: 0; }
     .ws-input {
-      flex: 1;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 0.88rem;
-      color: var(--text);
-      font-family: inherit;
-      background: white;
-      transition: border-color 0.15s;
+      flex: 1; border: 1.5px solid var(--border); border-radius: 8px;
+      padding: 10px 12px; font-size: 0.88rem; color: var(--text);
+      font-family: inherit; background: white; transition: border-color 0.15s;
     }
     .ws-input:focus { outline: none; border-color: var(--accent); }
-
     .ws-hint {
       font-size: 0.78rem; color: #888; line-height: 1.5;
       margin: 0 16px 16px; padding: 10px 14px;
       background: #f8fafc; border-radius: 8px;
       border-left: 3px solid var(--accent);
     }
-
     .ws-save-bar {
       position: fixed; bottom: 56px; left: 0; right: 0;
       background: white; border-top: 1px solid #e5e7eb;
@@ -71,14 +48,12 @@
       box-shadow: 0 -2px 8px rgba(0,0,0,0.06); z-index: 90;
     }
     .save-status { font-size: 0.78rem; color: #888; }
-    .save-status.saved { color: var(--accent); }
     .ws-btn {
       padding: 9px 20px; background: var(--accent); color: white;
       border: none; border-radius: 8px; font-size: 0.85rem;
       font-weight: 700; cursor: pointer; transition: background 0.15s;
     }
     .ws-btn:hover { background: var(--accent-dark); }
-
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0;
       background: white; border-top: 1px solid #e5e7eb;
@@ -112,11 +87,11 @@
   <div class="container">
     <div class="ws-header">
       <h1 class="ws-title">&#x2B50; Core Values</h1>
-      <p class="ws-sub">The 3–5 non-negotiable beliefs that guide how your company operates. These are the behaviours you'd hire and fire for.</p>
+      <p class="ws-sub">The 3&#x2013;5 non-negotiable beliefs that guide how your company operates. These are the behaviours you&#x2019;d hire and fire for.</p>
     </div>
 
     <div class="ws-hint">
-      Tip: Great core values are specific enough that you could point to someone living them vs. ignoring them. Aim for 3–5 that are genuinely yours.
+      Tip: Great core values are specific enough that you could point to someone living them vs. ignoring them. Aim for 3&#x2013;5 that are genuinely yours.
     </div>
 
     <div class="ws-card">
