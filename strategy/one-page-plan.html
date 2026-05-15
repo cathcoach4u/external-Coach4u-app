@@ -12,7 +12,6 @@
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../css/style.css" />
   <style>
-    /* ── Screen chrome ── */
     body {
       opacity: 0;
       transition: opacity 0.2s ease;
@@ -56,10 +55,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .toolbar-hint {
-      font-size: 0.72rem;
-      color: #999;
-    }
+    .toolbar-hint { font-size: 0.72rem; color: #999; }
     @media (max-width: 600px) { .toolbar-hint { display: none; } }
 
     .print-btn {
@@ -80,7 +76,6 @@
     }
     .print-btn:hover { background: #0F766E; }
 
-    /* ── Mobile hint ── */
     .mobile-hint {
       display: none;
       background: #f0fdfa;
@@ -91,14 +86,12 @@
     }
     @media (max-width: 900px) { .mobile-hint { display: block; } }
 
-    /* ── Document preview wrapper — scrollable on mobile ── */
     .doc-preview {
       padding: 16px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
     }
 
-    /* ── The document itself — fixed minimum width so columns don't collapse ── */
     .plan-page {
       min-width: 760px;
       background: white;
@@ -108,7 +101,6 @@
       font-family: 'Aptos', 'Segoe UI', system-ui, sans-serif;
     }
 
-    /* ── Document header ── */
     .doc-header {
       background: #003366;
       color: white;
@@ -117,40 +109,16 @@
       align-items: center;
       justify-content: space-between;
     }
-    .doc-company {
-      font-size: 0.95rem;
-      font-weight: 800;
-      letter-spacing: 0.3px;
-    }
-    .doc-company-sub {
-      font-size: 0.68rem;
-      opacity: 0.7;
-      margin-top: 1px;
-    }
-    .doc-plan-title {
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      opacity: 0.9;
-    }
-    .doc-year {
-      font-size: 0.68rem;
-      opacity: 0.6;
-      margin-top: 2px;
-      text-align: right;
-    }
+    .doc-company { font-size: 0.95rem; font-weight: 800; letter-spacing: 0.3px; }
+    .doc-company-sub { font-size: 0.68rem; opacity: 0.7; margin-top: 1px; }
+    .doc-plan-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; }
+    .doc-year { font-size: 0.68rem; opacity: 0.6; margin-top: 2px; text-align: right; }
 
-    /* ── 3-column content grid ── */
     .doc-body {
       display: grid;
       grid-template-columns: 1fr 1.45fr 1fr;
     }
-
-    .doc-col {
-      padding: 14px 16px;
-      border-right: 1px solid #e5e7eb;
-    }
+    .doc-col { padding: 14px 16px; border-right: 1px solid #e5e7eb; }
     .doc-col:last-child { border-right: none; }
 
     .col-heading {
@@ -164,10 +132,8 @@
       margin-bottom: 12px;
     }
 
-    /* ── Field blocks ── */
     .field { margin-bottom: 10px; }
     .field:last-child { margin-bottom: 0; }
-
     .field-label {
       font-size: 0.56rem;
       font-weight: 800;
@@ -177,25 +143,10 @@
       margin-bottom: 3px;
       display: block;
     }
+    .field-value { font-size: 0.76rem; color: #2d2d2d; line-height: 1.5; }
+    .field-divider { border: none; border-top: 1px solid #f0f0f0; margin: 10px 0; }
 
-    .field-value {
-      font-size: 0.76rem;
-      color: #2d2d2d;
-      line-height: 1.5;
-    }
-
-    .field-divider {
-      border: none;
-      border-top: 1px solid #f0f0f0;
-      margin: 10px 0;
-    }
-
-    /* ── Core values pills ── */
-    .values-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
+    .values-pills { display: flex; flex-wrap: wrap; gap: 4px; }
     .value-pill {
       background: rgba(13,148,136,0.08);
       color: #0D9488;
@@ -206,42 +157,14 @@
       font-weight: 700;
     }
 
-    /* ── Financials row ── */
-    .fin-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-bottom: 6px;
-    }
+    .fin-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 6px; }
     .fin-cell .field-label { margin-bottom: 1px; }
     .fin-cell .field-value { font-weight: 700; font-size: 0.78rem; color: #003366; }
 
-    /* ── Numbered list ── */
-    .num-list {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-    .num-list li {
-      display: flex;
-      gap: 5px;
-      font-size: 0.73rem;
-      color: #2d2d2d;
-      line-height: 1.4;
-    }
-    .num-list li .n {
-      color: #0D9488;
-      font-weight: 800;
-      font-size: 0.68rem;
-      min-width: 13px;
-      padding-top: 1px;
-      flex-shrink: 0;
-    }
+    .num-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .num-list li { display: flex; gap: 5px; font-size: 0.73rem; color: #2d2d2d; line-height: 1.4; }
+    .num-list li .n { color: #0D9488; font-weight: 800; font-size: 0.68rem; min-width: 13px; padding-top: 1px; flex-shrink: 0; }
 
-    /* ── Document footer ── */
     .doc-footer {
       background: #f8f9fa;
       border-top: 1px solid #e5e7eb;
@@ -250,37 +173,15 @@
       align-items: center;
       justify-content: space-between;
     }
-    .doc-footer-text {
-      font-size: 0.6rem;
-      color: #aaa;
-    }
-    .doc-footer-tagline {
-      font-size: 0.6rem;
-      color: #0D9488;
-      font-weight: 700;
-    }
+    .doc-footer-text { font-size: 0.6rem; color: #aaa; }
+    .doc-footer-tagline { font-size: 0.6rem; color: #0D9488; font-weight: 700; }
 
-    /* ── Print ── */
-    @page {
-      size: A4 landscape;
-      margin: 7mm 9mm;
-    }
+    @page { size: A4 landscape; margin: 7mm 9mm; }
 
     @media print {
-      body {
-        opacity: 1 !important;
-        background: white !important;
-        padding: 0 !important;
-      }
-
-      .screen-toolbar,
-      .mobile-hint { display: none !important; }
-
-      .doc-preview {
-        padding: 0 !important;
-        overflow: visible !important;
-      }
-
+      body { opacity: 1 !important; background: white !important; padding: 0 !important; }
+      .screen-toolbar, .mobile-hint { display: none !important; }
+      .doc-preview { padding: 0 !important; overflow: visible !important; }
       .plan-page {
         min-width: 0 !important;
         width: 100% !important;
@@ -289,13 +190,7 @@
         page-break-inside: avoid;
         break-inside: avoid;
       }
-
-      .doc-body {
-        page-break-inside: avoid;
-        break-inside: avoid;
-      }
-
-      /* Slightly tighter for print to guarantee single page */
+      .doc-body { page-break-inside: avoid; break-inside: avoid; }
       .doc-header { padding: 9px 18px; }
       .doc-col { padding: 11px 14px; }
       .col-heading { margin-bottom: 9px; }
@@ -340,10 +235,8 @@
 
       <div class="doc-body">
 
-        <!-- COL 1: WHO WE ARE -->
         <div class="doc-col">
           <div class="col-heading">Who We Are</div>
-
           <div class="field">
             <span class="field-label">Core Values</span>
             <div class="values-pills">
@@ -353,67 +246,40 @@
               <span class="value-pill">Accountability</span>
             </div>
           </div>
-
           <hr class="field-divider">
-
           <div class="field">
             <span class="field-label">Purpose</span>
             <div class="field-value">To help business owners build thriving, self-managing businesses so they can achieve freedom and fulfilment.</div>
           </div>
-
           <div class="field">
             <span class="field-label">Niche</span>
             <div class="field-value">Strengths-based business coaching for small and medium businesses across Australia.</div>
           </div>
         </div>
 
-        <!-- COL 2: WHERE WE ARE GOING -->
         <div class="doc-col">
           <div class="col-heading">Where We Are Going</div>
-
           <div class="field">
             <span class="field-label">10-Year Vision</span>
             <div class="field-value">Australia&#x2019;s most trusted business coaching practice &mdash; 500 thriving client businesses, a team of 10 coaches, delivering measurable results nationwide.</div>
           </div>
-
           <hr class="field-divider">
-
           <div class="field">
             <span class="field-label">3-Year Picture</span>
             <div class="fin-row">
-              <div class="fin-cell">
-                <span class="field-label">Target Date</span>
-                <div class="field-value">June 2028</div>
-              </div>
-              <div class="fin-cell">
-                <span class="field-label">Revenue</span>
-                <div class="field-value">$1.2M</div>
-              </div>
-              <div class="fin-cell">
-                <span class="field-label">Profit</span>
-                <div class="field-value">$360K</div>
-              </div>
+              <div class="fin-cell"><span class="field-label">Target Date</span><div class="field-value">June 2028</div></div>
+              <div class="fin-cell"><span class="field-label">Revenue</span><div class="field-value">$1.2M</div></div>
+              <div class="fin-cell"><span class="field-label">Profit</span><div class="field-value">$360K</div></div>
             </div>
             <div class="field-value">4 coaches, 80 active clients, systemised 12-month program, recurring revenue model established.</div>
           </div>
-
           <hr class="field-divider">
-
           <div class="field">
             <span class="field-label">1-Year Plan</span>
             <div class="fin-row">
-              <div class="fin-cell">
-                <span class="field-label">Target Date</span>
-                <div class="field-value">Dec 2025</div>
-              </div>
-              <div class="fin-cell">
-                <span class="field-label">Revenue</span>
-                <div class="field-value">$420K</div>
-              </div>
-              <div class="fin-cell">
-                <span class="field-label">Profit</span>
-                <div class="field-value">$105K</div>
-              </div>
+              <div class="fin-cell"><span class="field-label">Target Date</span><div class="field-value">Dec 2025</div></div>
+              <div class="fin-cell"><span class="field-label">Revenue</span><div class="field-value">$420K</div></div>
+              <div class="fin-cell"><span class="field-label">Profit</span><div class="field-value">$105K</div></div>
             </div>
             <ul class="num-list">
               <li><span class="n">1.</span> Sign 20 new clients through referral and speaking</li>
@@ -424,17 +290,13 @@
           </div>
         </div>
 
-        <!-- COL 3: HOW WE GO TO MARKET -->
         <div class="doc-col">
           <div class="col-heading">How We Go to Market</div>
-
           <div class="field">
             <span class="field-label">Target Market</span>
             <div class="field-value">Business owners with 2&ndash;20 employees in professional services, trades, and health. Revenue $500K&ndash;$5M. Feel stuck or overwhelmed.</div>
           </div>
-
           <hr class="field-divider">
-
           <div class="field">
             <span class="field-label">What Makes Us Different</span>
             <ul class="num-list">
@@ -443,31 +305,27 @@
               <li><span class="n">3.</span> Real-world experience &mdash; founded by a former business owner</li>
             </ul>
           </div>
-
           <hr class="field-divider">
-
           <div class="field">
             <span class="field-label">Our Process</span>
             <div class="field-value">Coach4U 4-Step System: Clarity &#x2192; Strategy &#x2192; Execution &#x2192; Momentum. 12 months, monthly 1:1 sessions, weekly check-ins.</div>
           </div>
-
           <hr class="field-divider">
-
           <div class="field">
             <span class="field-label">Our Guarantee</span>
             <div class="field-value">No measurable progress in your first 90 days? We&#x2019;ll refund your last month&#x2019;s coaching fee &mdash; no questions asked.</div>
           </div>
         </div>
 
-      </div><!-- /.doc-body -->
+      </div>
 
       <div class="doc-footer">
         <span class="doc-footer-text">Confidential &mdash; For internal use only</span>
         <span class="doc-footer-tagline">Your Business Coach &mdash; coach4u.com.au</span>
       </div>
 
-    </div><!-- /.plan-page -->
-  </div><!-- /.doc-preview -->
+    </div>
+  </div>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
