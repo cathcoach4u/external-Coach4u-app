@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Goals | Your Business Coach</title>
+  <link rel="manifest" href="../manifest.json">
+  <meta name="theme-color" content="#1B3664">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css"/>
+  <link rel="stylesheet" href="../css/activity.css"/>
+  <style>
+    body{opacity:0;transition:opacity .2s ease}
+    .page-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+    .field-select{border:1.5px solid var(--act-light-grey);border-radius:8px;padding:8px 12px;font-family:var(--act-font-heading);font-size:.88rem;color:var(--act-dark-blue);background:white;cursor:pointer}
+    .progress-card{background:var(--act-soft);border-radius:12px;padding:16px 20px;margin-bottom:28px}
+    .progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .progress-label{font-family:var(--act-font-heading);font-weight:600;color:var(--act-dark-blue);font-size:.9rem}
+    .progress-pct{font-family:var(--act-font-heading);font-weight:700;color:var(--act-light-blue)}
+    .progress-track{height:8px;background:var(--act-light-grey);border-radius:4px;overflow:hidden}
+    .progress-fill{height:100%;background:var(--act-light-blue);border-radius:4px;transition:width .4s ease}
+    .goals-group{margin-bottom:28px}
+    .goals-group-header{font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:.95rem;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--act-light-grey);display:flex;align-items:center;gap:8px}
+    .goals-group-count{background:var(--act-soft);color:var(--act-light-blue);font-size:.78rem;font-weight:700;padding:2px 8px;border-radius:20px}
+    .goal-card{display:flex;align-items:flex-start;gap:14px;padding:16px 20px;background:white;border:1px solid var(--act-light-grey);border-radius:10px;margin-bottom:10px;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+    .goal-card:hover{box-shadow:0 2px 8px rgba(27,54,100,.1);border-color:var(--act-light-blue)}
+    .goal-icon{font-size:1.1rem;flex-shrink:0;margin-top:2px}
+    .goal-desc{font-family:var(--act-font-heading);font-weight:600;color:var(--act-dark-grey);font-size:.95rem;margin-bottom:4px}
+    .goal-meta{font-size:.82rem;color:#888;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .status-badge{font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:20px}
+    .sb-on_track{background:#d1fae5;color:#065f46}
+    .sb-off_track{background:#fee2e2;color:#991b1b}
+    .sb-at_risk{background:#fef3c7;color:#92400e}
+    .sb-done{background:#e0e7ff;color:#3730a3}
+    .company-tag{background:#eff6ff;color:#1d4ed8;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+    .modal-overlay.hidden{display:none}
+    .modal{background:white;border-radius:16px;padding:28px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+    .modal-title{font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:1.15rem}
+    .modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:#888;line-height:1;padding:0 4px}
+    .modal-field{margin-bottom:16px}
+    .modal-label{font-family:var(--act-font-heading);font-weight:600;color:var(--act-dark-blue);font-size:.88rem;margin-bottom:6px;display:block}
+    .modal-input,.modal-select,.modal-textarea{width:100%;border:1.5px solid var(--act-light-grey);border-radius:8px;padding:10px 14px;font-family:var(--act-font-body);font-size:.93rem;color:var(--act-dark-grey);background:white;box-sizing:border-box}
+    .modal-input:focus,.modal-select:focus,.modal-textarea:focus{outline:none;border-color:var(--act-light-blue)}
+    .modal-textarea{resize:vertical}
+    .modal-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .modal-footer{display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:10px}
+    .modal-footer-right{display:flex;gap:10px}
+    .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-family:var(--act-font-heading);font-weight:600;font-size:.88rem;z-index:2000;transition:opacity .3s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+    .toast-hidden{opacity:0;pointer-events:none}
+    .toast-success{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
+    .toast-error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+    .empty-state{text-align:center;padding:48px 20px;color:#888}
+    .empty-state-icon{font-size:2.5rem;margin-bottom:12px;opacity:.4}
+    .empty-state p{font-family:var(--act-font-heading);font-size:.95rem}
+    .hidden{display:none!important}
+  </style>
+</head>
+<body class="activity-page">
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="../learning-vault.html" class="header-back">&#x2190; Learning Vault</a>
+        <span class="header-title">Goals</span>
+      </div>
+      <button class="sign-out-btn" id="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="act-container">
+    <header class="act-header">
+      <h1>Quarterly Goals</h1>
+      <p>Your 3&#x2013;7 most important priorities this quarter &#x2014; the focus areas that move your business forward.</p>
+    </header>
+
+    <div class="page-controls">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-family:var(--act-font-heading);font-weight:600;color:var(--act-dark-blue);font-size:.9rem;">Quarter:</span>
+        <select class="field-select" id="quarter-select">
+          <option value="Q1 2026">Q1 2026</option>
+          <option value="Q2 2026" selected>Q2 2026</option>
+          <option value="Q3 2026">Q3 2026</option>
+          <option value="Q4 2026">Q4 2026</option>
+          <option value="Q1 2027">Q1 2027</option>
+        </select>
+      </div>
+      <button class="act-btn act-btn-primary" id="add-goal-btn">+ Add Goal</button>
+    </div>
+
+    <div class="progress-card">
+      <div class="progress-row">
+        <span class="progress-label" id="goals-progress-text">0 of 0 goals complete</span>
+        <span class="progress-pct" id="goals-progress-pct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="goals-progress-fill" style="width:0%"></div></div>
+    </div>
+
+    <div id="goals-board"></div>
+  </div>
+
+  <div class="modal-overlay hidden" id="goal-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" id="goal-modal-title">Add Goal</span>
+        <button class="modal-close" id="goal-modal-close">&times;</button>
+      </div>
+      <input type="hidden" id="goal-id"/>
+      <div class="modal-field">
+        <label class="modal-label">Goal Description *</label>
+        <textarea class="modal-textarea" id="goal-description" rows="3" placeholder="What must happen this quarter?"></textarea>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Owner</label>
+        <input type="text" class="modal-input" id="goal-owner" placeholder="Person responsible"/>
+      </div>
+      <div class="modal-2col modal-field">
+        <div>
+          <label class="modal-label">Status</label>
+          <select class="modal-select" id="goal-status">
+            <option value="on_track">On Track</option>
+            <option value="at_risk">At Risk</option>
+            <option value="off_track">Off Track</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+        <div>
+          <label class="modal-label">Quarter</label>
+          <select class="modal-select" id="goal-quarter">
+            <option value="Q1 2026">Q1 2026</option>
+            <option value="Q2 2026">Q2 2026</option>
+            <option value="Q3 2026">Q3 2026</option>
+            <option value="Q4 2026">Q4 2026</option>
+            <option value="Q1 2027">Q1 2027</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-field">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+          <input type="checkbox" id="goal-company" style="width:16px;height:16px;"/>
+          <span class="modal-label" style="margin:0;">Mark as Company Goal</span>
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button class="act-btn hidden" id="goal-modal-delete" style="color:#991b1b;border:1.5px solid #fca5a5;background:white;">Delete</button>
+        <div class="modal-footer-right">
+          <button class="act-btn act-btn-secondary" id="goal-modal-cancel">Cancel</button>
+          <button class="act-btn act-btn-primary" id="goal-modal-save">Save Goal</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast toast-hidden" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+  'use strict';
+  const _sb=window.supabase.createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
+  document.getElementById('sign-out-btn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='../login.html';});
+  let currentBusinessId=1,_goals=[];
+  function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
+  async function api(method,path,body){const opts={method,headers:{'Content-Type':'application/json'}};if(body!==undefined)opts.body=JSON.stringify(body);const res=await fetch('/api'+path,opts);if(!res.ok){const e=await res.json().catch(()=>({error:res.statusText}));throw new Error(e.error||res.statusText)}return res.json()}
+  const get=p=>api('GET',p),post=(p,b)=>api('POST',p,b),put=(p,b)=>api('PUT',p,b),del=p=>api('DELETE',p);
+  const STATUS_ICON={on_track:'&#x1F7E2;',at_risk:'&#x1F7E1;',off_track:'&#x1F534;',done:'&#x2705;'};
+  const STATUS_LABEL={on_track:'On Track',at_risk:'At Risk',off_track:'Off Track',done:'Done'};
+  async function loadGoals(){
+    const quarter=document.getElementById('quarter-select').value;
+    try{_goals=await get('/rocks?quarter='+encodeURIComponent(quarter)+'&business_id='+currentBusinessId);renderBoard(_goals)}
+    catch(e){showToast('Could not load goals','error')}
+  }
+  function renderBoard(goals){
+    const board=document.getElementById('goals-board');
+    board.innerHTML='';
+    if(!goals.length){board.innerHTML='<div class="empty-state"><div class="empty-state-icon">&#x1F3AF;</div><p>No goals for this quarter yet.<br>Add your first priority to get started.</p></div>';updateProgress([]);return;}
+    updateProgress(goals);
+    const company=goals.filter(g=>g.company_rock);
+    if(company.length)board.appendChild(renderGroup('&#x25C9; Company Goals',company));
+    const individual=goals.filter(g=>!g.company_rock);
+    [...new Set(individual.map(g=>g.owner||'Unassigned'))].forEach(owner=>board.appendChild(renderGroup(owner,individual.filter(g=>(g.owner||'Unassigned')===owner))));
+  }
+  function renderGroup(label,goals){
+    const group=document.createElement('div');group.className='goals-group';
+    group.innerHTML=`<div class="goals-group-header">${label}<span class="goals-group-count">${goals.length}</span></div>`;
+    goals.forEach(g=>{
+      const card=document.createElement('div');card.className='goal-card';
+      card.innerHTML=`<div class="goal-icon">${STATUS_ICON[g.status]||'&#x26AA;'}</div><div style="flex:1"><div class="goal-desc">${escHtml(g.description)}</div><div class="goal-meta">${g.owner?escHtml(g.owner):'<em>Unassigned</em>'}<span class="status-badge sb-${g.status}">${STATUS_LABEL[g.status]||g.status}</span>${g.company_rock?'<span class="company-tag">Company</span>':''}</div></div>`;
+      card.addEventListener('click',()=>openModal(_goals.find(x=>x.id===g.id)));group.appendChild(card);
+    });
+    return group;
+  }
+  function updateProgress(goals){
+    const done=goals.filter(g=>g.status==='done').length,total=goals.length,pct=total?Math.round(done/total*100):0;
+    document.getElementById('goals-progress-text').textContent=`${done} of ${total} goals complete`;
+    document.getElementById('goals-progress-pct').textContent=pct+'%';
+    document.getElementById('goals-progress-fill').style.width=pct+'%';
+  }
+  document.getElementById('quarter-select').addEventListener('change',loadGoals);
+  document.getElementById('add-goal-btn').addEventListener('click',()=>openModal(null));
+  function openModal(goal){
+    const isNew=!goal;
+    document.getElementById('goal-modal-title').textContent=isNew?'Add Goal':'Edit Goal';
+    document.getElementById('goal-id').value=isNew?'':goal.id;
+    document.getElementById('goal-description').value=isNew?'':(goal.description||'');
+    document.getElementById('goal-owner').value=isNew?'':(goal.owner||'');
+    document.getElementById('goal-status').value=isNew?'on_track':(goal.status||'on_track');
+    document.getElementById('goal-company').checked=isNew?false:!!goal.company_rock;
+    const q=document.getElementById('quarter-select').value;
+    document.getElementById('goal-quarter').value=isNew?q:(goal.quarter||q);
+    document.getElementById('goal-modal-delete').classList.toggle('hidden',isNew);
+    document.getElementById('goal-modal').classList.remove('hidden');
+  }
+  function closeModal(){document.getElementById('goal-modal').classList.add('hidden')}
+  document.getElementById('goal-modal-close').addEventListener('click',closeModal);
+  document.getElementById('goal-modal-cancel').addEventListener('click',closeModal);
+  document.getElementById('goal-modal').addEventListener('click',e=>{if(e.target===document.getElementById('goal-modal'))closeModal()});
+  document.getElementById('goal-modal-save').addEventListener('click',async()=>{
+    const id=document.getElementById('goal-id').value;
+    const description=document.getElementById('goal-description').value.trim();
+    const owner=document.getElementById('goal-owner').value.trim();
+    const status=document.getElementById('goal-status').value;
+    const quarter=document.getElementById('goal-quarter').value;
+    const company_rock=document.getElementById('goal-company').checked?1:0;
+    if(!description){showToast('Description is required','error');return}
+    try{
+      if(id){await put(`/rocks/${id}`,{description,owner,status,quarter,company_rock,seat_id:null});showToast('Goal updated','success')}
+      else{await post('/rocks',{description,owner,status,quarter,company_rock,seat_id:null,business_id:currentBusinessId});showToast('Goal created','success')}
+      closeModal();await loadGoals();
+    }catch(e){showToast('Save failed: '+e.message,'error')}
+  });
+  document.getElementById('goal-modal-delete').addEventListener('click',async()=>{
+    const id=document.getElementById('goal-id').value;
+    if(!id||!confirm('Delete this goal?'))return;
+    try{await del('/rocks/'+id);showToast('Deleted','success');closeModal();await loadGoals()}
+    catch(e){showToast('Delete failed','error')}
+  });
+  (async()=>{
+    const{data:{user}}=await _sb.auth.getUser();
+    if(!user){window.location.href='../login.html';return}
+    try{
+      const businesses=await get('/businesses');
+      const biz=businesses.find(b=>b.type==='holding')||businesses[0];
+      if(biz)currentBusinessId=biz.id;
+      await loadGoals();
+    }catch(e){console.error(e)}
+    document.body.style.opacity='1';
+  })();
+  </script>
+</body>
+</html>
