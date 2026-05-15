@@ -14,33 +14,57 @@
   <style>
     body { opacity: 0; transition: opacity 0.2s ease; }
 
-    .modules-grid {
+    .container { padding-bottom: 80px; }
+    .section-heading {
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--primary); margin: 0 0 4px;
+    }
+    .section-sub {
+      font-size: 0.85rem; color: #666; margin: 0 0 20px;
+    }
+
+    .activities-section { padding: 24px 16px 0; }
+
+    .activity-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 32px;
+      gap: 10px;
+      margin-bottom: 20px;
     }
-    .module-card {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 11px; border-radius: 8px;
-      border: 1px solid var(--border); background: #fafafa;
+    @media (max-width: 480px) {
+      .activity-grid { grid-template-columns: 1fr; }
+    }
+
+    .activity-card {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 12px; border-radius: 10px;
+      border: 1.5px solid var(--accent); background: white;
       text-decoration: none;
-      transition: box-shadow 0.15s, border-color 0.15s, background 0.15s;
+      transition: box-shadow 0.15s, background 0.15s;
     }
-    .module-card:hover { background: white; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border-color: #ccc; text-decoration: none; }
-    .module-card.coming-soon { cursor: default; pointer-events: none; opacity: 0.55; }
-    .mod-icon { width: 30px; height: 30px; border-radius: 6px; background: rgba(13,148,136,0.1); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
-    .mod-name { font-size: 12px; font-weight: 700; color: var(--primary); line-height: 1.3; flex: 1; }
-    .mod-name.muted { color: #aaa; }
-    .mod-arrow { font-size: 12px; color: #ccc; flex-shrink: 0; }
+    .activity-card:hover {
+      background: #f0fdfa;
+      box-shadow: 0 2px 8px rgba(13,148,136,0.12);
+      text-decoration: none;
+    }
+    .act-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: rgba(13,148,136,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .act-text { flex: 1; min-width: 0; }
+    .act-name {
+      font-size: 0.88rem; font-weight: 700;
+      color: var(--primary); line-height: 1.3; margin-bottom: 2px;
+    }
+    .act-desc { font-size: 0.76rem; color: #666; line-height: 1.35; }
+    .act-arrow { font-size: 16px; color: var(--accent); flex-shrink: 0; }
 
     .bottom-nav {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: white;
-      border-top: 1px solid #e5e7eb;
-      display: flex;
-      z-index: 100;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white; border-top: 1px solid #e5e7eb;
+      display: flex; z-index: 100;
       padding-bottom: env(safe-area-inset-bottom);
       box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
     }
@@ -54,7 +78,6 @@
     }
     .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
     .bottom-nav-icon { font-size: 20px; line-height: 1; }
-    .container { padding-bottom: 80px; }
   </style>
 </head>
 <body>
@@ -69,27 +92,44 @@
   </header>
 
   <div class="container">
-    <div class="modules-grid">
-      <a class="module-card" href="scorecard.html">
-        <div class="mod-icon">&#x1F4CA;</div>
-        <div class="mod-name">Scorecard</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
-      <a class="module-card" href="goals.html">
-        <div class="mod-icon">&#x1F3C6;</div>
-        <div class="mod-name">Goals</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
-      <a class="module-card" href="meeting.html">
-        <div class="mod-icon">&#x1F5D3;&#xFE0F;</div>
-        <div class="mod-name">Meeting</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
-      <a class="module-card" href="issues.html">
-        <div class="mod-icon">&#x26A1;</div>
-        <div class="mod-name">Issues</div>
-        <span class="mod-arrow">&#x203A;</span>
-      </a>
+    <div class="activities-section">
+      <h2 class="section-heading">Run Your Operations</h2>
+      <p class="section-sub">The weekly tools to keep your team focused, accountable and moving forward</p>
+
+      <div class="activity-grid">
+        <a class="activity-card" href="scorecard.html">
+          <div class="act-icon">&#x1F4CA;</div>
+          <div class="act-text">
+            <div class="act-name">Scorecard</div>
+            <div class="act-desc">Track the numbers that tell you how the business is really going</div>
+          </div>
+          <span class="act-arrow">&#x203A;</span>
+        </a>
+        <a class="activity-card" href="goals.html">
+          <div class="act-icon">&#x1F3C6;</div>
+          <div class="act-text">
+            <div class="act-name">Goals</div>
+            <div class="act-desc">Set and track your quarterly priorities to stay on plan</div>
+          </div>
+          <span class="act-arrow">&#x203A;</span>
+        </a>
+        <a class="activity-card" href="meeting.html">
+          <div class="act-icon">&#x1F5D3;&#xFE0F;</div>
+          <div class="act-text">
+            <div class="act-name">Meeting</div>
+            <div class="act-desc">Run a structured weekly team meeting that actually gets results</div>
+          </div>
+          <span class="act-arrow">&#x203A;</span>
+        </a>
+        <a class="activity-card" href="issues.html">
+          <div class="act-icon">&#x26A1;</div>
+          <div class="act-text">
+            <div class="act-name">Issues</div>
+            <div class="act-desc">Capture, prioritise and solve the problems holding you back</div>
+          </div>
+          <span class="act-arrow">&#x203A;</span>
+        </a>
+      </div>
     </div>
   </div>
 
@@ -118,21 +158,20 @@
       'https://eekefsuaefgpqmjdyniy.supabase.co',
       'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
     );
-    const { data: { user }, error } = await supabase.auth.getUser();
-    if (!user || error) { window.location.href = 'login.html'; }
-    else {
+    async function init() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (!user || error) { window.location.href = 'login.html'; return; }
       const { data: profile } = await supabase
         .from('users').select('membership_status').eq('id', user.id).single();
       if (!profile || profile.membership_status !== 'active') {
-        window.location.href = 'inactive.html';
-      } else {
-        document.body.style.opacity = '1';
-        document.getElementById('signOutBtn').addEventListener('click', async () => {
-          await supabase.auth.signOut();
-          window.location.href = 'login.html';
-        });
+        window.location.href = 'inactive.html'; return;
       }
+      document.body.style.opacity = '1';
+      document.getElementById('signOutBtn').addEventListener('click', async () => {
+        await supabase.auth.signOut(); window.location.href = 'login.html';
+      });
     }
+    init();
   </script>
 </body>
 </html>
