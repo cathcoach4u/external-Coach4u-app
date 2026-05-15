@@ -15,15 +15,15 @@
     body { opacity: 0; transition: opacity 0.2s ease; background: #f4f6f9; }
     .container { padding-bottom: 88px; }
 
-    /* ── Greeting ── */
+    /* ── Page title ── */
     .greeting-row {
       padding: 18px 16px 10px;
-      display: flex; align-items: flex-end; justify-content: space-between;
     }
     .greeting-name {
-      font-size: 1.1rem; font-weight: 800; color: var(--primary); line-height: 1.2;
+      font-size: 1.2rem; font-weight: 900; color: var(--primary); line-height: 1.2;
+      letter-spacing: -0.2px;
     }
-    .greeting-date { font-size: 0.78rem; color: #888; }
+    .greeting-date { font-size: 0.78rem; color: #888; margin-top: 2px; }
 
     /* ── Stat tiles ── */
     .stat-row {
@@ -149,12 +149,10 @@
 
   <div class="container">
 
-    <!-- Greeting -->
+    <!-- Page title -->
     <div class="greeting-row">
-      <div>
-        <div class="greeting-name" id="memberName">Welcome</div>
-        <div class="greeting-date" id="todayDate"></div>
-      </div>
+      <div class="greeting-name">Business Dashboard</div>
+      <div class="greeting-date" id="todayDate"></div>
     </div>
 
     <!-- Stat tiles -->
@@ -296,10 +294,6 @@
       if (!profile || profile.membership_status !== 'active') {
         window.location.href = 'inactive.html'; return;
       }
-      const email = user.email || '';
-      const name = email.includes('@') ? email.split('@')[0] : email;
-      document.getElementById('memberName').textContent =
-        'Welcome, ' + name.charAt(0).toUpperCase() + name.slice(1);
       document.body.style.opacity = '1';
       document.getElementById('signOutBtn').addEventListener('click', async () => {
         await supabase.auth.signOut(); window.location.href = 'login.html';
