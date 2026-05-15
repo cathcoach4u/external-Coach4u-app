@@ -111,9 +111,14 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.36
+v0.5.37
 
-## Recent Changes (v0.5.36)
+## Recent Changes (v0.5.37)
+- Normalised inline CSS formatting in `operations.html` to match `strategy.html` byte-for-byte on shared rules (font sizes, weights, line-heights, card/nav styles)
+- Both root hub pages confirmed using identical Aptos system stack via `css/style.css`
+- No visual change — formatting consistency only
+
+## Previous (v0.5.36)
 - Created `learning-vault.html` — new top-level Learning Vault page with activity cards
 - Created `learn/values-discovery.html` — 3-step guided discovery exercise (Identify → Define → In Action), saves to localStorage
 - Added Learn tab (📚) as 4th item in bottom nav on all pages: index.html, strategy.html, operations.html, all strategy/* sub-pages
