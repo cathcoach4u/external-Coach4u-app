@@ -1,31 +1,29 @@
 /* ============================================
-   Coach4U Activity Design System — css/activity.css
-   Version: 1.0
-   Source of truth: coach4u-shared/templates/css/activity.css
+   Activity styles — css/activity.css
+   Version: 2.0 (Design 1 — Aptos / navy / teal)
 
-   Use on: multi-step tools, worksheets, reflections, builders.
+   Use on: interactive tools and exercises under learn/.
    NOT for: dashboard, auth, or purely informational pages.
    Pair with css/style.css on authenticated activity pages.
 
-   Requires Google Fonts in <head>:
-     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+   No Google Fonts required — inherits the Aptos system stack from style.css.
    ============================================ */
 
-/* ----- Activity Tokens ----- */
+/* ----- Activity Tokens (Design 1) ----- */
 :root {
-  --act-dark-blue:    #1B3664;
-  --act-light-blue:   #5684C4;
-  --act-dark-grey:    #2D2D2D;
-  --act-light-grey:   #DDDDDD;
+  --act-dark-blue:    #003366;    /* Design 1 primary navy */
+  --act-light-blue:   #0D9488;    /* Design 1 accent teal  */
+  --act-dark-grey:    #333333;
+  --act-light-grey:   #e2e8f0;
   --act-bg:           #ffffff;
-  --act-soft:         #F5F7FB;
+  --act-soft:         #f0fdfa;    /* light teal tint */
   --act-radius-sm:    8px;
-  --act-radius-md:    12px;
-  --act-radius-lg:    16px;
-  --act-shadow-sm:    0 1px 2px rgba(27, 54, 100, 0.06);
-  --act-shadow-md:    0 4px 16px rgba(27, 54, 100, 0.08);
-  --act-font-body:    'Montserrat', sans-serif;
-  --act-font-heading: 'Inter', sans-serif;
+  --act-radius-md:    10px;
+  --act-radius-lg:    10px;       /* Design 1 standard card radius */
+  --act-shadow-sm:    0 1px 2px rgba(0, 51, 102, 0.06);
+  --act-shadow-md:    0 4px 16px rgba(0, 51, 102, 0.08);
+  --act-font-body:    -apple-system, BlinkMacSystemFont, 'Aptos', 'Segoe UI', Roboto, sans-serif;
+  --act-font-heading: -apple-system, BlinkMacSystemFont, 'Aptos', 'Segoe UI', Roboto, sans-serif;
 }
 
 body.activity-page {

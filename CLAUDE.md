@@ -14,74 +14,66 @@
 
 ## Design System
 
-Two designs are used in this project. **Do not mix them.**
-Both stylesheets are copied from `coach4u-shared/templates/css/` — that repo is a reference only, never modified directly.
+**One design.** Aptos system stack, navy `#003366` primary, teal `#0D9488` accent — applied to every page in the project.
 
-### Design 1 — Dashboard & Login (`css/style.css` v2.2)
-Applies to: `index.html` (portal homepage), `login.html`, `forgot-password.html`, `reset-password.html`, header, membership card, app card grid, footer.
-
-- Primary (navy): `#003366`
-- Primary dark: `#002244` — hover states
-- Accent (teal): `#0D9488` — buttons, borders, links
-- Accent dark: `#0F766E` — hover
+- Primary (navy): `#003366` | Primary dark: `#002244` (hover)
+- Accent (teal): `#0D9488` | Accent dark: `#0F766E` (hover)
 - Text: `#333333` | Muted: `#888888`
-- Font: Aptos system stack — **no Google Fonts**
-- Card border: `2px solid var(--accent)` (teal)
+- Font: **Aptos system stack** — no Google Fonts
+- Card border: `2px solid var(--accent)` or `1px solid var(--border)` depending on prominence
 - Border-radius: `10px`
-- App card icon bg: `rgba(13,148,136,0.1)` (teal tint)
+- Tip box (`.ws-hint`): `#f8fafc` bg, teal left border — used for "Explore X exercises in the Learning Vault →" prompts
 
-### Design 2 — Activity Pages (`css/activity.css` v1.0)
-Applies to: all tool and activity pages — e.g. `scorecard.html`, `goals.html`, `meeting.html`, `issues.html`, any worksheet, builder, or exercise.
-
-- Primary: `#1B3664` (darker navy)
-- Accent: `#5684C4` (blue)
-- Body text: `#2D2D2D`
-- Font: Inter (headings) + Montserrat (body) — loaded via Google Fonts
-- Card border: `1px solid #DDDDDD`, clean white background
-- Border-radius: `16px`
-- Input focus border: `#5684C4`
-- Sticky save bar at bottom of page
-- Uses `body.activity-page` class
+Stylesheets:
+- `css/style.css` — main design system v2.2 (loaded on every page)
+- `css/activity.css` — supplementary structural styles for interactive tools (tables, popovers, modals). Variables aliased to Design 1 colours/fonts; only loaded by tools in `learn/operations/` and `learn/values-discovery.html` where the extra patterns are needed.
 
 ## File Structure
 ```
-index.html                  — root portal / dashboard
-strategy.html               — Strategy hub (Build Your Strategy)
-operations.html             — Operations hub (Run Your Operations)
-learning-vault.html         — Learning Vault (guided activities)
-login.html                  — gold standard login (no inline styles, no Google Fonts, PWA meta)
-forgot-password.html        — gold standard forgot password
-reset-password.html         — gold standard reset password
+index.html              — root portal / dashboard
+strategy.html           — Strategy hub
+operations.html         — Operations hub
+learning-vault.html     — Learning Vault hub
+one-page-plan.html      — printable landscape one-page business plan
+login.html              — gold standard login
+forgot-password.html
+reset-password.html
+inactive.html           — shown when membership_status ≠ 'active'
+offline.html            — service-worker offline fallback
+404.html
 
-strategy/                   — Strategy worksheet sub-pages (Design 1 — Aptos)
-├── core-values.html
-├── core-focus.html
-├── targets.html
-├── marketing-strategy.html
-└── one-page-plan.html
+scorecard.html, goals.html, meeting.html, issues.html
+                        — Operations static info pages
 
-learn/                      — Learning Vault exercises & tools
-├── values-discovery.html   — guided exercise (Design 1)
-├── scorecard.html          — Scorecard tool (Design 2, to be converted)
-├── goals.html              — Goals tool (Design 2, to be converted)
-├── meeting.html            — Weekly Meeting tool (Design 2, to be converted)
-└── issues.html             — Issues list tool (Design 2, to be converted)
-
-scorecard.html, goals.html, meeting.html, issues.html   — Operations static info pages (Design 1) — each links to its tool in learn/
+learn/                  — all activities and interactive tools live here
+├── values-discovery.html       — guided 3-step values exercise (localStorage)
+├── strategy/                   — Strategy worksheets
+│   ├── core-values.html
+│   ├── core-focus.html
+│   ├── targets.html
+│   └── marketing-strategy.html
+└── operations/                 — Operations interactive tools
+    ├── scorecard.html
+    ├── goals.html
+    ├── meeting.html
+    └── issues.html
 
 css/
-├── style.css               — shared design system v2.2 (Design 1)
-└── activity.css            — activity-page design system (Design 2)
+├── style.css           — Design 1 system v2.2
+└── activity.css        — supplementary activity styles (Design 1 colours)
 
 js/
-├── auth.js                 — authentication (email+password, redirects)
-└── supabase.js             — Supabase client config
+├── auth.js             — sign in / out, membership gate
+└── supabase.js         — Supabase client + dashboard helpers
 ```
 
 ## Key Rules
-- Root hub pages (`index.html`, `strategy.html`, `operations.html`, `learning-vault.html`) load only `css/style.css` (Design 1 — Aptos)
-- Operations sub-pages (`scorecard.html`, `goals.html`, `meeting.html`, `issues.html`) load `css/style.css` + `css/activity.css` + Google Fonts (Design 2)
-- Strategy worksheets (`strategy/*.html`) currently load only `css/style.css` — kept on Design 1 by convention
+- All HTML pages use Design 1 (`css/style.css`) — no exceptions
+- `css/activity.css` is supplementary; only the 4 `learn/operations/*` tools and `learn/values-discovery.html` load it. It uses Design 1 colours and the Aptos font stack — no Google Fonts anywhere
+- Every interactive activity lives in `learn/<section>/`. No page outside the Learning Vault should link directly to a specific activity
+- Strategy worksheets in `learn/strategy/*` save bar is visual only (no save logic wired up yet)
+- Operations tools in `learn/operations/*` call `/api/...` endpoints that don't exist; they authenticate via Supabase correctly but persistence is broken until the data layer is rebuilt on top of the existing tables
+- Bottom nav order is always: Home / Strategy / Operations / Learn — active item gets `.active` class
 
 ## Login Page Standard (Gold Standard v2.2)
 
@@ -110,9 +102,15 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.42
+v0.5.44
 
-## Recent Changes (v0.5.42)
+## Recent Changes (v0.5.44)
+- **Consolidated activity hierarchy under `learn/`.** Strategy worksheets moved from `strategy/` → `learn/strategy/`; Operations tools moved from `learn/` → `learn/operations/`. The standalone `strategy/` directory is deleted. `strategy/one-page-plan.html` moved to root `one-page-plan.html` (it's a printable report, not an activity). `learn/values-discovery.html` kept flat at the top of `learn/`.
+- **Single design system.** `css/activity.css` rewritten so its `--act-*` variables now point to Design 1 colours (`#003366` navy, `#0D9488` teal) and the Aptos system stack — Design 2 is gone. Google Fonts `<link>` tags removed from the 4 Operations tools.
+- **All inbound links repointed:** `strategy.html`, `index.html`, `learning-vault.html`, and the 4 Operations static info pages now point to the new locations.
+- CLAUDE.md "Design System" and "File Structure" rewritten to reflect the single-design, single-activity-folder reality.
+
+## Previous (v0.5.42)
 - Removed the footer block on `login.html` (Strengths-Based Coaching tagline + website + email + phone)
 
 ## Previous (v0.5.41)

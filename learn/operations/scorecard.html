@@ -4,12 +4,11 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Scorecard | Your Business Coach</title>
-  <link rel="manifest" href="../manifest.json">
+  <link rel="manifest" href="../../manifest.json">
   <meta name="theme-color" content="#1B3664">
-  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css"/>
-  <link rel="stylesheet" href="../css/activity.css"/>
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <link rel="stylesheet" href="../../css/activity.css"/>
   <style>
     body{opacity:0;transition:opacity .2s ease}
     .page-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
@@ -61,7 +60,7 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="header-left">
-        <a href="../learning-vault.html" class="header-back">&#x2190; Learning Vault</a>
+        <a href="../../learning-vault.html" class="header-back">&#x2190; Learning Vault</a>
         <span class="header-title">Scorecard</span>
       </div>
       <button class="sign-out-btn" id="sign-out-btn">Sign Out</button>
@@ -142,7 +141,7 @@
   <script>
   'use strict';
   const _sb=window.supabase.createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
-  document.getElementById('sign-out-btn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='../login.html';});
+  document.getElementById('sign-out-btn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='../../login.html';});
   let currentBusinessId=1,_scorecard={metrics:[],weeks:[]},_activeMeta=null;
   function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
@@ -249,7 +248,7 @@
   });
   (async()=>{
     const{data:{user}}=await _sb.auth.getUser();
-    if(!user){window.location.href='../login.html';return}
+    if(!user){window.location.href='../../login.html';return}
     try{
       const businesses=await get('/businesses');
       const biz=businesses.find(b=>b.type==='holding')||businesses[0];
