@@ -14,6 +14,7 @@
   <style>
     body { opacity: 0; transition: opacity 0.2s ease; }
 
+    /* ── Layout ── */
     .container { padding-bottom: 80px; }
     .section-heading {
       font-size: 1.15rem; font-weight: 700; color: var(--primary);
@@ -21,6 +22,8 @@
       text-transform: none; letter-spacing: normal; display: block;
     }
     .section-sub { font-size: 0.85rem; color: #666; margin: 4px 0 20px; }
+
+    /* ── Section 1: Activity Cards ── */
     .activities-section { padding: 24px 16px 0; }
 
     .activity-grid {
@@ -34,9 +37,13 @@
     }
 
     .activity-card {
-      display: flex; align-items: center; gap: 12px;
-      padding: 14px 12px; border-radius: 10px;
-      border: 1.5px solid var(--accent); background: white;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--accent);
+      background: white;
       text-decoration: none;
       transition: box-shadow 0.15s, background 0.15s;
     }
@@ -46,23 +53,39 @@
       text-decoration: none;
     }
     .act-icon {
-      width: 36px; height: 36px; border-radius: 8px;
+      width: 36px; height: 36px;
+      border-radius: 8px;
       background: rgba(13,148,136,0.1);
       display: flex; align-items: center; justify-content: center;
       font-size: 18px; flex-shrink: 0;
     }
     .act-text { flex: 1; min-width: 0; }
     .act-name {
-      font-size: 0.88rem; font-weight: 700;
-      color: var(--accent); line-height: 1.3; margin-bottom: 2px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.3;
+      margin-bottom: 2px;
     }
-    .act-desc { font-size: 0.76rem; color: #666; line-height: 1.35; }
-    .act-arrow { font-size: 16px; color: var(--accent); flex-shrink: 0; }
+    .act-desc {
+      font-size: 0.76rem;
+      color: #666;
+      line-height: 1.35;
+    }
+    .act-arrow {
+      font-size: 16px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
 
+    /* ── Bottom Nav ── */
     .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: white; border-top: 1px solid #e5e7eb;
-      display: flex; z-index: 100;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      z-index: 100;
       padding-bottom: env(safe-area-inset-bottom);
       box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
     }
