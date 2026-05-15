@@ -4,7 +4,11 @@
 - Always push changes directly to `main` branch
 - Commit with clear, descriptive messages
 - Push after every commit — do not batch pushes
-- Bump version number with EVERY change (patch: 0.5.x) in `CLAUDE.md`
+- Bump version number with EVERY change (patch: 0.5.x). Three files MUST stay in sync:
+  - `CLAUDE.md` → `## Current Version` line
+  - `VERSION` (just the number, e.g. `0.5.46`)
+  - `sw.js` → `CACHE_VERSION = 'coach4u-vX.Y.Z'`
+- The visible label on `index.html` dashboard footer must also be updated each bump
 - For large file changes: split into small focused files (each under ~8KB) to avoid push timeouts
 
 ## Project Overview
@@ -100,9 +104,14 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.45
+v0.5.46
 
-## Recent Changes (v0.5.45)
+## Recent Changes (v0.5.46)
+- Added a subtle `v0.5.46` label at the bottom of `index.html` (dashboard) so the live version is visible without opening files
+- Synced the stale `VERSION` file (was `0.5.3`) and `sw.js` `CACHE_VERSION` (was `coach4u-v0.5.3`) to the current version
+- Going forward, every version bump in this file must also update `VERSION` and `sw.js` so all three stay in lockstep
+
+## Previous (v0.5.45)
 - **Flattened `learn/`.** Removed the `learn/strategy/` and `learn/operations/` subdirectories — all activity files now sit directly in `learn/`. `one-page-plan.html` stays at root (it's a printable report, not an activity).
 - All inbound links updated: `strategy.html`, `index.html`, `learning-vault.html`, and the Operations static info pages now point to `learn/<file>.html` directly.
 - Paths inside moved files: `../../X` → `../X`.
