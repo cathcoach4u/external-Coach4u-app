@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learning Vault | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#003366">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Your Business Coach">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body { opacity: 0; transition: opacity 0.2s ease; }
+    .container { padding: 0 0 90px; }
+
+    .vault-header { padding: 24px 16px 4px; }
+    .vault-title { font-size: 1.15rem; font-weight: 800; color: var(--primary); margin: 0 0 4px; }
+    .vault-sub { font-size: 0.85rem; color: #666; margin: 0 0 0; line-height: 1.45; }
+
+    .vault-section { padding: 20px 16px 0; }
+    .vault-section-label {
+      font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1px; color: #aaa; margin-bottom: 10px;
+    }
+
+    .vault-card {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px 14px; border-radius: 10px;
+      border: 1.5px solid var(--border); background: white;
+      text-decoration: none; margin-bottom: 10px;
+      transition: box-shadow 0.15s, background 0.15s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .vault-card:hover { background: #f0fdfa; box-shadow: 0 2px 8px rgba(13,148,136,0.1); text-decoration: none; }
+    .vault-card.coming-soon { opacity: 0.5; pointer-events: none; }
+
+    .vault-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: rgba(13,148,136,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .vault-card-body { flex: 1; min-width: 0; }
+    .vault-card-name {
+      font-size: 0.92rem; font-weight: 700; color: var(--primary); margin-bottom: 3px;
+    }
+    .vault-card-desc { font-size: 0.78rem; color: #666; line-height: 1.4; margin-bottom: 6px; }
+    .vault-card-meta { display: flex; align-items: center; gap: 8px; }
+    .vault-tag {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; padding: 2px 8px; border-radius: 20px;
+    }
+    .vault-tag-steps { background: rgba(13,148,136,0.1); color: #0D9488; }
+    .vault-tag-soon { background: #f3f4f6; color: #aaa; }
+    .vault-tag-time { background: #f0f9ff; color: #0369a1; }
+    .vault-arrow { font-size: 18px; color: var(--accent); flex-shrink: 0; align-self: center; }
+
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white; border-top: 1px solid #e5e7eb;
+      display: flex; z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+    }
+    .bottom-nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 8px 0 6px; text-decoration: none;
+      color: #aaa; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      gap: 3px; transition: color 0.15s;
+    }
+    .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
+    .bottom-nav-icon { font-size: 20px; line-height: 1; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="index.html" class="header-back">&#x2190; Home</a>
+        <span class="header-title">Learning Vault</span>
+      </div>
+      <button id="signOutBtn" class="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="vault-header">
+      <h1 class="vault-title">&#x1F4DA; Learning Vault</h1>
+      <p class="vault-sub">Guided activities and discovery exercises to build out your strategy — step by step.</p>
+    </div>
+
+    <div class="vault-section">
+      <div class="vault-section-label">Strategy Foundations</div>
+
+      <a class="vault-card" href="learn/values-discovery.html">
+        <div class="vault-icon">&#x2B50;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Discover Your Core Values</div>
+          <div class="vault-card-desc">A 3-step exercise to identify, define, and bring your values to life — so they guide every hire, decision, and client interaction.</div>
+          <div class="vault-card-meta">
+            <span class="vault-tag vault-tag-steps">3 Steps</span>
+            <span class="vault-tag vault-tag-time">&#x23F1; 20–30 min</span>
+          </div>
+        </div>
+        <span class="vault-arrow">&#x203A;</span>
+      </a>
+
+      <a class="vault-card coming-soon" href="#">
+        <div class="vault-icon">&#x1F9ED;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Clarify Your Core Focus</div>
+          <div class="vault-card-desc">Uncover why your business exists and what you do better than anyone else.</div>
+          <div class="vault-card-meta">
+            <span class="vault-tag vault-tag-soon">Coming Soon</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="vault-card coming-soon" href="#">
+        <div class="vault-icon">&#x1F3AF;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Build Your Vision &amp; Targets</div>
+          <div class="vault-card-desc">Set your 10-year vision, 3-year picture, and 1-year plan with confidence.</div>
+          <div class="vault-card-meta">
+            <span class="vault-tag vault-tag-soon">Coming Soon</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="vault-card coming-soon" href="#">
+        <div class="vault-icon">&#x1F4E3;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Define Your Marketing Strategy</div>
+          <div class="vault-card-desc">Get clear on who you serve, what makes you different, and the promise you make.</div>
+          <div class="vault-card-meta">
+            <span class="vault-tag vault-tag-soon">Coming Soon</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item" href="index.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
+    <a class="bottom-nav-item" href="strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
+    <a class="bottom-nav-item" href="operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
+    <a class="bottom-nav-item active" href="learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
+  </nav>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const supabase = createClient(
+      'https://eekefsuaefgpqmjdyniy.supabase.co',
+      'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+    );
+    async function init() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (!user || error) { window.location.href = 'login.html'; return; }
+      const { data: profile } = await supabase
+        .from('users').select('membership_status').eq('id', user.id).single();
+      if (!profile || profile.membership_status !== 'active') {
+        window.location.href = 'inactive.html'; return;
+      }
+      document.body.style.opacity = '1';
+      document.getElementById('signOutBtn').addEventListener('click', async () => {
+        await supabase.auth.signOut(); window.location.href = 'login.html';
+      });
+    }
+    init();
+  </script>
+</body>
+</html>

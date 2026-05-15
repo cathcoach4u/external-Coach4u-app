@@ -111,9 +111,17 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.35
+v0.5.36
 
-## Recent Changes (v0.5.35)
+## Recent Changes (v0.5.36)
+- Created `learning-vault.html` — new top-level Learning Vault page with activity cards
+- Created `learn/values-discovery.html` — 3-step guided discovery exercise (Identify → Define → In Action), saves to localStorage
+- Added Learn tab (📚) as 4th item in bottom nav on all pages: index.html, strategy.html, operations.html, all strategy/* sub-pages
+- Added discovery prompt on `strategy/core-values.html` linking to values-discovery exercise
+- Learning Vault shows: Values Discovery (live), Core Focus / Targets / Marketing Strategy (coming soon)
+- Values discovery “Finish” screen links back to `strategy/core-values.html` to enter results
+
+## Previous (v0.5.35)
 - Created `strategy/one-page-plan.html` — standalone landscape A4 one-page business plan
 - 3-column layout: Who We Are / Where We Are Going / How We Go to Market
 - Navy header bar, teal column headings, compact typography for single-page fit
