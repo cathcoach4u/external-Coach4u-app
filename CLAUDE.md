@@ -104,9 +104,13 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.46
+v0.5.47
 
-## Recent Changes (v0.5.46)
+## Recent Changes (v0.5.47)
+- Added a parallel teal CTA to `operations.html` so the Strategy and Operations hub pages match up visually — Strategy had "View One-Page Plan", Operations now has "Run Weekly Meeting" linking to `learn/meeting.html`
+- Updated `VERSION` and `sw.js` `CACHE_VERSION` to v0.5.47; dashboard label in `index.html` bumped to v0.5.47
+
+## Previous (v0.5.46)
 - Added a subtle `v0.5.46` label at the bottom of `index.html` (dashboard) so the live version is visible without opening files
 - Synced the stale `VERSION` file (was `0.5.3`) and `sw.js` `CACHE_VERSION` (was `coach4u-v0.5.3`) to the current version
 - Going forward, every version bump in this file must also update `VERSION` and `sw.js` so all three stay in lockstep
