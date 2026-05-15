@@ -77,6 +77,23 @@
       color: var(--accent);
       flex-shrink: 0;
     }
+    .meeting-btn {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: background 0.15s;
+      margin-bottom: 8px;
+    }
+    .meeting-btn:hover { background: var(--accent-dark); color: white; text-decoration: none; }
 
     /* ── Bottom Nav ── */
     .bottom-nav {
@@ -149,6 +166,10 @@
           <span class="act-arrow">&#x203A;</span>
         </a>
       </div>
+
+      <a class="meeting-btn" href="learn/meeting.html">
+        &#x1F5D3;&#xFE0F;&nbsp; Run Weekly Meeting
+      </a>
     </div>
   </div>
 
