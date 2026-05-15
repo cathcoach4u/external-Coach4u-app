@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Core Values | Your Business Coach</title>
+  <link rel="manifest" href="../manifest.json">
+  <meta name="theme-color" content="#003366">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body { opacity: 0; transition: opacity 0.2s ease; }
+    .container { padding-bottom: 80px; }
+    .ws-header { padding: 20px 16px 0; }
+    .ws-title { font-size: 1.15rem; font-weight: 800; color: var(--primary); margin: 0 0 4px; }
+    .ws-sub { font-size: 0.83rem; color: #666; margin: 0 0 20px; line-height: 1.45; }
+    .ws-card {
+      background: white; border-radius: 10px; border: 1px solid var(--border);
+      padding: 18px 16px; margin: 0 16px 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .ws-card-title {
+      font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.8px; color: var(--accent); margin-bottom: 14px;
+    }
+    .value-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .value-row:last-child { margin-bottom: 0; }
+    .value-num { font-size: 0.85rem; font-weight: 800; color: var(--accent); min-width: 20px; text-align: right; flex-shrink: 0; }
+    .ws-input {
+      flex: 1; border: 1.5px solid var(--border); border-radius: 8px;
+      padding: 10px 12px; font-size: 0.88rem; color: var(--text);
+      font-family: inherit; background: white; transition: border-color 0.15s;
+    }
+    .ws-input:focus { outline: none; border-color: var(--accent); }
+    .ws-hint {
+      font-size: 0.78rem; color: #888; line-height: 1.5;
+      margin: 0 16px 16px; padding: 10px 14px;
+      background: #f8fafc; border-radius: 8px;
+      border-left: 3px solid var(--accent);
+    }
+    .ws-save-bar {
+      position: fixed; bottom: 56px; left: 0; right: 0;
+      background: white; border-top: 1px solid #e5e7eb;
+      padding: 10px 16px; display: flex; align-items: center;
+      justify-content: space-between; gap: 10px;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.06); z-index: 90;
+    }
+    .save-status { font-size: 0.78rem; color: #888; }
+    .ws-btn {
+      padding: 9px 20px; background: var(--accent); color: white;
+      border: none; border-radius: 8px; font-size: 0.85rem;
+      font-weight: 700; cursor: pointer; transition: background 0.15s;
+    }
+    .ws-btn:hover { background: var(--accent-dark); }
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white; border-top: 1px solid #e5e7eb;
+      display: flex; z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+    }
+    .bottom-nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 8px 0 6px; text-decoration: none;
+      color: #aaa; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      gap: 3px; transition: color 0.15s;
+    }
+    .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
+    .bottom-nav-icon { font-size: 20px; line-height: 1; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="../strategy.html" class="header-back">&#x2190; Strategy</a>
+        <span class="header-title">Core Values</span>
+      </div>
+      <button id="signOutBtn" class="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="ws-header">
+      <h1 class="ws-title">&#x2B50; Core Values</h1>
+      <p class="ws-sub">The 3&#x2013;5 non-negotiable beliefs that guide how your company operates. These are the behaviours you&#x2019;d hire and fire for.</p>
+    </div>
+
+    <div class="ws-hint">
+      Tip: Great core values are specific enough that you could point to someone living them vs. ignoring them. Aim for 3&#x2013;5 that are genuinely yours.
+    </div>
+
+    <div class="ws-card">
+      <div class="ws-card-title">Your Core Values</div>
+      <div class="value-row">
+        <span class="value-num">1.</span>
+        <input class="ws-input" type="text" placeholder="e.g. Integrity" data-key="value_1" />
+      </div>
+      <div class="value-row">
+        <span class="value-num">2.</span>
+        <input class="ws-input" type="text" placeholder="e.g. Growth mindset" data-key="value_2" />
+      </div>
+      <div class="value-row">
+        <span class="value-num">3.</span>
+        <input class="ws-input" type="text" placeholder="e.g. Client first" data-key="value_3" />
+      </div>
+      <div class="value-row">
+        <span class="value-num">4.</span>
+        <input class="ws-input" type="text" placeholder="e.g. Accountability" data-key="value_4" />
+      </div>
+      <div class="value-row">
+        <span class="value-num">5.</span>
+        <input class="ws-input" type="text" placeholder="Optional 5th value" data-key="value_5" />
+      </div>
+    </div>
+  </div>
+
+  <div class="ws-save-bar">
+    <span class="save-status" id="saveStatus">Changes will save automatically</span>
+    <button class="ws-btn" onclick="window.location.href='../strategy.html'">Done &#x2713;</button>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item" href="../index.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
+    <a class="bottom-nav-item active" href="../strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
+    <a class="bottom-nav-item" href="../operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
+  </nav>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const supabase = createClient(
+      'https://eekefsuaefgpqmjdyniy.supabase.co',
+      'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+    );
+    async function init() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (!user || error) { window.location.href = '../login.html'; return; }
+      const { data: profile } = await supabase
+        .from('users').select('membership_status').eq('id', user.id).single();
+      if (!profile || profile.membership_status !== 'active') {
+        window.location.href = '../inactive.html'; return;
+      }
+      document.body.style.opacity = '1';
+      document.getElementById('signOutBtn').addEventListener('click', async () => {
+        await supabase.auth.signOut(); window.location.href = '../login.html';
+      });
+    }
+    init();
+  </script>
+</body>
+</html>

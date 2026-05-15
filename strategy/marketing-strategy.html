@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marketing Strategy | Your Business Coach</title>
+  <link rel="manifest" href="../manifest.json">
+  <meta name="theme-color" content="#003366">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body { opacity: 0; transition: opacity 0.2s ease; }
+    .container { padding-bottom: 140px; }
+    .ws-header { padding: 20px 16px 0; }
+    .ws-title { font-size: 1.15rem; font-weight: 800; color: var(--primary); margin: 0 0 4px; }
+    .ws-sub { font-size: 0.83rem; color: #666; margin: 0 0 20px; line-height: 1.45; }
+    .ws-card { background: white; border-radius: 10px; border: 1px solid var(--border); padding: 18px 16px; margin: 0 16px 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    .ws-card-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--accent); margin-bottom: 6px; }
+    .ws-card-desc { font-size: 0.78rem; color: #888; margin-bottom: 12px; line-height: 1.4; }
+    .ws-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--primary); display: block; margin-bottom: 6px; }
+    .ws-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 0.88rem; color: var(--text); font-family: inherit; background: white; transition: border-color 0.15s; box-sizing: border-box; }
+    .ws-input:focus { outline: none; border-color: var(--accent); }
+    .ws-textarea { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 0.88rem; color: var(--text); font-family: inherit; background: white; resize: vertical; transition: border-color 0.15s; box-sizing: border-box; line-height: 1.5; }
+    .ws-textarea:focus { outline: none; border-color: var(--accent); }
+    .ws-save-bar { position: fixed; bottom: 56px; left: 0; right: 0; background: white; border-top: 1px solid #e5e7eb; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); z-index: 90; }
+    .save-status { font-size: 0.78rem; color: #888; }
+    .ws-btn { padding: 9px 20px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+    .ws-btn:hover { background: var(--accent-dark); }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e5e7eb; display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -2px 8px rgba(0,0,0,0.06); }
+    .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 0 6px; text-decoration: none; color: #aaa; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; gap: 3px; transition: color 0.15s; }
+    .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
+    .bottom-nav-icon { font-size: 20px; line-height: 1; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="../strategy.html" class="header-back">&#x2190; Strategy</a>
+        <span class="header-title">Marketing Strategy</span>
+      </div>
+      <button id="signOutBtn" class="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
+  <div class="container">
+    <div class="ws-header">
+      <h1 class="ws-title">&#x1F4E3; Marketing Strategy</h1>
+      <p class="ws-sub">Define exactly who you serve, what makes you different, how you deliver results, and the promise you make.</p>
+    </div>
+    <div class="ws-card">
+      <div class="ws-card-title">Target Market</div>
+      <div class="ws-card-desc">Who is your ideal client? Be specific about who you serve best.</div>
+      <label class="ws-label">Our ideal client is&#x2026;</label>
+      <textarea class="ws-textarea" rows="3" placeholder="e.g. Business owners with 2&#x2013;20 employees in professional services, trades, and health. Revenue $500K&#x2013;$5M." data-key="target_market"></textarea>
+    </div>
+    <div class="ws-card">
+      <div class="ws-card-title">What Makes Us Different</div>
+      <div class="ws-card-desc">The 3 things that make your business unique and why clients choose you over anyone else.</div>
+      <label class="ws-label">Our three uniques are&#x2026;</label>
+      <textarea class="ws-textarea" rows="4" placeholder="1. &#10;2. &#10;3. " data-key="uniques"></textarea>
+    </div>
+    <div class="ws-card">
+      <div class="ws-card-title">Our Proven Process</div>
+      <div class="ws-card-desc">Your signature delivery method &#x2014; the repeatable steps clients go through to get results.</div>
+      <label class="ws-label">Our process is&#x2026;</label>
+      <textarea class="ws-textarea" rows="3" placeholder="e.g. The Coach4U 4-Step System: Clarity &#x2192; Strategy &#x2192; Execution &#x2192; Momentum." data-key="proven_process"></textarea>
+    </div>
+    <div class="ws-card">
+      <div class="ws-card-title">Our Guarantee</div>
+      <div class="ws-card-desc">The promise you make to clients that removes their risk.</div>
+      <label class="ws-label">We guarantee&#x2026;</label>
+      <input class="ws-input" type="text" placeholder="e.g. If you don&#x2019;t see measurable progress in 90 days, we&#x2019;ll refund your last month." data-key="guarantee" />
+    </div>
+  </div>
+  <div class="ws-save-bar">
+    <span class="save-status" id="saveStatus">Changes will save automatically</span>
+    <button class="ws-btn" onclick="window.location.href='../strategy.html'">Done &#x2713;</button>
+  </div>
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item" href="../index.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
+    <a class="bottom-nav-item active" href="../strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
+    <a class="bottom-nav-item" href="../operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
+  </nav>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const supabase = createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
+    async function init() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (!user || error) { window.location.href = '../login.html'; return; }
+      const { data: profile } = await supabase.from('users').select('membership_status').eq('id', user.id).single();
+      if (!profile || profile.membership_status !== 'active') { window.location.href = '../inactive.html'; return; }
+      document.body.style.opacity = '1';
+      document.getElementById('signOutBtn').addEventListener('click', async () => { await supabase.auth.signOut(); window.location.href = '../login.html'; });
+    }
+    init();
+  </script>
+</body>
+</html>
