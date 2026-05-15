@@ -48,26 +48,30 @@
     .stat-num.red    { color: #DC2626; }
     .stat-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #999; }
 
-    /* ── Section nav ── */
-    .section-nav { padding: 0 16px 14px; display: flex; flex-direction: column; gap: 8px; }
-    .nav-card {
-      display: flex; align-items: center; gap: 12px;
-      background: white; border-radius: 10px;
-      border: 1.5px solid var(--accent);
-      padding: 12px 14px; text-decoration: none;
-      transition: background 0.15s, box-shadow 0.15s;
+    /* ── 1-Year Goal ── */
+    .goal-text { font-size: 0.82rem; color: var(--primary); font-weight: 600; line-height: 1.5; margin-bottom: 5px; }
+    .goal-meta { font-size: 0.71rem; color: #aaa; }
+
+    /* ── Core Values ── */
+    .values-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .value-pill {
+      background: rgba(13,148,136,0.08); color: #0D9488;
+      border: 1px solid rgba(13,148,136,0.2);
+      border-radius: 20px; padding: 4px 11px;
+      font-size: 0.75rem; font-weight: 700;
     }
-    .nav-card:hover { background: #f0fdfa; box-shadow: 0 2px 8px rgba(13,148,136,0.1); text-decoration: none; }
-    .nav-icon {
-      width: 34px; height: 34px; border-radius: 8px;
-      background: rgba(13,148,136,0.1);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 17px; flex-shrink: 0;
+
+    /* ── Meeting button ── */
+    .meeting-btn {
+      display: flex; align-items: center; justify-content: space-between;
+      margin: 0 16px 10px; padding: 13px 16px;
+      background: var(--accent); color: white;
+      border-radius: 10px; text-decoration: none;
+      font-size: 0.88rem; font-weight: 700;
+      transition: background 0.15s;
     }
-    .nav-text { flex: 1; }
-    .nav-name { font-size: 0.88rem; font-weight: 700; color: var(--accent); line-height: 1.2; }
-    .nav-desc { font-size: 0.73rem; color: #888; margin-top: 1px; }
-    .nav-arrow { font-size: 16px; color: var(--accent); flex-shrink: 0; }
+    .meeting-btn:hover { background: var(--accent-dark); color: white; text-decoration: none; }
+    .meeting-btn-arrow { font-size: 18px; }
 
     /* ── Panels ── */
     .dash-panel {
@@ -171,33 +175,39 @@
       </a>
     </div>
 
-    <!-- Section nav -->
-    <div class="section-nav">
-      <a class="nav-card" href="strategy.html">
-        <div class="nav-icon">&#x1F9ED;</div>
-        <div class="nav-text">
-          <div class="nav-name">Strategy</div>
-          <div class="nav-desc">Core values, vision, targets &amp; marketing strategy</div>
-        </div>
-        <span class="nav-arrow">&#x203A;</span>
-      </a>
-      <a class="nav-card" href="operations.html">
-        <div class="nav-icon">&#x2699;&#xFE0F;</div>
-        <div class="nav-text">
-          <div class="nav-name">Operations</div>
-          <div class="nav-desc">Scorecard, goals, meetings &amp; issues</div>
-        </div>
-        <span class="nav-arrow">&#x203A;</span>
-      </a>
-      <a class="nav-card" href="learning-vault.html">
-        <div class="nav-icon">&#x1F4DA;</div>
-        <div class="nav-text">
-          <div class="nav-name">Learning Vault</div>
-          <div class="nav-desc">Guided activities and discovery exercises</div>
-        </div>
-        <span class="nav-arrow">&#x203A;</span>
-      </a>
+    <!-- 1-Year Goal -->
+    <div class="dash-panel">
+      <div class="panel-head">
+        <span class="panel-title">&#x1F3AF; 1-Year Goal</span>
+        <a class="panel-link" href="strategy/targets.html">Edit &#x203A;</a>
+      </div>
+      <div class="panel-body">
+        <div class="goal-text" id="oneYearGoal">Sign 20 new clients, launch group coaching program, hire first associate coach by Q3, and publish Signature Program workbook.</div>
+        <div class="goal-meta" id="oneYearMeta">Target: Dec 2025 &nbsp;&middot;&nbsp; Revenue: $420K</div>
+      </div>
     </div>
+
+    <!-- Core Values -->
+    <div class="dash-panel">
+      <div class="panel-head">
+        <span class="panel-title">&#x2B50; Core Values</span>
+        <a class="panel-link" href="strategy/core-values.html">Edit &#x203A;</a>
+      </div>
+      <div class="panel-body">
+        <div class="values-pills" id="valuesPills">
+          <span class="value-pill">Integrity</span>
+          <span class="value-pill">Growth Mindset</span>
+          <span class="value-pill">Client First</span>
+          <span class="value-pill">Accountability</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Meeting link -->
+    <a class="meeting-btn" href="operations.html">
+      <span>&#x1F5D3;&#xFE0F;&nbsp; Go to This Week&#x2019;s Meeting</span>
+      <span class="meeting-btn-arrow">&#x203A;</span>
+    </a>
 
     <!-- This Week -->
     <div class="dash-panel">
