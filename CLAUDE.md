@@ -98,9 +98,21 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.56
+v0.5.57
 
-## Recent Changes (v0.5.56)
+## Recent Changes (v0.5.57)
+- **Hub CTAs moved to top.** `strategy.html` "View One-Page Plan" button is now above the 5 worksheet cards (was below); `operations.html` "Run Weekly Meeting" button is now above the 4 tool cards (was below). The primary action is the first thing in view.
+- **Dashboard link audit (`index.html`).** All clickable elements now go to the actual tool instead of the Operations hub:
+  - Stat tile "Open Issues" → `issues.html` (was `operations.html`)
+  - Stat tile "Goals On Track" → `goals.html` (was `operations.html`)
+  - Stat tile "Next Meeting" → `meeting.html` (was `operations.html`)
+  - "Go to This Week's Meeting" big CTA → `meeting.html` (was `operations.html`)
+  - "View Meeting" panel link (This Week) → `meeting.html` (was `operations.html`)
+  - "View Goals" panel link (This Quarter) → `goals.html` (was `operations.html`)
+  - Edit links on 1-Year Goal (→`targets.html`) and Core Values (→`core-values.html`) were already correct
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.57
+
+## Previous (v0.5.56)
 - Added a new **Planning** section (`planning.html`) as a top-level hub between Home and Strategy in the bottom nav. The page visualises the annual + quarterly planning rhythm as a vertical flow: Annual Planning → Q1 Review → Q2 Review → Q3 Review → Q4 Review → cycles back to Annual. Each stage shows what it Reviews and what it Produces.
 - Annual Planning card links to `one-page-plan.html`; each quarterly review card links to `goals.html`.
 - Bottom nav extended from 4 to 5 items (Home / Planning / Strategy / Operations / Learn) on all pages: `index.html`, `strategy.html`, `operations.html`, `learning-vault.html`, all 5 Strategy worksheets, all 5 Operations tools (including the new `run-meeting.html`), and `learn/values-discovery.html`.
