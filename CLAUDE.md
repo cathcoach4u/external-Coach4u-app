@@ -67,7 +67,7 @@ js/
 ## Key Rules
 - All HTML pages use Design 1 (`css/style.css`) — no exceptions
 - Strategy worksheets and Operations tools live at root and ARE the source-of-truth pages. `learn/` is reserved for reference / how-to content (guides, exercises like Values Discovery). `strategy.html` and `operations.html` cards must link to root URLs, not `learn/`.
-- Strategy worksheets save bar is visual only (no save logic wired up yet)
+- Strategy worksheets persist all field edits to localStorage (keys: `coach4u_core_values`, `coach4u_core_focus`, `coach4u_targets`, `coach4u_marketing_strategy`, `coach4u_leadership_team`). On first visit each worksheet seeds realistic sample data. `one-page-plan.html` reads from those keys with the original hardcoded text as fallback when localStorage is empty.
 - Operations tools (scorecard / goals / meeting / issues) use a localStorage demo data stub seeded with realistic sample data. The previous `/api/...` calls are intercepted and routed to localStorage. Replace with the real Supabase data layer when ready.
 - Bottom nav order is always: Home / Planning / Strategy / Operations / Learn — active item gets `.active` class
 
@@ -98,9 +98,17 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.59
+v0.5.60
 
-## Recent Changes (v0.5.59)
+## Recent Changes (v0.5.60)
+- **Strategy worksheets now persist edits and seed dummy data.** All 4 Strategy worksheets (`core-values.html`, `core-focus.html`, `targets.html`, `marketing-strategy.html`) auto-save every field edit to localStorage and seed realistic example content on first visit. Matches the architecture `leadership-team.html` already used.
+  - Keys: `coach4u_core_values`, `coach4u_core_focus`, `coach4u_targets`, `coach4u_marketing_strategy` (plus existing `coach4u_leadership_team`).
+  - Save bar shows a brief "Saved ✓" pulse on each edit.
+- **`one-page-plan.html` now reflects worksheet edits.** Each field on the printable plan got a stable `id` (`opp-purpose`, `opp-niche`, `opp-ten-year`, `opp-3yr-*`, `opp-1yr-*`, `opp-values`, `opp-target-market`, `opp-uniques`, `opp-process`, `opp-guarantee`). On load, an `applyWorksheetData()` reads the 4 new localStorage keys (+ the existing leadership team key) and overrides the hardcoded HTML where data exists. Hardcoded text remains as a fallback if localStorage is cleared.
+- Multi-line fields (`one_year_goals`, `uniques`) render as numbered `<li>` items in the One-Page Plan, re-numbered from 1 regardless of how the user numbered them in the worksheet (the leading "N. " is stripped on render).
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.60.
+
+## Previous (v0.5.59)
 - **Issues simplified.** Priority (high/medium/low) removed entirely — gone from the modal, the card display, the seed data, and the localStorage save/load. Cards now just show description + owner (no priority badge, no date, no status — status is implicit by the column the card sits in). Solved tag also dropped (redundant in the Resolved column). The teal left-border replaces the per-priority red/amber/green border colors.
 - **"Run Weekly Meeting" CTA** on `operations.html` now creates (or opens) this week's meeting and lands you in `run-meeting.html`. The button checks `coach4u_demo_meetings` localStorage — if a meeting exists for today's ISO-week Monday it opens that one; otherwise it creates one (status `scheduled`, current quarter) and opens it.
 - **Goals tip.** Added a teal-bordered hint at the top of `goals.html`: "Aim for 3–7 company goals per quarter, plus 1–3 individual goals per leader. Keep them specific, measurable, and ownable." Updated the page subtitle to drop the EOS-style "3–7" inline phrasing (now in the tip box).

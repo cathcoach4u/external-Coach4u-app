@@ -80,6 +80,51 @@
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
     const supabase = createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
+    const STORAGE_KEY = 'coach4u_core_focus';
+    const SEED = {
+      purpose: 'To help business owners build thriving, self-managing businesses so they can achieve freedom and fulfilment.',
+      niche: 'Strengths-based business coaching for small and medium businesses across Australia.'
+    };
+
+    function loadData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') return parsed;
+        }
+      } catch (e) {}
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED)); } catch (e) {}
+      return { ...SEED };
+    }
+
+    function setSavedStatus() {
+      const el = document.getElementById('saveStatus');
+      if (!el) return;
+      el.textContent = 'Saved ✓';
+      el.style.color = '#0F766E';
+      clearTimeout(setSavedStatus._t);
+      setSavedStatus._t = setTimeout(() => {
+        el.textContent = 'Changes save automatically';
+        el.style.color = '#888';
+      }, 1200);
+    }
+
+    function wireWorksheet() {
+      const data = loadData();
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const k = el.dataset.key;
+        el.value = data[k] || '';
+        el.addEventListener('input', () => {
+          data[k] = el.value;
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            setSavedStatus();
+          } catch (e) {}
+        });
+      });
+    }
+
     async function init() {
       const { data: { user }, error } = await supabase.auth.getUser();
       if (!user || error) { window.location.href = 'login.html'; return; }
@@ -87,6 +132,7 @@
       if (!profile || profile.membership_status !== 'active') { window.location.href = 'inactive.html'; return; }
       document.body.style.opacity = '1';
       document.getElementById('signOutBtn').addEventListener('click', async () => { await supabase.auth.signOut(); window.location.href = 'login.html'; });
+      wireWorksheet();
     }
     init();
   </script>

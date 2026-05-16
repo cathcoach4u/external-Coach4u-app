@@ -102,6 +102,58 @@
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
     const supabase = createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
+    const STORAGE_KEY = 'coach4u_targets';
+    const SEED = {
+      ten_year: "Australia's most trusted business coaching practice — 500 thriving client businesses, a team of 10 coaches, delivering measurable results nationwide.",
+      three_year_date: 'June 2029',
+      three_year_revenue: '$1.2M',
+      three_year_profit: '$360K',
+      three_year_desc: '4 coaches, 80 active clients, systemised 12-month program, recurring revenue model established.',
+      one_year_date: 'Dec 2026',
+      one_year_revenue: '$420K',
+      one_year_profit: '$105K',
+      one_year_goals: '1. Sign 20 new clients through referral and speaking\n2. Launch group coaching program (min. 8 participants)\n3. Hire first associate coach by Q3\n4. Complete and publish Signature Program workbook'
+    };
+
+    function loadData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') return parsed;
+        }
+      } catch (e) {}
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED)); } catch (e) {}
+      return { ...SEED };
+    }
+
+    function setSavedStatus() {
+      const el = document.getElementById('saveStatus');
+      if (!el) return;
+      el.textContent = 'Saved ✓';
+      el.style.color = '#0F766E';
+      clearTimeout(setSavedStatus._t);
+      setSavedStatus._t = setTimeout(() => {
+        el.textContent = 'Changes save automatically';
+        el.style.color = '#888';
+      }, 1200);
+    }
+
+    function wireWorksheet() {
+      const data = loadData();
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const k = el.dataset.key;
+        el.value = data[k] || '';
+        el.addEventListener('input', () => {
+          data[k] = el.value;
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            setSavedStatus();
+          } catch (e) {}
+        });
+      });
+    }
+
     async function init() {
       const { data: { user }, error } = await supabase.auth.getUser();
       if (!user || error) { window.location.href = 'login.html'; return; }
@@ -109,6 +161,7 @@
       if (!profile || profile.membership_status !== 'active') { window.location.href = 'inactive.html'; return; }
       document.body.style.opacity = '1';
       document.getElementById('signOutBtn').addEventListener('click', async () => { await supabase.auth.signOut(); window.location.href = 'login.html'; });
+      wireWorksheet();
     }
     init();
   </script>
