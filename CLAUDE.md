@@ -65,6 +65,7 @@ css/
 
 js/
 ├── auth.js             — sign in / out, membership gate
+├── active-session.js   — floating "Resume Planning Session" pill (reads coach4u_active_planning_session)
 └── supabase.js         — Supabase client + dashboard helpers
 ```
 
@@ -102,9 +103,15 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.70
+v0.5.71
 
-## Recent Changes (v0.5.70)
+## Recent Changes (v0.5.71)
+- **Floating Resume Planning Session pill.** When you tap Start Session on an Annual or Quarterly Planning workspace, a teal pill appears bottom-center on every page in the app. Tap it to return to the in-progress session. Clears automatically when you mark the session completed or click End Session.
+- Implemented as a shared `js/active-session.js` loaded via `<script defer>` on every main page (21 pages: the dashboard, all 4 hubs, the 5 Strategy worksheets, the 5 Operations tools, the 4 planning session pages, the one-page plan, and `learn/values-discovery.html`).
+- Exposes `window.activeSession.set()` / `clear()` used by the two `run-*-session.html` workspaces. localStorage key: `coach4u_active_planning_session`.
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.71.
+
+## Previous (v0.5.70)
 - **`planning.html` restructured as a standard hub** to match the Strategy and Operations layout. Dropped the vertical flow visualisation (was a 4-node concept map); replaced with the same `activity-card` pattern used on the other hubs.
   - Top: **"View One-Page Plan"** teal CTA (matches Strategy's pattern).
   - Below: **2 activity cards** — **Annual Planning** → `annual-sessions.html`, **Quarterly Planning** → `quarterly-sessions.html`.

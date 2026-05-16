@@ -60,6 +60,7 @@
     .bottom-nav-item.active,.bottom-nav-item:hover{color:#0D9488;text-decoration:none}
     .bottom-nav-icon{font-size:20px;line-height:1}
   </style>
+  <script src="js/active-session.js" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -219,7 +220,13 @@
       </div>
     `;
     c.querySelector('#session-status').addEventListener('change',e=>{
-      try{updateSession(s.id,{status:e.target.value});_currentSession.status=e.target.value;showToast('Status updated','success')}
+      try{
+        updateSession(s.id,{status:e.target.value});_currentSession.status=e.target.value;showToast('Status updated','success');
+        if(window.activeSession){
+          if(e.target.value==='in_progress') window.activeSession.set('annual',s.id,'Annual '+(s.year||''));
+          else if(e.target.value==='completed') window.activeSession.clear();
+        }
+      }
       catch(err){showToast('Update failed','error')}
     });
     const timerBtn=c.querySelector('#timer-btn'),timerEl=c.querySelector('#timer-elapsed');
@@ -228,10 +235,12 @@
         _timerStart=Date.now();timerEl.classList.remove('hidden');timerBtn.textContent='⏹ End Session';timerBtn.classList.add('running');
         _timerInterval=setInterval(()=>{const sec=Math.floor((Date.now()-_timerStart)/1000);const mm=Math.floor(sec/60),ss=sec%60;timerEl.textContent=mm+':'+(ss<10?'0':'')+ss;},1000);
         try{updateSession(s.id,{status:'in_progress'});c.querySelector('#session-status').value='in_progress';_currentSession.status='in_progress';}catch(_){}
+        if(window.activeSession) window.activeSession.set('annual',s.id,'Annual '+(s.year||''));
       }else{
         clearInterval(_timerInterval);_timerInterval=null;_timerStart=null;
         timerEl.classList.add('hidden');timerBtn.textContent='▶ Start Session';timerBtn.classList.remove('running');
         try{updateSession(s.id,{status:'completed'});c.querySelector('#session-status').value='completed';_currentSession.status='completed';}catch(_){}
+        if(window.activeSession) window.activeSession.clear();
       }
     });
     c.querySelectorAll('.agenda-toggle').forEach(btn=>{
