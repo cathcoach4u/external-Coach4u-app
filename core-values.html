@@ -116,7 +116,19 @@
       </div>
       <div class="value-row">
         <span class="value-num">5.</span>
-        <input class="ws-input" type="text" placeholder="Optional 5th value" data-key="value_5" />
+        <input class="ws-input" type="text" placeholder="e.g. Better together" data-key="value_5" />
+      </div>
+      <div class="value-row">
+        <span class="value-num">6.</span>
+        <input class="ws-input" type="text" placeholder="Optional 6th value" data-key="value_6" />
+      </div>
+      <div class="value-row">
+        <span class="value-num">7.</span>
+        <input class="ws-input" type="text" placeholder="Optional 7th value" data-key="value_7" />
+      </div>
+      <div class="value-row">
+        <span class="value-num">8.</span>
+        <input class="ws-input" type="text" placeholder="Optional 8th value" data-key="value_8" />
       </div>
     </div>
   </div>
@@ -150,16 +162,16 @@
     };
 
     function loadData() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (parsed && typeof parsed === 'object') return parsed;
-        }
-      } catch (e) {}
-      // First visit — seed and persist
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED)); } catch (e) {}
-      return { ...SEED };
+      let data = null;
+      try { data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (e) {}
+      if (!data || typeof data !== 'object' || Array.isArray(data)) data = {};
+      // Fill in any SEED keys that are missing (preserves user edits including intentional empty strings)
+      let dirty = false;
+      for (const k of Object.keys(SEED)) {
+        if (data[k] === undefined) { data[k] = SEED[k]; dirty = true; }
+      }
+      if (dirty) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {} }
+      return data;
     }
 
     function setSavedStatus() {

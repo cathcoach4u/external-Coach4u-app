@@ -87,15 +87,15 @@
     };
 
     function loadData() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (parsed && typeof parsed === 'object') return parsed;
-        }
-      } catch (e) {}
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED)); } catch (e) {}
-      return { ...SEED };
+      let data = null;
+      try { data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (e) {}
+      if (!data || typeof data !== 'object' || Array.isArray(data)) data = {};
+      let dirty = false;
+      for (const k of Object.keys(SEED)) {
+        if (data[k] === undefined) { data[k] = SEED[k]; dirty = true; }
+      }
+      if (dirty) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {} }
+      return data;
     }
 
     function setSavedStatus() {

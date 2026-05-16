@@ -238,7 +238,7 @@
       </div>
     </div>
 
-    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.61</p>
+    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.62</p>
 
   </div>
 
@@ -264,7 +264,25 @@
       `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
 
     function seedIfEmpty(key, value) {
-      try { if (localStorage.getItem(key) == null) localStorage.setItem(key, JSON.stringify(value)); } catch (_) {}
+      try {
+        const raw = localStorage.getItem(key);
+        if (raw == null) { localStorage.setItem(key, JSON.stringify(value)); return; }
+        // Defensive merge: if stored value is empty/broken, fill missing keys/items from seed
+        let existing;
+        try { existing = JSON.parse(raw); } catch (_) { existing = null; }
+        if (Array.isArray(value)) {
+          if (!Array.isArray(existing) || existing.length === 0) {
+            localStorage.setItem(key, JSON.stringify(value));
+          }
+        } else if (value && typeof value === 'object') {
+          const merged = (existing && typeof existing === 'object' && !Array.isArray(existing)) ? existing : {};
+          let dirty = Object.keys(merged).length === 0;
+          for (const k of Object.keys(value)) {
+            if (merged[k] === undefined) { merged[k] = value[k]; dirty = true; }
+          }
+          if (dirty) localStorage.setItem(key, JSON.stringify(merged));
+        }
+      } catch (_) {}
     }
     function ensureSeeds() {
       // Strategy worksheets
@@ -446,7 +464,7 @@
       const cv = readLS('coach4u_core_values', null);
       if (cv) {
         const pills = [];
-        for (let i = 1; i <= 5; i++) {
+        for (let i = 1; i <= 8; i++) {
           const v = (cv['value_' + i] || '').toString().trim();
           if (v) pills.push(v);
         }
