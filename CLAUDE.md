@@ -36,6 +36,7 @@ Stylesheets:
 index.html              — root portal / dashboard
 strategy.html           — Strategy hub (cards link to root worksheets)
 operations.html         — Operations hub (cards link to root tools)
+planning.html           — Planning hub (annual + quarterly rhythm visualisation)
 learning-vault.html     — reference / how-to area (one active card + coming-soon placeholders)
 one-page-plan.html      — printable landscape one-page business plan (fed by the 5 worksheets)
 login.html              — gold standard login
@@ -68,7 +69,7 @@ js/
 - Strategy worksheets and Operations tools live at root and ARE the source-of-truth pages. `learn/` is reserved for reference / how-to content (guides, exercises like Values Discovery). `strategy.html` and `operations.html` cards must link to root URLs, not `learn/`.
 - Strategy worksheets save bar is visual only (no save logic wired up yet)
 - Operations tools (scorecard / goals / meeting / issues) use a localStorage demo data stub seeded with realistic sample data. The previous `/api/...` calls are intercepted and routed to localStorage. Replace with the real Supabase data layer when ready.
-- Bottom nav order is always: Home / Strategy / Operations / Learn — active item gets `.active` class
+- Bottom nav order is always: Home / Planning / Strategy / Operations / Learn — active item gets `.active` class
 
 ## Login Page Standard (Gold Standard v2.2)
 
@@ -97,9 +98,15 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.55
+v0.5.56
 
-## Recent Changes (v0.5.55)
+## Recent Changes (v0.5.56)
+- Added a new **Planning** section (`planning.html`) as a top-level hub between Home and Strategy in the bottom nav. The page visualises the annual + quarterly planning rhythm as a vertical flow: Annual Planning → Q1 Review → Q2 Review → Q3 Review → Q4 Review → cycles back to Annual. Each stage shows what it Reviews and what it Produces.
+- Annual Planning card links to `one-page-plan.html`; each quarterly review card links to `goals.html`.
+- Bottom nav extended from 4 to 5 items (Home / Planning / Strategy / Operations / Learn) on all pages: `index.html`, `strategy.html`, `operations.html`, `learning-vault.html`, all 5 Strategy worksheets, all 5 Operations tools (including the new `run-meeting.html`), and `learn/values-discovery.html`.
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.56
+
+## Previous (v0.5.55)
 - **Issues** simplified: dropped the "In Progress" middle column from the kanban — now just **Open** and **Resolved**. Modal status dropdown drops the "In Progress" option. Any legacy `ids_in_progress` items in localStorage fall into the Open column (the renderer treats anything other than `resolved` as open). Seed data updated to match.
 - **Scorecard** mobile improvements: metric (first) column is now **sticky** on the left so it stays visible while scrolling weekly values horizontally. Owner column hidden on screens ≤ 600px (secondary info; still visible on desktop). Cells / week columns / table padding all tightened on mobile so the table fits and feels less cramped. Week-column min-width moved from inline JS style to a `.col-week` class so the mobile media query can override.
 - Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.55
