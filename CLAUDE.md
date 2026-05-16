@@ -98,9 +98,16 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.67
+v0.5.68
 
-## Recent Changes (v0.5.67)
+## Recent Changes (v0.5.68)
+- **Planning page collapsed from 5 sessions to 4.** The previous "Q1 Review" was redundant — the Annual Planning session already produces the Q1 plan, so a separate Q1 Review meeting was double work.
+  - New flow: **Annual Planning** (sets year + Q1 plan) → **Q2 Planning Session** (end of Q1, produces Q2 goals) → **Q3 Planning Session** (end of Q2, produces Q3 goals) → **Q4 Planning Session** (end of Q3, produces Q4 goals) → cycles back to next year's Annual.
+  - Renamed the quarterly nodes from "Qn Review" → "Qn Planning Session" since each is forward-looking (reviews the prior quarter then plans the next). Icon changed from 🔁 to 🎯.
+  - Subtitle updated: "Four sessions a year. Annual sets the year and Q1; three quarterly sessions reset for Q2, Q3, and Q4."
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.68.
+
+## Previous (v0.5.67)
 - **Leadership Team moved INTO the One-Page Plan body** so the plan fits on a single A4 landscape page when printed (the previous full-width band below the 3-column body was pushing the print to a second page).
   - Now lives as a compact field at the bottom of the **"Who We Are"** column — fits thematically (the column already covers Core Values, Purpose, Niche).
   - Compact line-per-person format: `<strong>Name</strong> · <accent>Role</accent>` (responsibilities dropped from the one-pager — they still live in the worksheet for reference).
