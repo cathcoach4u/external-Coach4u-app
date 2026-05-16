@@ -163,15 +163,15 @@
     <!-- Stat tiles -->
     <div class="stat-row">
       <a class="stat-tile" href="issues.html">
-        <div class="stat-num red">3</div>
+        <div class="stat-num red" id="statOpenIssues">&mdash;</div>
         <div class="stat-label">Open Issues</div>
       </a>
       <a class="stat-tile" href="goals.html">
-        <div class="stat-num accent">2<span style="font-size:0.9rem;font-weight:700;color:#aaa;">/4</span></div>
+        <div class="stat-num accent" id="statGoalsOnTrack">&mdash;</div>
         <div class="stat-label">Goals On Track</div>
       </a>
       <a class="stat-tile" href="meeting.html">
-        <div class="stat-num" style="font-size:1rem;padding-top:3px;">Mon 19</div>
+        <div class="stat-num" style="font-size:1rem;padding-top:3px;" id="statNextMeeting">&mdash;</div>
         <div class="stat-label">Next Meeting</div>
       </a>
     </div>
@@ -214,31 +214,11 @@
     <div class="dash-panel">
       <div class="panel-head">
         <span class="panel-title">This Week</span>
-        <a class="panel-link" href="meeting.html">View Meeting &#x203A;</a>
+        <a class="panel-link" id="thisWeekViewLink" href="meeting.html">View Meeting &#x203A;</a>
       </div>
       <div class="panel-body">
-        <ul class="todo-list">
-          <li class="todo-item">
-            <div class="todo-check"></div>
-            <div>
-              <div class="todo-desc">Review Q2 financials with accountant</div>
-              <div class="todo-meta">Sarah &middot; Due 20 May</div>
-            </div>
-          </li>
-          <li class="todo-item">
-            <div class="todo-check"></div>
-            <div>
-              <div class="todo-desc">Send client proposal draft</div>
-              <div class="todo-meta">John &middot; Due 19 May</div>
-            </div>
-          </li>
-          <li class="todo-item">
-            <div class="todo-check done"></div>
-            <div>
-              <div class="todo-desc done">Weekly team check-in</div>
-              <div class="todo-meta">All &middot; Due 15 May</div>
-            </div>
-          </li>
+        <ul class="todo-list" id="thisWeekTodos">
+          <li class="todo-item"><div class="todo-check"></div><div><div class="todo-desc" style="color:#aaa;">No todos for this week yet.</div></div></li>
         </ul>
       </div>
     </div>
@@ -251,31 +231,14 @@
       </div>
       <div class="panel-body">
         <div class="progress-wrap">
-          <div class="progress-fill" style="width:50%"></div>
+          <div class="progress-fill" id="quarterProgressFill" style="width:0%"></div>
         </div>
-        <div class="progress-label">2 of 4 priorities on track</div>
-        <div class="rock-list">
-          <div class="rock-row">
-            <div class="rock-desc">Launch new service offering</div>
-            <span class="status-pill pill-green">On Track</span>
-          </div>
-          <div class="rock-row">
-            <div class="rock-desc">Increase monthly revenue 20%</div>
-            <span class="status-pill pill-amber">At Risk</span>
-          </div>
-          <div class="rock-row">
-            <div class="rock-desc">Hire 2 new team members</div>
-            <span class="status-pill pill-red">Off Track</span>
-          </div>
-          <div class="rock-row">
-            <div class="rock-desc">Redesign client onboarding</div>
-            <span class="status-pill pill-grey">Not Started</span>
-          </div>
-        </div>
+        <div class="progress-label" id="quarterProgressLabel">No goals set yet</div>
+        <div class="rock-list" id="quarterRocks"></div>
       </div>
     </div>
 
-    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.60</p>
+    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.61</p>
 
   </div>
 
@@ -300,21 +263,200 @@
     document.getElementById('todayDate').textContent =
       `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
 
-    // Point "Go to This Week's Meeting" at the actual meeting for the current ISO week, if seeded.
-    (function () {
-      try {
-        const data = JSON.parse(localStorage.getItem('coach4u_demo_meetings'));
-        if (!data || !data.meetings) return;
-        const d = new Date();
-        const day = d.getDay();
-        d.setDate(d.getDate() + ((day === 0 ? -6 : 1) - day));
-        const mondayIso = d.toISOString().slice(0, 10);
-        const m = data.meetings.find(x => x.meeting_date === mondayIso)
-              || data.meetings.find(x => x.status !== 'completed')
-              || data.meetings[0];
-        if (m) document.getElementById('thisWeekMeetingBtn').href = 'run-meeting.html?id=' + m.id;
-      } catch (_) {}
-    })();
+    function seedIfEmpty(key, value) {
+      try { if (localStorage.getItem(key) == null) localStorage.setItem(key, JSON.stringify(value)); } catch (_) {}
+    }
+    function ensureSeeds() {
+      // Strategy worksheets
+      seedIfEmpty('coach4u_core_values', {
+        value_1:'Integrity', value_2:'Growth mindset', value_3:'Client first', value_4:'Accountability', value_5:'Better together'
+      });
+      seedIfEmpty('coach4u_targets', {
+        ten_year:"Australia's most trusted business coaching practice — 500 thriving client businesses, a team of 10 coaches, delivering measurable results nationwide.",
+        three_year_date:'June 2029', three_year_revenue:'$1.2M', three_year_profit:'$360K',
+        three_year_desc:'4 coaches, 80 active clients, systemised 12-month program, recurring revenue model established.',
+        one_year_date:'Dec 2026', one_year_revenue:'$420K', one_year_profit:'$105K',
+        one_year_goals:'1. Sign 20 new clients through referral and speaking\n2. Launch group coaching program (min. 8 participants)\n3. Hire first associate coach by Q3\n4. Complete and publish Signature Program workbook'
+      });
+      // Operations tools
+      const today = new Date();
+      const mon = new Date(today);
+      mon.setDate(today.getDate() + ((today.getDay() === 0 ? -6 : 1) - today.getDay()));
+      const monIso = mon.toISOString().slice(0, 10);
+      const nextMon = new Date(mon); nextMon.setDate(mon.getDate() + 7);
+      const nextMonIso = nextMon.toISOString().slice(0, 10);
+      const q = 'Q' + (Math.floor(today.getMonth() / 3) + 1) + ' ' + today.getFullYear();
+      seedIfEmpty('coach4u_demo_meetings', {
+        meetings: [
+          { id: 4001, meeting_date: monIso, status: 'scheduled', quarter: q, rating: null, notes: '', business_id: 1,
+            headlines: [
+              { id: 4101, type: 'good_news', description: 'Closed largest deal of the year — £42k MRR with Acme Corp' },
+              { id: 4102, type: 'good_news', description: 'Lou completed her ICF Master certification' },
+              { id: 4103, type: 'headline', description: 'Two coaches off sick same week, capacity pressure' }
+            ],
+            todos: [
+              { id: 4201, description: 'Send Q3 proposal to Globex by Friday', owner: 'Cath', done: false },
+              { id: 4202, description: 'Draft new coach JD', owner: 'Lou', done: false },
+              { id: 4203, description: 'Migrate Pipedrive contacts → HubSpot', owner: 'Andrew', done: false },
+              { id: 4204, description: 'Book Manchester event venue', owner: 'Cath', done: true }
+            ]
+          },
+          { id: 4002, meeting_date: nextMonIso, status: 'scheduled', quarter: q, rating: null, notes: '', business_id: 1, headlines: [], todos: [] }
+        ]
+      });
+      seedIfEmpty('coach4u_demo_rocks', [
+        { id:2001, description:'Launch new "Strategy in a Day" workshop', owner:'Cath',   status:'on_track',  quarter:q, company_rock:1, business_id:1, sort_order:1, seat_id:null },
+        { id:2002, description:'Hire 1 senior coach',                     owner:'Lou',    status:'at_risk',   quarter:q, company_rock:1, business_id:1, sort_order:2, seat_id:null },
+        { id:2003, description:'Move CRM to HubSpot',                     owner:'Andrew', status:'on_track',  quarter:q, company_rock:0, business_id:1, sort_order:3, seat_id:null },
+        { id:2004, description:'Run 3 prospect events in Manchester',     owner:'Cath',   status:'off_track', quarter:q, company_rock:0, business_id:1, sort_order:4, seat_id:null }
+      ]);
+      seedIfEmpty('coach4u_demo_issues', [
+        { id:3001, description:'Onboarding flow takes new clients 3+ weeks — intake forms and scheduling drag on. We need to simplify or automate.', owner:'Cath',   status:'open',     solution:'', business_id:1, created_at:new Date(Date.now()-5*86400000).toISOString() },
+        { id:3002, description:'Coach utilisation below 70% target — Q1 hit 64%. Either we have too many coaches or pipeline is weak.',             owner:'Lou',    status:'open',     solution:'', business_id:1, created_at:new Date(Date.now()-12*86400000).toISOString() },
+        { id:3003, description:'No standard scorecard for coach performance — each coach is measured differently, we need a unified scorecard.',     owner:'Andrew', status:'open',     solution:'', business_id:1, created_at:new Date(Date.now()-21*86400000).toISOString() },
+        { id:3004, description:"Website conversion rate dropped 30% after last redesign — visitors aren't getting to the booking form.",            owner:'Andrew', status:'resolved', solution:'Reverted hero CTA, moved booking widget above the fold, conversion back to baseline within a week.', business_id:1, created_at:new Date(Date.now()-30*86400000).toISOString() }
+      ]);
+    }
+
+    function escapeHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+    function readLS(key, fallback) {
+      try { const raw = localStorage.getItem(key); if (raw) return JSON.parse(raw); } catch (_) {}
+      return fallback;
+    }
+    function thisMondayIso() {
+      const d = new Date();
+      d.setDate(d.getDate() + ((d.getDay() === 0 ? -6 : 1) - d.getDay()));
+      return d.toISOString().slice(0, 10);
+    }
+    function currentQuarter() {
+      const d = new Date();
+      return 'Q' + (Math.floor(d.getMonth() / 3) + 1) + ' ' + d.getFullYear();
+    }
+    function fmtShortDate(iso) {
+      if (!iso) return '—';
+      const d = new Date(iso + 'T00:00:00');
+      return days[d.getDay()].slice(0,3) + ' ' + d.getDate();
+    }
+    function fmtDueDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso + 'T00:00:00');
+      return d.getDate() + ' ' + months[d.getMonth()];
+    }
+
+    function renderDashboard() {
+      // ── Meetings ──
+      const meetingsData = readLS('coach4u_demo_meetings', { meetings: [] });
+      const meetings = (meetingsData && meetingsData.meetings) || [];
+      const mondayIso = thisMondayIso();
+      const todayIso = new Date().toISOString().slice(0, 10);
+      const thisWeekMeeting = meetings.find(x => x.meeting_date === mondayIso);
+      const upcoming = meetings.slice().filter(m => m.status !== 'completed' && m.meeting_date >= todayIso)
+                                .sort((a,b) => a.meeting_date.localeCompare(b.meeting_date))[0];
+      const nextMeeting = thisWeekMeeting || upcoming || meetings.find(m => m.status !== 'completed') || meetings[0];
+
+      // Stat tile: Next Meeting
+      document.getElementById('statNextMeeting').textContent = nextMeeting ? fmtShortDate(nextMeeting.meeting_date) : 'None';
+
+      // "Go to This Week's Meeting" button
+      if (nextMeeting) {
+        document.getElementById('thisWeekMeetingBtn').href = 'run-meeting.html?id=' + nextMeeting.id;
+        document.getElementById('thisWeekViewLink').href = 'run-meeting.html?id=' + nextMeeting.id;
+      }
+
+      // This Week todos panel
+      const todosWrap = document.getElementById('thisWeekTodos');
+      const focusMeeting = thisWeekMeeting || upcoming || meetings.find(m => (m.todos || []).length) || meetings[0];
+      const todos = (focusMeeting && focusMeeting.todos) || [];
+      if (todos.length) {
+        todosWrap.innerHTML = todos.slice(0, 4).map(t => `
+          <li class="todo-item">
+            <div class="todo-check ${t.done ? 'done' : ''}"></div>
+            <div>
+              <div class="todo-desc ${t.done ? 'done' : ''}">${escapeHtml(t.description || '')}</div>
+              <div class="todo-meta">${escapeHtml(t.owner || '')}${t.due_date ? ' &middot; Due ' + fmtDueDate(t.due_date) : ''}</div>
+            </div>
+          </li>
+        `).join('');
+      }
+
+      // ── Issues stat tile ──
+      const issues = readLS('coach4u_demo_issues', []);
+      const openCount = (Array.isArray(issues) ? issues : []).filter(i => i.status !== 'resolved').length;
+      document.getElementById('statOpenIssues').textContent = openCount;
+
+      // ── Goals (rocks) ──
+      const rocks = readLS('coach4u_demo_rocks', []);
+      const quarter = currentQuarter();
+      let quarterRocks = (Array.isArray(rocks) ? rocks : []).filter(r => r.quarter === quarter);
+      // Fall back to all rocks if none match this quarter (handles seed Q2 2026 vs real current quarter)
+      if (!quarterRocks.length) quarterRocks = Array.isArray(rocks) ? rocks : [];
+
+      const onTrack = quarterRocks.filter(r => r.status === 'on_track').length;
+      const total = quarterRocks.length;
+
+      // Stat tile: Goals On Track
+      document.getElementById('statGoalsOnTrack').innerHTML = total
+        ? `${onTrack}<span style="font-size:0.9rem;font-weight:700;color:#aaa;">/${total}</span>`
+        : '0';
+
+      // This Quarter panel
+      const STATUS_LABEL = { on_track:'On Track', at_risk:'At Risk', off_track:'Off Track', done:'Done', not_started:'Not Started' };
+      const STATUS_PILL  = { on_track:'pill-green', at_risk:'pill-amber', off_track:'pill-red', done:'pill-green', not_started:'pill-grey' };
+      const pct = total ? Math.round((onTrack / total) * 100) : 0;
+      document.getElementById('quarterProgressFill').style.width = pct + '%';
+      document.getElementById('quarterProgressLabel').textContent = total
+        ? `${onTrack} of ${total} ${total === 1 ? 'priority' : 'priorities'} on track`
+        : 'No goals set yet';
+      const rocksWrap = document.getElementById('quarterRocks');
+      if (quarterRocks.length) {
+        rocksWrap.innerHTML = quarterRocks.slice(0, 5).map(r => `
+          <div class="rock-row">
+            <div class="rock-desc">${escapeHtml(r.description || '')}</div>
+            <span class="status-pill ${STATUS_PILL[r.status] || 'pill-grey'}">${STATUS_LABEL[r.status] || (r.status || '—')}</span>
+          </div>
+        `).join('');
+      } else {
+        rocksWrap.innerHTML = '<div style="font-size:0.78rem;color:#aaa;padding:6px 0;">Add quarterly goals to see them here.</div>';
+      }
+
+      // ── 1-Year Goal panel ──
+      const targets = readLS('coach4u_targets', null);
+      if (targets) {
+        const goals = (targets.one_year_goals || '')
+          .split('\n')
+          .map(s => s.replace(/^\s*(?:\d+[.)]|[-*•])\s+/, '').trim())
+          .filter(Boolean);
+        if (goals.length) {
+          const joined = goals.length > 1
+            ? goals.slice(0, -1).join(', ') + ', and ' + goals[goals.length - 1]
+            : goals[0];
+          document.getElementById('oneYearGoal').textContent = joined;
+        }
+        const metaBits = [];
+        if (targets.one_year_date) metaBits.push('Target: ' + targets.one_year_date);
+        if (targets.one_year_revenue) metaBits.push('Revenue: ' + targets.one_year_revenue);
+        if (metaBits.length) document.getElementById('oneYearMeta').innerHTML = metaBits.join(' &nbsp;&middot;&nbsp; ');
+      }
+
+      // ── Core Values panel ──
+      const cv = readLS('coach4u_core_values', null);
+      if (cv) {
+        const pills = [];
+        for (let i = 1; i <= 5; i++) {
+          const v = (cv['value_' + i] || '').toString().trim();
+          if (v) pills.push(v);
+        }
+        if (pills.length) {
+          document.getElementById('valuesPills').innerHTML = pills.map(v =>
+            `<span class="value-pill">${escapeHtml(v)}</span>`
+          ).join('');
+        }
+      }
+    }
 
     async function init() {
       const { data: { user }, error } = await supabase.auth.getUser();
@@ -324,6 +466,8 @@
       if (!profile || profile.membership_status !== 'active') {
         window.location.href = 'inactive.html'; return;
       }
+      ensureSeeds();
+      renderDashboard();
       document.body.style.opacity = '1';
       document.getElementById('signOutBtn').addEventListener('click', async () => {
         await supabase.auth.signOut(); window.location.href = 'login.html';

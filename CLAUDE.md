@@ -98,9 +98,22 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.60
+v0.5.61
 
-## Recent Changes (v0.5.60)
+## Recent Changes (v0.5.61)
+- **Dashboard panels are now fully live.** Every clickable tile and panel on `index.html` reads from localStorage instead of showing hardcoded sample text:
+  - **Open Issues** stat tile — count of `coach4u_demo_issues` where status ≠ resolved
+  - **Goals On Track** stat tile — `on_track` rocks / total rocks in the current quarter from `coach4u_demo_rocks` (falls back to all rocks if no quarter match)
+  - **Next Meeting** stat tile — first non-completed meeting from `coach4u_demo_meetings`, rendered as "Mon DD"
+  - **1-Year Goal** panel — reads `coach4u_targets`: joins `one_year_goals` lines (stripped of "N." prefixes), shows `one_year_date` + `one_year_revenue` in the meta line
+  - **Core Values** panel — reads `coach4u_core_values`, renders one pill per non-empty `value_1..value_5`
+  - **This Week** todos panel — pulls todos from this Monday's meeting (or next upcoming), shows up to 4 with owner + done state. The "View Meeting →" link now goes to `run-meeting.html?id=X`
+  - **This Quarter** panel — progress bar + label show `on_track`/`total` for current quarter, rock list renders each with the matching status pill (on_track / at_risk / off_track / done / not_started)
+- **Pre-seed on first visit.** Added `ensureSeeds()` on dashboard load — writes seeded defaults to all 5 localStorage keys (`coach4u_core_values`, `coach4u_targets`, `coach4u_demo_meetings`, `coach4u_demo_rocks`, `coach4u_demo_issues`) ONLY if the key is missing. Means visiting the dashboard first now populates the data so every page (worksheets, tools, one-page-plan) shows consistent content without having to tap through each tool to trigger its own seed.
+- Tool/worksheet seeds remain in their own files as a no-op safety net (`localStorage.setItem` only fires if value is null/empty in each tool's `loadData()`).
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.61.
+
+## Previous (v0.5.60)
 - **Strategy worksheets now persist edits and seed dummy data.** All 4 Strategy worksheets (`core-values.html`, `core-focus.html`, `targets.html`, `marketing-strategy.html`) auto-save every field edit to localStorage and seed realistic example content on first visit. Matches the architecture `leadership-team.html` already used.
   - Keys: `coach4u_core_values`, `coach4u_core_focus`, `coach4u_targets`, `coach4u_marketing_strategy` (plus existing `coach4u_leadership_team`).
   - Save bar shows a brief "Saved ✓" pulse on each edit.
