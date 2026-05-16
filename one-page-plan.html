@@ -165,52 +165,17 @@
     .num-list li { display: flex; gap: 5px; font-size: 0.73rem; color: #2d2d2d; line-height: 1.4; }
     .num-list li .n { color: #0D9488; font-weight: 800; font-size: 0.68rem; min-width: 13px; padding-top: 1px; flex-shrink: 0; }
 
-    .doc-team {
-      border-top: 1px solid #e5e7eb;
-      padding: 12px 20px 10px;
-      background: #fafbfc;
-    }
-    .doc-team-heading {
-      font-size: 0.6rem;
-      font-weight: 800;
-      letter-spacing: 1.8px;
-      text-transform: uppercase;
-      color: #0D9488;
-      border-left: 3px solid #0D9488;
-      padding-left: 7px;
-      margin-bottom: 8px;
-    }
-    .team-table {
-      display: grid;
-      grid-template-columns: 1.1fr 1.2fr 2.5fr;
-      gap: 4px 14px;
-      font-size: 0.7rem;
-      line-height: 1.4;
-    }
-    .team-table .th {
-      font-size: 0.56rem;
-      font-weight: 800;
-      letter-spacing: 0.9px;
-      text-transform: uppercase;
-      color: #003366;
-      padding-bottom: 4px;
-      border-bottom: 1px solid #e5e7eb;
-    }
-    .team-table .td-name { font-weight: 800; color: #003366; }
-    .team-table .td-role { font-weight: 700; color: #0D9488; }
-    .team-table .td-resp { color: #2d2d2d; }
-    .team-table .row { display: contents; }
-    .team-table .row .td-name,
-    .team-table .row .td-role,
-    .team-table .row .td-resp { border-bottom: 1px solid #f0f0f0; padding: 4px 0; }
-    .team-table .row:last-child .td-name,
-    .team-table .row:last-child .td-role,
-    .team-table .row:last-child .td-resp { border-bottom: none; }
+    .doc-team { display: none; }
+    .doc-team-heading { display: none; }
+    .team-compact { display: flex; flex-direction: column; gap: 3px; }
+    .team-line { font-size: 0.72rem; line-height: 1.35; color: #2d2d2d; }
+    .team-line .tn { font-weight: 800; color: #003366; }
+    .team-line .tr { font-weight: 700; color: #0D9488; }
+    .team-line .tsep { color: #bbb; margin: 0 4px; }
     .team-empty {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: #888;
       font-style: italic;
-      padding: 6px 0;
     }
 
     .doc-footer {
@@ -239,11 +204,7 @@
         break-inside: avoid;
       }
       .doc-body { page-break-inside: avoid; break-inside: avoid; }
-      .doc-team { page-break-inside: avoid; break-inside: avoid; padding: 9px 18px 7px; }
-      .doc-team-heading { margin-bottom: 6px; }
-      .team-table .row .td-name,
-      .team-table .row .td-role,
-      .team-table .row .td-resp { padding: 3px 0; }
+      .team-line { font-size: 0.66rem; line-height: 1.3; }
       .doc-header { padding: 9px 18px; }
       .doc-col { padding: 11px 14px; }
       .col-heading { margin-bottom: 9px; }
@@ -308,6 +269,11 @@
             <span class="field-label">Niche</span>
             <div class="field-value" id="opp-niche">Strengths-based business coaching for small and medium businesses across Australia.</div>
           </div>
+          <hr class="field-divider">
+          <div class="field">
+            <span class="field-label">Leadership Team</span>
+            <div id="opp-team-compact" class="team-compact"></div>
+          </div>
         </div>
 
         <div class="doc-col">
@@ -370,11 +336,6 @@
           </div>
         </div>
 
-      </div>
-
-      <div class="doc-team">
-        <div class="doc-team-heading">Leadership Team</div>
-        <div id="teamTable"></div>
       </div>
 
       <div class="doc-footer">
@@ -488,34 +449,28 @@
     }
 
     function renderTeamTable() {
-      const wrap = document.getElementById('teamTable');
+      const wrap = document.getElementById('opp-team-compact');
+      if (!wrap) return;
       let team = [];
       try {
         const raw = localStorage.getItem('coach4u_leadership_team');
         if (raw) team = JSON.parse(raw) || [];
       } catch (e) { team = []; }
 
-      if (!Array.isArray(team) || team.length === 0) {
+      // Filter out empty placeholder rows (no name AND no role)
+      const filled = (Array.isArray(team) ? team : []).filter(m => (m.name && m.name.trim()) || (m.role && m.role.trim()));
+
+      if (!filled.length) {
         wrap.innerHTML = '<div class="team-empty">Add your leadership team in the Strategy section.</div>';
         return;
       }
 
-      const rows = team.map(m => `
-        <div class="row">
-          <div class="td-name">${escapeHtml(m.name || '—')}</div>
-          <div class="td-role">${escapeHtml(m.role || '')}</div>
-          <div class="td-resp">${escapeHtml(firstSentence(m.responsibilities))}</div>
-        </div>
-      `).join('');
-
-      wrap.innerHTML = `
-        <div class="team-table">
-          <div class="th">Name</div>
-          <div class="th">Role</div>
-          <div class="th">Key Responsibility</div>
-          ${rows}
-        </div>
-      `;
+      wrap.innerHTML = filled.map(m => {
+        const name = escapeHtml((m.name || '').trim() || '—');
+        const role = escapeHtml((m.role || '').trim());
+        if (!role) return `<div class="team-line"><span class="tn">${name}</span></div>`;
+        return `<div class="team-line"><span class="tn">${name}</span><span class="tsep">&middot;</span><span class="tr">${role}</span></div>`;
+      }).join('');
     }
 
     async function init() {

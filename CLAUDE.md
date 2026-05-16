@@ -98,9 +98,17 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.66
+v0.5.67
 
-## Recent Changes (v0.5.66)
+## Recent Changes (v0.5.67)
+- **Leadership Team moved INTO the One-Page Plan body** so the plan fits on a single A4 landscape page when printed (the previous full-width band below the 3-column body was pushing the print to a second page).
+  - Now lives as a compact field at the bottom of the **"Who We Are"** column — fits thematically (the column already covers Core Values, Purpose, Niche).
+  - Compact line-per-person format: `<strong>Name</strong> · <accent>Role</accent>` (responsibilities dropped from the one-pager — they still live in the worksheet for reference).
+  - Empty placeholder rows (no name and no role) are filtered out — so the one-pager only shows team members the user has actually filled in.
+- Removed the standalone `.doc-team` band markup, styles, and print rules. Cleaner DOM and one less page-break risk.
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.67.
+
+## Previous (v0.5.66)
 Final polish on `planning.html`:
 - **Fixed sign-out button class** — was `class="signOutBtn"` (mass-rename slip from v0.5.65 that broke its styling), now correctly `class="sign-out-btn"`.
 - **Bottom nav font aligned** with all other pages (`10px / 0.5px letter-spacing`).
