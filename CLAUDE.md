@@ -36,11 +36,11 @@ Stylesheets:
 index.html              — root portal / dashboard
 strategy.html           — Strategy hub (cards link to root worksheets)
 operations.html         — Operations hub (cards link to root tools)
-planning.html           — Planning hub (annual + quarterly rhythm visualisation; cards open list pages)
+planning.html           — Planning hub (2 activity cards → annual + quarterly session lists)
 annual-sessions.html    — list of past + scheduled annual planning sessions
-run-annual-session.html — workspace for a single annual planning session (agenda + notes)
+run-annual-session.html — workspace for a single annual planning session (attendance + areas checklist + share link to team check-in)
 quarterly-sessions.html — list of past + scheduled quarterly planning sessions
-run-quarterly-session.html — workspace for a single quarterly planning session
+run-quarterly-session.html — workspace for a single quarterly planning session (attendance + areas checklist + share link)
 team-checkin.html       — public team-facing check-in form (no auth) — 17-question EOS-style organisational survey; submissions write to coach4u_team_checkins keyed by session_id + session_type
 learning-vault.html     — reference / how-to area (one active card + coming-soon placeholders)
 one-page-plan.html      — printable landscape one-page business plan (fed by the 5 worksheets)
@@ -410,12 +410,16 @@ Audit fixes for consistency across all pages:
 - Portal (primary): `https://cathcoach4u.github.io/yourbusinesscoach/`
 
 ## Current Status
-- **Root dashboard**: WORKING — index.html, strategy.html, operations.html, learning-vault.html
-- **Strategy worksheets**: WORKING — `strategy/*.html` (core-values, core-focus, targets, marketing-strategy, one-page-plan)
-- **Operations sub-pages**: WORKING — scorecard, goals, meeting, issues
-- **Accountability Chart & Team Alignment**: MOVED to `yourteamcoach`
+- **Dashboard** (`index.html`) — live, reads all panels from localStorage (`coach4u_*` keys), pre-seeds on first visit via `ensureSeeds()`
+- **Hubs** — `strategy.html`, `operations.html`, `planning.html`, `learning-vault.html` — uniform Design 1 layout (CTA + activity cards)
+- **Strategy worksheets** at root — core-values, core-focus, targets, marketing-strategy, leadership-team. Auto-save to localStorage, seed on first visit, feed `one-page-plan.html`
+- **Operations tools** at root — scorecard (Weekly Numbers), goals (Quarterly Goals), meeting (Past list) + run-meeting (workspace), issues. localStorage demo data stub in place of `/api/...` calls
+- **Planning sessions** — annual-sessions + run-annual-session (4 areas) and quarterly-sessions + run-quarterly-session (3 areas). Workspaces now use attendance + checklist + team check-in share link (no notes / no rating)
+- **Team Check-in** — public auth-free `team-checkin.html` (17 EOS-style questions, 1–5 Likert). Submissions to `coach4u_team_checkins` keyed by session_id + session_type. Ready for Supabase swap-in
+- **Resume pill** — floating "Resume Planning Session" pill on every page when a session is in progress (`coach4u_active_planning_session`)
 - **Mobile**: Responsive at 390px and 768px breakpoints
 - **Login**: Gold standard v2.2
+- **Accountability Chart & Team Alignment**: MOVED to `yourteamcoach`
 
 ## Add a New Member (SQL)
 
