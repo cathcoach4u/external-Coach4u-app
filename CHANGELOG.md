@@ -1,42 +1,114 @@
 # Changelog
 
-## v0.5.4 — 2026-04-29
+All notable changes to the project. The two most recent entries live in `CLAUDE.md`; everything else is here.
 
-### Design system alignment (v1.3)
-- Updated brand colours across all pages: primary navy `#1B3664`, blue-teal `#5684C4`, body text `#2D2D2D`, borders `#DDDDDD`
-- Added Inter Bold and Montserrat Regular (Google Fonts) to all pages
-- Updated `manifest.json` `theme_color` to `#1B3664`
-- Inlined all module CSS — removed external `<link rel="stylesheet">` from business and growth pages
-- Added missing `<head>` meta block to `business/index.html` (manifest, theme-color, favicons, PWA tags)
-- Inlined Supabase client initialisation in every page
-- Added `.sign-out-btn` to business and growth authenticated pages
-- Standardised login form IDs to `signInForm`, `login-btn`, `message`
-- Removed em-dash from login success message
-- Removed exclamation mark from auth alert message
-- Fixed `offline.html` footer copy to use correct practice description
-- Removed duplicate `ai.js` load from `growth/index.html`
-- Removed duplicate `apple-mobile-web-app-capable` meta tag from `growth/index.html`
+---
+
+## v0.5.73
+- **Planning session workspaces simplified to attendance + checklist + share link.** Both `run-annual-session.html` and `run-quarterly-session.html` previously had a multi-step agenda accordion with per-step notes textareas, a 1–10 session-rating step, a "Review Team Check-in" agenda step, and a big inline aggregated check-in results table at the top. Stripped all of that.
+- New workspace shape (both files): **status dropdown + timer**, then a **📋 Attendance** block (single textarea, debounced ~300ms auto-save), then **✅ Areas to Cover** (one checkbox per area with the existing Strategy/Goals deep-links inline beside each row + a "{n} of {total} areas completed" progress hint), then a **🌟 Team Check-in** block reduced to two buttons — **Copy Check-in Link** (teal, clipboard + toast) and **Open Form** (secondary). No count, no aggregated table, no comments view.
+- **Annual** workspace has 4 areas: Review Last Year / Refresh Core Values + Core Focus / Update 10-Year + 3-Year Picture / Set 1-Year Plan + Q1 Goals. **Quarterly** has 3 areas: Review Last Quarter / Lessons + Adjustments / Set Next Quarter's Goals.
+- **Persistence** — two new fields on each session object: `attendance: '<string>'` and `areas_completed: { [areaId]: boolean }`. Attendance saves debounced on input; checkboxes save immediately.
+- Removed CSS / JS: `.rating-btns`, `.rating-btn`, `.notes-textarea`, `.ci-table`, `.ci-dot*`, `.ci-comments`, `.ci-q`, `.ci-c`, `.checkin-empty`, `.label-sm`, `.agenda-*` rules; `loadCheckins`, `aggregate`, `renderCheckinResultsTable`, `renderCheckinComments`, `updateAgendaNotes`, `buildAgendaSteps`, `priorQuarter` helpers.
+
+## v0.5.72
+- **Team Check-in form added.** A new public, auth-free page `team-checkin.html` lets team members rate organisational health statements (EOS-style) before each Annual or Quarterly planning session. The leader copies a per-session link (`team-checkin.html?session=<id>&type=annual|quarterly`) from the session workspace and shares it.
+- **Form structure**: required name field + optional role field + **17 rated statements** (1–5 Likert, 1 = Strongly Disagree, 5 = Strongly Agree) + optional comment per question.
+- **17 statements** cover vision, core focus, 10-year + 3-year targets, accountability chart, "right seat", leadership trust, issue solving, weekly meetings, quarterly priorities, annual meetings, core values hiring/firing, "right people", mentoring/coaching, strengths-based culture, and thriving culture.
+- **Database-ready JSON**. Submissions write to localStorage under `coach4u_team_checkins` as `{ id, session_id, session_type, name, role, submitted_at, scores: number[17], comments: string[17] }` — same shape that will post to a future Supabase `team_checkins` table.
+- **Workspace aggregation** added in v0.5.72 but later removed in v0.5.73 in favour of the slim share-link block.
+
+## v0.5.71
+- **Floating Resume Planning Session pill.** When you tap Start Session on an Annual or Quarterly Planning workspace, a teal pill appears bottom-center on every page in the app. Tap it to return to the in-progress session. Clears automatically when you mark the session completed or click End Session.
+- Implemented as a shared `js/active-session.js` loaded via `<script defer>` on every main page (21 pages).
+- Exposes `window.activeSession.set()` / `clear()` used by the two `run-*-session.html` workspaces. localStorage key: `coach4u_active_planning_session`.
+
+## v0.5.70
+- **`planning.html` restructured as a standard hub** to match the Strategy and Operations layout. Dropped the vertical flow visualisation; replaced with the same `activity-card` pattern.
+- Top: "View One-Page Plan" teal CTA. Below: 2 activity cards — Annual Planning → `annual-sessions.html`, Quarterly Planning → `quarterly-sessions.html`.
+
+## v0.5.69
+- **Planning is now actionable, not just a diagram.** 4 new pages built on the same pattern as `meeting.html` + `run-meeting.html`:
+  - `annual-sessions.html` — list of past + scheduled annual planning sessions
+  - `run-annual-session.html` — single-session workspace (originally 5-step agenda; simplified in v0.5.73)
+  - `quarterly-sessions.html` — list of past + scheduled quarterly sessions; "+ New" modal asks which quarter
+  - `run-quarterly-session.html` — single-session workspace (originally 4-step agenda; simplified in v0.5.73)
+- localStorage keys: `coach4u_annual_sessions` (array), `coach4u_quarterly_sessions` (array). No nested wrapper.
+- Seed data: annual list seeds 1 completed + 1 scheduled. Quarterly list seeds 2 completed + 1 scheduled.
+- `planning.html` cards repointed; `index.html` `ensureSeeds()` extended.
+
+## v0.5.68
+- **Planning page collapsed from 5 sessions to 4.** The "Q1 Review" was redundant — the Annual Planning session already produces the Q1 plan.
+- New flow: Annual Planning (sets year + Q1) → Q2 Planning Session → Q3 Planning Session → Q4 Planning Session → cycles back.
+
+## v0.5.67
+- **Leadership Team moved INTO the One-Page Plan body** so the plan fits on a single A4 landscape page when printed. Lives as a compact field at the bottom of the "Who We Are" column. Empty placeholder rows filtered out.
+
+## v0.5.66
+Final polish on `planning.html`:
+- Fixed sign-out button class regression. Bottom nav font aligned with other pages.
+- Subtitle tightened; stage labels simplified; Annual node balanced with a "Reviews" row; "Start Here" chip added; "View One-Page Plan" CTA at top.
+
+## v0.5.65
+Audit fixes for consistency across all pages:
+- Hub titles simplified — `strategy.html` "Build Your Strategy" → "Strategy", `operations.html` "Run Your Operations" → "Operations".
+- Goals header-title → "Quarterly Goals".
+- **Sign-out button id standardised to `signOutBtn` across all 17 pages.** (Some used `sign-out-btn` kebab-case.)
+- Google Fonts purged from `offline.html`, `404.html`, `inactive.html`, `forgot-password.html`.
+- "Next Meeting" stat tile on the dashboard now opens `run-meeting.html?id=X` directly.
+
+## v0.5.64
+- **Consistent hint box across all 9 worksheets/tools.** Every Strategy worksheet and Operations tool now has the same pattern: subtitle + one minimal `.ws-hint` with a single Learning Vault link.
+- `.ws-hint` promoted to shared `css/style.css`.
+
+## v0.5.63
+- **Text-clipping audit on worksheets.** Added `autoGrow(textarea)` helper to resize each textarea to its `scrollHeight`.
+- Marketing Strategy "Our Guarantee" field converted from `<input>` to `<textarea rows="2">`.
+
+## v0.5.62
+- **Robust seed merging.** `loadData()` and dashboard `seedIfEmpty()` now use a **merge-missing-keys** strategy: any SEED key that's `undefined` in the stored object gets filled in (intentional empty strings are preserved).
+- Core Values worksheet now lists 8 values (was 5); seed still fills 1–5.
+
+## v0.5.61
+- **Dashboard panels are now fully live.** Every clickable tile and panel on `index.html` reads from localStorage instead of hardcoded sample text (Open Issues, Goals On Track, Next Meeting, 1-Year Goal, Core Values, This Week todos, This Quarter rocks).
+- Pre-seed on first visit via `ensureSeeds()` — writes seeded defaults to all localStorage keys ONLY if missing.
+
+## v0.5.60
+- **Strategy worksheets now persist edits and seed dummy data.** All 4 Strategy worksheets auto-save every field edit to localStorage and seed realistic example content on first visit.
+  - Keys: `coach4u_core_values`, `coach4u_core_focus`, `coach4u_targets`, `coach4u_marketing_strategy` (plus existing `coach4u_leadership_team`).
+- **`one-page-plan.html` now reflects worksheet edits.** Each field on the printable plan got a stable `id`; `applyWorksheetData()` reads the localStorage keys and overrides hardcoded HTML where data exists.
+
+---
+
+## Earlier History (v0.5.9 – v0.5.59) — Summary
+Pre-v0.5.60 milestones, compressed:
+- **v0.5.59** — Issues simplified (priority removed); "Run Weekly Meeting" CTA creates this-week's meeting; Goals tip box; Scorecard renamed to "Weekly Numbers".
+- **v0.5.58** — PWA icon fixed (4U now visible in teal); hub top gap tightened; Dashboard "Go to This Week's Meeting" opens `run-meeting.html?id=X` directly.
+- **v0.5.55–v0.5.57** — Issues kanban → 2 columns; Scorecard mobile sticky-column; Hub CTAs moved to top; Dashboard links all repointed to actual tools.
+- **v0.5.54** — Meeting split into past-list (`meeting.html`) + active workspace (`run-meeting.html`).
+- **v0.5.51** — Strategy worksheets + Operations tools promoted out of `learn/` to project root. `learn/` reduced to reference area (Values Discovery only).
+- **v0.5.50** — Operations tools (scorecard/goals/meeting/issues) given localStorage demo data stub in place of dead `/api/...` calls.
+- **v0.5.41–v0.5.49** — Multiple structure passes consolidating to Design 1 (Aptos, navy + teal). Deleted legacy `business/`, `css/activity.css`, root orphans (`values.html`, `vision-strategy.html`, `marketing.html`, `targeting.html`). Login gold-standardised.
+- **v0.5.33–v0.5.40** — Dashboard placeholder sections built; Strategy + One-Page Plan landscape layout introduced; Learning Vault + Values Discovery exercise added; consolidated to single Supabase project.
+- **v0.5.9–v0.5.12** — Root portal restored as primary; legacy modules (Accountability Chart, Team Alignment) moved out to `yourteamcoach`.
+
+---
+
+## Ancient History (v0.5.1 – v0.5.4) — predecessor era
+
+These entries describe an earlier project structure (`business/`, `growth/`, `thrivehq/` paths) that no longer exists. Kept for record only.
+
+### v0.5.4 — 2026-04-29 — Design system alignment (v1.3)
+- Updated brand colours across all pages: primary navy `#1B3664`, blue-teal `#5684C4` (later replaced by Design 1 navy `#003366` + teal `#0D9488`)
+- Added Inter Bold and Montserrat Regular (Google Fonts) to all pages (later removed)
+- Inlined module CSS; inlined Supabase client; standardised login form IDs
 - Bumped service worker cache version to `coach4u-v0.5.3`
-- Updated version badge in `business/index.html` to v0.5.4
 
-## v0.5.3 — prior
+### v0.5.3
+- Built complete ThriveHQ external PWA app (Phase 1) under `/thrivehq/` (later removed)
 
-- Built complete ThriveHQ external PWA app (Phase 1)
-- Added ThriveHQ to `/thrivehq/` with separate Supabase project
-- Configured PWA manifest and service worker for `/external-Coach4u-app/thrivehq/` path
-- Magic link authentication with Supabase integration
-- Brain Pulse dashboard with 4 sections
-- Resources hub, account page, and offline support
+### v0.5.2
+- Standardised typography to 7 size steps
 
-## v0.5.2 — prior
-
-- Standardised typography: consolidated font sizes to 7 standard steps
-- Bumped service worker cache version
-
-## v0.5.1 — prior
-
-- Fixed critical bug: `business/index.html` loading wrong `app.js`
-- Nav pills now functional
-- Removed error toasts from load functions
-- Redesigned header layout
-- Nav tabs styled as true pills
+### v0.5.1
+- Fixed `business/index.html` loading wrong `app.js`; nav pill restyling; header redesign
