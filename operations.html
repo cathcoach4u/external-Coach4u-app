@@ -131,7 +131,7 @@
 
   <div class="container">
     <div class="activities-section">
-      <a class="meeting-btn" href="meeting.html">
+      <a class="meeting-btn" id="runWeeklyMeetingBtn" href="meeting.html">
         &#x1F5D3;&#xFE0F;&nbsp; Run Weekly Meeting
       </a>
 
@@ -139,7 +139,7 @@
         <a class="activity-card" href="scorecard.html">
           <div class="act-icon">&#x1F4CA;</div>
           <div class="act-text">
-            <div class="act-name">Scorecard</div>
+            <div class="act-name">Weekly Numbers</div>
             <div class="act-desc">Track the numbers that tell you how the business is really going</div>
           </div>
           <span class="act-arrow">&#x203A;</span>
@@ -212,6 +212,34 @@
       document.body.style.opacity = '1';
       document.getElementById('signOutBtn').addEventListener('click', async () => {
         await supabase.auth.signOut(); window.location.href = 'login.html';
+      });
+      wireRunMeetingButton();
+    }
+
+    // Run Weekly Meeting: open this-week's existing meeting, otherwise create one and open it.
+    function wireRunMeetingButton() {
+      const btn = document.getElementById('runWeeklyMeetingBtn');
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const KEY = 'coach4u_demo_meetings';
+        let data;
+        try { data = JSON.parse(localStorage.getItem(KEY)); } catch (_) {}
+        if (!data || !data.meetings) data = { meetings: [] };
+        // This-week Monday in ISO
+        const d = new Date();
+        const day = d.getDay();
+        d.setDate(d.getDate() + ((day === 0 ? -6 : 1) - day));
+        const mondayIso = d.toISOString().slice(0, 10);
+        let m = data.meetings.find(x => x.meeting_date === mondayIso);
+        if (!m) {
+          const q = 'Q' + Math.floor(new Date().getMonth() / 3 + 1) + ' ' + new Date().getFullYear();
+          m = { id: Date.now() * 1000 + Math.floor(Math.random() * 1000),
+                meeting_date: mondayIso, status: 'scheduled', quarter: q,
+                rating: null, notes: '', business_id: 1, headlines: [], todos: [] };
+          data.meetings.push(m);
+          localStorage.setItem(KEY, JSON.stringify(data));
+        }
+        window.location.href = 'run-meeting.html?id=' + m.id;
       });
     }
     init();

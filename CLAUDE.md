@@ -98,9 +98,16 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.58
+v0.5.59
 
-## Recent Changes (v0.5.58)
+## Recent Changes (v0.5.59)
+- **Issues simplified.** Priority (high/medium/low) removed entirely — gone from the modal, the card display, the seed data, and the localStorage save/load. Cards now just show description + owner (no priority badge, no date, no status — status is implicit by the column the card sits in). Solved tag also dropped (redundant in the Resolved column). The teal left-border replaces the per-priority red/amber/green border colors.
+- **"Run Weekly Meeting" CTA** on `operations.html` now creates (or opens) this week's meeting and lands you in `run-meeting.html`. The button checks `coach4u_demo_meetings` localStorage — if a meeting exists for today's ISO-week Monday it opens that one; otherwise it creates one (status `scheduled`, current quarter) and opens it.
+- **Goals tip.** Added a teal-bordered hint at the top of `goals.html`: "Aim for 3–7 company goals per quarter, plus 1–3 individual goals per leader. Keep them specific, measurable, and ownable." Updated the page subtitle to drop the EOS-style "3–7" inline phrasing (now in the tip box).
+- **Scorecard renamed to "Weekly Numbers"** (avoids EOS jargon). Updated: page `<title>`, header label, `ws-title`, the Operations card label ("Weekly Numbers"), and the Run Meeting agenda item ("Numbers Review" + "Open Weekly Numbers →" link). File name `scorecard.html` and the URL stay the same.
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.59
+
+## Previous (v0.5.58)
 - **PWA icon fixed.** `favicon.svg` had its "4U" text filled with `#001a33` — same as the navy background, so it rendered as just an empty area next to the "C". Repainted the "4U" in teal `#0D9488`, simplified the SVG, and added an explicit `apple-touch-icon` link on `index.html`. Updated `manifest.json`: app name → "Your Business Coach" (was an outdated tagline), broken `/assets/icon-*.png` references replaced with the working `favicon.svg`, theme/background colors aligned to navy `#003366`.
 - **Hub top gap tightened.** `strategy.html` and `operations.html` had `.activities-section { padding: 24px 16px 0 }` on top of the container's mobile 20px top padding (44px total). Dropped the section's top padding so the primary CTA sits ~20px below the title bar.
 - **Dashboard "Go to This Week's Meeting"** now opens the actual meeting in `run-meeting.html?id=X` instead of dropping you on the past-meetings list. The href is set on page load: finds the meeting whose date matches the current ISO-week Monday, falling back to the first non-completed meeting, falling back to the first meeting. Reads from the same `coach4u_demo_meetings` localStorage key.
