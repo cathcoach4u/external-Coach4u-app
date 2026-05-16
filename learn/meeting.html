@@ -168,7 +168,109 @@
   let currentBusinessId=1,_meetings=[],_currentMeeting=null,_timerInterval=null,_timerStart=null;
   function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
-  async function api(method,path,body){const opts={method,headers:{'Content-Type':'application/json'}};if(body!==undefined)opts.body=JSON.stringify(body);const res=await fetch('/api'+path,opts);if(!res.ok){const e=await res.json().catch(()=>({error:res.statusText}));throw new Error(e.error||res.statusText)}return res.json()}
+  // localStorage demo data stub (replaces non-existent /api/... backend). See CLAUDE.md v0.5.50.
+  const _LS_KEY='coach4u_demo_meetings';
+  function _genId(){return Date.now()*1000+Math.floor(Math.random()*1000)}
+  function _mondayISO(d){const dt=new Date(d);const day=dt.getDay();const diff=(day===0?-6:1)-day;dt.setDate(dt.getDate()+diff);return dt.toISOString().slice(0,10)}
+  function _isoAddDays(iso,n){const dt=new Date(iso+'T00:00:00');dt.setDate(dt.getDate()+n);return dt.toISOString().slice(0,10)}
+  function _meetingsSeed(){
+    const thisMon=_mondayISO(new Date());
+    const nextMon=_isoAddDays(thisMon,7);
+    return{
+      meetings:[
+        {id:4001,meeting_date:thisMon,status:'completed',quarter:'Q2 2026',rating:8,notes:'Strong week — Acme deal closed. Need to keep an eye on coach capacity.',business_id:1,
+          headlines:[
+            {id:4101,type:'good_news',description:'Closed largest deal of the year — £42k MRR with Acme Corp'},
+            {id:4102,type:'good_news',description:'Lou completed her ICF Master certification'},
+            {id:4103,type:'headline',description:'Two coaches off sick same week, capacity pressure'}
+          ],
+          todos:[
+            {id:4201,description:'Send Q3 proposal to Globex by Friday',owner:'Cath',done:false},
+            {id:4202,description:'Draft new coach JD',owner:'Lou',done:false},
+            {id:4203,description:'Migrate Pipedrive contacts → HubSpot',owner:'Andrew',done:false},
+            {id:4204,description:'Book Manchester event venue',owner:'Cath',done:true}
+          ]
+        },
+        {id:4002,meeting_date:nextMon,status:'scheduled',quarter:'Q2 2026',rating:null,notes:'',business_id:1,headlines:[],todos:[]}
+      ]
+    };
+  }
+  function _meetingsLoad(){let d;try{d=JSON.parse(localStorage.getItem(_LS_KEY))}catch(_){d=null}if(!d||!d.meetings){d=_meetingsSeed();_meetingsSave(d)}return d}
+  function _meetingsSave(d){localStorage.setItem(_LS_KEY,JSON.stringify(d))}
+  async function api(method,path,body){
+    await new Promise(r=>setTimeout(r,30));
+    const [pathname,query='']=path.split('?');
+    const qp={};query.split('&').filter(Boolean).forEach(p=>{const[k,v]=p.split('=');qp[k]=decodeURIComponent(v||'')});
+    if(method==='GET'&&pathname==='/businesses')return[{id:1,name:'Demo Business',type:'holding'}];
+    const d=_meetingsLoad();
+    // GET /meetings — list
+    if(method==='GET'&&pathname==='/meetings'){
+      return d.meetings.slice().sort((a,b)=>(b.meeting_date||'').localeCompare(a.meeting_date||''))
+        .map(m=>({id:m.id,meeting_date:m.meeting_date,status:m.status,quarter:m.quarter,rating:m.rating}));
+    }
+    // GET /meetings/:id — single meeting with headlines + todos
+    if(method==='GET'&&/^\/meetings\/\d+$/.test(pathname)){
+      const id=parseInt(pathname.split('/').pop());
+      const m=d.meetings.find(x=>x.id===id);
+      if(!m)throw new Error('Meeting not found');
+      return JSON.parse(JSON.stringify(m));
+    }
+    // POST /meetings — create
+    if(method==='POST'&&pathname==='/meetings'){
+      const m={id:_genId(),meeting_date:body.meeting_date,quarter:body.quarter||'',status:body.status||'scheduled',rating:null,notes:'',business_id:body.business_id||1,headlines:[],todos:[]};
+      d.meetings.push(m);_meetingsSave(d);return m;
+    }
+    // PUT /meetings/:id — update meeting fields
+    if(method==='PUT'&&/^\/meetings\/\d+$/.test(pathname)){
+      const id=parseInt(pathname.split('/').pop());
+      const m=d.meetings.find(x=>x.id===id);
+      if(m){
+        if(body.status!==undefined)m.status=body.status;
+        if(body.rating!==undefined)m.rating=body.rating;
+        if(body.notes!==undefined)m.notes=body.notes;
+        if(body.meeting_date!==undefined)m.meeting_date=body.meeting_date;
+        if(body.quarter!==undefined)m.quarter=body.quarter;
+        _meetingsSave(d);
+      }
+      return m||{};
+    }
+    // POST /meetings/:id/headlines
+    if(method==='POST'&&/^\/meetings\/\d+\/headlines$/.test(pathname)){
+      const mid=parseInt(pathname.split('/')[2]);
+      const m=d.meetings.find(x=>x.id===mid);
+      if(!m)throw new Error('Meeting not found');
+      const h={id:_genId(),type:body.type||'good_news',description:body.description};
+      m.headlines=m.headlines||[];m.headlines.push(h);_meetingsSave(d);return h;
+    }
+    // DELETE /meetings/headlines/:id
+    if(method==='DELETE'&&/^\/meetings\/headlines\/\d+$/.test(pathname)){
+      const hid=parseInt(pathname.split('/').pop());
+      d.meetings.forEach(m=>{if(m.headlines)m.headlines=m.headlines.filter(h=>h.id!==hid)});
+      _meetingsSave(d);return{ok:true};
+    }
+    // POST /meetings/:id/todos
+    if(method==='POST'&&/^\/meetings\/\d+\/todos$/.test(pathname)){
+      const mid=parseInt(pathname.split('/')[2]);
+      const m=d.meetings.find(x=>x.id===mid);
+      if(!m)throw new Error('Meeting not found');
+      const t={id:_genId(),description:body.description,owner:body.owner||'',done:!!body.done};
+      m.todos=m.todos||[];m.todos.push(t);_meetingsSave(d);return t;
+    }
+    // PUT /meetings/todos/:id
+    if(method==='PUT'&&/^\/meetings\/todos\/\d+$/.test(pathname)){
+      const tid=parseInt(pathname.split('/').pop());
+      let updated=null;
+      d.meetings.forEach(m=>{if(m.todos){const t=m.todos.find(x=>x.id===tid);if(t){if(body.description!==undefined)t.description=body.description;if(body.owner!==undefined)t.owner=body.owner;if(body.done!==undefined)t.done=!!body.done;updated=t}}});
+      _meetingsSave(d);return updated||{};
+    }
+    // DELETE /meetings/todos/:id
+    if(method==='DELETE'&&/^\/meetings\/todos\/\d+$/.test(pathname)){
+      const tid=parseInt(pathname.split('/').pop());
+      d.meetings.forEach(m=>{if(m.todos)m.todos=m.todos.filter(t=>t.id!==tid)});
+      _meetingsSave(d);return{ok:true};
+    }
+    throw new Error('Unhandled api path: '+method+' '+pathname);
+  }
   const get=p=>api('GET',p),post=(p,b)=>api('POST',p,b),put=(p,b)=>api('PUT',p,b),del=p=>api('DELETE',p);
   function fmtDate(d){if(!d)return '';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}
   const STATUS_LABEL={scheduled:'Scheduled',in_progress:'In Progress',completed:'Completed'};

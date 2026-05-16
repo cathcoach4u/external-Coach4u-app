@@ -71,7 +71,7 @@ js/
 - All HTML pages use Design 1 (`css/style.css`) — no exceptions
 - Every interactive activity lives flat in `learn/`. No page outside the Learning Vault should link directly to a specific activity
 - Strategy worksheets save bar is visual only (no save logic wired up yet)
-- Operations tools call `/api/...` endpoints that don't exist; they authenticate via Supabase correctly but persistence is broken until the data layer is rebuilt on top of the existing tables
+- Operations tools (scorecard / goals / meeting / issues) use a localStorage demo data stub seeded with realistic sample data. The previous `/api/...` calls are intercepted and routed to localStorage. Replace with the real Supabase data layer when ready.
 - Bottom nav order is always: Home / Strategy / Operations / Learn — active item gets `.active` class
 
 ## Login Page Standard (Gold Standard v2.2)
@@ -101,9 +101,19 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.49
+v0.5.50
 
-## Recent Changes (v0.5.49)
+## Recent Changes (v0.5.50)
+- Operations tools (scorecard, goals, meeting, issues) now seed and persist a demo dataset to localStorage — replaces the `/api/...` calls that never had a backend. Each tool's `api()` helper is now a per-tool localStorage router with sensible seed data so the tools look populated on first visit and changes persist in-browser.
+- localStorage keys: `coach4u_demo_scorecard`, `coach4u_demo_rocks`, `coach4u_demo_meetings`, `coach4u_demo_issues`. The Supabase data layer rebuild will replace this stub.
+- Scorecard seeds 6 metrics (New Leads, Discovery Calls Booked, Proposals Sent, Revenue (£k), Client NPS, Marketing Posts) with the last 6 ISO-week Mondays of entries — values are computed relative to today so the cells always look "recent".
+- Goals seeds 4 quarterly priorities for Q2 2026 (the dropdown's default selected quarter) with mixed statuses (on_track / at_risk / off_track) so the kanban-style board renders multiple groupings on first load.
+- Meeting seeds a completed meeting on the current Monday (with 3 headlines and 4 to-dos) plus a scheduled meeting on the next Monday. Headline `type` values are `good_news` / `headline` to match the existing renderer; todos use `description` / `owner` / `done` fields.
+- Issues seeds 4 items spanning open / in-progress / resolved with mixed priorities — field names (`description`, `owner`, `priority`, `status`, `solution`) match what the existing kanban renderer reads. Status enum uses `open` / `ids_in_progress` / `resolved` per the existing modal.
+- All UI / CSS / event handlers / modal logic unchanged — only the `api()` helper bodies were replaced. UI loading states briefly flash via a 30ms `setTimeout` in the stub.
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.50.
+
+## Previous (v0.5.49)
 - Converted the 4 Operations tool pages (`learn/meeting.html`, `learn/scorecard.html`, `learn/goals.html`, `learn/issues.html`) from the legacy `activity.css` shell to the Design 1 worksheet shell used elsewhere in the project
 - Each tool now uses the standard `site-header` + `.container` + `.ws-header` / `.ws-title` / `.ws-sub` pattern, navy `#003366` / teal `#0D9488` Design 1 variables, and the unified Aptos-inherit font stack
 - Replaced legacy `.act-btn .act-btn-primary` / `.act-btn .act-btn-secondary` with locally-scoped `.ws-btn` / `.ws-btn-secondary` rules in each file's `<style>` block
