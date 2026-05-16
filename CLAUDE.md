@@ -104,9 +104,15 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.47
+v0.5.48
 
-## Recent Changes (v0.5.47)
+## Recent Changes (v0.5.48)
+- Added a 5th Strategy activity card: **Leadership Team** (icon 👥) → `learn/leadership-team.html`
+- New worksheet `learn/leadership-team.html` (Design 1): editable team-member cards with name / role / responsibilities, "+ Add Team Member" button, edit-in-place + delete per card, "Save Leadership Team" button. Persistence: `localStorage` key `coach4u_leadership_team`. Seeds with 5 default members (Cath Baker, Lou Henderson, Andrew Baker + 2 greyed `[Add your name]` placeholders) on first visit.
+- `one-page-plan.html` now has a full-width **Leadership Team** band between the 3-column body and the footer — compact Name | Role | Key Responsibility table reading from the same `coach4u_leadership_team` localStorage key. Falls back to "Add your leadership team in the Strategy section." when empty. Includes print rules so the band stays on the same A4 landscape page.
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.48.
+
+## Previous (v0.5.47)
 - Added a parallel teal CTA to `operations.html` so the Strategy and Operations hub pages match up visually — Strategy had "View One-Page Plan", Operations now has "Run Weekly Meeting" linking to `learn/meeting.html`
 - Updated `VERSION` and `sw.js` `CACHE_VERSION` to v0.5.47; dashboard label in `index.html` bumped to v0.5.47
 

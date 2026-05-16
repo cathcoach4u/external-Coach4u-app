@@ -165,6 +165,54 @@
     .num-list li { display: flex; gap: 5px; font-size: 0.73rem; color: #2d2d2d; line-height: 1.4; }
     .num-list li .n { color: #0D9488; font-weight: 800; font-size: 0.68rem; min-width: 13px; padding-top: 1px; flex-shrink: 0; }
 
+    .doc-team {
+      border-top: 1px solid #e5e7eb;
+      padding: 12px 20px 10px;
+      background: #fafbfc;
+    }
+    .doc-team-heading {
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: #0D9488;
+      border-left: 3px solid #0D9488;
+      padding-left: 7px;
+      margin-bottom: 8px;
+    }
+    .team-table {
+      display: grid;
+      grid-template-columns: 1.1fr 1.2fr 2.5fr;
+      gap: 4px 14px;
+      font-size: 0.7rem;
+      line-height: 1.4;
+    }
+    .team-table .th {
+      font-size: 0.56rem;
+      font-weight: 800;
+      letter-spacing: 0.9px;
+      text-transform: uppercase;
+      color: #003366;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .team-table .td-name { font-weight: 800; color: #003366; }
+    .team-table .td-role { font-weight: 700; color: #0D9488; }
+    .team-table .td-resp { color: #2d2d2d; }
+    .team-table .row { display: contents; }
+    .team-table .row .td-name,
+    .team-table .row .td-role,
+    .team-table .row .td-resp { border-bottom: 1px solid #f0f0f0; padding: 4px 0; }
+    .team-table .row:last-child .td-name,
+    .team-table .row:last-child .td-role,
+    .team-table .row:last-child .td-resp { border-bottom: none; }
+    .team-empty {
+      font-size: 0.72rem;
+      color: #888;
+      font-style: italic;
+      padding: 6px 0;
+    }
+
     .doc-footer {
       background: #f8f9fa;
       border-top: 1px solid #e5e7eb;
@@ -191,6 +239,11 @@
         break-inside: avoid;
       }
       .doc-body { page-break-inside: avoid; break-inside: avoid; }
+      .doc-team { page-break-inside: avoid; break-inside: avoid; padding: 9px 18px 7px; }
+      .doc-team-heading { margin-bottom: 6px; }
+      .team-table .row .td-name,
+      .team-table .row .td-role,
+      .team-table .row .td-resp { padding: 3px 0; }
       .doc-header { padding: 9px 18px; }
       .doc-col { padding: 11px 14px; }
       .col-heading { margin-bottom: 9px; }
@@ -319,6 +372,11 @@
 
       </div>
 
+      <div class="doc-team">
+        <div class="doc-team-heading">Leadership Team</div>
+        <div id="teamTable"></div>
+      </div>
+
       <div class="doc-footer">
         <span class="doc-footer-text">Confidential &mdash; For internal use only</span>
         <span class="doc-footer-tagline">Your Business Coach &mdash; coach4u.com.au</span>
@@ -333,6 +391,51 @@
       'https://eekefsuaefgpqmjdyniy.supabase.co',
       'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
     );
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    function firstSentence(text) {
+      const s = String(text || '').trim();
+      if (!s) return '';
+      const match = s.match(/^([^.!?]*[.!?])/);
+      return (match ? match[1] : s).trim();
+    }
+
+    function renderTeamTable() {
+      const wrap = document.getElementById('teamTable');
+      let team = [];
+      try {
+        const raw = localStorage.getItem('coach4u_leadership_team');
+        if (raw) team = JSON.parse(raw) || [];
+      } catch (e) { team = []; }
+
+      if (!Array.isArray(team) || team.length === 0) {
+        wrap.innerHTML = '<div class="team-empty">Add your leadership team in the Strategy section.</div>';
+        return;
+      }
+
+      const rows = team.map(m => `
+        <div class="row">
+          <div class="td-name">${escapeHtml(m.name || '—')}</div>
+          <div class="td-role">${escapeHtml(m.role || '')}</div>
+          <div class="td-resp">${escapeHtml(firstSentence(m.responsibilities))}</div>
+        </div>
+      `).join('');
+
+      wrap.innerHTML = `
+        <div class="team-table">
+          <div class="th">Name</div>
+          <div class="th">Role</div>
+          <div class="th">Key Responsibility</div>
+          ${rows}
+        </div>
+      `;
+    }
+
     async function init() {
       const { data: { user }, error } = await supabase.auth.getUser();
       if (!user || error) { window.location.href = 'login.html'; return; }
@@ -342,6 +445,7 @@
         window.location.href = 'inactive.html'; return;
       }
       document.body.style.opacity = '1';
+      renderTeamTable();
     }
     init();
   </script>
