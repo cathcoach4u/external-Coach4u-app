@@ -12,142 +12,90 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css"/>
   <style>
-    body{opacity:0;transition:opacity .2s ease}
-    .container{padding-bottom:90px}
-    .ws-header{padding:20px 16px 0}
-    .ws-title{font-size:1.2rem;font-weight:800;color:var(--primary);margin:0 0 4px}
-    .ws-sub{font-size:.85rem;color:#666;margin:0 0 20px;line-height:1.5}
+    body { opacity: 0; transition: opacity 0.2s ease; }
 
-    .flow{margin:0 16px}
-    .flow-node{
-      background:white;
-      border-radius:12px;
-      border:1.5px solid var(--border);
-      padding:16px 18px;
-      box-shadow:0 1px 3px rgba(0,0,0,0.05);
-      transition:box-shadow .15s,border-color .15s;
-      text-decoration:none;
-      display:block;
-      color:inherit;
-    }
-    .flow-node:hover{
-      box-shadow:0 4px 12px rgba(0,0,0,0.08);
-      border-color:var(--accent);
-      text-decoration:none;
-      color:inherit;
-    }
-    .flow-node.annual{
-      border-color:var(--primary);
-      background:linear-gradient(135deg, #003366 0%, #004488 100%);
-      color:white;
-    }
-    .flow-node.annual:hover{
-      border-color:var(--primary);
-      box-shadow:0 4px 14px rgba(0,51,102,0.25);
-      color:white;
-    }
-    .flow-stage-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
-    .flow-stage-label{
-      font-size:.7rem;
-      font-weight:800;
-      letter-spacing:1px;
-      text-transform:uppercase;
-      color:var(--accent);
-    }
-    .flow-node.annual .flow-stage-label{color:#a7f3d0}
-    .flow-quarter-badge{
-      font-size:.7rem;
-      font-weight:700;
-      color:#888;
-      background:#f3f4f6;
-      padding:2px 8px;
-      border-radius:20px;
-    }
-    .flow-node.annual .flow-quarter-badge{background:rgba(255,255,255,0.15);color:#cffafe}
-    .flow-title{
-      font-size:1.05rem;
-      font-weight:800;
-      color:var(--primary);
-      margin:0 0 12px;
-      letter-spacing:-0.3px;
-    }
-    .flow-node.annual .flow-title{color:white}
-    .flow-row{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-      font-size:.83rem;
-      line-height:1.45;
-      margin-bottom:4px;
-    }
-    .flow-row:last-child{margin-bottom:0}
-    .flow-row-icon{
-      font-size:.85rem;
-      width:18px;
-      flex-shrink:0;
-      padding-top:2px;
-    }
-    .flow-row-label{
-      font-weight:700;
-      color:var(--primary);
-      margin-right:4px;
-    }
-    .flow-node.annual .flow-row-label{color:white}
-    .flow-row-text{color:var(--text)}
-    .flow-node.annual .flow-row-text{color:#e0f2fe}
+    .container { padding-bottom: 80px; }
 
-    .flow-arrow{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:6px 0;
+    .ws-header { padding: 20px 16px 0; }
+    .ws-title { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin: 0 0 4px; }
+    .ws-sub { font-size: 0.85rem; color: #666; margin: 0 0 20px; line-height: 1.5; }
+
+    .activities-section { padding: 0 16px; }
+
+    .view-plan-btn {
+      display: block; width: 100%;
+      padding: 13px;
+      background: var(--accent); color: white;
+      border: none; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 700;
+      cursor: pointer; text-align: center; text-decoration: none;
+      transition: background 0.15s;
+      margin-bottom: 16px;
     }
-    .flow-arrow-line{
-      width:2px;
-      height:18px;
-      background:var(--accent);
-      opacity:.5;
+    .view-plan-btn:hover { background: var(--accent-dark); color: white; text-decoration: none; }
+
+    .activity-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
     }
-    .flow-arrow-head{
-      color:var(--accent);
-      font-size:1.2rem;
-      line-height:1;
-      margin-top:-4px;
+    @media (max-width: 480px) {
+      .activity-grid { grid-template-columns: 1fr; }
     }
 
-    .flow-cycle{
-      margin:14px auto 0;
-      padding:14px 18px;
-      background:#f0fdfa;
-      border:1.5px dashed var(--accent);
-      border-radius:12px;
-      text-align:center;
-      font-size:.85rem;
-      color:var(--primary);
-      font-weight:600;
+    .activity-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--accent);
+      background: white;
+      text-decoration: none;
+      transition: box-shadow 0.15s, background 0.15s;
     }
-    .flow-cycle-icon{font-size:1.05rem;margin-right:6px;vertical-align:-1px}
-    .flow-cta{display:block;width:calc(100% - 32px);margin:0 16px 16px;padding:13px;background:var(--accent);color:white;border:none;border-radius:10px;font-size:.9rem;font-weight:700;text-align:center;text-decoration:none;transition:background .15s}
-    .flow-cta:hover{background:var(--accent-dark);color:white;text-decoration:none}
-    .start-chip{font-size:.62rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;background:#a7f3d0;color:#003366;padding:3px 8px;border-radius:20px;margin-left:6px}
+    .activity-card:hover {
+      background: #f0fdfa;
+      box-shadow: 0 2px 8px rgba(13,148,136,0.12);
+      text-decoration: none;
+    }
+    .act-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: rgba(13,148,136,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .act-text { flex: 1; min-width: 0; }
+    .act-name {
+      font-size: 0.88rem; font-weight: 700; color: var(--accent);
+      line-height: 1.3; margin-bottom: 2px;
+    }
+    .act-desc {
+      font-size: 0.76rem; color: #666; line-height: 1.35;
+    }
+    .act-arrow {
+      font-size: 16px; color: var(--accent); flex-shrink: 0;
+    }
 
-    .bottom-nav{
-      position:fixed;bottom:0;left:0;right:0;
-      background:white;border-top:1px solid #e5e7eb;
-      display:flex;z-index:100;
-      padding-bottom:env(safe-area-inset-bottom);
-      box-shadow:0 -2px 8px rgba(0,0,0,.06);
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white; border-top: 1px solid #e5e7eb;
+      display: flex; z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
     }
-    .bottom-nav-item{
-      flex:1;display:flex;flex-direction:column;
-      align-items:center;justify-content:center;
-      padding:8px 0 6px;text-decoration:none;
-      color:#aaa;font-size:10px;font-weight:700;
-      text-transform:uppercase;letter-spacing:.5px;
-      gap:3px;transition:color .15s;
+    .bottom-nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 8px 0 6px; text-decoration: none;
+      color: #aaa; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      gap: 3px; transition: color 0.15s;
     }
-    .bottom-nav-item.active,.bottom-nav-item:hover{color:#0D9488;text-decoration:none}
-    .bottom-nav-icon{font-size:20px;line-height:1}
+    .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
+    .bottom-nav-icon { font-size: 20px; line-height: 1; }
   </style>
 </head>
 <body>
@@ -163,89 +111,33 @@
 
   <div class="container">
     <div class="ws-header">
-      <h1 class="ws-title">&#x1F5FA;&#xFE0F; Planning Rhythm</h1>
-      <p class="ws-sub">Four sessions a year. Annual sets the year and Q1; three quarterly sessions reset for Q2, Q3, and Q4.</p>
+      <h1 class="ws-title">&#x1F5FA;&#xFE0F; Planning</h1>
+      <p class="ws-sub">Your annual + quarterly planning rhythm. Set the year, then reset each quarter.</p>
     </div>
 
-    <a class="flow-cta" href="one-page-plan.html">&#x1F4CB;&nbsp; View One-Page Plan</a>
-
-    <div class="flow">
-
-      <a href="annual-sessions.html" class="flow-node annual">
-        <div class="flow-stage-row">
-          <span class="flow-stage-label">Once a Year <span class="start-chip">Start Here</span></span>
-          <span class="flow-quarter-badge">Annual</span>
-        </div>
-        <h2 class="flow-title">&#x1F4C5; Annual Planning</h2>
-        <div class="flow-row">
-          <span class="flow-row-icon">&#x1F50D;</span>
-          <span><span class="flow-row-label">Reviews:</span><span class="flow-row-text">Last year&#x2019;s results</span></span>
-        </div>
-        <div class="flow-row">
-          <span class="flow-row-icon">&#x2728;</span>
-          <span><span class="flow-row-label">Produces:</span><span class="flow-row-text">One-Page Business Plan + Q1 Goals</span></span>
-        </div>
+    <div class="activities-section">
+      <a class="view-plan-btn" href="one-page-plan.html">
+        &#x1F4CB;&nbsp; View One-Page Plan
       </a>
 
-      <div class="flow-arrow"><div style="display:flex;flex-direction:column;align-items:center;"><div class="flow-arrow-line"></div><div class="flow-arrow-head">&#x25BC;</div></div></div>
-
-      <a href="quarterly-sessions.html" class="flow-node">
-        <div class="flow-stage-row">
-          <span class="flow-stage-label">End of Q1</span>
-          <span class="flow-quarter-badge">Q2 Planning</span>
-        </div>
-        <h2 class="flow-title">&#x1F3AF; Q2 Planning Session</h2>
-        <div class="flow-row">
-          <span class="flow-row-icon">&#x1F50D;</span>
-          <span><span class="flow-row-label">Reviews:</span><span class="flow-row-text">Q1 goals &mdash; what hit, what missed, why</span></span>
-        </div>
-        <div class="flow-row">
-          <span class="flow-row-icon">&#x2728;</span>
-          <span><span class="flow-row-label">Produces:</span><span class="flow-row-text">Q2 Goals</span></span>
-        </div>
-      </a>
-
-      <div class="flow-arrow"><div style="display:flex;flex-direction:column;align-items:center;"><div class="flow-arrow-line"></div><div class="flow-arrow-head">&#x25BC;</div></div></div>
-
-      <a href="quarterly-sessions.html" class="flow-node">
-        <div class="flow-stage-row">
-          <span class="flow-stage-label">End of Q2</span>
-          <span class="flow-quarter-badge">Q3 Planning</span>
-        </div>
-        <h2 class="flow-title">&#x1F3AF; Q3 Planning Session</h2>
-        <div class="flow-row">
-          <span class="flow-row-icon">&#x1F50D;</span>
-          <span><span class="flow-row-label">Reviews:</span><span class="flow-row-text">Q2 goals &mdash; what hit, what missed, why</span></span>
-        </div>
-        <div class="flow-row">
-          <span class="flow-row-icon">&#x2728;</span>
-          <span><span class="flow-row-label">Produces:</span><span class="flow-row-text">Q3 Goals</span></span>
-        </div>
-      </a>
-
-      <div class="flow-arrow"><div style="display:flex;flex-direction:column;align-items:center;"><div class="flow-arrow-line"></div><div class="flow-arrow-head">&#x25BC;</div></div></div>
-
-      <a href="quarterly-sessions.html" class="flow-node">
-        <div class="flow-stage-row">
-          <span class="flow-stage-label">End of Q3</span>
-          <span class="flow-quarter-badge">Q4 Planning</span>
-        </div>
-        <h2 class="flow-title">&#x1F3AF; Q4 Planning Session</h2>
-        <div class="flow-row">
-          <span class="flow-row-icon">&#x1F50D;</span>
-          <span><span class="flow-row-label">Reviews:</span><span class="flow-row-text">Q3 goals &mdash; what hit, what missed, why</span></span>
-        </div>
-        <div class="flow-row">
-          <span class="flow-row-icon">&#x2728;</span>
-          <span><span class="flow-row-label">Produces:</span><span class="flow-row-text">Q4 Goals</span></span>
-        </div>
-      </a>
-
-      <div class="flow-cycle">
-        <span class="flow-cycle-icon">&#x21A9;&#xFE0F;</span>
-        End of Q4 cycles back to Annual Planning
+      <div class="activity-grid">
+        <a class="activity-card" href="annual-sessions.html">
+          <div class="act-icon">&#x1F4C5;</div>
+          <div class="act-text">
+            <div class="act-name">Annual Planning</div>
+            <div class="act-desc">Once a year &mdash; set the direction, refresh the One-Page Plan, agree Q1 goals</div>
+          </div>
+          <span class="act-arrow">&#x203A;</span>
+        </a>
+        <a class="activity-card" href="quarterly-sessions.html">
+          <div class="act-icon">&#x1F3AF;</div>
+          <div class="act-text">
+            <div class="act-name">Quarterly Planning</div>
+            <div class="act-desc">Three times a year &mdash; review the prior quarter, set the next</div>
+          </div>
+          <span class="act-arrow">&#x203A;</span>
+        </a>
       </div>
-
     </div>
   </div>
 
@@ -260,10 +152,10 @@
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
     const sb = createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
-    document.getElementById('signOutBtn').addEventListener('click',async()=>{await sb.auth.signOut();window.location.href='login.html';});
-    const{data:{user}}=await sb.auth.getUser();
-    if(!user){window.location.href='login.html';}
-    document.body.style.opacity='1';
+    document.getElementById('signOutBtn').addEventListener('click', async () => { await sb.auth.signOut(); window.location.href = 'login.html'; });
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) { window.location.href = 'login.html'; }
+    document.body.style.opacity = '1';
   </script>
 </body>
 </html>

@@ -102,9 +102,17 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.69
+v0.5.70
 
-## Recent Changes (v0.5.69)
+## Recent Changes (v0.5.70)
+- **`planning.html` restructured as a standard hub** to match the Strategy and Operations layout. Dropped the vertical flow visualisation (was a 4-node concept map); replaced with the same `activity-card` pattern used on the other hubs.
+  - Top: **"View One-Page Plan"** teal CTA (matches Strategy's pattern).
+  - Below: **2 activity cards** — **Annual Planning** → `annual-sessions.html`, **Quarterly Planning** → `quarterly-sessions.html`.
+  - Subtitle simplified to: "Your annual + quarterly planning rhythm. Set the year, then reset each quarter."
+- All planning page state, links, and routing preserved; only the layout changed.
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.70.
+
+## Previous (v0.5.69)
 - **Planning is now actionable, not just a diagram.** The Planning page cards previously dead-ended on the One-Page Plan and the Goals tool. They now open dedicated session list pages, mirroring the weekly Meeting flow.
   - **4 new pages** built on the same pattern as `meeting.html` + `run-meeting.html`:
     - `annual-sessions.html` — list of past + scheduled annual planning sessions, "+ New Annual Session" creates a session for today and opens the workspace
