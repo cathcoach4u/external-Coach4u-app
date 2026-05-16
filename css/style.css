@@ -238,6 +238,15 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .site-footer a { color: var(--accent); }
 .site-footer a:hover { color: var(--accent-dark); text-decoration: underline; }
 
+/* ----- Tip / hint box (shared by all worksheets + tools) ----- */
+.ws-hint {
+  font-size: 0.78rem; color: #555; line-height: 1.5;
+  margin: 0 16px 16px; padding: 10px 14px;
+  background: #f8fafc; border-radius: 8px; border-left: 3px solid var(--accent);
+}
+.ws-hint a { color: var(--accent); font-weight: 700; text-decoration: none; }
+.ws-hint a:hover { text-decoration: underline; }
+
 /* ----- Responsive ----- */
 @media (max-width: 640px) {
   .container { padding: 20px 16px; }

@@ -98,9 +98,15 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.63
+v0.5.64
 
-## Recent Changes (v0.5.63)
+## Recent Changes (v0.5.64)
+- **Consistent hint box across all 9 worksheets/tools.** Every Strategy worksheet and Operations tool now has the same pattern under its `ws-header`: subtitle + one minimal `.ws-hint` containing a single Learning Vault link. Dropped the verbose paragraph tips that were duplicating the subtitle on the 4 strategy worksheets + leadership-team, and removed the goals "How many goals?" inline tip in favor of the consistent pattern.
+- **Added LV links** to `scorecard.html` (Weekly Numbers), `meeting.html` (Past Meetings), `issues.html`, `goals.html` (Quarterly Goals) — they had no Learning Vault link before.
+- **`.ws-hint` promoted to shared `css/style.css`** so every page uses one canonical rule (`#f8fafc` bg, teal left border, accent-coloured link). The page-local copies still work as overrides.
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.64.
+
+## Previous (v0.5.63)
 - **Text-clipping audit on worksheets.** Seeded content was overflowing the fixed `rows` height on textareas (e.g. the 3rd unique on Marketing Strategy was hidden below the visible area) and a long single-line input was clipping horizontally.
   - Added an `autoGrow(textarea)` helper to all 4 Strategy worksheets that resizes each textarea to its `scrollHeight` on initial load and on every keystroke — so the field always fits its content.
   - Converted the **Marketing Strategy "Our Guarantee"** field from `<input type="text">` to `<textarea rows="2">` (it had a long seed value that was clipping at the right edge on mobile).
