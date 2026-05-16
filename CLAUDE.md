@@ -97,9 +97,13 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.51
+v0.5.52
 
-## Recent Changes (v0.5.51)
+## Recent Changes (v0.5.52)
+- Deleted two stray root orphans `marketing.html` and `targeting.html` — older Design 1 info-page versions of `marketing-strategy.html` / `targets.html`, unreferenced from anywhere in the app (left over from an earlier restructure)
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.52
+
+## Previous (v0.5.51)
 - Promoted Strategy worksheets and Operations tools out of `learn/` to the project root. `strategy.html` and `operations.html` are now the source-of-truth navigation — their cards land directly on first-class root pages (e.g., `/scorecard.html`, `/core-values.html`).
 - The 4 placeholder info pages at root (was: `scorecard.html`, `goals.html`, `meeting.html`, `issues.html`) are gone; their slots now serve the actual tools (moved from `learn/`).
 - 9 files moved with `git mv` so history follows: `core-values.html`, `core-focus.html`, `targets.html`, `marketing-strategy.html`, `leadership-team.html`, `scorecard.html`, `goals.html`, `meeting.html`, `issues.html`. All `../` relative paths inside those files stripped to root-relative.
