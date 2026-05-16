@@ -79,7 +79,7 @@
       <div class="ws-card-title">Our Guarantee</div>
       <div class="ws-card-desc">The promise you make to clients that removes their risk.</div>
       <label class="ws-label">We guarantee&#x2026;</label>
-      <input class="ws-input" type="text" placeholder="e.g. If you don&#x2019;t see measurable progress in 90 days, we&#x2019;ll refund your last month." data-key="guarantee" />
+      <textarea class="ws-textarea" rows="2" placeholder="e.g. If you don&#x2019;t see measurable progress in 90 days, we&#x2019;ll refund your last month." data-key="guarantee"></textarea>
     </div>
   </div>
   <div class="ws-save-bar">
@@ -128,12 +128,19 @@
       }, 1200);
     }
 
+    function autoGrow(el) {
+      if (!el || el.tagName !== 'TEXTAREA') return;
+      el.style.height = 'auto';
+      el.style.height = (el.scrollHeight + 2) + 'px';
+    }
     function wireWorksheet() {
       const data = loadData();
       document.querySelectorAll('[data-key]').forEach(el => {
         const k = el.dataset.key;
         el.value = data[k] || '';
+        autoGrow(el);
         el.addEventListener('input', () => {
+          autoGrow(el);
           data[k] = el.value;
           try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));

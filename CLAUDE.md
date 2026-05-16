@@ -98,9 +98,15 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.62
+v0.5.63
 
-## Recent Changes (v0.5.62)
+## Recent Changes (v0.5.63)
+- **Text-clipping audit on worksheets.** Seeded content was overflowing the fixed `rows` height on textareas (e.g. the 3rd unique on Marketing Strategy was hidden below the visible area) and a long single-line input was clipping horizontally.
+  - Added an `autoGrow(textarea)` helper to all 4 Strategy worksheets that resizes each textarea to its `scrollHeight` on initial load and on every keystroke — so the field always fits its content.
+  - Converted the **Marketing Strategy "Our Guarantee"** field from `<input type="text">` to `<textarea rows="2">` (it had a long seed value that was clipping at the right edge on mobile).
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.63.
+
+## Previous (v0.5.62)
 - **Robust seed merging.** Both the worksheets' `loadData()` and the dashboard's `seedIfEmpty()` previously accepted ANY non-null object — so a stale empty `{}` in localStorage (from earlier sessions before the seed logic landed) would short-circuit the seed and leave fields blank. Replaced with a **merge-missing-keys** strategy: any SEED key that's `undefined` in the stored object gets filled in (intentional empty strings are preserved). Applied to all 4 worksheets + the dashboard.
 - **Core Values worksheet now lists 8 values** (was 5). Inputs 6/7/8 are optional. Seed data still fills only values 1–5; 6–8 stay empty by default. Dashboard panel and one-page-plan pills both iterate `value_1..value_8` now.
 - Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.62.

@@ -110,12 +110,19 @@
       }, 1200);
     }
 
+    function autoGrow(el) {
+      if (!el || el.tagName !== 'TEXTAREA') return;
+      el.style.height = 'auto';
+      el.style.height = (el.scrollHeight + 2) + 'px';
+    }
     function wireWorksheet() {
       const data = loadData();
       document.querySelectorAll('[data-key]').forEach(el => {
         const k = el.dataset.key;
         el.value = data[k] || '';
+        autoGrow(el);
         el.addEventListener('input', () => {
+          autoGrow(el);
           data[k] = el.value;
           try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
