@@ -98,9 +98,18 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.64
+v0.5.65
 
-## Recent Changes (v0.5.64)
+## Recent Changes (v0.5.65)
+Audit fixes for consistency across all pages:
+- **Hub titles simplified.** Dropped the verb prefixes on the two hubs that had them — `strategy.html` "Build Your Strategy" → "Strategy", `operations.html` "Run Your Operations" → "Operations". Now all 4 hubs match (Strategy / Operations / Planning / Learning Vault) and the bottom-nav labels.
+- **Goals header-title** changed from "Goals" to **"Quarterly Goals"** so the breadcrumb label matches the page heading.
+- **Sign-out button id standardised** to `signOutBtn` across all 17 pages (6 newer tools used `sign-out-btn` kebab-case — `getElementById` references updated to match).
+- **Google Fonts purged from utility pages.** `offline.html`, `404.html`, `inactive.html`, `forgot-password.html` were still loading Inter + Montserrat from `fonts.googleapis.com` despite the project rule. Removed the `<link>` tags and swapped inline `font-family: 'Montserrat'` / `'Inter'` references to the Aptos system stack (or `inherit` where `css/style.css` is loaded). `login.html` and `reset-password.html` were already clean.
+- **"Next Meeting" stat tile** on the dashboard now opens `run-meeting.html?id=X` directly — aligned with the "Go to This Week's Meeting" button and the "View Meeting" panel link, all three landing in the active workspace.
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.65.
+
+## Previous (v0.5.64)
 - **Consistent hint box across all 9 worksheets/tools.** Every Strategy worksheet and Operations tool now has the same pattern under its `ws-header`: subtitle + one minimal `.ws-hint` containing a single Learning Vault link. Dropped the verbose paragraph tips that were duplicating the subtitle on the 4 strategy worksheets + leadership-team, and removed the goals "How many goals?" inline tip in favor of the consistent pattern.
 - **Added LV links** to `scorecard.html` (Weekly Numbers), `meeting.html` (Past Meetings), `issues.html`, `goals.html` (Quarterly Goals) — they had no Learning Vault link before.
 - **`.ws-hint` promoted to shared `css/style.css`** so every page uses one canonical rule (`#f8fafc` bg, teal left border, accent-coloured link). The page-local copies still work as overrides.

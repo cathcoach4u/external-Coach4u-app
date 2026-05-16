@@ -74,7 +74,7 @@
         <a href="meeting.html" class="header-back">&#x2190; Past Meetings</a>
         <span class="header-title">Run Meeting</span>
       </div>
-      <button class="sign-out-btn" id="sign-out-btn">Sign Out</button>
+      <button class="signOutBtn" id="signOutBtn">Sign Out</button>
     </div>
   </header>
 
@@ -104,7 +104,7 @@
   <script>
   'use strict';
   const _sb=window.supabase.createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
-  document.getElementById('sign-out-btn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
+  document.getElementById('signOutBtn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
   let _currentMeeting=null,_timerInterval=null,_timerStart=null;
   function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}

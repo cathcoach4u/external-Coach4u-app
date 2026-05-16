@@ -155,7 +155,7 @@
         <a href="index.html" class="header-back">&#x2190; Home</a>
         <span class="header-title">Planning</span>
       </div>
-      <button class="sign-out-btn" id="sign-out-btn">Sign Out</button>
+      <button class="signOutBtn" id="signOutBtn">Sign Out</button>
     </div>
   </header>
 
@@ -271,7 +271,7 @@
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
     const sb = createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
-    document.getElementById('sign-out-btn').addEventListener('click',async()=>{await sb.auth.signOut();window.location.href='login.html';});
+    document.getElementById('signOutBtn').addEventListener('click',async()=>{await sb.auth.signOut();window.location.href='login.html';});
     const{data:{user}}=await sb.auth.getUser();
     if(!user){window.location.href='login.html';}
     document.body.style.opacity='1';
