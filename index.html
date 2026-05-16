@@ -10,6 +10,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Your Business Coach">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css" />
   <style>
     body { opacity: 0; transition: opacity 0.2s ease; background: #f4f6f9; }
@@ -204,7 +205,7 @@
     </div>
 
     <!-- Meeting link -->
-    <a class="meeting-btn" href="meeting.html">
+    <a class="meeting-btn" id="thisWeekMeetingBtn" href="meeting.html">
       <span>&#x1F5D3;&#xFE0F;&nbsp; Go to This Week&#x2019;s Meeting</span>
       <span class="meeting-btn-arrow">&#x203A;</span>
     </a>
@@ -274,7 +275,7 @@
       </div>
     </div>
 
-    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.57</p>
+    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.58</p>
 
   </div>
 
@@ -298,6 +299,22 @@
     const now = new Date();
     document.getElementById('todayDate').textContent =
       `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+    // Point "Go to This Week's Meeting" at the actual meeting for the current ISO week, if seeded.
+    (function () {
+      try {
+        const data = JSON.parse(localStorage.getItem('coach4u_demo_meetings'));
+        if (!data || !data.meetings) return;
+        const d = new Date();
+        const day = d.getDay();
+        d.setDate(d.getDate() + ((day === 0 ? -6 : 1) - day));
+        const mondayIso = d.toISOString().slice(0, 10);
+        const m = data.meetings.find(x => x.meeting_date === mondayIso)
+              || data.meetings.find(x => x.status !== 'completed')
+              || data.meetings[0];
+        if (m) document.getElementById('thisWeekMeetingBtn').href = 'run-meeting.html?id=' + m.id;
+      } catch (_) {}
+    })();
 
     async function init() {
       const { data: { user }, error } = await supabase.auth.getUser();
