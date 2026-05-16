@@ -18,66 +18,40 @@
     .ws-btn:hover{background:var(--accent-dark)}
     .ws-btn-secondary{padding:9px 18px;background:white;color:var(--primary);border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .15s}
     .ws-btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
-    .session-detail{background:white;border:1px solid var(--border);border-radius:12px;padding:24px;margin:0 16px}
+    .session-detail{background:white;border:1px solid var(--border);border-radius:12px;padding:24px;margin:0 16px 14px}
     .session-empty{text-align:center;padding:48px 20px;color:#aaa;font-family:inherit;background:white;border:1px solid var(--border);border-radius:12px;margin:0 16px}
     .session-detail-heading{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px}
     .session-detail-title{font-family:inherit;font-weight:700;color:var(--primary);font-size:1.15rem}
     .field-select{border:1.5px solid var(--border);border-radius:8px;padding:7px 12px;font-family:inherit;font-size:.85rem;color:var(--primary);background:white;cursor:pointer}
-    .status-pill{font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:20px}
-    .sp-scheduled{background:#fef3c7;color:#92400e}
-    .sp-in_progress{background:#dbeafe;color:#1e40af}
-    .sp-completed{background:#d1fae5;color:#065f46}
-    .agenda-section{border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden}
-    .agenda-toggle{width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;background:#f0fdfa;border:none;cursor:pointer;text-align:left;transition:background .12s}
-    .agenda-toggle:hover{background:#eef2fa}
-    .agenda-num{width:26px;height:26px;border-radius:50%;background:var(--primary);color:white;display:grid;place-items:center;font-family:inherit;font-weight:700;font-size:.82rem;flex-shrink:0}
-    .agenda-title-text{font-family:inherit;font-weight:700;color:var(--primary);font-size:.93rem;flex:1}
-    .agenda-arrow{margin-left:8px;font-size:.8rem;color:#aaa;transition:transform .2s}
-    .agenda-toggle.open .agenda-arrow{transform:rotate(180deg)}
-    .agenda-content{display:none;padding:16px}
-    .agenda-content.open{display:block}
-    .agenda-prompt{font-size:.88rem;color:#666;font-family:inherit;line-height:1.5;margin:0 0 10px}
-    .agenda-links{margin:0 0 12px;font-size:.85rem;font-family:inherit}
-    .agenda-links a{color:var(--accent);font-weight:600;text-decoration:none;margin-right:14px}
-    .agenda-links a:hover{text-decoration:underline}
-    .session-timer-bar{display:flex;align-items:center;gap:12px;background:#f0fdfa;border-radius:8px;padding:10px 14px;margin-bottom:16px}
+    .session-timer-bar{display:flex;align-items:center;gap:12px;background:#f0fdfa;border-radius:8px;padding:10px 14px;margin-bottom:0}
     .timer-btn{font-family:inherit;font-weight:700;font-size:.85rem;padding:6px 14px;border-radius:6px;cursor:pointer;border:1.5px solid var(--accent);background:white;color:var(--primary);transition:all .15s}
     .timer-btn.running{border-color:#991b1b;color:#991b1b;background:#fff5f5}
     .timer-elapsed{font-family:inherit;font-weight:700;font-size:1rem;color:var(--primary);font-variant-numeric:tabular-nums}
-    .rating-btns{display:flex;gap:8px;flex-wrap:wrap}
-    .rating-btn{width:40px;height:40px;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:inherit;font-weight:700;font-size:.9rem;transition:all .15s}
-    .rating-btn.selected{background:var(--primary);color:white;border-color:var(--primary)}
-    .notes-textarea{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-family:inherit;font-size:.88rem;resize:vertical;min-height:90px;box-sizing:border-box}
-    .notes-textarea:focus{outline:none;border-color:var(--accent)}
     .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-family:inherit;font-weight:600;font-size:.88rem;z-index:2000;transition:opacity .3s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
     .toast-hidden{opacity:0;pointer-events:none}
     .toast-success{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
     .toast-error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
     .hidden{display:none!important}
-    .label-sm{font-family:inherit;font-weight:600;color:var(--primary);font-size:.85rem;margin-bottom:8px;display:block}
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e5e7eb;display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -2px 8px rgba(0,0,0,.06)}
     .bottom-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0 6px;text-decoration:none;color:#aaa;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;gap:3px;transition:color .15s}
     .bottom-nav-item.active,.bottom-nav-item:hover{color:#0D9488;text-decoration:none}
     .bottom-nav-icon{font-size:20px;line-height:1}
-    /* Team Check-in section */
-    .checkin-block{background:white;border:1px solid var(--border);border-radius:12px;padding:18px;margin:0 16px 14px}
-    .checkin-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-    .checkin-title{font-family:inherit;font-weight:700;color:var(--primary);font-size:1rem;margin:0}
-    .checkin-count{font-family:inherit;color:#666;font-size:.82rem;margin:2px 0 0}
-    .checkin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-    .checkin-empty{font-family:inherit;color:#888;font-size:.83rem;font-style:italic;margin:4px 0 0}
-    .ci-table{width:100%;border-collapse:collapse;font-family:inherit;font-size:.83rem;margin-top:6px}
-    .ci-table th{text-align:left;color:#888;font-weight:600;font-size:.72rem;letter-spacing:.5px;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--border)}
-    .ci-table td{padding:8px;border-bottom:1px solid #f0f0f0;vertical-align:middle;color:var(--text)}
-    .ci-table .ci-avg{font-weight:700;color:var(--primary);font-variant-numeric:tabular-nums;text-align:right;width:54px}
-    .ci-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
-    .ci-dot-red{background:#dc2626}
-    .ci-dot-amber{background:#f59e0b}
-    .ci-dot-green{background:#10b981}
-    .ci-comments{margin-top:6px}
-    .ci-comments .ci-q{font-family:inherit;font-weight:700;color:var(--primary);font-size:.85rem;margin:14px 0 4px}
-    .ci-comments .ci-c{font-family:inherit;color:#444;font-size:.83rem;background:#f8fafc;border-left:3px solid var(--accent);padding:6px 10px;border-radius:4px;margin:4px 0;line-height:1.45}
-    .ci-comments .ci-c .ci-author{color:#888;font-size:.75rem;font-weight:600;margin-right:6px}
+    /* Attendance + Areas + Check-in blocks */
+    .attendance-block, .areas-block, .checkin-block { background:white; border:1px solid var(--border); border-radius:12px; padding:18px; margin:0 16px 14px; }
+    .block-title { font-family:inherit; font-weight:700; color:var(--primary); font-size:1rem; margin:0 0 10px; }
+    .attendance-input { width:100%; min-height:60px; border:1.5px solid var(--border); border-radius:8px; padding:10px 12px; font-family:inherit; font-size:.88rem; color:var(--text); resize:vertical; box-sizing:border-box; }
+    .attendance-input:focus { outline:none; border-color:var(--accent); }
+    .areas-progress { font-size:.8rem; color:#666; margin-bottom:10px; font-family:inherit; font-weight:600; }
+    .area-row { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid #f0f0f0; }
+    .area-row:last-child { border-bottom:none; }
+    .area-row input[type=checkbox] { width:20px; height:20px; flex-shrink:0; margin-top:2px; accent-color:var(--accent); cursor:pointer; }
+    .area-text { flex:1; }
+    .area-name { font-family:inherit; font-weight:600; color:var(--primary); font-size:.93rem; line-height:1.4; }
+    .area-name.complete { text-decoration:line-through; color:#aaa; }
+    .area-links { display:flex; gap:14px; flex-wrap:wrap; margin-top:5px; font-size:.82rem; }
+    .area-links a { color:var(--accent); font-weight:600; text-decoration:none; }
+    .area-links a:hover { text-decoration:underline; }
+    .checkin-actions{display:flex;gap:8px;flex-wrap:wrap}
   </style>
   <script src="js/active-session.js" defer></script>
 </head>
@@ -95,7 +69,7 @@
   <div class="container">
     <div class="ws-header">
       <h1 class="ws-title" id="ws-title">&#x1F3AF; Quarterly Planning Session</h1>
-      <p class="ws-sub" id="ws-sub">Review the last quarter, set the next.</p>
+      <p class="ws-sub" id="ws-sub">Track attendance, tick off each area as you cover it, and share the team check-in link.</p>
     </div>
 
     <div class="session-detail session-empty hidden" id="session-empty">
@@ -119,18 +93,10 @@
   'use strict';
   const _sb=window.supabase.createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
   document.getElementById('signOutBtn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
-  let _currentSession=null,_timerInterval=null,_timerStart=null;
+  let _currentSession=null,_timerInterval=null,_timerStart=null,_attendanceTimer=null;
   function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
   const _LS_KEY='coach4u_quarterly_sessions';
-  function _quarterlyAgendaBlank(){
-    return [
-      { id:1, title:'Review Last Quarter',          notes:'' },
-      { id:2, title:'Lessons + Adjustments',        notes:'' },
-      { id:3, title:"Set Next Quarter's Goals",     notes:'' },
-      { id:4, title:'Conclude — Rate the Session',  notes:'' }
-    ];
-  }
   function quarterEndDate(qLabel){
     const m=/^Q(\d)\s+(\d{4})$/.exec(qLabel); if(!m) return new Date().toISOString().slice(0,10);
     const q=parseInt(m[1]); const yr=parseInt(m[2]);
@@ -138,12 +104,6 @@
     const endMonth=[3,6,9,12][priorQ-1];
     const endDay=[31,30,30,31][priorQ-1];
     return priorYr+'-'+String(endMonth).padStart(2,'0')+'-'+String(endDay).padStart(2,'0');
-  }
-  function priorQuarter(qLabel){
-    const m=/^Q(\d)\s+(\d{4})$/.exec(qLabel); if(!m) return '';
-    const q=parseInt(m[1]); const yr=parseInt(m[2]);
-    let pq=q-1, py=yr; if(pq<1){pq=4;py=yr-1;}
-    return 'Q'+pq+' '+py;
   }
   function nextUpcomingQuarter(){
     const now=new Date();
@@ -154,24 +114,17 @@
   }
   function _quarterlySeed(){
     return [
-      { id:6001, session_date:'2026-03-31', target_quarter:'Q2 2026', status:'completed', rating:7,
-        agenda:[
-          { id:1, title:'Review Last Quarter',          notes:'Q1 results: 4 of 5 priorities hit. Missed associate-coach hire (still searching). Revenue $98k (target $90k) — strong.' },
-          { id:2, title:'Lessons + Adjustments',        notes:'Need a clearer rock owner for hiring. Sales pipeline review should be weekly not monthly.' },
-          { id:3, title:"Set Next Quarter's Goals",     notes:'Q2: 1) Hire associate coach (Lou), 2) Launch group coaching program, 3) 5 new clients, 4) Speak at 2 events.' },
-          { id:4, title:'Conclude — Rate the Session',  notes:'Solid session. Cath to update goals.html with Q2 priorities by EOW.' }
-        ]
+      { id:6001, session_date:'2026-03-31', target_quarter:'Q2 2026', status:'completed',
+        attendance:'Cath, Lou, Andrew',
+        areas_completed:{1:true,2:true,3:true}
       },
-      { id:6002, session_date:'2026-06-30', target_quarter:'Q3 2026', status:'completed', rating:8,
-        agenda:[
-          { id:1, title:'Review Last Quarter',          notes:'Q2: 3 of 4 priorities hit. Hired associate coach (Sarah, started May). Group program launched with 6 participants. Missed event speaking target (1 of 2).' },
-          { id:2, title:'Lessons + Adjustments',        notes:'Event scheduling needs more lead time. Group program proves out — repeat in Q3 with 10 participants.' },
-          { id:3, title:"Set Next Quarter's Goals",     notes:'Q3: 1) Group cohort #2 (10 ppl), 2) Sign 6 new 1:1 clients, 3) Publish signature workbook, 4) Hire admin support.' },
-          { id:4, title:'Conclude — Rate the Session',  notes:'Best session yet. Team in sync. Andrew to brief team Monday.' }
-        ]
+      { id:6002, session_date:'2026-06-30', target_quarter:'Q3 2026', status:'completed',
+        attendance:'Cath, Lou, Andrew, Sarah',
+        areas_completed:{1:true,2:true,3:true}
       },
-      { id:6003, session_date:quarterEndDate(nextUpcomingQuarter()), target_quarter:nextUpcomingQuarter(), status:'scheduled', rating:null,
-        agenda:_quarterlyAgendaBlank()
+      { id:6003, session_date:quarterEndDate(nextUpcomingQuarter()), target_quarter:nextUpcomingQuarter(), status:'scheduled',
+        attendance:'',
+        areas_completed:{}
       }
     ];
   }
@@ -181,7 +134,6 @@
   function getSessionId(){const u=new URLSearchParams(window.location.search);const id=parseInt(u.get('id'));return isNaN(id)?null:id}
   function getSession(id){const all=_quarterlyLoad();return all.find(s=>s.id===id)||null}
   function updateSession(id,patch){const all=_quarterlyLoad();const s=all.find(x=>x.id===id);if(s){Object.assign(s,patch);_quarterlySave(all)}return s}
-  function updateAgendaNotes(id,agendaId,notes){const all=_quarterlyLoad();const s=all.find(x=>x.id===id);if(s){const a=(s.agenda||[]).find(x=>x.id===agendaId);if(a){a.notes=notes;_quarterlySave(all)}}return s}
 
   // 17 team check-in questions (must stay in sync with team-checkin.html)
   const CHECKIN_QUESTIONS = [
@@ -204,79 +156,16 @@
     "We are committed to creating a workplace culture where everyone can thrive in all aspects."
   ];
 
-  function loadCheckins(sessionId, sessionType){
-    try {
-      const all = JSON.parse(localStorage.getItem('coach4u_team_checkins') || '[]');
-      return all.filter(c => c.session_id === sessionId && c.session_type === sessionType);
-    } catch (_) { return []; }
-  }
-  function aggregate(checkins, questionCount){
-    if (!checkins.length) return [];
-    const out = [];
-    for (let q = 0; q < questionCount; q++) {
-      const scores = checkins.map(c => (c.scores || [])[q]).filter(v => typeof v === 'number');
-      const avg = scores.length ? scores.reduce((a,b) => a+b, 0) / scores.length : null;
-      out.push({ q, avg, count: scores.length });
-    }
-    return out;
-  }
-  function avgClass(avg){ if(avg==null) return ''; if(avg<3) return 'ci-dot-red'; if(avg<4) return 'ci-dot-amber'; return 'ci-dot-green'; }
-  function truncate(s,n){ s=String(s||''); return s.length>n ? s.slice(0,n-1)+'…' : s; }
-  function renderCheckinResultsTable(checkins){
-    if(!checkins.length) return '<p class="checkin-empty">No team check-ins yet. Send the form link from the section above.</p>';
-    const agg = aggregate(checkins, CHECKIN_QUESTIONS.length)
-      .map(r => ({...r, text: CHECKIN_QUESTIONS[r.q]}))
-      .filter(r => r.avg != null)
-      .sort((a,b) => a.avg - b.avg);
-    return `<table class="ci-table">
-      <thead><tr><th>Question</th><th style="text-align:right;">Avg</th></tr></thead>
-      <tbody>${agg.map(r => `<tr>
-        <td><span class="ci-dot ${avgClass(r.avg)}"></span>${escHtml(truncate(r.text,80))}</td>
-        <td class="ci-avg">${r.avg.toFixed(1)}</td>
-      </tr>`).join('')}</tbody>
-    </table>`;
-  }
-  function renderCheckinComments(checkins){
-    if(!checkins.length) return '';
-    const blocks = [];
-    for(let q=0; q<CHECKIN_QUESTIONS.length; q++){
-      const items = checkins
-        .map(c => ({ name: c.name, role: c.role, comment: (c.comments||[])[q] }))
-        .filter(x => x.comment && String(x.comment).trim());
-      if(items.length){
-        blocks.push(`<div class="ci-q">${escHtml(CHECKIN_QUESTIONS[q])}</div>` +
-          items.map(it => `<div class="ci-c"><span class="ci-author">${escHtml(it.name||'Anon')}${it.role?' · '+escHtml(it.role):''}</span>${escHtml(it.comment)}</div>`).join(''));
-      }
-    }
-    if(!blocks.length) return '<p class="checkin-empty" style="margin-top:10px;">No comments submitted.</p>';
-    return '<div class="ci-comments">' + blocks.join('') + '</div>';
-  }
   function buildCheckinLink(sessionId){
     return new URL('team-checkin.html?session='+sessionId+'&type=quarterly', window.location.href).href;
   }
 
-  function buildAgendaSteps(s){
-    const tq=s.target_quarter||'';
-    const pq=priorQuarter(tq)||'last quarter';
-    const tqNum=(/^Q(\d)/.exec(tq)||[])[1]||'n';
-    return [
-      {id:'checkin',title:'Review Team Check-in',
-        prompt:'Read through the aggregated team scores below. Discuss the lowest-rated statements first — they show where the team feels least confident going into '+(tq||'next quarter')+'.',
-        links:[]},
-      {id:1,title:'Review Last Quarter',
-        prompt:'Walk through every '+pq+' goal — what hit, what missed, why.',
-        links:[{href:'goals.html',text:'Open Quarterly Goals →'}]},
-      {id:2,title:'Lessons + Adjustments',
-        prompt:'What did we learn? What needs to change in how we plan, execute, or measure?',
-        links:[]},
-      {id:3,title:"Set Next Quarter's Goals",
-        prompt:'Aim for 3–7 priorities this quarter. Specific, measurable, ownable.',
-        links:[{href:'goals.html',text:'Open Quarterly Goals →'}]},
-      {id:4,title:'Conclude — Rate the Session',
-        prompt:'Rate the session 1–10. Capture decisions, action items, next steps.',
-        links:[]}
-    ];
-  }
+  // Areas to cover during the quarterly session
+  const AREAS=[
+    {id:1, name:'Review Last Quarter',         links:[{href:'goals.html',text:'Open Quarterly Goals →'}]},
+    {id:2, name:'Lessons + Adjustments',       links:[]},
+    {id:3, name:"Set Next Quarter's Goals",    links:[{href:'goals.html',text:'Open Quarterly Goals →'}]}
+  ];
 
   function loadDetail(id){
     const s=getSession(id);
@@ -288,35 +177,23 @@
     _currentSession=s;
     const qn=(/^Q(\d)/.exec(s.target_quarter||'')||[])[1]||'';
     document.getElementById('ws-title').innerHTML='&#x1F3AF; '+(qn?'Q'+qn:'Quarterly')+' Planning Session — '+fmtDate(s.session_date);
-    document.getElementById('ws-sub').textContent='Sets goals for '+(s.target_quarter||'next quarter')+'.';
+    document.getElementById('ws-sub').textContent='Sets goals for '+(s.target_quarter||'next quarter')+' — track attendance, tick off each area as you cover it, and share the team check-in link.';
     renderDetail(s);
+  }
+
+  function progressText(areasCompleted){
+    const total=AREAS.length;
+    const done=AREAS.filter(a=>areasCompleted&&areasCompleted[a.id]).length;
+    return done+' of '+total+' areas completed';
   }
 
   function renderDetail(s){
     const c=document.getElementById('session-content');
     if(_timerInterval){clearInterval(_timerInterval);_timerInterval=null;_timerStart=null;}
-    const agendaMap={};(s.agenda||[]).forEach(a=>{agendaMap[a.id]=a});
-    const steps=buildAgendaSteps(s);
-    const checkins=loadCheckins(s.id,'quarterly');
+    const attendance=s.attendance||'';
+    const areasCompleted=s.areas_completed||{};
     const checkinLink=buildCheckinLink(s.id);
-    const countTxt=checkins.length===0?'No responses yet':(checkins.length+' team '+(checkins.length===1?'response':'responses')+' received');
-    const tableHtml=checkins.length
-      ? renderCheckinResultsTable(checkins)
-      : '<p class="checkin-empty">Share the link with your team — their feedback will appear here as they submit.</p>';
     c.innerHTML=`
-      <div class="checkin-block">
-        <div class="checkin-head">
-          <div>
-            <h3 class="checkin-title">&#x1F31F; Team Check-in</h3>
-            <p class="checkin-count">${countTxt}</p>
-          </div>
-        </div>
-        <div class="checkin-actions">
-          <button class="ws-btn" id="copy-checkin-link">Copy Check-in Link</button>
-          <a class="ws-btn-secondary" href="${escHtml(checkinLink)}" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;">Open Form</a>
-        </div>
-        ${tableHtml}
-      </div>
       <div class="session-detail">
         <div class="session-detail-heading">
           <div><div class="session-detail-title">&#x1F3AF; ${fmtDate(s.session_date)} &middot; Sets ${escHtml(s.target_quarter||'')}</div></div>
@@ -333,40 +210,68 @@
           <span class="timer-elapsed hidden" id="timer-elapsed">0:00</span>
           <span style="font-size:.8rem;color:#888;font-family:inherit;">Target: half day</span>
         </div>
-        <div id="agenda-accordion">
-          ${steps.map((step,idx)=>{
-            const a=agendaMap[step.id]||{notes:''};
-            const isCheckin=(step.id==='checkin');
-            const isConclude=(step.id===4);
-            const displayNum=idx+1;
-            const linksHtml=step.links.length?`<p class="agenda-links">${step.links.map(l=>`<a href="${l.href}">${l.text}</a>`).join('')}</p>`:'';
-            const ratingHtml=isConclude?`<div style="margin-bottom:14px;"><span class="label-sm">Session Rating (1–10)</span><div class="rating-btns">${[...Array(10)].map((_,i)=>`<button class="rating-btn ${s.rating===(i+1)?'selected':''}" data-rating="${i+1}">${i+1}</button>`).join('')}</div></div>`:'';
-            const notesLabel=isConclude?'Decisions, action items, next steps':'Notes';
-            let body;
-            if(isCheckin){
-              const innerTable=checkins.length?renderCheckinResultsTable(checkins):'<p class="checkin-empty">No team check-ins yet. Send the form link from the section above.</p>';
-              const commentsHtml=renderCheckinComments(checkins);
-              body=`<p class="agenda-prompt">${step.prompt}</p>${innerTable}${commentsHtml}`;
-            } else {
-              body=`<p class="agenda-prompt">${step.prompt}</p>
-                  ${linksHtml}
-                  ${ratingHtml}
-                  <span class="label-sm">${notesLabel}</span>
-                  <textarea class="notes-textarea" data-agenda-id="${step.id}" placeholder="Type your notes here...">${escHtml(a.notes||'')}</textarea>
-                  <div style="margin-top:8px;"><button class="ws-btn-secondary save-notes-btn" data-agenda-id="${step.id}">Save Notes</button></div>`;
-            }
-            return `
-              <div class="agenda-section">
-                <button class="agenda-toggle"><div class="agenda-num">${displayNum}</div><div class="agenda-title-text">${step.title}</div><span class="agenda-arrow">▼</span></button>
-                <div class="agenda-content">
-                  ${body}
-                </div>
+      </div>
+
+      <div class="attendance-block">
+        <h3 class="block-title">&#x1F4CB; Attendance</h3>
+        <textarea class="attendance-input" id="attendance-input" placeholder="Who is in this session?">${escHtml(attendance)}</textarea>
+      </div>
+
+      <div class="areas-block">
+        <h3 class="block-title">&#x2705; Areas to Cover</h3>
+        <p class="areas-progress" id="areas-progress">${progressText(areasCompleted)}</p>
+        ${AREAS.map(area=>{
+          const checked=!!areasCompleted[area.id];
+          const linksHtml=area.links.length?`<div class="area-links">${area.links.map(l=>`<a href="${l.href}">${l.text}</a>`).join('')}</div>`:'';
+          return `
+            <div class="area-row">
+              <input type="checkbox" data-area-id="${area.id}" id="area-${area.id}" ${checked?'checked':''}>
+              <div class="area-text">
+                <label class="area-name ${checked?'complete':''}" for="area-${area.id}" data-area-id="${area.id}">${escHtml(area.name)}</label>
+                ${linksHtml}
               </div>
-            `;
-          }).join('')}
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <div class="checkin-block">
+        <h3 class="block-title">&#x1F31F; Team Check-in</h3>
+        <div class="checkin-actions">
+          <button class="ws-btn" id="copy-checkin-link">Copy Check-in Link</button>
+          <a class="ws-btn-secondary" href="${escHtml(checkinLink)}" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;">Open Form</a>
         </div>
       </div>
     `;
+
+    // Attendance auto-save (debounced ~300ms)
+    const attInput=c.querySelector('#attendance-input');
+    attInput.addEventListener('input',()=>{
+      clearTimeout(_attendanceTimer);
+      _attendanceTimer=setTimeout(()=>{
+        try{updateSession(s.id,{attendance:attInput.value});_currentSession.attendance=attInput.value;}
+        catch(err){showToast('Save failed','error')}
+      },300);
+    });
+
+    // Area checkboxes — immediate save
+    c.querySelectorAll('input[type=checkbox][data-area-id]').forEach(cb=>{
+      cb.addEventListener('change',()=>{
+        const aid=parseInt(cb.dataset.areaId);
+        const next=Object.assign({},_currentSession.areas_completed||{});
+        next[aid]=cb.checked;
+        try{
+          updateSession(s.id,{areas_completed:next});
+          _currentSession.areas_completed=next;
+          const label=c.querySelector('label[data-area-id="'+aid+'"]');
+          if(label) label.classList.toggle('complete',cb.checked);
+          const prog=c.querySelector('#areas-progress');
+          if(prog) prog.textContent=progressText(next);
+        } catch(err){ showToast('Save failed','error'); cb.checked=!cb.checked; }
+      });
+    });
+
+    // Copy check-in link
     const copyBtn=c.querySelector('#copy-checkin-link');
     if(copyBtn){
       copyBtn.addEventListener('click',()=>{
@@ -379,6 +284,8 @@
         }
       });
     }
+
+    // Status dropdown
     c.querySelector('#session-status').addEventListener('change',e=>{
       try{
         updateSession(s.id,{status:e.target.value});_currentSession.status=e.target.value;showToast('Status updated','success');
@@ -389,6 +296,8 @@
       }
       catch(err){showToast('Update failed','error')}
     });
+
+    // Timer
     const timerBtn=c.querySelector('#timer-btn'),timerEl=c.querySelector('#timer-elapsed');
     timerBtn.addEventListener('click',()=>{
       if(!_timerStart){
@@ -403,27 +312,6 @@
         if(window.activeSession) window.activeSession.clear();
       }
     });
-    c.querySelectorAll('.agenda-toggle').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        const content=btn.nextElementSibling;
-        const isOpen=content.classList.contains('open');
-        btn.classList.toggle('open',!isOpen);
-        content.classList.toggle('open',!isOpen);
-      });
-    });
-    c.querySelectorAll('.save-notes-btn').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        const aid=parseInt(btn.dataset.agendaId);
-        const ta=c.querySelector('textarea[data-agenda-id="'+aid+'"]');
-        try{updateAgendaNotes(s.id,aid,ta.value);showToast('Notes saved','success');const a=(_currentSession.agenda||[]).find(x=>x.id===aid);if(a)a.notes=ta.value}
-        catch(err){showToast('Save failed','error')}
-      });
-    });
-    c.querySelectorAll('.rating-btn').forEach(btn=>btn.addEventListener('click',()=>{
-      const rating=parseInt(btn.dataset.rating);
-      try{updateSession(s.id,{rating});_currentSession.rating=rating;c.querySelectorAll('.rating-btn').forEach(b=>b.classList.toggle('selected',parseInt(b.dataset.rating)===rating));showToast('Rating saved','success');}
-      catch(err){showToast('Save failed','error')}
-    }));
   }
 
   (async()=>{
