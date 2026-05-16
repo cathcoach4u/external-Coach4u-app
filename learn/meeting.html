@@ -8,102 +8,113 @@
   <meta name="theme-color" content="#1B3664">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../css/style.css"/>
-  <link rel="stylesheet" href="../css/activity.css"/>
   <style>
     body{opacity:0;transition:opacity .2s ease}
-    .page-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
-    .meeting-layout{display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:start}
+    .container{padding-bottom:100px;}
+    .ws-header{padding:20px 16px 0}
+    .ws-title{font-size:1.15rem;font-weight:800;color:var(--primary);margin:0 0 4px}
+    .ws-sub{font-size:.83rem;color:#666;margin:0 0 20px;line-height:1.45}
+    .ws-btn{padding:9px 20px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;transition:background .15s}
+    .ws-btn:hover{background:var(--accent-dark)}
+    .ws-btn-secondary{padding:9px 18px;background:white;color:var(--primary);border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .15s}
+    .ws-btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+    .page-controls{display:flex;justify-content:space-between;align-items:center;margin:0 16px 24px;flex-wrap:wrap;gap:12px}
+    .meeting-layout{display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:start;margin:0 16px}
     @media(max-width:720px){.meeting-layout{grid-template-columns:1fr}}
-    .meetings-sidebar{background:white;border:1px solid var(--act-light-grey);border-radius:12px;overflow:hidden}
-    .sidebar-heading{padding:14px 16px;background:var(--act-soft);font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:.88rem;border-bottom:1px solid var(--act-light-grey)}
+    .meetings-sidebar{background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+    .sidebar-heading{padding:14px 16px;background:#f0fdfa;font-family:inherit;font-weight:700;color:var(--primary);font-size:.88rem;border-bottom:1px solid var(--border)}
     .meeting-item{padding:12px 16px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .12s}
     .meeting-item:hover{background:#f8faff}
-    .meeting-item.active{background:#eff6ff;border-left:3px solid var(--act-light-blue)}
-    .meeting-item-date{font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:.9rem}
+    .meeting-item.active{background:#eff6ff;border-left:3px solid var(--accent)}
+    .meeting-item-date{font-family:inherit;font-weight:700;color:var(--primary);font-size:.9rem}
     .meeting-item-meta{font-size:.78rem;color:#888;margin-top:2px;display:flex;gap:8px;align-items:center}
     .status-pill{font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:20px}
     .sp-scheduled{background:#fef3c7;color:#92400e}
     .sp-in_progress{background:#dbeafe;color:#1e40af}
     .sp-completed{background:#d1fae5;color:#065f46}
-    .meeting-detail{background:white;border:1px solid var(--act-light-grey);border-radius:12px;padding:24px}
-    .meeting-empty{text-align:center;padding:48px 20px;color:#aaa;font-family:var(--act-font-heading)}
+    .meeting-detail{background:white;border:1px solid var(--border);border-radius:12px;padding:24px}
+    .meeting-empty{text-align:center;padding:48px 20px;color:#aaa;font-family:inherit}
     .meeting-detail-heading{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px}
-    .meeting-detail-title{font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:1.15rem}
-    .field-select{border:1.5px solid var(--act-light-grey);border-radius:8px;padding:7px 12px;font-family:var(--act-font-heading);font-size:.85rem;color:var(--act-dark-blue);background:white;cursor:pointer}
-    .agenda-section{border:1px solid var(--act-light-grey);border-radius:10px;margin-bottom:10px;overflow:hidden}
-    .agenda-toggle{width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--act-soft);border:none;cursor:pointer;text-align:left;transition:background .12s}
+    .meeting-detail-title{font-family:inherit;font-weight:700;color:var(--primary);font-size:1.15rem}
+    .field-select{border:1.5px solid var(--border);border-radius:8px;padding:7px 12px;font-family:inherit;font-size:.85rem;color:var(--primary);background:white;cursor:pointer}
+    .agenda-section{border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden}
+    .agenda-toggle{width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;background:#f0fdfa;border:none;cursor:pointer;text-align:left;transition:background .12s}
     .agenda-toggle:hover{background:#eef2fa}
-    .agenda-num{width:26px;height:26px;border-radius:50%;background:var(--act-dark-blue);color:white;display:grid;place-items:center;font-family:var(--act-font-heading);font-weight:700;font-size:.82rem;flex-shrink:0}
-    .agenda-title-text{font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:.93rem;flex:1}
-    .agenda-time{font-size:.78rem;color:var(--act-light-blue);font-family:var(--act-font-heading);font-weight:600}
+    .agenda-num{width:26px;height:26px;border-radius:50%;background:var(--primary);color:white;display:grid;place-items:center;font-family:inherit;font-weight:700;font-size:.82rem;flex-shrink:0}
+    .agenda-title-text{font-family:inherit;font-weight:700;color:var(--primary);font-size:.93rem;flex:1}
+    .agenda-time{font-size:.78rem;color:var(--accent);font-family:inherit;font-weight:600}
     .agenda-arrow{margin-left:8px;font-size:.8rem;color:#aaa;transition:transform .2s}
     .agenda-toggle.open .agenda-arrow{transform:rotate(180deg)}
     .agenda-content{display:none;padding:16px}
     .agenda-content.open{display:block}
     .item-list{list-style:none;margin:0 0 12px;padding:0}
-    .item-list li{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border:1px solid #f0f0f0;border-radius:8px;margin-bottom:6px;font-size:.88rem;font-family:var(--act-font-heading)}
-    .item-list li .item-text{flex:1;color:var(--act-dark-grey)}
+    .item-list li{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border:1px solid #f0f0f0;border-radius:8px;margin-bottom:6px;font-size:.88rem;font-family:inherit}
+    .item-list li .item-text{flex:1;color:var(--text)}
     .item-list li .item-meta{font-size:.75rem;color:#aaa;white-space:nowrap}
     .item-del-btn{background:none;border:none;cursor:pointer;color:#ccc;font-size:1rem;padding:0 4px;line-height:1}
     .item-del-btn:hover{color:#991b1b}
     .item-add-row{display:flex;gap:8px}
-    .item-add-input{flex:1;border:1.5px solid var(--act-light-grey);border-radius:8px;padding:8px 12px;font-family:var(--act-font-body);font-size:.88rem;color:var(--act-dark-grey)}
-    .item-add-input:focus{outline:none;border-color:var(--act-light-blue)}
-    .meeting-timer-bar{display:flex;align-items:center;gap:12px;background:var(--act-soft);border-radius:8px;padding:10px 14px;margin-bottom:16px}
-    .timer-btn{font-family:var(--act-font-heading);font-weight:700;font-size:.85rem;padding:6px 14px;border-radius:6px;cursor:pointer;border:1.5px solid var(--act-light-blue);background:white;color:var(--act-dark-blue);transition:all .15s}
+    .item-add-input{flex:1;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:inherit;font-size:.88rem;color:var(--text)}
+    .item-add-input:focus{outline:none;border-color:var(--accent)}
+    .meeting-timer-bar{display:flex;align-items:center;gap:12px;background:#f0fdfa;border-radius:8px;padding:10px 14px;margin-bottom:16px}
+    .timer-btn{font-family:inherit;font-weight:700;font-size:.85rem;padding:6px 14px;border-radius:6px;cursor:pointer;border:1.5px solid var(--accent);background:white;color:var(--primary);transition:all .15s}
     .timer-btn.running{border-color:#991b1b;color:#991b1b;background:#fff5f5}
-    .timer-elapsed{font-family:var(--act-font-heading);font-weight:700;font-size:1rem;color:var(--act-dark-blue);font-variant-numeric:tabular-nums}
+    .timer-elapsed{font-family:inherit;font-weight:700;font-size:1rem;color:var(--primary);font-variant-numeric:tabular-nums}
     .rating-btns{display:flex;gap:8px;flex-wrap:wrap}
-    .rating-btn{width:40px;height:40px;border-radius:8px;border:2px solid var(--act-light-grey);background:white;cursor:pointer;font-family:var(--act-font-heading);font-weight:700;font-size:.9rem;transition:all .15s}
-    .rating-btn.selected{background:var(--act-dark-blue);color:white;border-color:var(--act-dark-blue)}
-    .notes-textarea{width:100%;border:1.5px solid var(--act-light-grey);border-radius:8px;padding:10px 14px;font-family:var(--act-font-body);font-size:.88rem;resize:vertical;min-height:80px;box-sizing:border-box}
-    .notes-textarea:focus{outline:none;border-color:var(--act-light-blue)}
+    .rating-btn{width:40px;height:40px;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:inherit;font-weight:700;font-size:.9rem;transition:all .15s}
+    .rating-btn.selected{background:var(--primary);color:white;border-color:var(--primary)}
+    .notes-textarea{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-family:inherit;font-size:.88rem;resize:vertical;min-height:80px;box-sizing:border-box}
+    .notes-textarea:focus{outline:none;border-color:var(--accent)}
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
     .modal-overlay.hidden{display:none}
     .modal{background:white;border-radius:16px;padding:28px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2)}
     .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-    .modal-title{font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:1.1rem}
+    .modal-title{font-family:inherit;font-weight:700;color:var(--primary);font-size:1.1rem}
     .modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:#888;line-height:1;padding:0 4px}
     .modal-field{margin-bottom:16px}
-    .modal-label{font-family:var(--act-font-heading);font-weight:600;color:var(--act-dark-blue);font-size:.88rem;margin-bottom:6px;display:block}
-    .modal-input,.modal-select{width:100%;border:1.5px solid var(--act-light-grey);border-radius:8px;padding:10px 14px;font-family:var(--act-font-body);font-size:.93rem;color:var(--act-dark-grey);background:white;box-sizing:border-box}
-    .modal-input:focus,.modal-select:focus{outline:none;border-color:var(--act-light-blue)}
+    .modal-label{font-family:inherit;font-weight:600;color:var(--primary);font-size:.88rem;margin-bottom:6px;display:block}
+    .modal-input,.modal-select{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-family:inherit;font-size:.93rem;color:var(--text);background:white;box-sizing:border-box}
+    .modal-input:focus,.modal-select:focus{outline:none;border-color:var(--accent)}
     .modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
-    .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-family:var(--act-font-heading);font-weight:600;font-size:.88rem;z-index:2000;transition:opacity .3s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+    .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-family:inherit;font-weight:600;font-size:.88rem;z-index:2000;transition:opacity .3s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
     .toast-hidden{opacity:0;pointer-events:none}
     .toast-success{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
     .toast-error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
     .hidden{display:none!important}
-    .label-sm{font-family:var(--act-font-heading);font-weight:600;color:var(--act-dark-blue);font-size:.85rem;margin-bottom:8px;display:block}
+    .label-sm{font-family:inherit;font-weight:600;color:var(--primary);font-size:.85rem;margin-bottom:8px;display:block}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e5e7eb;display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -2px 8px rgba(0,0,0,.06)}
+    .bottom-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0 6px;text-decoration:none;color:#aaa;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;gap:3px;transition:color .15s}
+    .bottom-nav-item.active,.bottom-nav-item:hover{color:#0D9488;text-decoration:none}
+    .bottom-nav-icon{font-size:20px;line-height:1}
   </style>
 </head>
-<body class="activity-page">
+<body>
   <header class="site-header">
     <div class="header-inner">
       <div class="header-left">
-        <a href="../learning-vault.html" class="header-back">&#x2190; Learning Vault</a>
+        <a href="../operations.html" class="header-back">&#x2190; Operations</a>
         <span class="header-title">Meeting</span>
       </div>
       <button class="sign-out-btn" id="sign-out-btn">Sign Out</button>
     </div>
   </header>
 
-  <div class="act-container" style="max-width:1000px;">
-    <header class="act-header">
-      <h1>Weekly Meeting</h1>
-      <p>Structured weekly team meeting &#x2014; agenda, check-in, scorecard review, and Issues.</p>
-    </header>
+  <div class="container">
+    <div class="ws-header">
+      <h1 class="ws-title">&#x1F5D3;&#xFE0F; Weekly Meeting</h1>
+      <p class="ws-sub">Structured weekly team meeting &#x2014; agenda, check-in, scorecard review, and Issues.</p>
+    </div>
 
     <div class="page-controls">
-      <span class="act-step-hint" style="margin:0;">Select a meeting to view its agenda, or create a new one.</span>
-      <button class="act-btn act-btn-primary" id="new-meeting-btn">+ New Meeting</button>
+      <span style="font-size:0.78rem;color:#888;">Select a meeting to view its agenda, or create a new one.</span>
+      <button class="ws-btn" id="new-meeting-btn">+ New Meeting</button>
     </div>
 
     <div class="meeting-layout">
       <div>
         <div class="meetings-sidebar">
           <div class="sidebar-heading">Past Meetings</div>
-          <div id="meetings-list"><div style="padding:20px;color:#aaa;font-size:.85rem;font-family:var(--act-font-heading);">No meetings yet.</div></div>
+          <div id="meetings-list"><div style="padding:20px;color:#aaa;font-size:.85rem;font-family:inherit;">No meetings yet.</div></div>
         </div>
       </div>
       <div id="meeting-detail">
@@ -134,13 +145,20 @@
         </select>
       </div>
       <div class="modal-footer">
-        <button class="act-btn act-btn-secondary" id="nm-modal-cancel">Cancel</button>
-        <button class="act-btn act-btn-primary" id="nm-modal-save">Create Meeting</button>
+        <button class="ws-btn-secondary" id="nm-modal-cancel">Cancel</button>
+        <button class="ws-btn" id="nm-modal-save">Create Meeting</button>
       </div>
     </div>
   </div>
 
   <div class="toast toast-hidden" id="toast"></div>
+
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item" href="../index.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
+    <a class="bottom-nav-item" href="../strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
+    <a class="bottom-nav-item active" href="../operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
+    <a class="bottom-nav-item" href="../learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
+  </nav>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
@@ -164,7 +182,7 @@
   }
   function renderMeetingsList(){
     const list=document.getElementById('meetings-list');
-    if(!_meetings.length){list.innerHTML='<div style="padding:20px;color:#aaa;font-size:.85rem;font-family:var(--act-font-heading);">No meetings yet.</div>';return;}
+    if(!_meetings.length){list.innerHTML='<div style="padding:20px;color:#aaa;font-size:.85rem;font-family:inherit;">No meetings yet.</div>';return;}
     list.innerHTML=_meetings.map(m=>`<div class="meeting-item ${_currentMeeting&&_currentMeeting.id===m.id?'active':''}" data-id="${m.id}"><div class="meeting-item-date">${fmtDate(m.meeting_date)}</div><div class="meeting-item-meta"><span class="status-pill ${STATUS_CLASS[m.status]||'sp-scheduled'}">${STATUS_LABEL[m.status]||m.status}</span>${m.quarter?escHtml(m.quarter):''}${m.rating?' &middot; '+m.rating+'/10':''}</div></div>`).join('');
     list.querySelectorAll('.meeting-item').forEach(el=>el.addEventListener('click',()=>loadDetail(parseInt(el.dataset.id))));
   }
@@ -193,15 +211,15 @@
         <div class="meeting-timer-bar">
           <button class="timer-btn" id="timer-btn">&#x25B6; Start Meeting</button>
           <span class="timer-elapsed hidden" id="timer-elapsed">0:00</span>
-          <span style="font-size:.8rem;color:#888;font-family:var(--act-font-heading);">Target: 90 min</span>
+          <span style="font-size:.8rem;color:#888;font-family:inherit;">Target: 90 min</span>
         </div>
         <div id="agenda-accordion">
           ${agendaSection(1,'Segue &#x2014; Good News','5 min',renderSegue(m))}
-          ${agendaSection(2,'Scorecard Review','5 min','<p style="font-size:.88rem;color:#888;font-family:var(--act-font-heading);">Review your weekly metrics. <a href="scorecard.html" style="color:var(--act-light-blue);">Open Scorecard &#x2192;</a></p>')}
-          ${agendaSection(3,'Priorities Review','5 min','<p style="font-size:.88rem;color:#888;font-family:var(--act-font-heading);">Review quarterly goals. <a href="goals.html" style="color:var(--act-light-blue);">Open Goals &#x2192;</a></p>')}
+          ${agendaSection(2,'Scorecard Review','5 min','<p style="font-size:.88rem;color:#888;font-family:inherit;">Review your weekly metrics. <a href="scorecard.html" style="color:var(--accent);">Open Scorecard &#x2192;</a></p>')}
+          ${agendaSection(3,'Priorities Review','5 min','<p style="font-size:.88rem;color:#888;font-family:inherit;">Review quarterly goals. <a href="goals.html" style="color:var(--accent);">Open Goals &#x2192;</a></p>')}
           ${agendaSection(4,'Customer &amp; Employee Headlines','5 min',renderHeadlines(m))}
           ${agendaSection(5,'To-Do List','5 min',renderTodos(m))}
-          ${agendaSection(6,'Issues &#x2014; Identify, Discuss, Solve','60 min','<p style="font-size:.88rem;color:#888;font-family:var(--act-font-heading);">Work through your issues list. <a href="issues.html" style="color:var(--act-light-blue);">Open Issues &#x2192;</a></p>')}
+          ${agendaSection(6,'Issues &#x2014; Identify, Discuss, Solve','60 min','<p style="font-size:.88rem;color:#888;font-family:inherit;">Work through your issues list. <a href="issues.html" style="color:var(--accent);">Open Issues &#x2192;</a></p>')}
           ${agendaSection(7,'Conclude &amp; Rate','5 min',renderConclude(m))}
         </div>
       </div>
@@ -236,18 +254,18 @@
     return `<div class="agenda-section"><button class="agenda-toggle"><div class="agenda-num">${num}</div><div class="agenda-title-text">${title}</div><span class="agenda-time">${time}</span><span class="agenda-arrow">&#x25BC;</span></button><div class="agenda-content">${content}</div></div>`;
   }
   function renderSegue(m){
-    return `<p style="font-size:.88rem;color:#666;font-family:var(--act-font-heading);">Start with 1 minute each: share a piece of good news &#x2014; personal or professional.</p>`;
+    return `<p style="font-size:.88rem;color:#666;font-family:inherit;">Start with 1 minute each: share a piece of good news &#x2014; personal or professional.</p>`;
   }
   function renderHeadlines(m){
     const items=(m.headlines||[]);
-    return `<ul class="item-list" id="headlines-list">${items.length?items.map(h=>`<li><span class="item-text">${escHtml(h.description)}</span><span class="item-meta">${h.type==='good_news'?'&#x1F4A1;':'&#x26A0;'}</span><button class="item-del-btn" data-hid="${h.id}">&times;</button></li>`).join(''):'<li style="color:#aaa;font-style:italic;">No headlines yet.</li>'}</ul><div class="item-add-row"><select class="field-select" id="headline-type" style="flex-shrink:0;padding:7px 10px;"><option value="good_news">&#x1F4A1; Good News</option><option value="headline">&#x26A0; Headline</option></select><input type="text" class="item-add-input" id="headline-input" placeholder="Add a headline..."/><button class="act-btn act-btn-primary" id="add-headline-btn" style="padding:8px 14px;">Add</button></div>`;
+    return `<ul class="item-list" id="headlines-list">${items.length?items.map(h=>`<li><span class="item-text">${escHtml(h.description)}</span><span class="item-meta">${h.type==='good_news'?'&#x1F4A1;':'&#x26A0;'}</span><button class="item-del-btn" data-hid="${h.id}">&times;</button></li>`).join(''):'<li style="color:#aaa;font-style:italic;">No headlines yet.</li>'}</ul><div class="item-add-row"><select class="field-select" id="headline-type" style="flex-shrink:0;padding:7px 10px;"><option value="good_news">&#x1F4A1; Good News</option><option value="headline">&#x26A0; Headline</option></select><input type="text" class="item-add-input" id="headline-input" placeholder="Add a headline..."/><button class="ws-btn" id="add-headline-btn" style="padding:8px 14px;">Add</button></div>`;
   }
   function renderTodos(m){
     const items=(m.todos||[]);
-    return `<ul class="item-list" id="todos-list">${items.length?items.map(t=>`<li><input type="checkbox" ${t.done?'checked':''} data-tid="${t.id}" style="flex-shrink:0;"/><span class="item-text" style="${t.done?'text-decoration:line-through;color:#aaa':''}">${escHtml(t.description)}</span><span class="item-meta">${t.owner?escHtml(t.owner):''}</span><button class="item-del-btn" data-tid="${t.id}">&times;</button></li>`).join(''):'<li style="color:#aaa;font-style:italic;">No todos yet.</li>'}</ul><div class="item-add-row"><input type="text" class="item-add-input" id="todo-input" placeholder="Add a to-do..."/><input type="text" class="item-add-input" id="todo-owner" placeholder="Owner" style="max-width:120px;"/><button class="act-btn act-btn-primary" id="add-todo-btn" style="padding:8px 14px;">Add</button></div>`;
+    return `<ul class="item-list" id="todos-list">${items.length?items.map(t=>`<li><input type="checkbox" ${t.done?'checked':''} data-tid="${t.id}" style="flex-shrink:0;"/><span class="item-text" style="${t.done?'text-decoration:line-through;color:#aaa':''}">${escHtml(t.description)}</span><span class="item-meta">${t.owner?escHtml(t.owner):''}</span><button class="item-del-btn" data-tid="${t.id}">&times;</button></li>`).join(''):'<li style="color:#aaa;font-style:italic;">No todos yet.</li>'}</ul><div class="item-add-row"><input type="text" class="item-add-input" id="todo-input" placeholder="Add a to-do..."/><input type="text" class="item-add-input" id="todo-owner" placeholder="Owner" style="max-width:120px;"/><button class="ws-btn" id="add-todo-btn" style="padding:8px 14px;">Add</button></div>`;
   }
   function renderConclude(m){
-    return `<div style="margin-bottom:16px;"><span class="label-sm">Meeting Rating (1&#x2013;10)</span><div class="rating-btns">${[...Array(10)].map((_,i)=>`<button class="rating-btn ${m.rating===(i+1)?'selected':''}" data-rating="${i+1}">${i+1}</button>`).join('')}</div></div><div><span class="label-sm">Notes / Cascading Messages</span><textarea class="notes-textarea" id="meeting-notes" placeholder="Any action items or messages to cascade to the team...">${escHtml(m.notes||'')}</textarea><button class="act-btn act-btn-secondary" id="save-notes-btn" style="margin-top:8px;">Save Notes</button></div>`;
+    return `<div style="margin-bottom:16px;"><span class="label-sm">Meeting Rating (1&#x2013;10)</span><div class="rating-btns">${[...Array(10)].map((_,i)=>`<button class="rating-btn ${m.rating===(i+1)?'selected':''}" data-rating="${i+1}">${i+1}</button>`).join('')}</div></div><div><span class="label-sm">Notes / Cascading Messages</span><textarea class="notes-textarea" id="meeting-notes" placeholder="Any action items or messages to cascade to the team...">${escHtml(m.notes||'')}</textarea><button class="ws-btn-secondary" id="save-notes-btn" style="margin-top:8px;">Save Notes</button></div>`;
   }
   function wireHeadlines(m,c){
     c.querySelector('#add-headline-btn')&&c.querySelector('#add-headline-btn').addEventListener('click',async()=>{
