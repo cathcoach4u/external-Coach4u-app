@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Run Meeting | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#003366">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    body{opacity:0;transition:opacity .2s ease}
+    .container{padding-bottom:100px;}
+    .ws-header{padding:20px 16px 0}
+    .ws-title{font-size:1.15rem;font-weight:800;color:var(--primary);margin:0 0 4px}
+    .ws-sub{font-size:.83rem;color:#666;margin:0 0 20px;line-height:1.45}
+    .ws-btn{padding:9px 20px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;transition:background .15s}
+    .ws-btn:hover{background:var(--accent-dark)}
+    .ws-btn-secondary{padding:9px 18px;background:white;color:var(--primary);border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .15s}
+    .ws-btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+    .meeting-detail{background:white;border:1px solid var(--border);border-radius:12px;padding:24px;margin:0 16px}
+    .meeting-empty{text-align:center;padding:48px 20px;color:#aaa;font-family:inherit;background:white;border:1px solid var(--border);border-radius:12px;margin:0 16px}
+    .meeting-detail-heading{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+    .meeting-detail-title{font-family:inherit;font-weight:700;color:var(--primary);font-size:1.15rem}
+    .field-select{border:1.5px solid var(--border);border-radius:8px;padding:7px 12px;font-family:inherit;font-size:.85rem;color:var(--primary);background:white;cursor:pointer}
+    .status-pill{font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:20px}
+    .sp-scheduled{background:#fef3c7;color:#92400e}
+    .sp-in_progress{background:#dbeafe;color:#1e40af}
+    .sp-completed{background:#d1fae5;color:#065f46}
+    .agenda-section{border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden}
+    .agenda-toggle{width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;background:#f0fdfa;border:none;cursor:pointer;text-align:left;transition:background .12s}
+    .agenda-toggle:hover{background:#eef2fa}
+    .agenda-num{width:26px;height:26px;border-radius:50%;background:var(--primary);color:white;display:grid;place-items:center;font-family:inherit;font-weight:700;font-size:.82rem;flex-shrink:0}
+    .agenda-title-text{font-family:inherit;font-weight:700;color:var(--primary);font-size:.93rem;flex:1}
+    .agenda-time{font-size:.78rem;color:var(--accent);font-family:inherit;font-weight:600}
+    .agenda-arrow{margin-left:8px;font-size:.8rem;color:#aaa;transition:transform .2s}
+    .agenda-toggle.open .agenda-arrow{transform:rotate(180deg)}
+    .agenda-content{display:none;padding:16px}
+    .agenda-content.open{display:block}
+    .item-list{list-style:none;margin:0 0 12px;padding:0}
+    .item-list li{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border:1px solid #f0f0f0;border-radius:8px;margin-bottom:6px;font-size:.88rem;font-family:inherit}
+    .item-list li .item-text{flex:1;color:var(--text)}
+    .item-list li .item-meta{font-size:.75rem;color:#aaa;white-space:nowrap}
+    .item-del-btn{background:none;border:none;cursor:pointer;color:#ccc;font-size:1rem;padding:0 4px;line-height:1}
+    .item-del-btn:hover{color:#991b1b}
+    .item-add-row{display:flex;gap:8px}
+    .item-add-input{flex:1;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:inherit;font-size:.88rem;color:var(--text)}
+    .item-add-input:focus{outline:none;border-color:var(--accent)}
+    .meeting-timer-bar{display:flex;align-items:center;gap:12px;background:#f0fdfa;border-radius:8px;padding:10px 14px;margin-bottom:16px}
+    .timer-btn{font-family:inherit;font-weight:700;font-size:.85rem;padding:6px 14px;border-radius:6px;cursor:pointer;border:1.5px solid var(--accent);background:white;color:var(--primary);transition:all .15s}
+    .timer-btn.running{border-color:#991b1b;color:#991b1b;background:#fff5f5}
+    .timer-elapsed{font-family:inherit;font-weight:700;font-size:1rem;color:var(--primary);font-variant-numeric:tabular-nums}
+    .rating-btns{display:flex;gap:8px;flex-wrap:wrap}
+    .rating-btn{width:40px;height:40px;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:inherit;font-weight:700;font-size:.9rem;transition:all .15s}
+    .rating-btn.selected{background:var(--primary);color:white;border-color:var(--primary)}
+    .notes-textarea{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-family:inherit;font-size:.88rem;resize:vertical;min-height:80px;box-sizing:border-box}
+    .notes-textarea:focus{outline:none;border-color:var(--accent)}
+    .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-family:inherit;font-weight:600;font-size:.88rem;z-index:2000;transition:opacity .3s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+    .toast-hidden{opacity:0;pointer-events:none}
+    .toast-success{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
+    .toast-error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+    .hidden{display:none!important}
+    .label-sm{font-family:inherit;font-weight:600;color:var(--primary);font-size:.85rem;margin-bottom:8px;display:block}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e5e7eb;display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -2px 8px rgba(0,0,0,.06)}
+    .bottom-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0 6px;text-decoration:none;color:#aaa;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;gap:3px;transition:color .15s}
+    .bottom-nav-item.active,.bottom-nav-item:hover{color:#0D9488;text-decoration:none}
+    .bottom-nav-icon{font-size:20px;line-height:1}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="meeting.html" class="header-back">&#x2190; Past Meetings</a>
+        <span class="header-title">Run Meeting</span>
+      </div>
+      <button class="sign-out-btn" id="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="ws-header">
+      <h1 class="ws-title" id="ws-title">&#x1F5D3;&#xFE0F; Run Meeting</h1>
+      <p class="ws-sub" id="ws-sub">Work through the agenda, capture headlines, track to-dos, and rate the meeting.</p>
+    </div>
+
+    <div class="meeting-detail meeting-empty hidden" id="meeting-empty">
+      No meeting selected. <a href="meeting.html" style="color:var(--accent);font-weight:600;">Back to Past Meetings &#x2192;</a>
+    </div>
+    <div id="meeting-content"></div>
+  </div>
+
+  <div class="toast toast-hidden" id="toast"></div>
+
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item" href="index.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
+    <a class="bottom-nav-item" href="strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
+    <a class="bottom-nav-item active" href="operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
+    <a class="bottom-nav-item" href="learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+  'use strict';
+  const _sb=window.supabase.createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
+  document.getElementById('sign-out-btn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
+  let _currentMeeting=null,_timerInterval=null,_timerStart=null;
+  function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
+  const _LS_KEY='coach4u_demo_meetings';
+  function _genId(){return Date.now()*1000+Math.floor(Math.random()*1000)}
+  function _mondayISO(d){const dt=new Date(d);const day=dt.getDay();const diff=(day===0?-6:1)-day;dt.setDate(dt.getDate()+diff);return dt.toISOString().slice(0,10)}
+  function _isoAddDays(iso,n){const dt=new Date(iso+'T00:00:00');dt.setDate(dt.getDate()+n);return dt.toISOString().slice(0,10)}
+  function _meetingsSeed(){
+    const thisMon=_mondayISO(new Date());
+    const nextMon=_isoAddDays(thisMon,7);
+    return{
+      meetings:[
+        {id:4001,meeting_date:thisMon,status:'completed',quarter:'Q2 2026',rating:8,notes:'Strong week — Acme deal closed. Need to keep an eye on coach capacity.',business_id:1,
+          headlines:[
+            {id:4101,type:'good_news',description:'Closed largest deal of the year — £42k MRR with Acme Corp'},
+            {id:4102,type:'good_news',description:'Lou completed her ICF Master certification'},
+            {id:4103,type:'headline',description:'Two coaches off sick same week, capacity pressure'}
+          ],
+          todos:[
+            {id:4201,description:'Send Q3 proposal to Globex by Friday',owner:'Cath',done:false},
+            {id:4202,description:'Draft new coach JD',owner:'Lou',done:false},
+            {id:4203,description:'Migrate Pipedrive contacts → HubSpot',owner:'Andrew',done:false},
+            {id:4204,description:'Book Manchester event venue',owner:'Cath',done:true}
+          ]
+        },
+        {id:4002,meeting_date:nextMon,status:'scheduled',quarter:'Q2 2026',rating:null,notes:'',business_id:1,headlines:[],todos:[]}
+      ]
+    };
+  }
+  function _meetingsLoad(){let d;try{d=JSON.parse(localStorage.getItem(_LS_KEY))}catch(_){d=null}if(!d||!d.meetings){d=_meetingsSeed();_meetingsSave(d)}return d}
+  function _meetingsSave(d){localStorage.setItem(_LS_KEY,JSON.stringify(d))}
+  async function api(method,path,body){
+    await new Promise(r=>setTimeout(r,30));
+    const [pathname]=path.split('?');
+    const d=_meetingsLoad();
+    if(method==='GET'&&/^\/meetings\/\d+$/.test(pathname)){
+      const id=parseInt(pathname.split('/').pop());
+      const m=d.meetings.find(x=>x.id===id);
+      if(!m)throw new Error('Meeting not found');
+      return JSON.parse(JSON.stringify(m));
+    }
+    if(method==='PUT'&&/^\/meetings\/\d+$/.test(pathname)){
+      const id=parseInt(pathname.split('/').pop());
+      const m=d.meetings.find(x=>x.id===id);
+      if(m){
+        if(body.status!==undefined)m.status=body.status;
+        if(body.rating!==undefined)m.rating=body.rating;
+        if(body.notes!==undefined)m.notes=body.notes;
+        if(body.meeting_date!==undefined)m.meeting_date=body.meeting_date;
+        if(body.quarter!==undefined)m.quarter=body.quarter;
+        _meetingsSave(d);
+      }
+      return m||{};
+    }
+    if(method==='POST'&&/^\/meetings\/\d+\/headlines$/.test(pathname)){
+      const mid=parseInt(pathname.split('/')[2]);
+      const m=d.meetings.find(x=>x.id===mid);
+      if(!m)throw new Error('Meeting not found');
+      const h={id:_genId(),type:body.type||'good_news',description:body.description};
+      m.headlines=m.headlines||[];m.headlines.push(h);_meetingsSave(d);return h;
+    }
+    if(method==='DELETE'&&/^\/meetings\/headlines\/\d+$/.test(pathname)){
+      const hid=parseInt(pathname.split('/').pop());
+      d.meetings.forEach(m=>{if(m.headlines)m.headlines=m.headlines.filter(h=>h.id!==hid)});
+      _meetingsSave(d);return{ok:true};
+    }
+    if(method==='POST'&&/^\/meetings\/\d+\/todos$/.test(pathname)){
+      const mid=parseInt(pathname.split('/')[2]);
+      const m=d.meetings.find(x=>x.id===mid);
+      if(!m)throw new Error('Meeting not found');
+      const t={id:_genId(),description:body.description,owner:body.owner||'',done:!!body.done};
+      m.todos=m.todos||[];m.todos.push(t);_meetingsSave(d);return t;
+    }
+    if(method==='PUT'&&/^\/meetings\/todos\/\d+$/.test(pathname)){
+      const tid=parseInt(pathname.split('/').pop());
+      let updated=null;
+      d.meetings.forEach(m=>{if(m.todos){const t=m.todos.find(x=>x.id===tid);if(t){if(body.description!==undefined)t.description=body.description;if(body.owner!==undefined)t.owner=body.owner;if(body.done!==undefined)t.done=!!body.done;updated=t}}});
+      _meetingsSave(d);return updated||{};
+    }
+    if(method==='DELETE'&&/^\/meetings\/todos\/\d+$/.test(pathname)){
+      const tid=parseInt(pathname.split('/').pop());
+      d.meetings.forEach(m=>{if(m.todos)m.todos=m.todos.filter(t=>t.id!==tid)});
+      _meetingsSave(d);return{ok:true};
+    }
+    throw new Error('Unhandled api path: '+method+' '+pathname);
+  }
+  const get=p=>api('GET',p),post=(p,b)=>api('POST',p,b),put=(p,b)=>api('PUT',p,b),del=p=>api('DELETE',p);
+  function fmtDate(d){if(!d)return '';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}
+  function getMeetingId(){const u=new URLSearchParams(window.location.search);const id=parseInt(u.get('id'));return isNaN(id)?null:id}
+  async function loadDetail(id){
+    try{
+      const m=await get('/meetings/'+id);
+      _currentMeeting=m;
+      document.getElementById('ws-title').innerHTML='&#x1F5D3;&#xFE0F; '+fmtDate(m.meeting_date);
+      document.getElementById('ws-sub').textContent=(m.quarter?m.quarter+' — ':'')+'Work through the agenda below.';
+      renderDetail(m);
+    }catch(e){
+      document.getElementById('meeting-empty').classList.remove('hidden');
+      document.getElementById('meeting-empty').innerHTML='Meeting not found. <a href="meeting.html" style="color:var(--accent);font-weight:600;">Back to Past Meetings &#x2192;</a>';
+    }
+  }
+  function renderDetail(m){
+    const c=document.getElementById('meeting-content');
+    if(_timerInterval){clearInterval(_timerInterval);_timerInterval=null;_timerStart=null;}
+    c.innerHTML=`
+      <div class="meeting-detail">
+        <div class="meeting-detail-heading">
+          <div><div class="meeting-detail-title">&#x1F5D3; ${fmtDate(m.meeting_date)}</div></div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <select class="field-select" id="meeting-status">
+              <option value="scheduled" ${m.status==='scheduled'?'selected':''}>Scheduled</option>
+              <option value="in_progress" ${m.status==='in_progress'?'selected':''}>In Progress</option>
+              <option value="completed" ${m.status==='completed'?'selected':''}>Completed</option>
+            </select>
+          </div>
+        </div>
+        <div class="meeting-timer-bar">
+          <button class="timer-btn" id="timer-btn">▶ Start Meeting</button>
+          <span class="timer-elapsed hidden" id="timer-elapsed">0:00</span>
+          <span style="font-size:.8rem;color:#888;font-family:inherit;">Target: 90 min</span>
+        </div>
+        <div id="agenda-accordion">
+          ${agendaSection(1,'Segue &#x2014; Good News','5 min',renderSegue(m))}
+          ${agendaSection(2,'Scorecard Review','5 min','<p style="font-size:.88rem;color:#888;font-family:inherit;">Review your weekly metrics. <a href="scorecard.html" style="color:var(--accent);">Open Scorecard &#x2192;</a></p>')}
+          ${agendaSection(3,'Priorities Review','5 min','<p style="font-size:.88rem;color:#888;font-family:inherit;">Review quarterly goals. <a href="goals.html" style="color:var(--accent);">Open Goals &#x2192;</a></p>')}
+          ${agendaSection(4,'Customer &amp; Employee Headlines','5 min',renderHeadlines(m))}
+          ${agendaSection(5,'To-Do List','5 min',renderTodos(m))}
+          ${agendaSection(6,'Issues &#x2014; Identify, Discuss, Solve','60 min','<p style="font-size:.88rem;color:#888;font-family:inherit;">Work through your issues list. <a href="issues.html" style="color:var(--accent);">Open Issues &#x2192;</a></p>')}
+          ${agendaSection(7,'Conclude &amp; Rate','5 min',renderConclude(m))}
+        </div>
+      </div>
+    `;
+    c.querySelector('#meeting-status').addEventListener('change',async e=>{
+      try{await put('/meetings/'+m.id,{...m,status:e.target.value});_currentMeeting.status=e.target.value;showToast('Status updated','success')}
+      catch(err){showToast('Update failed','error')}
+    });
+    const timerBtn=c.querySelector('#timer-btn'),timerEl=c.querySelector('#timer-elapsed');
+    timerBtn.addEventListener('click',async()=>{
+      if(!_timerStart){
+        _timerStart=Date.now();timerEl.classList.remove('hidden');timerBtn.textContent='⏹ End Meeting';timerBtn.classList.add('running');
+        _timerInterval=setInterval(()=>{const s=Math.floor((Date.now()-_timerStart)/1000);const mm=Math.floor(s/60),ss=s%60;timerEl.textContent=mm+':'+(ss<10?'0':'')+ss;},1000);
+        try{await put('/meetings/'+m.id,{...m,status:'in_progress'});c.querySelector('#meeting-status').value='in_progress';_currentMeeting.status='in_progress';}catch(_){}
+      }else{
+        clearInterval(_timerInterval);_timerInterval=null;_timerStart=null;
+        timerEl.classList.add('hidden');timerBtn.textContent='▶ Start Meeting';timerBtn.classList.remove('running');
+        try{await put('/meetings/'+m.id,{...m,status:'completed'});c.querySelector('#meeting-status').value='completed';_currentMeeting.status='completed';}catch(_){}
+      }
+    });
+    c.querySelectorAll('.agenda-toggle').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const content=btn.nextElementSibling;
+        const isOpen=content.classList.contains('open');
+        btn.classList.toggle('open',!isOpen);
+        content.classList.toggle('open',!isOpen);
+      });
+    });
+    wireHeadlines(m,c);wireTodos(m,c);wireConclude(m,c);
+  }
+  function agendaSection(num,title,time,content){
+    return `<div class="agenda-section"><button class="agenda-toggle"><div class="agenda-num">${num}</div><div class="agenda-title-text">${title}</div><span class="agenda-time">${time}</span><span class="agenda-arrow">&#x25BC;</span></button><div class="agenda-content">${content}</div></div>`;
+  }
+  function renderSegue(m){
+    return `<p style="font-size:.88rem;color:#666;font-family:inherit;">Start with 1 minute each: share a piece of good news &#x2014; personal or professional.</p>`;
+  }
+  function renderHeadlines(m){
+    const items=(m.headlines||[]);
+    return `<ul class="item-list" id="headlines-list">${items.length?items.map(h=>`<li><span class="item-text">${escHtml(h.description)}</span><span class="item-meta">${h.type==='good_news'?'&#x1F4A1;':'&#x26A0;'}</span><button class="item-del-btn" data-hid="${h.id}">&times;</button></li>`).join(''):'<li style="color:#aaa;font-style:italic;">No headlines yet.</li>'}</ul><div class="item-add-row"><select class="field-select" id="headline-type" style="flex-shrink:0;padding:7px 10px;"><option value="good_news">&#x1F4A1; Good News</option><option value="headline">&#x26A0; Headline</option></select><input type="text" class="item-add-input" id="headline-input" placeholder="Add a headline..."/><button class="ws-btn" id="add-headline-btn" style="padding:8px 14px;">Add</button></div>`;
+  }
+  function renderTodos(m){
+    const items=(m.todos||[]);
+    return `<ul class="item-list" id="todos-list">${items.length?items.map(t=>`<li><input type="checkbox" ${t.done?'checked':''} data-tid="${t.id}" style="flex-shrink:0;"/><span class="item-text" style="${t.done?'text-decoration:line-through;color:#aaa':''}">${escHtml(t.description)}</span><span class="item-meta">${t.owner?escHtml(t.owner):''}</span><button class="item-del-btn" data-tid="${t.id}">&times;</button></li>`).join(''):'<li style="color:#aaa;font-style:italic;">No todos yet.</li>'}</ul><div class="item-add-row"><input type="text" class="item-add-input" id="todo-input" placeholder="Add a to-do..."/><input type="text" class="item-add-input" id="todo-owner" placeholder="Owner" style="max-width:120px;"/><button class="ws-btn" id="add-todo-btn" style="padding:8px 14px;">Add</button></div>`;
+  }
+  function renderConclude(m){
+    return `<div style="margin-bottom:16px;"><span class="label-sm">Meeting Rating (1&#x2013;10)</span><div class="rating-btns">${[...Array(10)].map((_,i)=>`<button class="rating-btn ${m.rating===(i+1)?'selected':''}" data-rating="${i+1}">${i+1}</button>`).join('')}</div></div><div><span class="label-sm">Notes / Cascading Messages</span><textarea class="notes-textarea" id="meeting-notes" placeholder="Any action items or messages to cascade to the team...">${escHtml(m.notes||'')}</textarea><button class="ws-btn-secondary" id="save-notes-btn" style="margin-top:8px;">Save Notes</button></div>`;
+  }
+  function wireHeadlines(m,c){
+    c.querySelector('#add-headline-btn')&&c.querySelector('#add-headline-btn').addEventListener('click',async()=>{
+      const desc=c.querySelector('#headline-input').value.trim();
+      const type=c.querySelector('#headline-type').value;
+      if(!desc)return;
+      try{await post('/meetings/'+m.id+'/headlines',{type,description:desc});showToast('Added','success');await loadDetail(m.id)}
+      catch(e){showToast('Failed','error')}
+    });
+    c.querySelectorAll('.item-del-btn[data-hid]').forEach(btn=>btn.addEventListener('click',async()=>{
+      try{await del('/meetings/headlines/'+btn.dataset.hid);await loadDetail(m.id)}catch(e){showToast('Failed','error')}
+    }));
+  }
+  function wireTodos(m,c){
+    c.querySelector('#add-todo-btn')&&c.querySelector('#add-todo-btn').addEventListener('click',async()=>{
+      const desc=c.querySelector('#todo-input').value.trim();
+      const owner=c.querySelector('#todo-owner').value.trim();
+      if(!desc)return;
+      try{await post('/meetings/'+m.id+'/todos',{description:desc,owner,done:false});showToast('Added','success');await loadDetail(m.id)}
+      catch(e){showToast('Failed','error')}
+    });
+    c.querySelectorAll('input[type=checkbox][data-tid]').forEach(cb=>cb.addEventListener('change',async()=>{
+      const todo=(m.todos||[]).find(t=>t.id===parseInt(cb.dataset.tid));
+      if(!todo)return;
+      try{await put('/meetings/todos/'+cb.dataset.tid,{...todo,done:cb.checked});}
+      catch(e){cb.checked=!cb.checked;showToast('Failed','error')}
+    }));
+    c.querySelectorAll('.item-del-btn[data-tid]').forEach(btn=>btn.addEventListener('click',async()=>{
+      try{await del('/meetings/todos/'+btn.dataset.tid);await loadDetail(m.id)}catch(e){showToast('Failed','error')}
+    }));
+  }
+  function wireConclude(m,c){
+    c.querySelectorAll('.rating-btn').forEach(btn=>btn.addEventListener('click',async()=>{
+      const rating=parseInt(btn.dataset.rating);
+      try{await put('/meetings/'+m.id,{...m,rating});_currentMeeting.rating=rating;c.querySelectorAll('.rating-btn').forEach(b=>b.classList.toggle('selected',parseInt(b.dataset.rating)===rating));showToast('Rating saved','success');}
+      catch(e){showToast('Failed','error')}
+    }));
+    const notesBtn=c.querySelector('#save-notes-btn');
+    notesBtn&&notesBtn.addEventListener('click',async()=>{
+      const notes=c.querySelector('#meeting-notes').value;
+      try{await put('/meetings/'+m.id,{...m,notes});showToast('Notes saved','success')}
+      catch(e){showToast('Failed','error')}
+    });
+  }
+  (async()=>{
+    const{data:{user}}=await _sb.auth.getUser();
+    if(!user){window.location.href='login.html';return}
+    const id=getMeetingId();
+    if(!id){
+      document.getElementById('meeting-empty').classList.remove('hidden');
+    }else{
+      await loadDetail(id);
+    }
+    document.body.style.opacity='1';
+  })();
+  </script>
+</body>
+</html>

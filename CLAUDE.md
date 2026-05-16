@@ -97,9 +97,15 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.53
+v0.5.54
 
-## Recent Changes (v0.5.53)
+## Recent Changes (v0.5.54)
+- Split the Meeting tool into two pages: `meeting.html` is now a clean list of past / scheduled meetings (Operations card lands here), and `run-meeting.html` is the active workspace (timer, agenda, headlines, todos, rating, notes).
+- Clicking a row in the past-meetings list opens `run-meeting.html?id=X`. The "+ New Meeting" button creates a meeting and navigates straight into `run-meeting.html`.
+- `run-meeting.html` back link → `meeting.html` (Past Meetings). Both pages share the same `coach4u_demo_meetings` localStorage data, so changes in the workspace immediately reflect in the list.
+- Removed the sidebar layout from `meeting.html`; the past meetings now render full-width with a chevron arrow per row.
+
+## Previous (v0.5.53)
 - Fixed the Start / End Meeting button on `meeting.html` rendering literal `&#x23F9;` / `&#x25B6;` text — `.textContent` doesn't decode HTML entities, so the JS-set button labels were showing escape codes instead of glyphs. Replaced with literal ⏹ / ▶ Unicode characters.
 - Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.53
 
