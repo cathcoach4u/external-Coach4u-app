@@ -59,6 +59,25 @@
     .bottom-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0 6px;text-decoration:none;color:#aaa;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;gap:3px;transition:color .15s}
     .bottom-nav-item.active,.bottom-nav-item:hover{color:#0D9488;text-decoration:none}
     .bottom-nav-icon{font-size:20px;line-height:1}
+    /* Team Check-in section */
+    .checkin-block{background:white;border:1px solid var(--border);border-radius:12px;padding:18px;margin:0 16px 14px}
+    .checkin-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+    .checkin-title{font-family:inherit;font-weight:700;color:var(--primary);font-size:1rem;margin:0}
+    .checkin-count{font-family:inherit;color:#666;font-size:.82rem;margin:2px 0 0}
+    .checkin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+    .checkin-empty{font-family:inherit;color:#888;font-size:.83rem;font-style:italic;margin:4px 0 0}
+    .ci-table{width:100%;border-collapse:collapse;font-family:inherit;font-size:.83rem;margin-top:6px}
+    .ci-table th{text-align:left;color:#888;font-weight:600;font-size:.72rem;letter-spacing:.5px;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--border)}
+    .ci-table td{padding:8px;border-bottom:1px solid #f0f0f0;vertical-align:middle;color:var(--text)}
+    .ci-table .ci-avg{font-weight:700;color:var(--primary);font-variant-numeric:tabular-nums;text-align:right;width:54px}
+    .ci-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+    .ci-dot-red{background:#dc2626}
+    .ci-dot-amber{background:#f59e0b}
+    .ci-dot-green{background:#10b981}
+    .ci-comments{margin-top:6px}
+    .ci-comments .ci-q{font-family:inherit;font-weight:700;color:var(--primary);font-size:.85rem;margin:14px 0 4px}
+    .ci-comments .ci-c{font-family:inherit;color:#444;font-size:.83rem;background:#f8fafc;border-left:3px solid var(--accent);padding:6px 10px;border-radius:4px;margin:4px 0;line-height:1.45}
+    .ci-comments .ci-c .ci-author{color:#888;font-size:.75rem;font-weight:600;margin-right:6px}
   </style>
   <script src="js/active-session.js" defer></script>
 </head>
@@ -164,11 +183,86 @@
   function updateSession(id,patch){const all=_quarterlyLoad();const s=all.find(x=>x.id===id);if(s){Object.assign(s,patch);_quarterlySave(all)}return s}
   function updateAgendaNotes(id,agendaId,notes){const all=_quarterlyLoad();const s=all.find(x=>x.id===id);if(s){const a=(s.agenda||[]).find(x=>x.id===agendaId);if(a){a.notes=notes;_quarterlySave(all)}}return s}
 
+  // 17 team check-in questions (must stay in sync with team-checkin.html)
+  const CHECKIN_QUESTIONS = [
+    "We have a clear vision in writing that has been properly communicated and is shared by all.",
+    "Our Core Focus (core business) is clear, and we keep our people, systems, and processes aligned with it.",
+    "Our 10-Year Target (big, long-range business goal) is clear, communicated regularly, and is shared by all.",
+    "Our 3-Year Target is clear, communicated regularly, and is shared by all.",
+    "Our Accountability Chart (organisational chart that includes roles/responsibilities) is clear, complete, and constantly updated.",
+    "Everyone is in the \"right seat\" (they get it, want it, and have the capacity to do their job well).",
+    "Our leadership team is open and honest, and demonstrates a high level of trust.",
+    "All teams clearly identify, discuss, and solve issues for the long-term greater good of the business.",
+    "Everyone is engaged in regular weekly meetings.",
+    "Everyone has Quarterly Projects (1 to 7 priorities per quarter) and is focused on them.",
+    "All meetings are on the same day and at the same time each week, have the same agenda, and start and end on time.",
+    "We conduct Annual Meetings to discuss the focus for the upcoming year.",
+    "Our core values are clear, and we are hiring, reviewing, rewarding, and firing around them.",
+    "All of the people in our organisation are the \"right people\" (they fit our culture and share our values).",
+    "We have a focus on mentoring and coaching our team members.",
+    "We have a focus on a Strengths-Based Culture.",
+    "We are committed to creating a workplace culture where everyone can thrive in all aspects."
+  ];
+
+  function loadCheckins(sessionId, sessionType){
+    try {
+      const all = JSON.parse(localStorage.getItem('coach4u_team_checkins') || '[]');
+      return all.filter(c => c.session_id === sessionId && c.session_type === sessionType);
+    } catch (_) { return []; }
+  }
+  function aggregate(checkins, questionCount){
+    if (!checkins.length) return [];
+    const out = [];
+    for (let q = 0; q < questionCount; q++) {
+      const scores = checkins.map(c => (c.scores || [])[q]).filter(v => typeof v === 'number');
+      const avg = scores.length ? scores.reduce((a,b) => a+b, 0) / scores.length : null;
+      out.push({ q, avg, count: scores.length });
+    }
+    return out;
+  }
+  function avgClass(avg){ if(avg==null) return ''; if(avg<3) return 'ci-dot-red'; if(avg<4) return 'ci-dot-amber'; return 'ci-dot-green'; }
+  function truncate(s,n){ s=String(s||''); return s.length>n ? s.slice(0,n-1)+'…' : s; }
+  function renderCheckinResultsTable(checkins){
+    if(!checkins.length) return '<p class="checkin-empty">No team check-ins yet. Send the form link from the section above.</p>';
+    const agg = aggregate(checkins, CHECKIN_QUESTIONS.length)
+      .map(r => ({...r, text: CHECKIN_QUESTIONS[r.q]}))
+      .filter(r => r.avg != null)
+      .sort((a,b) => a.avg - b.avg);
+    return `<table class="ci-table">
+      <thead><tr><th>Question</th><th style="text-align:right;">Avg</th></tr></thead>
+      <tbody>${agg.map(r => `<tr>
+        <td><span class="ci-dot ${avgClass(r.avg)}"></span>${escHtml(truncate(r.text,80))}</td>
+        <td class="ci-avg">${r.avg.toFixed(1)}</td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  }
+  function renderCheckinComments(checkins){
+    if(!checkins.length) return '';
+    const blocks = [];
+    for(let q=0; q<CHECKIN_QUESTIONS.length; q++){
+      const items = checkins
+        .map(c => ({ name: c.name, role: c.role, comment: (c.comments||[])[q] }))
+        .filter(x => x.comment && String(x.comment).trim());
+      if(items.length){
+        blocks.push(`<div class="ci-q">${escHtml(CHECKIN_QUESTIONS[q])}</div>` +
+          items.map(it => `<div class="ci-c"><span class="ci-author">${escHtml(it.name||'Anon')}${it.role?' · '+escHtml(it.role):''}</span>${escHtml(it.comment)}</div>`).join(''));
+      }
+    }
+    if(!blocks.length) return '<p class="checkin-empty" style="margin-top:10px;">No comments submitted.</p>';
+    return '<div class="ci-comments">' + blocks.join('') + '</div>';
+  }
+  function buildCheckinLink(sessionId){
+    return new URL('team-checkin.html?session='+sessionId+'&type=quarterly', window.location.href).href;
+  }
+
   function buildAgendaSteps(s){
     const tq=s.target_quarter||'';
     const pq=priorQuarter(tq)||'last quarter';
     const tqNum=(/^Q(\d)/.exec(tq)||[])[1]||'n';
     return [
+      {id:'checkin',title:'Review Team Check-in',
+        prompt:'Read through the aggregated team scores below. Discuss the lowest-rated statements first — they show where the team feels least confident going into '+(tq||'next quarter')+'.',
+        links:[]},
       {id:1,title:'Review Last Quarter',
         prompt:'Walk through every '+pq+' goal — what hit, what missed, why.',
         links:[{href:'goals.html',text:'Open Quarterly Goals →'}]},
@@ -203,7 +297,26 @@
     if(_timerInterval){clearInterval(_timerInterval);_timerInterval=null;_timerStart=null;}
     const agendaMap={};(s.agenda||[]).forEach(a=>{agendaMap[a.id]=a});
     const steps=buildAgendaSteps(s);
+    const checkins=loadCheckins(s.id,'quarterly');
+    const checkinLink=buildCheckinLink(s.id);
+    const countTxt=checkins.length===0?'No responses yet':(checkins.length+' team '+(checkins.length===1?'response':'responses')+' received');
+    const tableHtml=checkins.length
+      ? renderCheckinResultsTable(checkins)
+      : '<p class="checkin-empty">Share the link with your team — their feedback will appear here as they submit.</p>';
     c.innerHTML=`
+      <div class="checkin-block">
+        <div class="checkin-head">
+          <div>
+            <h3 class="checkin-title">&#x1F31F; Team Check-in</h3>
+            <p class="checkin-count">${countTxt}</p>
+          </div>
+        </div>
+        <div class="checkin-actions">
+          <button class="ws-btn" id="copy-checkin-link">Copy Check-in Link</button>
+          <a class="ws-btn-secondary" href="${escHtml(checkinLink)}" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;">Open Form</a>
+        </div>
+        ${tableHtml}
+      </div>
       <div class="session-detail">
         <div class="session-detail-heading">
           <div><div class="session-detail-title">&#x1F3AF; ${fmtDate(s.session_date)} &middot; Sets ${escHtml(s.target_quarter||'')}</div></div>
@@ -221,22 +334,32 @@
           <span style="font-size:.8rem;color:#888;font-family:inherit;">Target: half day</span>
         </div>
         <div id="agenda-accordion">
-          ${steps.map(step=>{
+          ${steps.map((step,idx)=>{
             const a=agendaMap[step.id]||{notes:''};
+            const isCheckin=(step.id==='checkin');
             const isConclude=(step.id===4);
+            const displayNum=idx+1;
             const linksHtml=step.links.length?`<p class="agenda-links">${step.links.map(l=>`<a href="${l.href}">${l.text}</a>`).join('')}</p>`:'';
             const ratingHtml=isConclude?`<div style="margin-bottom:14px;"><span class="label-sm">Session Rating (1–10)</span><div class="rating-btns">${[...Array(10)].map((_,i)=>`<button class="rating-btn ${s.rating===(i+1)?'selected':''}" data-rating="${i+1}">${i+1}</button>`).join('')}</div></div>`:'';
             const notesLabel=isConclude?'Decisions, action items, next steps':'Notes';
-            return `
-              <div class="agenda-section">
-                <button class="agenda-toggle"><div class="agenda-num">${step.id}</div><div class="agenda-title-text">${step.title}</div><span class="agenda-arrow">▼</span></button>
-                <div class="agenda-content">
-                  <p class="agenda-prompt">${step.prompt}</p>
+            let body;
+            if(isCheckin){
+              const innerTable=checkins.length?renderCheckinResultsTable(checkins):'<p class="checkin-empty">No team check-ins yet. Send the form link from the section above.</p>';
+              const commentsHtml=renderCheckinComments(checkins);
+              body=`<p class="agenda-prompt">${step.prompt}</p>${innerTable}${commentsHtml}`;
+            } else {
+              body=`<p class="agenda-prompt">${step.prompt}</p>
                   ${linksHtml}
                   ${ratingHtml}
                   <span class="label-sm">${notesLabel}</span>
                   <textarea class="notes-textarea" data-agenda-id="${step.id}" placeholder="Type your notes here...">${escHtml(a.notes||'')}</textarea>
-                  <div style="margin-top:8px;"><button class="ws-btn-secondary save-notes-btn" data-agenda-id="${step.id}">Save Notes</button></div>
+                  <div style="margin-top:8px;"><button class="ws-btn-secondary save-notes-btn" data-agenda-id="${step.id}">Save Notes</button></div>`;
+            }
+            return `
+              <div class="agenda-section">
+                <button class="agenda-toggle"><div class="agenda-num">${displayNum}</div><div class="agenda-title-text">${step.title}</div><span class="agenda-arrow">▼</span></button>
+                <div class="agenda-content">
+                  ${body}
                 </div>
               </div>
             `;
@@ -244,6 +367,18 @@
         </div>
       </div>
     `;
+    const copyBtn=c.querySelector('#copy-checkin-link');
+    if(copyBtn){
+      copyBtn.addEventListener('click',()=>{
+        const link=buildCheckinLink(s.id);
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(link).then(()=>showToast('Link copied — share it with your team','success'),()=>showToast('Copy failed — '+link,'error'));
+        } else {
+          try{const ta=document.createElement('textarea');ta.value=link;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('Link copied — share it with your team','success');}
+          catch(_){showToast('Copy failed — '+link,'error');}
+        }
+      });
+    }
     c.querySelector('#session-status').addEventListener('change',e=>{
       try{
         updateSession(s.id,{status:e.target.value});_currentSession.status=e.target.value;showToast('Status updated','success');

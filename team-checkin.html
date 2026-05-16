@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Team Check-in | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#003366">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    body{opacity:0;transition:opacity .2s ease}
+    .container{padding-bottom:60px;max-width:780px;margin:0 auto}
+    .ws-header{padding:20px 16px 0}
+    .ws-title{font-size:1.25rem;font-weight:800;color:var(--primary);margin:0 0 6px}
+    .ws-sub{font-size:.9rem;color:#666;margin:0 0 14px;line-height:1.5}
+    .legend{font-size:.78rem;color:#666;background:#f8fafc;border-left:3px solid var(--accent);padding:8px 12px;border-radius:6px;margin:0 16px 18px;font-family:inherit}
+    .checkin-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px;margin:0 16px 16px}
+    .field-label{font-family:inherit;font-weight:600;color:var(--primary);font-size:.88rem;display:block;margin-bottom:6px}
+    .field-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-family:inherit;font-size:.92rem;color:var(--text);box-sizing:border-box}
+    .field-input:focus{outline:none;border-color:var(--accent)}
+    .q-card{background:white;border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin:0 16px 12px}
+    .q-num{font-family:inherit;font-weight:700;color:var(--accent);font-size:.78rem;letter-spacing:.5px;margin-bottom:4px;display:block}
+    .q-text{font-family:inherit;font-weight:600;color:var(--primary);font-size:.95rem;line-height:1.45;margin:0 0 12px}
+    .rating-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+    .rating-btn{width:46px;height:46px;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:inherit;font-weight:700;font-size:1rem;color:var(--primary);transition:all .15s}
+    .rating-btn:hover{border-color:var(--accent)}
+    .rating-btn.selected{background:var(--primary);color:white;border-color:var(--primary)}
+    .comment-toggle{background:none;border:none;color:var(--accent);font-family:inherit;font-weight:600;font-size:.82rem;cursor:pointer;padding:6px 0 0;text-align:left}
+    .comment-toggle:hover{text-decoration:underline}
+    .comment-area{margin-top:8px;display:none}
+    .comment-area.open{display:block}
+    .comment-area textarea{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-family:inherit;font-size:.88rem;min-height:60px;resize:vertical;box-sizing:border-box}
+    .comment-area textarea:focus{outline:none;border-color:var(--accent)}
+    .submit-bar{margin:18px 16px 0}
+    .submit-btn{width:100%;padding:14px 20px;background:var(--accent);color:white;border:none;border-radius:10px;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:background .15s}
+    .submit-btn:hover{background:var(--accent-dark)}
+    .submit-btn:disabled{background:#cbd5e1;cursor:not-allowed}
+    .submit-error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;margin:12px 16px 0;font-family:inherit;font-size:.85rem}
+    .success-card{background:white;border:2px solid var(--accent);border-radius:12px;padding:36px 24px;margin:0 16px;text-align:center}
+    .success-icon{font-size:48px;margin-bottom:12px}
+    .success-title{font-family:inherit;font-weight:800;color:var(--primary);font-size:1.25rem;margin:0 0 8px}
+    .success-text{font-family:inherit;color:#666;font-size:.95rem;line-height:1.5;margin:0}
+    .q-card.q-missing{border-color:#fca5a5;background:#fef2f2}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <span class="header-title">Team Check-in</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="ws-header">
+      <h1 class="ws-title">&#x1F31F; Team Check-in</h1>
+      <p class="ws-sub">Rate each statement honestly. Your answers help your team's planning session focus on the right things.</p>
+    </div>
+
+    <div class="legend"><strong>1</strong> = Strongly Disagree &nbsp;&middot;&nbsp; <strong>5</strong> = Strongly Agree</div>
+
+    <div id="form-wrap">
+      <div class="checkin-card">
+        <div style="margin-bottom:14px;">
+          <label class="field-label" for="ci-name">Your name <span style="color:#991b1b;">*</span></label>
+          <input class="field-input" id="ci-name" type="text" autocomplete="name" placeholder="Jane Smith"/>
+        </div>
+        <div>
+          <label class="field-label" for="ci-role">Your role (optional)</label>
+          <input class="field-input" id="ci-role" type="text" placeholder="e.g. Operations Lead"/>
+        </div>
+      </div>
+
+      <div id="questions"></div>
+
+      <div id="submit-error" class="submit-error" style="display:none;"></div>
+      <div class="submit-bar">
+        <button class="submit-btn" id="submitBtn">Submit Check-in</button>
+      </div>
+    </div>
+
+    <div id="success-wrap" style="display:none;">
+      <div class="success-card">
+        <div class="success-icon">&#x2705;</div>
+        <h2 class="success-title">Thank you &mdash; your check-in has been recorded</h2>
+        <p class="success-text">Your responses have been sent to your team. You can close this page now.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  'use strict';
+  // PUBLIC PAGE - no Supabase auth gate. Anyone with the URL can submit.
+
+  const QUESTIONS = [
+    "We have a clear vision in writing that has been properly communicated and is shared by all.",
+    "Our Core Focus (core business) is clear, and we keep our people, systems, and processes aligned with it.",
+    "Our 10-Year Target (big, long-range business goal) is clear, communicated regularly, and is shared by all.",
+    "Our 3-Year Target is clear, communicated regularly, and is shared by all.",
+    "Our Accountability Chart (organisational chart that includes roles/responsibilities) is clear, complete, and constantly updated.",
+    "Everyone is in the \"right seat\" (they get it, want it, and have the capacity to do their job well).",
+    "Our leadership team is open and honest, and demonstrates a high level of trust.",
+    "All teams clearly identify, discuss, and solve issues for the long-term greater good of the business.",
+    "Everyone is engaged in regular weekly meetings.",
+    "Everyone has Quarterly Projects (1 to 7 priorities per quarter) and is focused on them.",
+    "All meetings are on the same day and at the same time each week, have the same agenda, and start and end on time.",
+    "We conduct Annual Meetings to discuss the focus for the upcoming year.",
+    "Our core values are clear, and we are hiring, reviewing, rewarding, and firing around them.",
+    "All of the people in our organisation are the \"right people\" (they fit our culture and share our values).",
+    "We have a focus on mentoring and coaching our team members.",
+    "We have a focus on a Strengths-Based Culture.",
+    "We are committed to creating a workplace culture where everyone can thrive in all aspects."
+  ];
+
+  function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+  function getParams(){
+    const u = new URLSearchParams(window.location.search);
+    const id = parseInt(u.get('session'));
+    const type = u.get('type');
+    return {
+      session_id: isNaN(id) ? null : id,
+      session_type: (type === 'annual' || type === 'quarterly') ? type : null
+    };
+  }
+
+  const state = {
+    scores: new Array(QUESTIONS.length).fill(null),
+    comments: new Array(QUESTIONS.length).fill('')
+  };
+
+  function renderQuestions(){
+    const wrap = document.getElementById('questions');
+    wrap.innerHTML = QUESTIONS.map((q, i) => `
+      <div class="q-card" data-qi="${i}">
+        <span class="q-num">QUESTION ${i+1} of ${QUESTIONS.length}</span>
+        <p class="q-text">${escHtml(q)}</p>
+        <div class="rating-row" data-q="${i}">
+          ${[1,2,3,4,5].map(n => `<button type="button" class="rating-btn" data-q="${i}" data-score="${n}">${n}</button>`).join('')}
+        </div>
+        <button type="button" class="comment-toggle" data-toggle="${i}">+ Add a comment</button>
+        <div class="comment-area" id="comment-${i}">
+          <textarea data-comment-q="${i}" placeholder="Optional comment..."></textarea>
+        </div>
+      </div>
+    `).join('');
+
+    wrap.querySelectorAll('.rating-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const q = parseInt(btn.dataset.q);
+        const score = parseInt(btn.dataset.score);
+        state.scores[q] = score;
+        wrap.querySelectorAll('.rating-btn[data-q="'+q+'"]').forEach(b => {
+          b.classList.toggle('selected', parseInt(b.dataset.score) === score);
+        });
+        const card = wrap.querySelector('.q-card[data-qi="'+q+'"]');
+        if (card) card.classList.remove('q-missing');
+      });
+    });
+
+    wrap.querySelectorAll('.comment-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.dataset.toggle);
+        const area = document.getElementById('comment-' + i);
+        const open = area.classList.toggle('open');
+        btn.textContent = open ? '− Hide comment' : '+ Add a comment';
+        if (open) area.querySelector('textarea').focus();
+      });
+    });
+
+    wrap.querySelectorAll('textarea[data-comment-q]').forEach(ta => {
+      ta.addEventListener('input', () => {
+        state.comments[parseInt(ta.dataset.commentQ)] = ta.value;
+      });
+    });
+  }
+
+  function validate(){
+    const name = document.getElementById('ci-name').value.trim();
+    const errors = [];
+    if (!name) errors.push('Please enter your name.');
+    const missing = [];
+    state.scores.forEach((s, i) => { if (s === null || s === undefined) missing.push(i); });
+    if (missing.length) errors.push('Please rate all ' + QUESTIONS.length + ' questions (missing: ' + missing.map(i => i+1).join(', ') + ').');
+    // highlight missing
+    document.querySelectorAll('.q-card').forEach(card => card.classList.remove('q-missing'));
+    missing.forEach(i => {
+      const c = document.querySelector('.q-card[data-qi="'+i+'"]');
+      if (c) c.classList.add('q-missing');
+    });
+    return { ok: errors.length === 0, errors, name, missing };
+  }
+
+  function showError(msg){
+    const e = document.getElementById('submit-error');
+    e.textContent = msg;
+    e.style.display = 'block';
+  }
+  function hideError(){
+    document.getElementById('submit-error').style.display = 'none';
+  }
+
+  function loadAll(){
+    try { return JSON.parse(localStorage.getItem('coach4u_team_checkins') || '[]') || []; }
+    catch (_) { return []; }
+  }
+  function saveAll(arr){ localStorage.setItem('coach4u_team_checkins', JSON.stringify(arr)); }
+
+  function submitForm(){
+    hideError();
+    const v = validate();
+    if (!v.ok) {
+      showError(v.errors.join(' '));
+      // scroll to first missing
+      if (v.missing && v.missing.length) {
+        const card = document.querySelector('.q-card[data-qi="'+v.missing[0]+'"]');
+        if (card) card.scrollIntoView({behavior:'smooth', block:'center'});
+      } else if (!v.name) {
+        document.getElementById('ci-name').focus();
+      }
+      return;
+    }
+
+    const params = getParams();
+    const role = document.getElementById('ci-role').value.trim();
+    const submission = {
+      id: Date.now() * 1000 + Math.floor(Math.random() * 1000),
+      session_id: params.session_id,
+      session_type: params.session_type,
+      name: v.name,
+      role: role,
+      submitted_at: new Date().toISOString(),
+      scores: state.scores.slice(),
+      comments: state.comments.slice()
+    };
+
+    try {
+      const all = loadAll();
+      all.push(submission);
+      saveAll(all);
+    } catch (err) {
+      showError('Could not save your check-in. Please try again.');
+      return;
+    }
+
+    // success state
+    document.getElementById('form-wrap').style.display = 'none';
+    document.getElementById('success-wrap').style.display = 'block';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderQuestions();
+    document.getElementById('submitBtn').addEventListener('click', submitForm);
+    document.body.style.opacity = '1';
+  });
+  </script>
+</body>
+</html>

@@ -41,6 +41,7 @@ annual-sessions.html    — list of past + scheduled annual planning sessions
 run-annual-session.html — workspace for a single annual planning session (agenda + notes)
 quarterly-sessions.html — list of past + scheduled quarterly planning sessions
 run-quarterly-session.html — workspace for a single quarterly planning session
+team-checkin.html       — public team-facing check-in form (no auth) — 17-question EOS-style organisational survey; submissions write to coach4u_team_checkins keyed by session_id + session_type
 learning-vault.html     — reference / how-to area (one active card + coming-soon placeholders)
 one-page-plan.html      — printable landscape one-page business plan (fed by the 5 worksheets)
 login.html              — gold standard login
@@ -103,9 +104,18 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.71
+v0.5.72
 
-## Recent Changes (v0.5.71)
+## Recent Changes (v0.5.72)
+- **Team Check-in form added.** A new public, auth-free page `team-checkin.html` lets team members rate 17 organisational health statements (1–5 Likert, EOS-style) before each Annual or Quarterly planning session. The leader copies a per-session link (`team-checkin.html?session=<id>&type=annual|quarterly`) from the session workspace and shares it with the team. Anyone with the link can submit — no Supabase auth gate.
+- **17 questions** cover vision, core focus, 10-year + 3-year targets, accountability chart, "right seat", leadership trust, issue solving, weekly meetings, quarterly priorities, annual meetings, core values hiring/firing, "right people", mentoring/coaching, strengths-based culture, and thriving culture.
+- **Each question** offers a 1–5 rating (1 = Strongly Disagree, 5 = Strongly Agree) plus an optional comment expander. Submissions validate required name + all 17 ratings before saving.
+- **Database-ready JSON.** Submissions write to localStorage under `coach4u_team_checkins` as an array of `{ id, session_id, session_type, name, role, submitted_at (ISO), scores: number[17], comments: string[17] }`. This is the exact shape that will post to a future Supabase `team_checkins` table when the data layer is wired up — no restructuring needed.
+- **Workspace aggregation.** Both `run-annual-session.html` and `run-quarterly-session.html` now have a "🌟 Team Check-in" block above the agenda showing the response count, a **Copy Check-in Link** button (clipboard + toast), an **Open Form** preview link, and a compact results table sorted lowest-avg first with red/amber/green dots (< 3 red, 3–4 amber, ≥ 4 green) so weak spots surface immediately.
+- **New "Review Team Check-in" agenda item** inserted as Step 1 in both workspaces, pushing the existing steps to 2–6 (annual) / 2–5 (quarterly). Step body shows the same aggregated table plus per-question comments grouped by author so the team can read individual feedback during the meeting. Existing agenda step IDs (1–5 / 1–4) are unchanged in the underlying data — only the display number shifts — so saved notes still attach to the right step.
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.72.
+
+## Previous (v0.5.71)
 - **Floating Resume Planning Session pill.** When you tap Start Session on an Annual or Quarterly Planning workspace, a teal pill appears bottom-center on every page in the app. Tap it to return to the in-progress session. Clears automatically when you mark the session completed or click End Session.
 - Implemented as a shared `js/active-session.js` loaded via `<script defer>` on every main page (21 pages: the dashboard, all 4 hubs, the 5 Strategy worksheets, the 5 Operations tools, the 4 planning session pages, the one-page plan, and `learn/values-discovery.html`).
 - Exposes `window.activeSession.set()` / `clear()` used by the two `run-*-session.html` workspaces. localStorage key: `coach4u_active_planning_session`.
