@@ -98,9 +98,21 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.65
+v0.5.66
 
-## Recent Changes (v0.5.65)
+## Recent Changes (v0.5.66)
+Final polish on `planning.html`:
+- **Fixed sign-out button class** — was `class="signOutBtn"` (mass-rename slip from v0.5.65 that broke its styling), now correctly `class="sign-out-btn"`.
+- **Bottom nav font aligned** with all other pages (`10px / 0.5px letter-spacing`).
+- **Subtitle tightened** — "The annual + quarterly cadence that drives your business. Each quarter reviews the last and produces the next set of goals." → "Your annual + quarterly rhythm. Each review closes one quarter and sets up the next."
+- **Stage labels simplified** — dropped the "Step N · " prefix on every node (the visual top-to-bottom flow already conveys order); labels now read just "Once a Year", "End of Q1", etc.
+- **Annual node balanced** — added a `Reviews: Last year's results` row so it has the same two-row layout as the Q1–Q4 nodes.
+- **"Start Here" chip** added to the Annual node (light-teal pill on navy gradient) so the entry point of the loop reads immediately.
+- **Primary CTA at top** — `View One-Page Plan` teal button above the flow, mirroring the pattern on Strategy/Operations hubs.
+- **Cycle indicator simplified** — dropped the muted "Each year refreshes..." subtext line; the visual loop already conveys the message.
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.66.
+
+## Previous (v0.5.65)
 Audit fixes for consistency across all pages:
 - **Hub titles simplified.** Dropped the verb prefixes on the two hubs that had them — `strategy.html` "Build Your Strategy" → "Strategy", `operations.html` "Run Your Operations" → "Operations". Now all 4 hubs match (Strategy / Operations / Planning / Learning Vault) and the bottom-nav labels.
 - **Goals header-title** changed from "Goals" to **"Quarterly Goals"** so the breadcrumb label matches the page heading.

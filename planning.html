@@ -127,7 +127,9 @@
       font-weight:600;
     }
     .flow-cycle-icon{font-size:1.05rem;margin-right:6px;vertical-align:-1px}
-    .flow-cycle .muted{color:#666;font-weight:400;font-size:.8rem;display:block;margin-top:2px}
+    .flow-cta{display:block;width:calc(100% - 32px);margin:0 16px 16px;padding:13px;background:var(--accent);color:white;border:none;border-radius:10px;font-size:.9rem;font-weight:700;text-align:center;text-decoration:none;transition:background .15s}
+    .flow-cta:hover{background:var(--accent-dark);color:white;text-decoration:none}
+    .start-chip{font-size:.62rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;background:#a7f3d0;color:#003366;padding:3px 8px;border-radius:20px;margin-left:6px}
 
     .bottom-nav{
       position:fixed;bottom:0;left:0;right:0;
@@ -140,8 +142,8 @@
       flex:1;display:flex;flex-direction:column;
       align-items:center;justify-content:center;
       padding:8px 0 6px;text-decoration:none;
-      color:#aaa;font-size:9.5px;font-weight:700;
-      text-transform:uppercase;letter-spacing:.4px;
+      color:#aaa;font-size:10px;font-weight:700;
+      text-transform:uppercase;letter-spacing:.5px;
       gap:3px;transition:color .15s;
     }
     .bottom-nav-item.active,.bottom-nav-item:hover{color:#0D9488;text-decoration:none}
@@ -155,24 +157,30 @@
         <a href="index.html" class="header-back">&#x2190; Home</a>
         <span class="header-title">Planning</span>
       </div>
-      <button class="signOutBtn" id="signOutBtn">Sign Out</button>
+      <button class="sign-out-btn" id="signOutBtn">Sign Out</button>
     </div>
   </header>
 
   <div class="container">
     <div class="ws-header">
       <h1 class="ws-title">&#x1F5FA;&#xFE0F; Planning Rhythm</h1>
-      <p class="ws-sub">The annual + quarterly cadence that drives your business. Each quarter reviews the last and produces the next set of goals.</p>
+      <p class="ws-sub">Your annual + quarterly rhythm. Each review closes one quarter and sets up the next.</p>
     </div>
+
+    <a class="flow-cta" href="one-page-plan.html">&#x1F4CB;&nbsp; View One-Page Plan</a>
 
     <div class="flow">
 
       <a href="one-page-plan.html" class="flow-node annual">
         <div class="flow-stage-row">
-          <span class="flow-stage-label">Step 1 &middot; Once a Year</span>
+          <span class="flow-stage-label">Once a Year <span class="start-chip">Start Here</span></span>
           <span class="flow-quarter-badge">Annual</span>
         </div>
         <h2 class="flow-title">&#x1F4C5; Annual Planning</h2>
+        <div class="flow-row">
+          <span class="flow-row-icon">&#x1F50D;</span>
+          <span><span class="flow-row-label">Reviews:</span><span class="flow-row-text">Last year&#x2019;s results</span></span>
+        </div>
         <div class="flow-row">
           <span class="flow-row-icon">&#x2728;</span>
           <span><span class="flow-row-label">Produces:</span><span class="flow-row-text">One-Page Business Plan + Q1 Goals</span></span>
@@ -183,7 +191,7 @@
 
       <a href="goals.html" class="flow-node">
         <div class="flow-stage-row">
-          <span class="flow-stage-label">Step 2 &middot; End of Q1</span>
+          <span class="flow-stage-label">End of Q1</span>
           <span class="flow-quarter-badge">Q1 Review</span>
         </div>
         <h2 class="flow-title">&#x1F501; Q1 Review</h2>
@@ -201,7 +209,7 @@
 
       <a href="goals.html" class="flow-node">
         <div class="flow-stage-row">
-          <span class="flow-stage-label">Step 3 &middot; End of Q2</span>
+          <span class="flow-stage-label">End of Q2</span>
           <span class="flow-quarter-badge">Q2 Review</span>
         </div>
         <h2 class="flow-title">&#x1F501; Q2 Review</h2>
@@ -219,7 +227,7 @@
 
       <a href="goals.html" class="flow-node">
         <div class="flow-stage-row">
-          <span class="flow-stage-label">Step 4 &middot; End of Q3</span>
+          <span class="flow-stage-label">End of Q3</span>
           <span class="flow-quarter-badge">Q3 Review</span>
         </div>
         <h2 class="flow-title">&#x1F501; Q3 Review</h2>
@@ -237,7 +245,7 @@
 
       <a href="goals.html" class="flow-node">
         <div class="flow-stage-row">
-          <span class="flow-stage-label">Step 5 &middot; End of Q4</span>
+          <span class="flow-stage-label">End of Q4</span>
           <span class="flow-quarter-badge">Q4 Review</span>
         </div>
         <h2 class="flow-title">&#x1F501; Q4 Review</h2>
@@ -254,7 +262,6 @@
       <div class="flow-cycle">
         <span class="flow-cycle-icon">&#x21A9;&#xFE0F;</span>
         Cycles back to Annual Planning
-        <span class="muted">Each year refreshes the One-Page Plan and Q1 Goals</span>
       </div>
 
     </div>
