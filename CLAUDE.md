@@ -34,10 +34,10 @@ Stylesheets:
 ## File Structure
 ```
 index.html              — root portal / dashboard
-strategy.html           — Strategy hub
-operations.html         — Operations hub
-learning-vault.html     — Learning Vault hub
-one-page-plan.html      — printable landscape one-page business plan
+strategy.html           — Strategy hub (cards link to root worksheets)
+operations.html         — Operations hub (cards link to root tools)
+learning-vault.html     — reference / how-to area (one active card + coming-soon placeholders)
+one-page-plan.html      — printable landscape one-page business plan (fed by the 5 worksheets)
 login.html              — gold standard login
 forgot-password.html
 reset-password.html
@@ -45,19 +45,15 @@ inactive.html           — shown when membership_status ≠ 'active'
 offline.html            — service-worker offline fallback
 404.html
 
-scorecard.html, goals.html, meeting.html, issues.html
-                        — Operations static info pages
+core-values.html, core-focus.html, targets.html,
+marketing-strategy.html, leadership-team.html
+                        — Strategy worksheets (source of truth, feed one-page-plan)
 
-learn/                  — all activities and interactive tools (flat)
-├── values-discovery.html       — guided 3-step values exercise (localStorage)
-├── core-values.html            — Strategy worksheet
-├── core-focus.html             — Strategy worksheet
-├── targets.html                — Strategy worksheet
-├── marketing-strategy.html     — Strategy worksheet
-├── scorecard.html              — Operations tool
-├── goals.html                  — Operations tool
-├── meeting.html                — Operations tool
-└── issues.html                 — Operations tool
+scorecard.html, goals.html, meeting.html, issues.html
+                        — Operations tools (source of truth, feed meeting.html)
+
+learn/                  — reference area
+└── values-discovery.html       — guided 3-step values exercise (localStorage)
 
 css/
 └── style.css           — Design 1 system v2.2
@@ -69,7 +65,7 @@ js/
 
 ## Key Rules
 - All HTML pages use Design 1 (`css/style.css`) — no exceptions
-- Every interactive activity lives flat in `learn/`. No page outside the Learning Vault should link directly to a specific activity
+- Strategy worksheets and Operations tools live at root and ARE the source-of-truth pages. `learn/` is reserved for reference / how-to content (guides, exercises like Values Discovery). `strategy.html` and `operations.html` cards must link to root URLs, not `learn/`.
 - Strategy worksheets save bar is visual only (no save logic wired up yet)
 - Operations tools (scorecard / goals / meeting / issues) use a localStorage demo data stub seeded with realistic sample data. The previous `/api/...` calls are intercepted and routed to localStorage. Replace with the real Supabase data layer when ready.
 - Bottom nav order is always: Home / Strategy / Operations / Learn — active item gets `.active` class
@@ -101,9 +97,18 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.50
+v0.5.51
 
-## Recent Changes (v0.5.50)
+## Recent Changes (v0.5.51)
+- Promoted Strategy worksheets and Operations tools out of `learn/` to the project root. `strategy.html` and `operations.html` are now the source-of-truth navigation — their cards land directly on first-class root pages (e.g., `/scorecard.html`, `/core-values.html`).
+- The 4 placeholder info pages at root (was: `scorecard.html`, `goals.html`, `meeting.html`, `issues.html`) are gone; their slots now serve the actual tools (moved from `learn/`).
+- 9 files moved with `git mv` so history follows: `core-values.html`, `core-focus.html`, `targets.html`, `marketing-strategy.html`, `leadership-team.html`, `scorecard.html`, `goals.html`, `meeting.html`, `issues.html`. All `../` relative paths inside those files stripped to root-relative.
+- `strategy.html` (5 worksheet card hrefs), `operations.html` (Run Weekly Meeting CTA), `index.html` (Edit links on 1-Year Goal and Core Values panels) repointed from `learn/X.html` to `X.html`.
+- `learning-vault.html` reframed as a reference / how-to area — keeps Values Discovery as the one active card and shows 4 'coming soon' how-to cards (How to Build a Scorecard, How to Run Level 10 Meetings, Setting Quarterly Priorities, Defining Your Core Focus).
+- `learn/` now holds only `values-discovery.html` — the guided exercise stays put.
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.51.
+
+## Previous (v0.5.50)
 - Operations tools (scorecard, goals, meeting, issues) now seed and persist a demo dataset to localStorage — replaces the `/api/...` calls that never had a backend. Each tool's `api()` helper is now a per-tool localStorage router with sensible seed data so the tools look populated on first visit and changes persist in-browser.
 - localStorage keys: `coach4u_demo_scorecard`, `coach4u_demo_rocks`, `coach4u_demo_meetings`, `coach4u_demo_issues`. The Supabase data layer rebuild will replace this stub.
 - Scorecard seeds 6 metrics (New Leads, Discovery Calls Booked, Proposals Sent, Revenue (£k), Client NPS, Marketing Posts) with the last 6 ISO-week Mondays of entries — values are computed relative to today so the cells always look "recent".
