@@ -333,12 +333,12 @@
     const timerBtn=c.querySelector('#timer-btn'),timerEl=c.querySelector('#timer-elapsed');
     timerBtn.addEventListener('click',async()=>{
       if(!_timerStart){
-        _timerStart=Date.now();timerEl.classList.remove('hidden');timerBtn.textContent='&#x23F9; End Meeting';timerBtn.classList.add('running');
+        _timerStart=Date.now();timerEl.classList.remove('hidden');timerBtn.textContent='⏹ End Meeting';timerBtn.classList.add('running');
         _timerInterval=setInterval(()=>{const s=Math.floor((Date.now()-_timerStart)/1000);const mm=Math.floor(s/60),ss=s%60;timerEl.textContent=mm+':'+(ss<10?'0':'')+ss;},1000);
         try{await put('/meetings/'+m.id,{...m,status:'in_progress'});c.querySelector('#meeting-status').value='in_progress';_currentMeeting.status='in_progress';renderMeetingsList()}catch(_){}
       }else{
         clearInterval(_timerInterval);_timerInterval=null;_timerStart=null;
-        timerEl.classList.add('hidden');timerBtn.textContent='&#x25B6; Start Meeting';timerBtn.classList.remove('running');
+        timerEl.classList.add('hidden');timerBtn.textContent='▶ Start Meeting';timerBtn.classList.remove('running');
         try{await put('/meetings/'+m.id,{...m,status:'completed'});c.querySelector('#meeting-status').value='completed';_currentMeeting.status='completed';renderMeetingsList()}catch(_){}
       }
     });

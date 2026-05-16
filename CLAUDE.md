@@ -97,9 +97,13 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.52
+v0.5.53
 
-## Recent Changes (v0.5.52)
+## Recent Changes (v0.5.53)
+- Fixed the Start / End Meeting button on `meeting.html` rendering literal `&#x23F9;` / `&#x25B6;` text — `.textContent` doesn't decode HTML entities, so the JS-set button labels were showing escape codes instead of glyphs. Replaced with literal ⏹ / ▶ Unicode characters.
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.53
+
+## Previous (v0.5.52)
 - Deleted two stray root orphans `marketing.html` and `targeting.html` — older Design 1 info-page versions of `marketing-strategy.html` / `targets.html`, unreferenced from anywhere in the app (left over from an earlier restructure)
 - Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.52
 
