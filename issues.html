@@ -21,7 +21,7 @@
     .page-controls{display:flex;justify-content:space-between;align-items:center;margin:0 16px 24px;flex-wrap:wrap;gap:12px}
     .page-controls-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
     .field-select{border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-family:inherit;font-size:.88rem;color:var(--primary);background:white;cursor:pointer}
-    .kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0 16px 28px}
+    .kanban{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:0 16px 28px}
     @media(max-width:700px){.kanban{grid-template-columns:1fr}}
     .kanban-col{background:#f0fdfa;border-radius:12px;padding:16px}
     .kanban-col-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
@@ -97,10 +97,6 @@
         <div id="cards-open"></div>
       </div>
       <div class="kanban-col">
-        <div class="kanban-col-header"><span class="kanban-col-title">&#x1F7E0; In Progress</span><span class="kanban-count" id="count-ids">0</span></div>
-        <div id="cards-ids"></div>
-      </div>
-      <div class="kanban-col">
         <div class="kanban-col-header"><span class="kanban-col-title">&#x2705; Resolved</span><span class="kanban-count" id="count-resolved">0</span></div>
         <div id="cards-resolved"></div>
       </div>
@@ -136,7 +132,6 @@
         <label class="modal-label">Status</label>
         <select class="modal-select" id="issue-status">
           <option value="open">Open</option>
-          <option value="ids_in_progress">In Progress</option>
           <option value="resolved">Resolved</option>
         </select>
       </div>
@@ -178,7 +173,7 @@
   function _issuesSeed(){
     return[
       {id:3001,description:'Onboarding flow takes new clients 3+ weeks — intake forms and scheduling drag on. We need to simplify or automate.',owner:'Cath',priority:'high',status:'open',solution:'',business_id:1,created_at:_isoOffsetDays(-5)},
-      {id:3002,description:'Coach utilisation below 70% target — Q1 hit 64%. Either we have too many coaches or pipeline is weak.',owner:'Lou',priority:'medium',status:'ids_in_progress',solution:'',business_id:1,created_at:_isoOffsetDays(-12)},
+      {id:3002,description:'Coach utilisation below 70% target — Q1 hit 64%. Either we have too many coaches or pipeline is weak.',owner:'Lou',priority:'medium',status:'open',solution:'',business_id:1,created_at:_isoOffsetDays(-12)},
       {id:3003,description:'No standard scorecard for coach performance — each coach is measured differently, we need a unified scorecard.',owner:'Andrew',priority:'low',status:'open',solution:'',business_id:1,created_at:_isoOffsetDays(-21)},
       {id:3004,description:'Website conversion rate dropped 30% after last redesign — visitors aren’t getting to the booking form.',owner:'Andrew',priority:'high',status:'resolved',solution:'Reverted hero CTA to previous copy, moved booking widget above the fold, conversion back to baseline within a week.',business_id:1,created_at:_isoOffsetDays(-30)}
     ];
@@ -220,13 +215,11 @@
     catch(e){showToast('Could not load issues','error')}
   }
   function renderBoard(issues){
-    const open=issues.filter(i=>i.status==='open');
-    const ids=issues.filter(i=>i.status==='ids_in_progress');
+    const open=issues.filter(i=>i.status!=='resolved');
     const resolved=issues.filter(i=>i.status==='resolved');
     document.getElementById('count-open').textContent=open.length;
-    document.getElementById('count-ids').textContent=ids.length;
     document.getElementById('count-resolved').textContent=resolved.length;
-    renderCards('cards-open',open);renderCards('cards-ids',ids);renderCards('cards-resolved',resolved);
+    renderCards('cards-open',open);renderCards('cards-resolved',resolved);
     populateOwnerFilter(issues);
   }
   function populateOwnerFilter(issues){

@@ -97,9 +97,14 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.54
+v0.5.55
 
-## Recent Changes (v0.5.54)
+## Recent Changes (v0.5.55)
+- **Issues** simplified: dropped the "In Progress" middle column from the kanban — now just **Open** and **Resolved**. Modal status dropdown drops the "In Progress" option. Any legacy `ids_in_progress` items in localStorage fall into the Open column (the renderer treats anything other than `resolved` as open). Seed data updated to match.
+- **Scorecard** mobile improvements: metric (first) column is now **sticky** on the left so it stays visible while scrolling weekly values horizontally. Owner column hidden on screens ≤ 600px (secondary info; still visible on desktop). Cells / week columns / table padding all tightened on mobile so the table fits and feels less cramped. Week-column min-width moved from inline JS style to a `.col-week` class so the mobile media query can override.
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.55
+
+## Previous (v0.5.54)
 - Split the Meeting tool into two pages: `meeting.html` is now a clean list of past / scheduled meetings (Operations card lands here), and `run-meeting.html` is the active workspace (timer, agenda, headlines, todos, rating, notes).
 - Clicking a row in the past-meetings list opens `run-meeting.html?id=X`. The "+ New Meeting" button creates a meeting and navigates straight into `run-meeting.html`.
 - `run-meeting.html` back link → `meeting.html` (Past Meetings). Both pages share the same `coach4u_demo_meetings` localStorage data, so changes in the workspace immediately reflect in the list.

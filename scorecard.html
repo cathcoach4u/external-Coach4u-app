@@ -20,16 +20,33 @@
     .ws-btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
     .act-card{background:white;border-radius:10px;border:1px solid var(--border);padding:18px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
     .page-controls{display:flex;justify-content:space-between;align-items:center;margin:0 16px 24px;flex-wrap:wrap;gap:12px}
-    .scorecard-wrap{overflow-x:auto;margin:0 16px 28px}
+    .scorecard-wrap{overflow-x:auto;margin:0 16px 28px;-webkit-overflow-scrolling:touch;border-radius:10px;border:1px solid var(--border);background:white}
     .scorecard-table{width:100%;border-collapse:collapse;font-size:.88rem}
     .scorecard-table th{background:#f0fdfa;font-family:inherit;font-weight:700;color:var(--primary);padding:10px 14px;text-align:left;border-bottom:2px solid var(--border);white-space:nowrap}
     .scorecard-table td{padding:8px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
     .scorecard-table tr:hover td{background:#fafbff}
-    .col-metric{min-width:150px;font-family:inherit;font-weight:600;color:var(--primary)}
+    .col-metric{min-width:150px;font-family:inherit;font-weight:600;color:var(--primary);position:sticky;left:0;background:white;z-index:1;box-shadow:2px 0 4px -2px rgba(0,0,0,.08)}
+    .scorecard-table th.col-metric{background:#f0fdfa;z-index:3}
+    .scorecard-table tr:hover td.col-metric{background:#fafbff}
     .col-owner{min-width:90px;color:#666}
     .col-goal{min-width:70px;font-weight:600;color:var(--primary)}
+    .col-week{min-width:72px}
     .metric-sub{font-size:.72rem;color:#aaa;font-weight:400;display:block}
     .sc-cell{display:flex;align-items:center;justify-content:center;min-width:60px;height:32px;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:700;font-size:.85rem;transition:opacity .15s;border:1.5px solid transparent}
+    @media(max-width:600px){
+      .scorecard-wrap{margin:0 8px 24px}
+      .scorecard-table{font-size:.8rem}
+      .scorecard-table th{padding:8px 10px;font-size:.74rem}
+      .scorecard-table td{padding:6px 8px}
+      .col-metric{min-width:120px;padding:8px 10px}
+      .col-owner{display:none}
+      .scorecard-table th.col-owner{display:none}
+      .col-goal{min-width:50px}
+      .col-week{min-width:56px}
+      .sc-cell{min-width:48px;height:28px;font-size:.78rem}
+      .metric-edit-btn{font-size:.85rem;padding:2px 4px}
+      .metric-sub{font-size:.66rem}
+    }
     .sc-cell:hover{opacity:.8}
     .cell-empty{background:#f5f5f5;color:#bbb;border-color:#e0e0e0}
     .cell-green{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
@@ -235,7 +252,7 @@
   function renderTable({metrics,weeks}){
     const hRow=document.getElementById('scorecard-header-row');
     const tbody=document.getElementById('scorecard-body');
-    hRow.innerHTML=`<th class="col-metric" style="padding:12px 16px;">Metric</th><th class="col-owner">Owner</th><th class="col-goal">Goal</th>${weeks.map(w=>`<th style="text-align:center;min-width:72px;">${fmtWeek(w)}</th>`).join('')}<th style="width:40px;"></th>`;
+    hRow.innerHTML=`<th class="col-metric" style="padding:12px 16px;">Metric</th><th class="col-owner">Owner</th><th class="col-goal">Goal</th>${weeks.map(w=>`<th class="col-week" style="text-align:center;">${fmtWeek(w)}</th>`).join('')}<th style="width:40px;"></th>`;
     tbody.innerHTML='';
     if(!metrics.length){tbody.innerHTML=`<tr><td colspan="${weeks.length+4}" style="padding:40px;text-align:center;color:#aaa;font-family:inherit;">No metrics yet &#x2014; add your first measurable above.</td></tr>`;return;}
     metrics.forEach(metric=>{
