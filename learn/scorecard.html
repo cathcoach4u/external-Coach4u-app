@@ -5,94 +5,104 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Scorecard | Your Business Coach</title>
   <link rel="manifest" href="../manifest.json">
-  <meta name="theme-color" content="#1B3664">
+  <meta name="theme-color" content="#003366">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../css/style.css"/>
-  <link rel="stylesheet" href="../css/activity.css"/>
   <style>
     body{opacity:0;transition:opacity .2s ease}
-    .page-controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
-    .scorecard-wrap{overflow-x:auto;margin-bottom:28px}
+    .container{padding-bottom:100px;}
+    .ws-header{padding:20px 16px 0}
+    .ws-title{font-size:1.15rem;font-weight:800;color:var(--primary);margin:0 0 4px}
+    .ws-sub{font-size:.83rem;color:#666;margin:0 0 20px;line-height:1.45}
+    .ws-btn{padding:9px 20px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;transition:background .15s}
+    .ws-btn:hover{background:var(--accent-dark)}
+    .ws-btn-secondary{padding:9px 18px;background:white;color:var(--primary);border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .15s}
+    .ws-btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+    .act-card{background:white;border-radius:10px;border:1px solid var(--border);padding:18px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+    .page-controls{display:flex;justify-content:space-between;align-items:center;margin:0 16px 24px;flex-wrap:wrap;gap:12px}
+    .scorecard-wrap{overflow-x:auto;margin:0 16px 28px}
     .scorecard-table{width:100%;border-collapse:collapse;font-size:.88rem}
-    .scorecard-table th{background:var(--act-soft);font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);padding:10px 14px;text-align:left;border-bottom:2px solid var(--act-light-grey);white-space:nowrap}
+    .scorecard-table th{background:#f0fdfa;font-family:inherit;font-weight:700;color:var(--primary);padding:10px 14px;text-align:left;border-bottom:2px solid var(--border);white-space:nowrap}
     .scorecard-table td{padding:8px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
     .scorecard-table tr:hover td{background:#fafbff}
-    .col-metric{min-width:150px;font-family:var(--act-font-heading);font-weight:600;color:var(--act-dark-blue)}
+    .col-metric{min-width:150px;font-family:inherit;font-weight:600;color:var(--primary)}
     .col-owner{min-width:90px;color:#666}
-    .col-goal{min-width:70px;font-weight:600;color:var(--act-dark-blue)}
+    .col-goal{min-width:70px;font-weight:600;color:var(--primary)}
     .metric-sub{font-size:.72rem;color:#aaa;font-weight:400;display:block}
-    .sc-cell{display:flex;align-items:center;justify-content:center;min-width:60px;height:32px;border-radius:6px;cursor:pointer;font-family:var(--act-font-heading);font-weight:700;font-size:.85rem;transition:opacity .15s;border:1.5px solid transparent}
+    .sc-cell{display:flex;align-items:center;justify-content:center;min-width:60px;height:32px;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:700;font-size:.85rem;transition:opacity .15s;border:1.5px solid transparent}
     .sc-cell:hover{opacity:.8}
     .cell-empty{background:#f5f5f5;color:#bbb;border-color:#e0e0e0}
     .cell-green{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
     .cell-red{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
-    .metric-edit-btn{background:none;border:none;cursor:pointer;color:var(--act-light-blue);font-size:.8rem;padding:2px 6px;border-radius:4px;font-family:var(--act-font-heading);font-weight:600}
-    .metric-edit-btn:hover{background:var(--act-soft)}
-    .cell-popover{position:fixed;z-index:500;background:white;border:1.5px solid var(--act-light-blue);border-radius:10px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.15);min-width:180px}
+    .metric-edit-btn{background:none;border:none;cursor:pointer;color:var(--accent);font-size:.8rem;padding:2px 6px;border-radius:4px;font-family:inherit;font-weight:600}
+    .metric-edit-btn:hover{background:#f0fdfa}
+    .cell-popover{position:fixed;z-index:500;background:white;border:1.5px solid var(--accent);border-radius:10px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.15);min-width:180px}
     .cell-popover.hidden{display:none}
-    .cell-popover input{width:100%;border:1.5px solid var(--act-light-grey);border-radius:6px;padding:8px 10px;font-family:var(--act-font-heading);font-size:.9rem;box-sizing:border-box;margin-bottom:8px}
-    .cell-popover input:focus{outline:none;border-color:var(--act-light-blue)}
+    .cell-popover input{width:100%;border:1.5px solid var(--border);border-radius:6px;padding:8px 10px;font-family:inherit;font-size:.9rem;box-sizing:border-box;margin-bottom:8px}
+    .cell-popover input:focus{outline:none;border-color:var(--accent)}
     .cell-popover-actions{display:flex;gap:6px}
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
     .modal-overlay.hidden{display:none}
     .modal{background:white;border-radius:16px;padding:28px;max-width:460px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
     .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-    .modal-title{font-family:var(--act-font-heading);font-weight:700;color:var(--act-dark-blue);font-size:1.15rem}
+    .modal-title{font-family:inherit;font-weight:700;color:var(--primary);font-size:1.15rem}
     .modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:#888;line-height:1;padding:0 4px}
     .modal-field{margin-bottom:16px}
-    .modal-label{font-family:var(--act-font-heading);font-weight:600;color:var(--act-dark-blue);font-size:.88rem;margin-bottom:6px;display:block}
-    .modal-input,.modal-select{width:100%;border:1.5px solid var(--act-light-grey);border-radius:8px;padding:10px 14px;font-family:var(--act-font-body);font-size:.93rem;color:var(--act-dark-grey);background:white;box-sizing:border-box}
-    .modal-input:focus,.modal-select:focus{outline:none;border-color:var(--act-light-blue)}
+    .modal-label{font-family:inherit;font-weight:600;color:var(--primary);font-size:.88rem;margin-bottom:6px;display:block}
+    .modal-input,.modal-select{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-family:inherit;font-size:.93rem;color:var(--text);background:white;box-sizing:border-box}
+    .modal-input:focus,.modal-select:focus{outline:none;border-color:var(--accent)}
     .modal-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .modal-footer{display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:10px}
     .modal-footer-right{display:flex;gap:10px}
-    .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-family:var(--act-font-heading);font-weight:600;font-size:.88rem;z-index:2000;transition:opacity .3s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+    .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-family:inherit;font-weight:600;font-size:.88rem;z-index:2000;transition:opacity .3s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
     .toast-hidden{opacity:0;pointer-events:none}
     .toast-success{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
     .toast-error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
     .empty-state{text-align:center;padding:48px 20px;color:#888}
     .empty-state-icon{font-size:2.5rem;margin-bottom:12px;opacity:.4}
-    .empty-state p{font-family:var(--act-font-heading);font-size:.95rem}
+    .empty-state p{font-family:inherit;font-size:.95rem}
     .hidden{display:none!important}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e5e7eb;display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -2px 8px rgba(0,0,0,.06)}
+    .bottom-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0 6px;text-decoration:none;color:#aaa;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;gap:3px;transition:color .15s}
+    .bottom-nav-item.active,.bottom-nav-item:hover{color:#0D9488;text-decoration:none}
+    .bottom-nav-icon{font-size:20px;line-height:1}
   </style>
 </head>
-<body class="activity-page">
+<body>
   <header class="site-header">
     <div class="header-inner">
       <div class="header-left">
-        <a href="../learning-vault.html" class="header-back">&#x2190; Learning Vault</a>
+        <a href="../operations.html" class="header-back">&#x2190; Operations</a>
         <span class="header-title">Scorecard</span>
       </div>
       <button class="sign-out-btn" id="sign-out-btn">Sign Out</button>
     </div>
   </header>
 
-  <div class="act-container" style="max-width:1000px;">
-    <header class="act-header">
-      <h1>Scorecard</h1>
-      <p>Weekly measurables &#x2014; your company&#x2019;s pulse with leading indicators and targets. Click any cell to enter a value.</p>
-    </header>
-
-    <div class="page-controls">
-      <p class="act-step-hint" style="margin:0;">&#x1F7E2; = on track &nbsp; &#x1F534; = off track &nbsp; Click a cell to update</p>
-      <button class="act-btn act-btn-primary" id="add-metric-btn">+ Add Metric</button>
+  <div class="container">
+    <div class="ws-header">
+      <h1 class="ws-title">&#x1F4CA; Scorecard</h1>
+      <p class="ws-sub">Weekly measurables &#x2014; your company&#x2019;s pulse with leading indicators and targets. Click any cell to enter a value.</p>
     </div>
 
-    <div class="act-card" style="padding:0;overflow:hidden;">
-      <div class="scorecard-wrap" style="padding:0;">
-        <table class="scorecard-table" id="scorecard-table">
-          <thead><tr id="scorecard-header-row"></tr></thead>
-          <tbody id="scorecard-body"></tbody>
-        </table>
-      </div>
+    <div class="page-controls">
+      <span style="font-size:0.78rem;color:#888;">&#x1F7E2; = on track &nbsp; &#x1F534; = off track &nbsp; Click a cell to update</span>
+      <button class="ws-btn" id="add-metric-btn">+ Add Metric</button>
+    </div>
+
+    <div class="scorecard-wrap">
+      <table class="scorecard-table" id="scorecard-table">
+        <thead><tr id="scorecard-header-row"></tr></thead>
+        <tbody id="scorecard-body"></tbody>
+      </table>
     </div>
   </div>
 
   <div class="cell-popover hidden" id="cell-popover">
     <input type="number" id="cell-input" placeholder="Enter value" step="any"/>
     <div class="cell-popover-actions">
-      <button class="act-btn act-btn-primary" id="cell-save" style="padding:7px 14px;font-size:.82rem;">Save</button>
-      <button class="act-btn act-btn-secondary" id="cell-cancel" style="padding:7px 12px;font-size:.82rem;">Cancel</button>
+      <button class="ws-btn" id="cell-save" style="padding:7px 14px;font-size:.82rem;">Save</button>
+      <button class="ws-btn-secondary" id="cell-cancel" style="padding:7px 12px;font-size:.82rem;">Cancel</button>
     </div>
   </div>
 
@@ -126,16 +136,23 @@
         </select>
       </div>
       <div class="modal-footer">
-        <button class="act-btn hidden" id="metric-modal-delete" style="color:#991b1b;border:1.5px solid #fca5a5;background:white;">Delete</button>
+        <button class="ws-btn-secondary hidden" id="metric-modal-delete" style="color:#991b1b;border-color:#fca5a5;">Delete</button>
         <div class="modal-footer-right">
-          <button class="act-btn act-btn-secondary" id="metric-modal-cancel">Cancel</button>
-          <button class="act-btn act-btn-primary" id="metric-modal-save">Save Metric</button>
+          <button class="ws-btn-secondary" id="metric-modal-cancel">Cancel</button>
+          <button class="ws-btn" id="metric-modal-save">Save Metric</button>
         </div>
       </div>
     </div>
   </div>
 
   <div class="toast toast-hidden" id="toast"></div>
+
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item" href="../index.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
+    <a class="bottom-nav-item" href="../strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
+    <a class="bottom-nav-item active" href="../operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
+    <a class="bottom-nav-item" href="../learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
+  </nav>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
@@ -160,7 +177,7 @@
     const tbody=document.getElementById('scorecard-body');
     hRow.innerHTML=`<th class="col-metric" style="padding:12px 16px;">Metric</th><th class="col-owner">Owner</th><th class="col-goal">Goal</th>${weeks.map(w=>`<th style="text-align:center;min-width:72px;">${fmtWeek(w)}</th>`).join('')}<th style="width:40px;"></th>`;
     tbody.innerHTML='';
-    if(!metrics.length){tbody.innerHTML=`<tr><td colspan="${weeks.length+4}" style="padding:40px;text-align:center;color:#aaa;font-family:var(--act-font-heading);">No metrics yet &#x2014; add your first measurable above.</td></tr>`;return;}
+    if(!metrics.length){tbody.innerHTML=`<tr><td colspan="${weeks.length+4}" style="padding:40px;text-align:center;color:#aaa;font-family:inherit;">No metrics yet &#x2014; add your first measurable above.</td></tr>`;return;}
     metrics.forEach(metric=>{
       const goalNum=parseFloat(metric.goal);
       let goalDisp=metric.goal||'&#x2014;';

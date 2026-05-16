@@ -30,7 +30,6 @@
 
 Stylesheets:
 - `css/style.css` — main design system v2.2 (loaded on every page)
-- `css/activity.css` — supplementary structural styles for interactive tools (tables, popovers, modals). Variables aliased to Design 1 colours/fonts; only loaded by tools in `learn/operations/` and `learn/values-discovery.html` where the extra patterns are needed.
 
 ## File Structure
 ```
@@ -61,8 +60,7 @@ learn/                  — all activities and interactive tools (flat)
 └── issues.html                 — Operations tool
 
 css/
-├── style.css           — Design 1 system v2.2
-└── activity.css        — supplementary activity styles (Design 1 colours)
+└── style.css           — Design 1 system v2.2
 
 js/
 ├── auth.js             — sign in / out, membership gate
@@ -71,7 +69,6 @@ js/
 
 ## Key Rules
 - All HTML pages use Design 1 (`css/style.css`) — no exceptions
-- `css/activity.css` is supplementary; only the 4 Operations tools (`learn/scorecard.html`, `learn/goals.html`, `learn/meeting.html`, `learn/issues.html`) and `learn/values-discovery.html` load it. It uses Design 1 colours and the Aptos font stack — no Google Fonts anywhere
 - Every interactive activity lives flat in `learn/`. No page outside the Learning Vault should link directly to a specific activity
 - Strategy worksheets save bar is visual only (no save logic wired up yet)
 - Operations tools call `/api/...` endpoints that don't exist; they authenticate via Supabase correctly but persistence is broken until the data layer is rebuilt on top of the existing tables
@@ -104,9 +101,19 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.48
+v0.5.49
 
-## Recent Changes (v0.5.48)
+## Recent Changes (v0.5.49)
+- Converted the 4 Operations tool pages (`learn/meeting.html`, `learn/scorecard.html`, `learn/goals.html`, `learn/issues.html`) from the legacy `activity.css` shell to the Design 1 worksheet shell used elsewhere in the project
+- Each tool now uses the standard `site-header` + `.container` + `.ws-header` / `.ws-title` / `.ws-sub` pattern, navy `#003366` / teal `#0D9488` Design 1 variables, and the unified Aptos-inherit font stack
+- Replaced legacy `.act-btn .act-btn-primary` / `.act-btn .act-btn-secondary` with locally-scoped `.ws-btn` / `.ws-btn-secondary` rules in each file's `<style>` block
+- Added the standard bottom nav (Home / Strategy / Operations / Learn) to all 4 pages with Operations marked active; back link in the site header now points to `../operations.html`
+- **Deleted `css/activity.css`** — no longer referenced anywhere in the active app
+- **Deleted root orphans `values.html` and `vision-strategy.html`** — leftovers from the deleted `business/` directory (Design 2, Google Fonts, referenced the now-deleted `css/activity.css`); not linked from anywhere in the app
+- All tool functionality, IDs, data attributes, event listeners, modal/popover/table CSS, and `<script>` blocks remain untouched
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.49
+
+## Previous (v0.5.48)
 - Added a 5th Strategy activity card: **Leadership Team** (icon 👥) → `learn/leadership-team.html`
 - New worksheet `learn/leadership-team.html` (Design 1): editable team-member cards with name / role / responsibilities, "+ Add Team Member" button, edit-in-place + delete per card, "Save Leadership Team" button. Persistence: `localStorage` key `coach4u_leadership_team`. Seeds with 5 default members (Cath Baker, Lou Henderson, Andrew Baker + 2 greyed `[Add your name]` placeholders) on first visit.
 - `one-page-plan.html` now has a full-width **Leadership Team** band between the 3-column body and the footer — compact Name | Role | Key Responsibility table reading from the same `coach4u_leadership_team` localStorage key. Falls back to "Add your leadership team in the Strategy section." when empty. Includes print rules so the band stays on the same A4 landscape page.
