@@ -36,7 +36,11 @@ Stylesheets:
 index.html              — root portal / dashboard
 strategy.html           — Strategy hub (cards link to root worksheets)
 operations.html         — Operations hub (cards link to root tools)
-planning.html           — Planning hub (annual + quarterly rhythm visualisation)
+planning.html           — Planning hub (annual + quarterly rhythm visualisation; cards open list pages)
+annual-sessions.html    — list of past + scheduled annual planning sessions
+run-annual-session.html — workspace for a single annual planning session (agenda + notes)
+quarterly-sessions.html — list of past + scheduled quarterly planning sessions
+run-quarterly-session.html — workspace for a single quarterly planning session
 learning-vault.html     — reference / how-to area (one active card + coming-soon placeholders)
 one-page-plan.html      — printable landscape one-page business plan (fed by the 5 worksheets)
 login.html              — gold standard login
@@ -50,8 +54,8 @@ core-values.html, core-focus.html, targets.html,
 marketing-strategy.html, leadership-team.html
                         — Strategy worksheets (source of truth, feed one-page-plan)
 
-scorecard.html, goals.html, meeting.html, issues.html
-                        — Operations tools (source of truth, feed meeting.html)
+scorecard.html, goals.html, meeting.html, run-meeting.html, issues.html
+                        — Operations tools (meeting.html = past list, run-meeting.html = workspace)
 
 learn/                  — reference area
 └── values-discovery.html       — guided 3-step values exercise (localStorage)
@@ -98,9 +102,23 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ```
 
 ## Current Version
-v0.5.68
+v0.5.69
 
-## Recent Changes (v0.5.68)
+## Recent Changes (v0.5.69)
+- **Planning is now actionable, not just a diagram.** The Planning page cards previously dead-ended on the One-Page Plan and the Goals tool. They now open dedicated session list pages, mirroring the weekly Meeting flow.
+  - **4 new pages** built on the same pattern as `meeting.html` + `run-meeting.html`:
+    - `annual-sessions.html` — list of past + scheduled annual planning sessions, "+ New Annual Session" creates a session for today and opens the workspace
+    - `run-annual-session.html` — single-session workspace with 5-step agenda accordion (Review Last Year / Refresh Core Values + Core Focus / Update 10-Year + 3-Year Picture / Set 1-Year Plan + Q1 Goals / Conclude — Rate the Session), each with a prompt, notes textarea, and per-step Save button; deep-links to the relevant Strategy worksheets
+    - `quarterly-sessions.html` — list of past + scheduled quarterly sessions, "+ New Quarterly Session" opens a modal asking which quarter (Q2 / Q3 / Q4 / Q1 next year — pre-fills the next upcoming quarter) and auto-fills the date as the end of the prior quarter
+    - `run-quarterly-session.html` — single-session workspace with 4-step agenda (Review Last Quarter / Lessons + Adjustments / Set Next Quarter's Goals / Conclude — Rate the Session), prompt text dynamically refers to the prior quarter (e.g. "Walk through every Q1 2026 goal…")
+  - Both workspaces use the same status dropdown (scheduled / in_progress / completed), Start/End Session timer, 1–10 rating buttons, and per-step notes pattern from `run-meeting.html`.
+  - **localStorage keys**: `coach4u_annual_sessions` (array of session objects) and `coach4u_quarterly_sessions` (array of session objects). No nested wrapper — simpler than the meetings shape.
+  - **Seed data**: annual list seeds 1 completed session (this year's Jan 1, rating 8, sample notes per step) + 1 scheduled (next year's Jan 1). Quarterly list seeds 2 completed (Q2 2026 + Q3 2026 with notes) + 1 scheduled for the next upcoming quarter.
+  - **`planning.html` cards repointed**: Annual → `annual-sessions.html`; all three Q2/Q3/Q4 cards → `quarterly-sessions.html`. The "View One-Page Plan" top CTA is unchanged.
+  - **`index.html` `ensureSeeds()` extended** so visiting the dashboard first pre-seeds both new keys (matches the existing pattern for the 5 worksheet/operations keys).
+- Bumped `VERSION`, `sw.js` `CACHE_VERSION`, and dashboard label to v0.5.69.
+
+## Previous (v0.5.68)
 - **Planning page collapsed from 5 sessions to 4.** The previous "Q1 Review" was redundant — the Annual Planning session already produces the Q1 plan, so a separate Q1 Review meeting was double work.
   - New flow: **Annual Planning** (sets year + Q1 plan) → **Q2 Planning Session** (end of Q1, produces Q2 goals) → **Q3 Planning Session** (end of Q2, produces Q3 goals) → **Q4 Planning Session** (end of Q3, produces Q4 goals) → cycles back to next year's Annual.
   - Renamed the quarterly nodes from "Qn Review" → "Qn Planning Session" since each is forward-looking (reviews the prior quarter then plans the next). Icon changed from 🔁 to 🎯.

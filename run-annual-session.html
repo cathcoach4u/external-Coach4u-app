@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Run Annual Session | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#003366">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    body{opacity:0;transition:opacity .2s ease}
+    .container{padding-bottom:100px;}
+    .ws-header{padding:20px 16px 0}
+    .ws-title{font-size:1.15rem;font-weight:800;color:var(--primary);margin:0 0 4px}
+    .ws-sub{font-size:.83rem;color:#666;margin:0 0 20px;line-height:1.45}
+    .ws-btn{padding:9px 20px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;transition:background .15s}
+    .ws-btn:hover{background:var(--accent-dark)}
+    .ws-btn-secondary{padding:9px 18px;background:white;color:var(--primary);border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .15s}
+    .ws-btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+    .session-detail{background:white;border:1px solid var(--border);border-radius:12px;padding:24px;margin:0 16px}
+    .session-empty{text-align:center;padding:48px 20px;color:#aaa;font-family:inherit;background:white;border:1px solid var(--border);border-radius:12px;margin:0 16px}
+    .session-detail-heading{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+    .session-detail-title{font-family:inherit;font-weight:700;color:var(--primary);font-size:1.15rem}
+    .field-select{border:1.5px solid var(--border);border-radius:8px;padding:7px 12px;font-family:inherit;font-size:.85rem;color:var(--primary);background:white;cursor:pointer}
+    .status-pill{font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:20px}
+    .sp-scheduled{background:#fef3c7;color:#92400e}
+    .sp-in_progress{background:#dbeafe;color:#1e40af}
+    .sp-completed{background:#d1fae5;color:#065f46}
+    .agenda-section{border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden}
+    .agenda-toggle{width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;background:#f0fdfa;border:none;cursor:pointer;text-align:left;transition:background .12s}
+    .agenda-toggle:hover{background:#eef2fa}
+    .agenda-num{width:26px;height:26px;border-radius:50%;background:var(--primary);color:white;display:grid;place-items:center;font-family:inherit;font-weight:700;font-size:.82rem;flex-shrink:0}
+    .agenda-title-text{font-family:inherit;font-weight:700;color:var(--primary);font-size:.93rem;flex:1}
+    .agenda-arrow{margin-left:8px;font-size:.8rem;color:#aaa;transition:transform .2s}
+    .agenda-toggle.open .agenda-arrow{transform:rotate(180deg)}
+    .agenda-content{display:none;padding:16px}
+    .agenda-content.open{display:block}
+    .agenda-prompt{font-size:.88rem;color:#666;font-family:inherit;line-height:1.5;margin:0 0 10px}
+    .agenda-links{margin:0 0 12px;font-size:.85rem;font-family:inherit}
+    .agenda-links a{color:var(--accent);font-weight:600;text-decoration:none;margin-right:14px}
+    .agenda-links a:hover{text-decoration:underline}
+    .session-timer-bar{display:flex;align-items:center;gap:12px;background:#f0fdfa;border-radius:8px;padding:10px 14px;margin-bottom:16px}
+    .timer-btn{font-family:inherit;font-weight:700;font-size:.85rem;padding:6px 14px;border-radius:6px;cursor:pointer;border:1.5px solid var(--accent);background:white;color:var(--primary);transition:all .15s}
+    .timer-btn.running{border-color:#991b1b;color:#991b1b;background:#fff5f5}
+    .timer-elapsed{font-family:inherit;font-weight:700;font-size:1rem;color:var(--primary);font-variant-numeric:tabular-nums}
+    .rating-btns{display:flex;gap:8px;flex-wrap:wrap}
+    .rating-btn{width:40px;height:40px;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;font-family:inherit;font-weight:700;font-size:.9rem;transition:all .15s}
+    .rating-btn.selected{background:var(--primary);color:white;border-color:var(--primary)}
+    .notes-textarea{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-family:inherit;font-size:.88rem;resize:vertical;min-height:90px;box-sizing:border-box}
+    .notes-textarea:focus{outline:none;border-color:var(--accent)}
+    .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-family:inherit;font-weight:600;font-size:.88rem;z-index:2000;transition:opacity .3s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+    .toast-hidden{opacity:0;pointer-events:none}
+    .toast-success{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
+    .toast-error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+    .hidden{display:none!important}
+    .label-sm{font-family:inherit;font-weight:600;color:var(--primary);font-size:.85rem;margin-bottom:8px;display:block}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e5e7eb;display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -2px 8px rgba(0,0,0,.06)}
+    .bottom-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0 6px;text-decoration:none;color:#aaa;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;gap:3px;transition:color .15s}
+    .bottom-nav-item.active,.bottom-nav-item:hover{color:#0D9488;text-decoration:none}
+    .bottom-nav-icon{font-size:20px;line-height:1}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="annual-sessions.html" class="header-back">&#x2190; Annual Sessions</a>
+        <span class="header-title">Run Annual Session</span>
+      </div>
+      <button class="sign-out-btn" id="signOutBtn">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="ws-header">
+      <h1 class="ws-title" id="ws-title">&#x1F4C5; Annual Planning</h1>
+      <p class="ws-sub" id="ws-sub">Work through each step. Notes save automatically when you click Save.</p>
+    </div>
+
+    <div class="session-detail session-empty hidden" id="session-empty">
+      No session selected. <a href="annual-sessions.html" style="color:var(--accent);font-weight:600;">Back to Annual Sessions &#x2192;</a>
+    </div>
+    <div id="session-content"></div>
+  </div>
+
+  <div class="toast toast-hidden" id="toast"></div>
+
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item" href="index.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
+    <a class="bottom-nav-item active" href="planning.html"><span class="bottom-nav-icon">&#x1F5FA;&#xFE0F;</span><span>Planning</span></a>
+    <a class="bottom-nav-item" href="strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
+    <a class="bottom-nav-item" href="operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
+    <a class="bottom-nav-item" href="learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+  'use strict';
+  const _sb=window.supabase.createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
+  document.getElementById('signOutBtn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
+  let _currentSession=null,_timerInterval=null,_timerStart=null;
+  function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
+  const _LS_KEY='coach4u_annual_sessions';
+  function _annualAgendaBlank(){
+    return [
+      { id:1, title:'Review Last Year',                  notes:'' },
+      { id:2, title:'Refresh Core Values + Core Focus',  notes:'' },
+      { id:3, title:'Update 10-Year + 3-Year Picture',   notes:'' },
+      { id:4, title:'Set 1-Year Plan + Q1 Goals',        notes:'' },
+      { id:5, title:'Conclude — Rate the Session',  notes:'' }
+    ];
+  }
+  function _annualSeed(){
+    const today=new Date();
+    const thisYear=today.getFullYear();
+    const nextYear=thisYear+1;
+    const janThis=thisYear+'-01-01';
+    const janNext=nextYear+'-01-01';
+    return [
+      { id:5001, session_date:janThis, year:String(thisYear), status:'completed', rating:8,
+        agenda:[
+          { id:1, title:'Review Last Year',                  notes:'Revenue up 22% YoY. Missed coach-hire target (1 of 2). Acme + Globex deals carried Q4. NPS held at 64.' },
+          { id:2, title:'Refresh Core Values + Core Focus',  notes:'Values still resonate. Considering tightening niche to professional services > 20 staff.' },
+          { id:3, title:'Update 10-Year + 3-Year Picture',   notes:'3-year picture confirmed: 4 coaches, 80 active clients, $1.2M revenue. 10-year unchanged.' },
+          { id:4, title:'Set 1-Year Plan + Q1 Goals',        notes:'1-year revenue target $420k. Q1 priorities: sign 5 new clients, ship signature workbook, hire 1 associate coach.' },
+          { id:5, title:'Conclude — Rate the Session', notes:'Great session. Action: Cath to update One-Page Plan by end of week. Andrew to brief team Monday.' }
+        ]
+      },
+      { id:5002, session_date:janNext, year:String(nextYear), status:'scheduled', rating:null,
+        agenda:_annualAgendaBlank()
+      }
+    ];
+  }
+  function _annualLoad(){let d;try{d=JSON.parse(localStorage.getItem(_LS_KEY))}catch(_){d=null}if(!Array.isArray(d)||d.length===0){d=_annualSeed();_annualSave(d)}return d}
+  function _annualSave(d){localStorage.setItem(_LS_KEY,JSON.stringify(d))}
+  function fmtDate(d){if(!d)return '';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}
+  function getSessionId(){const u=new URLSearchParams(window.location.search);const id=parseInt(u.get('id'));return isNaN(id)?null:id}
+  function getSession(id){const all=_annualLoad();return all.find(s=>s.id===id)||null}
+  function updateSession(id,patch){const all=_annualLoad();const s=all.find(x=>x.id===id);if(s){Object.assign(s,patch);_annualSave(all)}return s}
+  function updateAgendaNotes(id,agendaId,notes){const all=_annualLoad();const s=all.find(x=>x.id===id);if(s){const a=(s.agenda||[]).find(x=>x.id===agendaId);if(a){a.notes=notes;_annualSave(all)}}return s}
+
+  // Agenda step content definitions
+  const AGENDA_STEPS=[
+    {id:1,title:'Review Last Year',
+      prompt:'Capture biggest wins, biggest misses, revenue + profit actuals. Be honest about what didn’t work.',
+      links:[]},
+    {id:2,title:'Refresh Core Values + Core Focus',
+      prompt:'Are these still true? Any updates?',
+      links:[{href:'core-values.html',text:'Open Core Values worksheet →'},{href:'core-focus.html',text:'Open Core Focus worksheet →'}]},
+    {id:3,title:'Update 10-Year + 3-Year Picture',
+      prompt:'Where is the business going? Is the long-term vision still right?',
+      links:[{href:'targets.html',text:'Open Targets worksheet →'}]},
+    {id:4,title:'Set 1-Year Plan + Q1 Goals',
+      prompt:'Set the 1-year financial plan and the 3–7 Q1 priorities.',
+      links:[{href:'targets.html',text:'Open Targets →'},{href:'goals.html',text:'Open Quarterly Goals →'}]},
+    {id:5,title:'Conclude — Rate the Session',
+      prompt:'Rate the session 1–10. Capture decisions, action items, next steps.',
+      links:[]}
+  ];
+
+  function loadDetail(id){
+    const s=getSession(id);
+    if(!s){
+      document.getElementById('session-empty').classList.remove('hidden');
+      document.getElementById('session-empty').innerHTML='Session not found. <a href="annual-sessions.html" style="color:var(--accent);font-weight:600;">Back to Annual Sessions &#x2192;</a>';
+      return;
+    }
+    _currentSession=s;
+    document.getElementById('ws-title').innerHTML='&#x1F4C5; Annual Planning — '+fmtDate(s.session_date);
+    document.getElementById('ws-sub').textContent='Year '+(s.year||'')+' — Work through each step below. Notes save when you click Save.';
+    renderDetail(s);
+  }
+
+  function renderDetail(s){
+    const c=document.getElementById('session-content');
+    if(_timerInterval){clearInterval(_timerInterval);_timerInterval=null;_timerStart=null;}
+    const agendaMap={};(s.agenda||[]).forEach(a=>{agendaMap[a.id]=a});
+    c.innerHTML=`
+      <div class="session-detail">
+        <div class="session-detail-heading">
+          <div><div class="session-detail-title">&#x1F4C5; ${fmtDate(s.session_date)}</div></div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <select class="field-select" id="session-status">
+              <option value="scheduled" ${s.status==='scheduled'?'selected':''}>Scheduled</option>
+              <option value="in_progress" ${s.status==='in_progress'?'selected':''}>In Progress</option>
+              <option value="completed" ${s.status==='completed'?'selected':''}>Completed</option>
+            </select>
+          </div>
+        </div>
+        <div class="session-timer-bar">
+          <button class="timer-btn" id="timer-btn">▶ Start Session</button>
+          <span class="timer-elapsed hidden" id="timer-elapsed">0:00</span>
+          <span style="font-size:.8rem;color:#888;font-family:inherit;">Target: full day</span>
+        </div>
+        <div id="agenda-accordion">
+          ${AGENDA_STEPS.map(step=>{
+            const a=agendaMap[step.id]||{notes:''};
+            const isConclude=(step.id===5);
+            const linksHtml=step.links.length?`<p class="agenda-links">${step.links.map(l=>`<a href="${l.href}">${l.text}</a>`).join('')}</p>`:'';
+            const ratingHtml=isConclude?`<div style="margin-bottom:14px;"><span class="label-sm">Session Rating (1–10)</span><div class="rating-btns">${[...Array(10)].map((_,i)=>`<button class="rating-btn ${s.rating===(i+1)?'selected':''}" data-rating="${i+1}">${i+1}</button>`).join('')}</div></div>`:'';
+            const notesLabel=isConclude?'Decisions, action items, next steps':'Notes';
+            return `
+              <div class="agenda-section">
+                <button class="agenda-toggle"><div class="agenda-num">${step.id}</div><div class="agenda-title-text">${step.title}</div><span class="agenda-arrow">▼</span></button>
+                <div class="agenda-content">
+                  <p class="agenda-prompt">${step.prompt}</p>
+                  ${linksHtml}
+                  ${ratingHtml}
+                  <span class="label-sm">${notesLabel}</span>
+                  <textarea class="notes-textarea" data-agenda-id="${step.id}" placeholder="Type your notes here...">${escHtml(a.notes||'')}</textarea>
+                  <div style="margin-top:8px;"><button class="ws-btn-secondary save-notes-btn" data-agenda-id="${step.id}">Save Notes</button></div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+    c.querySelector('#session-status').addEventListener('change',e=>{
+      try{updateSession(s.id,{status:e.target.value});_currentSession.status=e.target.value;showToast('Status updated','success')}
+      catch(err){showToast('Update failed','error')}
+    });
+    const timerBtn=c.querySelector('#timer-btn'),timerEl=c.querySelector('#timer-elapsed');
+    timerBtn.addEventListener('click',()=>{
+      if(!_timerStart){
+        _timerStart=Date.now();timerEl.classList.remove('hidden');timerBtn.textContent='⏹ End Session';timerBtn.classList.add('running');
+        _timerInterval=setInterval(()=>{const sec=Math.floor((Date.now()-_timerStart)/1000);const mm=Math.floor(sec/60),ss=sec%60;timerEl.textContent=mm+':'+(ss<10?'0':'')+ss;},1000);
+        try{updateSession(s.id,{status:'in_progress'});c.querySelector('#session-status').value='in_progress';_currentSession.status='in_progress';}catch(_){}
+      }else{
+        clearInterval(_timerInterval);_timerInterval=null;_timerStart=null;
+        timerEl.classList.add('hidden');timerBtn.textContent='▶ Start Session';timerBtn.classList.remove('running');
+        try{updateSession(s.id,{status:'completed'});c.querySelector('#session-status').value='completed';_currentSession.status='completed';}catch(_){}
+      }
+    });
+    c.querySelectorAll('.agenda-toggle').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const content=btn.nextElementSibling;
+        const isOpen=content.classList.contains('open');
+        btn.classList.toggle('open',!isOpen);
+        content.classList.toggle('open',!isOpen);
+      });
+    });
+    c.querySelectorAll('.save-notes-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const aid=parseInt(btn.dataset.agendaId);
+        const ta=c.querySelector('textarea[data-agenda-id="'+aid+'"]');
+        try{updateAgendaNotes(s.id,aid,ta.value);showToast('Notes saved','success');const a=(_currentSession.agenda||[]).find(x=>x.id===aid);if(a)a.notes=ta.value}
+        catch(err){showToast('Save failed','error')}
+      });
+    });
+    c.querySelectorAll('.rating-btn').forEach(btn=>btn.addEventListener('click',()=>{
+      const rating=parseInt(btn.dataset.rating);
+      try{updateSession(s.id,{rating});_currentSession.rating=rating;c.querySelectorAll('.rating-btn').forEach(b=>b.classList.toggle('selected',parseInt(b.dataset.rating)===rating));showToast('Rating saved','success');}
+      catch(err){showToast('Save failed','error')}
+    }));
+  }
+
+  (async()=>{
+    const{data:{user}}=await _sb.auth.getUser();
+    if(!user){window.location.href='login.html';return}
+    const id=getSessionId();
+    if(!id){
+      document.getElementById('session-empty').classList.remove('hidden');
+    }else{
+      loadDetail(id);
+    }
+    document.body.style.opacity='1';
+  })();
+  </script>
+</body>
+</html>

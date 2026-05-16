@@ -238,7 +238,7 @@
       </div>
     </div>
 
-    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.68</p>
+    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.69</p>
 
   </div>
 
@@ -333,6 +333,65 @@
         { id:3002, description:'Coach utilisation below 70% target — Q1 hit 64%. Either we have too many coaches or pipeline is weak.',             owner:'Lou',    status:'open',     solution:'', business_id:1, created_at:new Date(Date.now()-12*86400000).toISOString() },
         { id:3003, description:'No standard scorecard for coach performance — each coach is measured differently, we need a unified scorecard.',     owner:'Andrew', status:'open',     solution:'', business_id:1, created_at:new Date(Date.now()-21*86400000).toISOString() },
         { id:3004, description:"Website conversion rate dropped 30% after last redesign — visitors aren't getting to the booking form.",            owner:'Andrew', status:'resolved', solution:'Reverted hero CTA, moved booking widget above the fold, conversion back to baseline within a week.', business_id:1, created_at:new Date(Date.now()-30*86400000).toISOString() }
+      ]);
+      // Planning sessions
+      const thisYear = today.getFullYear();
+      const nextYear = thisYear + 1;
+      seedIfEmpty('coach4u_annual_sessions', [
+        { id:5001, session_date:thisYear+'-01-01', year:String(thisYear), status:'completed', rating:8,
+          agenda:[
+            { id:1, title:'Review Last Year',                  notes:'Revenue up 22% YoY. Missed coach-hire target (1 of 2). Acme + Globex deals carried Q4. NPS held at 64.' },
+            { id:2, title:'Refresh Core Values + Core Focus',  notes:'Values still resonate. Considering tightening niche to professional services > 20 staff.' },
+            { id:3, title:'Update 10-Year + 3-Year Picture',   notes:'3-year picture confirmed: 4 coaches, 80 active clients, $1.2M revenue. 10-year unchanged.' },
+            { id:4, title:'Set 1-Year Plan + Q1 Goals',        notes:'1-year revenue target $420k. Q1 priorities: sign 5 new clients, ship signature workbook, hire 1 associate coach.' },
+            { id:5, title:'Conclude — Rate the Session',       notes:'Great session. Action: Cath to update One-Page Plan by end of week. Andrew to brief team Monday.' }
+          ]
+        },
+        { id:5002, session_date:nextYear+'-01-01', year:String(nextYear), status:'scheduled', rating:null,
+          agenda:[
+            { id:1, title:'Review Last Year',                  notes:'' },
+            { id:2, title:'Refresh Core Values + Core Focus',  notes:'' },
+            { id:3, title:'Update 10-Year + 3-Year Picture',   notes:'' },
+            { id:4, title:'Set 1-Year Plan + Q1 Goals',        notes:'' },
+            { id:5, title:'Conclude — Rate the Session',       notes:'' }
+          ]
+        }
+      ]);
+      // Pick next-upcoming quarter for the scheduled quarterly session
+      const _curQ = Math.floor(today.getMonth() / 3) + 1;
+      let _nextQ = _curQ + 1, _nextQYr = thisYear;
+      if (_nextQ > 4) { _nextQ = 1; _nextQYr = thisYear + 1; }
+      const _nextQuarterLabel = 'Q' + _nextQ + ' ' + _nextQYr;
+      // Quarter-end date for setting _nextQ goals (i.e. end of prior quarter)
+      let _priorQ = _nextQ - 1, _priorQYr = _nextQYr; if (_priorQ < 1) { _priorQ = 4; _priorQYr = _nextQYr - 1; }
+      const _endMonth = [3, 6, 9, 12][_priorQ - 1];
+      const _endDay = [31, 30, 30, 31][_priorQ - 1];
+      const _qSessionDate = _priorQYr + '-' + String(_endMonth).padStart(2, '0') + '-' + String(_endDay).padStart(2, '0');
+      seedIfEmpty('coach4u_quarterly_sessions', [
+        { id:6001, session_date:'2026-03-31', target_quarter:'Q2 2026', status:'completed', rating:7,
+          agenda:[
+            { id:1, title:'Review Last Quarter',          notes:'Q1 results: 4 of 5 priorities hit. Missed associate-coach hire (still searching). Revenue $98k (target $90k) — strong.' },
+            { id:2, title:'Lessons + Adjustments',        notes:'Need a clearer rock owner for hiring. Sales pipeline review should be weekly not monthly.' },
+            { id:3, title:"Set Next Quarter's Goals",     notes:'Q2: 1) Hire associate coach (Lou), 2) Launch group coaching program, 3) 5 new clients, 4) Speak at 2 events.' },
+            { id:4, title:'Conclude — Rate the Session', notes:'Solid session. Cath to update goals.html with Q2 priorities by EOW.' }
+          ]
+        },
+        { id:6002, session_date:'2026-06-30', target_quarter:'Q3 2026', status:'completed', rating:8,
+          agenda:[
+            { id:1, title:'Review Last Quarter',          notes:'Q2: 3 of 4 priorities hit. Hired associate coach (Sarah, started May). Group program launched with 6 participants. Missed event speaking target (1 of 2).' },
+            { id:2, title:'Lessons + Adjustments',        notes:'Event scheduling needs more lead time. Group program proves out — repeat in Q3 with 10 participants.' },
+            { id:3, title:"Set Next Quarter's Goals",     notes:'Q3: 1) Group cohort #2 (10 ppl), 2) Sign 6 new 1:1 clients, 3) Publish signature workbook, 4) Hire admin support.' },
+            { id:4, title:'Conclude — Rate the Session', notes:'Best session yet. Team in sync. Andrew to brief team Monday.' }
+          ]
+        },
+        { id:6003, session_date:_qSessionDate, target_quarter:_nextQuarterLabel, status:'scheduled', rating:null,
+          agenda:[
+            { id:1, title:'Review Last Quarter',          notes:'' },
+            { id:2, title:'Lessons + Adjustments',        notes:'' },
+            { id:3, title:"Set Next Quarter's Goals",     notes:'' },
+            { id:4, title:'Conclude — Rate the Session', notes:'' }
+          ]
+        }
       ]);
     }
 
