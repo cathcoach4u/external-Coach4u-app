@@ -4,6 +4,9 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.87
+- **Removed "Seats: X of Y" stat tile** from the SARUBA account dashboard. It duplicated the Users tile in plan-capacity framing — "1 of 3" felt ambiguous (status? error?). The stats row is now a clean 2-tile grid: **Businesses** + **Users**. Seat-allowance / billing context can surface later in a proper "Account / Billing" section when Stripe is wired up.
+
 ## v0.5.86
 - **Removed the "Active" pill from `my-businesses.html` business cards.** Previously the page auto-marked one business as "Active" on every visit (the localStorage-default selection), which felt like phantom state — implied a business was open even when the user had just logged in and not done anything. Now the account dashboard is a clean list with role pills only. Users tap "Open ›" on a card to enter that business. The underlying `coach4u_active_org_id` localStorage mechanism is unchanged and still drives which business `index.html` and other tools load when navigated to directly.
 

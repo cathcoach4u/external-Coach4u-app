@@ -128,9 +128,10 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.86
+v0.5.87
 
 ## Latest
+- **v0.5.87** — Removed the "Seats: X of Y" stat tile from the SARUBA dashboard. It was duplicating the Users tile in confusing framing ("1 of 3" felt like ambiguous status). The stats row is now 2 tiles: Businesses + Users. Plan-capacity / billing info will surface later in a dedicated billing area.
 - **v0.5.86** — Removed the "Active" pill from business cards on `my-businesses.html`. Previously one business always showed as "Active" on login (the localStorage-stored default selection), which implied state ("you have this open") when the user hadn't actually done anything yet. Now the account dashboard is a clean list — users tap "Open ›" to enter a business. The underlying `coach4u_active_org_id` mechanism still drives which business `index.html` and other tools load when navigated to directly.
 - **v0.5.85** — Account dashboard is now the first thing seen after sign-in. `login.html` now redirects to `my-businesses.html` (was `index.html`), so every user lands on the SARUBA parent dashboard first — sees all businesses, can switch between them, manage users, then tap into a specific business. Brand-new users (no team_members) get auto-redirected from `my-businesses.html` → `setup.html` so the first-business wizard still fires correctly.
 - **v0.5.84** — SARUBA account dashboard with user management. `my-businesses.html` is now a comprehensive parent dashboard: account header + stats row (businesses / users / seats) + businesses list with per-card rename/delete menu + Users section with invite/remove. Five new RPC functions land in Supabase (`invite_team_member`, `remove_team_member`, `rename_business`, `delete_business`, `link_pending_invites`) plus an `AFTER INSERT` trigger on `auth.users` that auto-links any pending invites matching the new user's email. Multi-business users now land on `my-businesses.html` after login (single-business users still go straight to `index.html`). **Requires SQL** — see CHANGELOG entry for the paste-and-run delta block.
