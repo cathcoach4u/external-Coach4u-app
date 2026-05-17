@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One-Page Plans &mdash; All Businesses | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#003366">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Your Business Coach">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      background: #e8edf2;
+      min-height: 100vh;
+      padding-bottom: 32px;
+    }
+
+    /* ===== Sticky toolbar (account-level back link) ===== */
+    .screen-toolbar {
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .toolbar-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .toolbar-back {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #0D9488;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .toolbar-back:hover { text-decoration: underline; }
+    .toolbar-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #003366;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .toolbar-hint { font-size: 0.72rem; color: #999; }
+    @media (max-width: 600px) { .toolbar-hint { display: none; } }
+
+    .print-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 14px;
+      background: #0D9488;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .print-btn:hover { background: #0F766E; }
+
+    /* ===== Page intro ===== */
+    .page-intro {
+      max-width: 1100px;
+      margin: 20px auto 12px;
+      padding: 0 20px;
+    }
+    .page-intro h1 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #003366;
+      margin: 0 0 4px;
+    }
+    .page-intro p {
+      font-size: 0.85rem;
+      color: #555;
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    .data-banner {
+      max-width: 1100px;
+      margin: 14px auto 0;
+      padding: 10px 14px;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      border-left: 4px solid #d97706;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      color: #78350f;
+      line-height: 1.5;
+    }
+    .data-banner strong { color: #78350f; }
+
+    .mobile-hint {
+      display: none;
+      max-width: 1100px;
+      margin: 12px auto 0;
+      background: #f0fdfa;
+      border: 1px solid #d1fae5;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.75rem;
+      color: #065f46;
+    }
+    @media (max-width: 900px) { .mobile-hint { display: block; } }
+
+    /* ===== Business plan cards (stack vertically) ===== */
+    .plans-wrap {
+      max-width: 1100px;
+      margin: 16px auto 0;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .doc-preview {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .plan-page {
+      min-width: 940px;
+      background: white;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.14);
+      border-radius: 4px;
+      overflow: hidden;
+      font-family: 'Aptos', 'Segoe UI', system-ui, sans-serif;
+    }
+
+    .doc-header {
+      background: #003366;
+      color: white;
+      padding: 11px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .doc-company { font-size: 0.95rem; font-weight: 800; letter-spacing: 0.3px; }
+    .doc-company-sub { font-size: 0.68rem; opacity: 0.7; margin-top: 1px; }
+    .doc-plan-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; }
+    .doc-year { font-size: 0.68rem; opacity: 0.6; margin-top: 2px; text-align: right; }
+
+    .doc-body {
+      display: grid;
+      grid-template-columns: 1fr 1.45fr 1fr;
+    }
+    .doc-col { padding: 14px 16px; border-right: 1px solid #e5e7eb; }
+    .doc-col:last-child { border-right: none; }
+
+    .col-heading {
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: #0D9488;
+      border-left: 3px solid #0D9488;
+      padding-left: 7px;
+      margin-bottom: 12px;
+    }
+
+    .field { margin-bottom: 10px; }
+    .field:last-child { margin-bottom: 0; }
+    .field-label {
+      font-size: 0.56rem;
+      font-weight: 800;
+      letter-spacing: 0.9px;
+      text-transform: uppercase;
+      color: #003366;
+      margin-bottom: 3px;
+      display: block;
+    }
+    .field-value { font-size: 0.76rem; color: #2d2d2d; line-height: 1.5; }
+    .field-value.empty { color: #b0b0b0; font-style: italic; }
+    .field-divider { border: none; border-top: 1px solid #f0f0f0; margin: 10px 0; }
+
+    .values-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+    .value-pill {
+      background: rgba(13,148,136,0.08);
+      color: #0D9488;
+      border: 1px solid rgba(13,148,136,0.25);
+      border-radius: 20px;
+      padding: 2px 9px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+    .values-pills .empty {
+      color: #b0b0b0;
+      font-style: italic;
+      font-size: 0.72rem;
+    }
+
+    .fin-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 6px; }
+    .fin-cell .field-label { margin-bottom: 1px; }
+    .fin-cell .field-value { font-weight: 700; font-size: 0.78rem; color: #003366; }
+    .fin-cell .field-value.empty { font-weight: 500; color: #b0b0b0; }
+
+    .num-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .num-list li { display: flex; gap: 5px; font-size: 0.73rem; color: #2d2d2d; line-height: 1.4; }
+    .num-list li .n { color: #0D9488; font-weight: 800; font-size: 0.68rem; min-width: 13px; padding-top: 1px; flex-shrink: 0; }
+    .num-list.empty-list { color: #b0b0b0; font-style: italic; font-size: 0.72rem; }
+
+    .team-compact { display: flex; flex-direction: column; gap: 3px; }
+    .team-line { font-size: 0.72rem; line-height: 1.35; color: #2d2d2d; }
+    .team-line .tn { font-weight: 800; color: #003366; }
+    .team-line .tr { font-weight: 700; color: #0D9488; }
+    .team-line .tsep { color: #bbb; margin: 0 4px; }
+    .team-empty { font-size: 0.7rem; color: #b0b0b0; font-style: italic; }
+
+    .doc-footer {
+      background: #f8f9fa;
+      border-top: 1px solid #e5e7eb;
+      padding: 6px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .doc-footer-text { font-size: 0.6rem; color: #aaa; }
+    .doc-footer-tagline { font-size: 0.6rem; color: #0D9488; font-weight: 700; }
+
+    /* Loading / empty states */
+    .state-msg {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 24px;
+      text-align: center;
+      background: white;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .state-msg.error {
+      border-left: 4px solid #dc2626;
+      color: #7f1d1d;
+      background: #fef2f2;
+    }
+
+    @page { size: A4 landscape; margin: 7mm 9mm; }
+
+    @media print {
+      body { opacity: 1 !important; background: white !important; padding: 0 !important; }
+      .screen-toolbar, .mobile-hint, .data-banner { display: none !important; }
+      .page-intro { padding: 0 0 8mm 0; margin: 0; max-width: none; }
+      .plans-wrap { padding: 0; margin: 0; max-width: none; gap: 0; }
+      .doc-preview { padding: 0 !important; overflow: visible !important; }
+      .plan-page {
+        min-width: 0 !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        page-break-after: always;
+        break-after: page;
+      }
+      .plan-page:last-child { page-break-after: auto; }
+      .doc-body { page-break-inside: avoid; break-inside: avoid; }
+      .team-line { font-size: 0.66rem; line-height: 1.3; }
+      .doc-header { padding: 9px 18px; }
+      .doc-col { padding: 11px 14px; }
+      .col-heading { margin-bottom: 9px; }
+      .field { margin-bottom: 8px; }
+      .field-divider { margin: 8px 0; }
+      .field-value { line-height: 1.4; }
+      .num-list li { line-height: 1.35; }
+      .doc-footer { padding: 5px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="screen-toolbar">
+    <div class="toolbar-left">
+      <a href="my-businesses.html" class="toolbar-back">&#x2190; Account</a>
+      <span class="toolbar-title">One-Page Plans &mdash; All Businesses</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+      <span class="toolbar-hint">One page per business &middot; Print for landscape A4</span>
+      <button class="print-btn" onclick="window.print()">&#x1F5A8;&nbsp; Print / PDF</button>
+    </div>
+  </div>
+
+  <div class="mobile-hint">
+    &#x21C4; Scroll right inside each plan to see all three columns &nbsp;&middot;&nbsp; Print for the best result
+  </div>
+
+  <div class="page-intro">
+    <h1>&#x1F4CB; One-Page Plans &mdash; All Businesses</h1>
+    <p>See every business&rsquo; strategic one-pager side by side. Useful for cross-business meetings, board reviews, and spotting alignment gaps.</p>
+  </div>
+
+  <div id="dataBanner" class="data-banner" style="display:none;">
+    <strong>Heads up:</strong> Strategy worksheets currently save locally on each business. Once the data layer migration lands (v0.5.94), edits sync to Supabase and this page populates automatically. For now the layout shows the structure with empty placeholders where data hasn&rsquo;t synced yet.
+  </div>
+
+  <div id="plansWrap" class="plans-wrap">
+    <div class="state-msg">Loading your businesses&hellip;</div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const sb = createClient(
+      'https://eekefsuaefgpqmjdyniy.supabase.co',
+      'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+    );
+
+    /* ============== helpers ============== */
+    function escHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    function fieldValue(text, fallback) {
+      const v = (text || '').toString().trim();
+      if (v) return `<div class="field-value">${escHtml(v)}</div>`;
+      return `<div class="field-value empty">${escHtml(fallback || '— not recorded —')}</div>`;
+    }
+
+    function finCell(label, value) {
+      const v = (value || '').toString().trim();
+      const cls = v ? 'field-value' : 'field-value empty';
+      const display = v || '—';
+      return `<div class="fin-cell"><span class="field-label">${escHtml(label)}</span><div class="${cls}">${escHtml(display)}</div></div>`;
+    }
+
+    function valuePills(cv) {
+      if (!cv) return '<div class="values-pills"><span class="empty">No core values recorded yet</span></div>';
+      const pills = [];
+      for (let i = 1; i <= 8; i++) {
+        const v = (cv['value_' + i] || '').toString().trim();
+        if (v) pills.push(v);
+      }
+      if (!pills.length) return '<div class="values-pills"><span class="empty">No core values recorded yet</span></div>';
+      return '<div class="values-pills">' + pills.map(v =>
+        `<span class="value-pill">${escHtml(v)}</span>`
+      ).join('') + '</div>';
+    }
+
+    function numList(raw, emptyLabel) {
+      const text = (raw || '').toString().trim();
+      if (!text) return `<div class="num-list empty-list">${escHtml(emptyLabel || '— not recorded —')}</div>`;
+      const items = text.split(/\r?\n/)
+        .map(line => line.trim())
+        .map(line => line.replace(/^\s*(?:\d+[.)]|[-*•])\s+/, '').trim())
+        .filter(Boolean);
+      if (!items.length) return `<div class="num-list empty-list">${escHtml(emptyLabel || '— not recorded —')}</div>`;
+      return '<ul class="num-list">' + items.map((t, i) =>
+        `<li><span class="n">${i + 1}.</span> ${escHtml(t)}</li>`
+      ).join('') + '</ul>';
+    }
+
+    function teamList(rows) {
+      const filled = (Array.isArray(rows) ? rows : [])
+        .filter(m => !m.placeholder && ((m.name && m.name.trim()) || (m.role && m.role.trim())));
+      if (!filled.length) {
+        return '<div class="team-empty">No leadership team recorded yet.</div>';
+      }
+      return '<div class="team-compact">' + filled.map(m => {
+        const name = escHtml((m.name || '').trim() || '—');
+        const role = escHtml((m.role || '').trim());
+        if (!role) return `<div class="team-line"><span class="tn">${name}</span></div>`;
+        return `<div class="team-line"><span class="tn">${name}</span><span class="tsep">&middot;</span><span class="tr">${role}</span></div>`;
+      }).join('') + '</div>';
+    }
+
+    /* ============== render one business card ============== */
+    function renderPlanCard(org, data) {
+      const cv = data.coreValues || null;
+      const cf = data.coreFocus || {};
+      const tg = data.targets || {};
+      const ms = data.marketing || {};
+      const team = data.team || [];
+
+      const year = new Date().getFullYear();
+
+      return `
+        <div class="doc-preview">
+          <div class="plan-page">
+
+            <div class="doc-header">
+              <div>
+                <div class="doc-company">${escHtml(org.name)}</div>
+                <div class="doc-company-sub">One-Page Business Plan</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="doc-plan-title">One-Page Business Plan</div>
+                <div class="doc-year">${year}</div>
+              </div>
+            </div>
+
+            <div class="doc-body">
+
+              <div class="doc-col">
+                <div class="col-heading">Who We Are</div>
+                <div class="field">
+                  <span class="field-label">Core Values</span>
+                  ${valuePills(cv)}
+                </div>
+                <hr class="field-divider">
+                <div class="field">
+                  <span class="field-label">Purpose</span>
+                  ${fieldValue(cf.purpose)}
+                </div>
+                <div class="field">
+                  <span class="field-label">Niche</span>
+                  ${fieldValue(cf.niche)}
+                </div>
+                <hr class="field-divider">
+                <div class="field">
+                  <span class="field-label">Leadership Team</span>
+                  ${teamList(team)}
+                </div>
+              </div>
+
+              <div class="doc-col">
+                <div class="col-heading">Where We Are Going</div>
+                <div class="field">
+                  <span class="field-label">10-Year Vision</span>
+                  ${fieldValue(tg.ten_year)}
+                </div>
+                <hr class="field-divider">
+                <div class="field">
+                  <span class="field-label">3-Year Picture</span>
+                  <div class="fin-row">
+                    ${finCell('Target Date', tg.three_year_date)}
+                    ${finCell('Revenue', tg.three_year_revenue)}
+                    ${finCell('Profit', tg.three_year_profit)}
+                  </div>
+                  ${fieldValue(tg.three_year_desc)}
+                </div>
+                <hr class="field-divider">
+                <div class="field">
+                  <span class="field-label">1-Year Plan</span>
+                  <div class="fin-row">
+                    ${finCell('Target Date', tg.one_year_date)}
+                    ${finCell('Revenue', tg.one_year_revenue)}
+                    ${finCell('Profit', tg.one_year_profit)}
+                  </div>
+                  ${numList(tg.one_year_goals, 'No 1-year goals recorded yet')}
+                </div>
+              </div>
+
+              <div class="doc-col">
+                <div class="col-heading">How We Go to Market</div>
+                <div class="field">
+                  <span class="field-label">Target Market</span>
+                  ${fieldValue(ms.target_market)}
+                </div>
+                <hr class="field-divider">
+                <div class="field">
+                  <span class="field-label">What Makes Us Different</span>
+                  ${numList(ms.uniques, 'No differentiators recorded yet')}
+                </div>
+                <hr class="field-divider">
+                <div class="field">
+                  <span class="field-label">Our Process</span>
+                  ${fieldValue(ms.proven_process)}
+                </div>
+                <hr class="field-divider">
+                <div class="field">
+                  <span class="field-label">Our Guarantee</span>
+                  ${fieldValue(ms.guarantee)}
+                </div>
+              </div>
+
+            </div>
+
+            <div class="doc-footer">
+              <span class="doc-footer-text">Confidential &mdash; ${escHtml(org.name)}</span>
+              <span class="doc-footer-tagline">Your Business Coach &mdash; coach4u.com.au</span>
+            </div>
+
+          </div>
+        </div>
+      `;
+    }
+
+    /* ============== load + render ============== */
+    async function init() {
+      const { data: { user }, error: authErr } = await sb.auth.getUser();
+      if (!user || authErr) { window.location.href = 'login.html'; return; }
+
+      const { data: profile } = await sb
+        .from('users').select('membership_status').eq('id', user.id).single();
+      if (!profile || profile.membership_status !== 'active') {
+        window.location.href = 'inactive.html'; return;
+      }
+
+      document.body.style.opacity = '1';
+
+      // Load caller's active orgs
+      const { data: mems, error: memErr } = await sb
+        .from('team_members')
+        .select('organisation_id, organisations!inner(id, name)')
+        .eq('user_id', user.id)
+        .eq('status', 'active');
+
+      const wrap = document.getElementById('plansWrap');
+
+      if (memErr) {
+        wrap.innerHTML = `<div class="state-msg error">Could not load businesses: ${escHtml(memErr.message)}</div>`;
+        return;
+      }
+      if (!mems || !mems.length) {
+        wrap.innerHTML = `<div class="state-msg">You don&rsquo;t have any businesses yet. <a href="setup.html">Create your first business</a>.</div>`;
+        return;
+      }
+
+      const orgs = mems
+        .map(m => ({ id: m.organisations.id, name: m.organisations.name }))
+        .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+      const orgIds = orgs.map(o => o.id);
+
+      // Fire all 5 strategy queries in parallel, scoped to orgIds
+      const [cvRes, cfRes, tgRes, msRes, ltRes] = await Promise.all([
+        sb.from('core_values').select('*').in('organisation_id', orgIds),
+        sb.from('core_focus').select('*').in('organisation_id', orgIds),
+        sb.from('targets').select('*').in('organisation_id', orgIds),
+        sb.from('marketing_strategy').select('*').in('organisation_id', orgIds),
+        sb.from('leadership_team_members').select('*').in('organisation_id', orgIds).order('sort_order', { ascending: true })
+      ]);
+
+      // Build per-org data map
+      const byOrg = new Map();
+      orgs.forEach(o => byOrg.set(o.id, { coreValues: null, coreFocus: {}, targets: {}, marketing: {}, team: [] }));
+
+      (cvRes.data || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.coreValues = r; });
+      (cfRes.data || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.coreFocus = r; });
+      (tgRes.data || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.targets = r; });
+      (msRes.data || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.marketing = r; });
+      (ltRes.data || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.team.push(r); });
+
+      // Show the data-layer-pending banner if every business returned empty plan data
+      const anyData = orgs.some(o => {
+        const d = byOrg.get(o.id);
+        if (!d) return false;
+        if (d.coreValues) return true;
+        if (d.coreFocus && (d.coreFocus.purpose || d.coreFocus.niche)) return true;
+        if (d.targets && Object.values(d.targets).some(v => v && String(v).trim() && !['organisation_id', 'updated_at'].includes(v))) return true;
+        if (d.marketing && (d.marketing.target_market || d.marketing.uniques || d.marketing.proven_process || d.marketing.guarantee)) return true;
+        if (d.team && d.team.length) return true;
+        return false;
+      });
+      if (!anyData) {
+        document.getElementById('dataBanner').style.display = 'block';
+      }
+
+      // Render
+      wrap.innerHTML = orgs.map(o => renderPlanCard(o, byOrg.get(o.id))).join('');
+    }
+
+    init();
+  </script>
+</body>
+</html>

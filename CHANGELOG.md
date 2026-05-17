@@ -4,6 +4,18 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.91
+- **New page: `account-plans.html` — cross-business One-Page Plans view.** The first real cross-business topic page; the proof-of-concept for the topic launcher (v0.5.89).
+- **Use case:** owner running a board / strategy meeting wants to see every business' one-pager side-by-side without drilling into each one individually. Topic-first navigation: "I want to compare plans" → not "I want to open Business A, then Business B".
+- **Layout:** account-level page (no business bottom-nav, no "← Home" — "← Account" back link to `my-businesses.html`). Stacked vertically: one compact one-pager card per business, in alphabetical order by name. Each card reuses the same 3-column layout as the per-business `one-page-plan.html` (Who We Are / Where We Are Going / How We Go to Market).
+- **Data flow:** loads the caller's active `team_members` rows, then fires 5 parallel Supabase queries scoped to that orgId set — `core_values`, `core_focus`, `targets`, `marketing_strategy`, `leadership_team_members`. Builds a per-org data map and renders one card per business. Empty fields render as muted italic "— not recorded —" placeholders instead of looking broken.
+- **Data-layer reality:** worksheet pages still save to localStorage (Supabase wiring lands in v0.5.94). So today the cross-business view will show every business as empty. To make this obvious rather than confusing, when every business returns zero strategy data the page shows a yellow banner: "Heads up: strategy worksheets currently save locally on each business. Once the data layer migration lands (v0.5.94), edits sync to Supabase and this page populates automatically."
+- **Print:** landscape A4, page-break-after each business so a 3-business account prints to 3 pages. Toolbar Print/PDF button. Mobile shows a teal hint to scroll right inside each plan card for the 3-column doc.
+- **Topic launcher update:** `account-plans.html` card on `my-businesses.html` flipped from `coming-soon` to `available` with an "Open" pill. 4 available cards on the dashboard now: Learning Vault, Businesses, Team, One-Page Plans. 12 still coming-soon (the rest of the cross-business pages).
+- **Why this one first:** validates the navigation pattern (topic-first, account-level page, "← Account" back link), the visual pattern (compact card per business), and the data pattern (parallel queries scoped to orgId set, empty-state handling, banner for data-layer-pending). The remaining 12 cross-business pages follow the same template.
+
+---
+
 ## v0.5.90
 - **Topic launcher fix — Businesses & Team are now `available` cards, not "Coming soon".** The v0.5.89 agent over-applied the "only Learning Vault is clickable" rule and marked all three "Learning & Account" cards as coming-soon. But the Businesses and Team sections exist right below on the same page — their `#businesses` and `#team` anchors are real navigation, not future work. Flipped both cards from `class="topic-card coming-soon"` to `class="topic-card available"` with an "Open" pill.
 - Dashboard now has **3 available topic cards** (Learning Vault → `learning-vault.html`, Businesses → `#businesses` anchor, Team → `#team` anchor) and **13 coming-soon** (the cross-business pages still to be built in v0.5.91+).
