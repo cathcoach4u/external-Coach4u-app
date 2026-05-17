@@ -4,6 +4,9 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.82
+- **Dashboard "Manage businesses" link always visible.** Previously the link was only rendered when the user belonged to 2+ businesses, leaving single-business users with no in-app way to reach `my-businesses.html` to add their second business. Now the link always shows, with adaptive label: "Switch business ›" if the user has 2+ orgs, "Manage businesses ›" if they have 1.
+
 ## v0.5.81
 - **New page `my-businesses.html`** — lists every organisation the user is an active member of with role pill, highlights the current active one, and has a "+ Create New Business" modal that calls the existing `bootstrap_organisation` RPC (handles both first business and additional). Tapping a different business sets it active and redirects back to the dashboard.
 - **New helper `js/active-org.js`** — tiny module exposing `window.activeOrg.get() / set(orgId) / clear()` backed by `localStorage.coach4u_active_org_id`. Loaded via `<script defer>` on every page that needs to know which business is currently selected.
