@@ -249,7 +249,7 @@
       </div>
     </div>
 
-    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.99</p>
+    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.100</p>
 
   </div>
 
@@ -459,15 +459,52 @@
       return d.getDate() + ' ' + months[d.getMonth()];
     }
 
-    function renderDashboard() {
+    async function renderDashboard(orgIdArg) {
+      const orgId = orgIdArg;
+      const quarter = currentQuarter();
+
+      // ── Parallel Supabase queries for all panel data ──
+      const [
+        meetingsRes, issuesCountRes, rocksRes, targetsRes, valuesRes
+      ] = await Promise.all([
+        supabase.from('meetings')
+          .select('id, meeting_date, status, quarter')
+          .eq('organisation_id', orgId)
+          .order('meeting_date', { ascending: false })
+          .limit(10),
+        supabase.from('issues')
+          .select('id', { count: 'exact', head: true })
+          .eq('organisation_id', orgId)
+          .eq('status', 'open'),
+        supabase.from('rocks')
+          .select('id, description, status, owner, company_rock, sort_order')
+          .eq('organisation_id', orgId)
+          .eq('quarter', quarter)
+          .order('sort_order', { ascending: true }),
+        supabase.from('targets')
+          .select('one_year_goals, one_year_date, one_year_revenue')
+          .eq('organisation_id', orgId)
+          .maybeSingle(),
+        supabase.from('core_values')
+          .select('*')
+          .eq('organisation_id', orgId)
+          .maybeSingle()
+      ]);
+
+      if (meetingsRes.error) console.warn('Load meetings failed:', meetingsRes.error.message);
+      if (issuesCountRes.error) console.warn('Load issues count failed:', issuesCountRes.error.message);
+      if (rocksRes.error) console.warn('Load rocks failed:', rocksRes.error.message);
+      if (targetsRes.error) console.warn('Load targets failed:', targetsRes.error.message);
+      if (valuesRes.error) console.warn('Load values failed:', valuesRes.error.message);
+
+      const meetings = Array.isArray(meetingsRes.data) ? meetingsRes.data : [];
+
       // ── Meetings ──
-      const meetingsData = readLS('coach4u_demo_meetings', { meetings: [] });
-      const meetings = (meetingsData && meetingsData.meetings) || [];
       const mondayIso = thisMondayIso();
       const todayIso = new Date().toISOString().slice(0, 10);
       const thisWeekMeeting = meetings.find(x => x.meeting_date === mondayIso);
       const upcoming = meetings.slice().filter(m => m.status !== 'completed' && m.meeting_date >= todayIso)
-                                .sort((a,b) => a.meeting_date.localeCompare(b.meeting_date))[0];
+                                .sort((a,b) => (a.meeting_date||'').localeCompare(b.meeting_date||''))[0];
       const nextMeeting = thisWeekMeeting || upcoming || meetings.find(m => m.status !== 'completed') || meetings[0];
 
       // Stat tile: Next Meeting
@@ -475,46 +512,53 @@
 
       // "Go to This Week's Meeting" button + Next Meeting tile + "View Meeting" link all open the actual meeting
       if (nextMeeting) {
-        const meetingUrl = 'run-meeting.html?id=' + nextMeeting.id;
+        const meetingUrl = 'run-meeting.html?id=' + encodeURIComponent(nextMeeting.id);
         document.getElementById('thisWeekMeetingBtn').href = meetingUrl;
         document.getElementById('thisWeekViewLink').href = meetingUrl;
         document.getElementById('statNextMeetingTile').href = meetingUrl;
+      } else {
+        // No meeting → links default to meeting.html (already in markup)
       }
 
-      // This Week todos panel
+      // This Week todos panel — pulled from the focused meeting's todos
       const todosWrap = document.getElementById('thisWeekTodos');
-      const focusMeeting = thisWeekMeeting || upcoming || meetings.find(m => (m.todos || []).length) || meetings[0];
-      const todos = (focusMeeting && focusMeeting.todos) || [];
-      if (todos.length) {
-        todosWrap.innerHTML = todos.slice(0, 4).map(t => `
-          <li class="todo-item">
-            <div class="todo-check ${t.done ? 'done' : ''}"></div>
-            <div>
-              <div class="todo-desc ${t.done ? 'done' : ''}">${escapeHtml(t.description || '')}</div>
-              <div class="todo-meta">${escapeHtml(t.owner || '')}${t.due_date ? ' &middot; Due ' + fmtDueDate(t.due_date) : ''}</div>
-            </div>
-          </li>
-        `).join('');
+      const focusMeeting = thisWeekMeeting || upcoming || meetings[0];
+      if (focusMeeting) {
+        const { data: todos, error: todosErr } = await supabase
+          .from('meeting_todos')
+          .select('description, owner, done, due_date')
+          .eq('meeting_id', focusMeeting.id)
+          .eq('done', false)
+          .order('created_at', { ascending: true })
+          .limit(4);
+        if (todosErr) console.warn('Load todos failed:', todosErr.message);
+        const list = Array.isArray(todos) ? todos : [];
+        if (list.length) {
+          todosWrap.innerHTML = list.map(t => `
+            <li class="todo-item">
+              <div class="todo-check ${t.done ? 'done' : ''}"></div>
+              <div>
+                <div class="todo-desc ${t.done ? 'done' : ''}">${escapeHtml(t.description || '')}</div>
+                <div class="todo-meta">${escapeHtml(t.owner || '')}${t.due_date ? ' &middot; Due ' + fmtDueDate(t.due_date) : ''}</div>
+              </div>
+            </li>
+          `).join('');
+        }
       }
 
       // ── Issues stat tile ──
-      const issues = readLS('coach4u_demo_issues', []);
-      const openCount = (Array.isArray(issues) ? issues : []).filter(i => i.status !== 'resolved').length;
+      const openCount = (issuesCountRes.count != null) ? issuesCountRes.count : 0;
       document.getElementById('statOpenIssues').textContent = openCount;
 
       // ── Goals (rocks) ──
-      const rocks = readLS('coach4u_demo_rocks', []);
-      const quarter = currentQuarter();
-      let quarterRocks = (Array.isArray(rocks) ? rocks : []).filter(r => r.quarter === quarter);
-      // Fall back to all rocks if none match this quarter (handles seed Q2 2026 vs real current quarter)
-      if (!quarterRocks.length) quarterRocks = Array.isArray(rocks) ? rocks : [];
-
+      const quarterRocks = Array.isArray(rocksRes.data) ? rocksRes.data : [];
+      const onTrackOrDone = quarterRocks.filter(r => r.status === 'on_track' || r.status === 'done').length;
       const onTrack = quarterRocks.filter(r => r.status === 'on_track').length;
       const total = quarterRocks.length;
 
-      // Stat tile: Goals On Track
+      // Stat tile: Goals On Track — count rocks that are 'on_track' or 'done' / total
       document.getElementById('statGoalsOnTrack').innerHTML = total
-        ? `${onTrack}<span style="font-size:0.9rem;font-weight:700;color:#aaa;">/${total}</span>`
+        ? `${onTrackOrDone}<span style="font-size:0.9rem;font-weight:700;color:#aaa;">/${total}</span>`
         : '0';
 
       // This Quarter panel
@@ -537,8 +581,8 @@
         rocksWrap.innerHTML = '<div style="font-size:0.78rem;color:#aaa;padding:6px 0;">Add quarterly goals to see them here.</div>';
       }
 
-      // ── 1-Year Goal panel ──
-      const targets = readLS('coach4u_targets', null);
+      // ── 1-Year Goal panel (Supabase targets) ──
+      const targets = targetsRes.data;
       if (targets) {
         const goals = (targets.one_year_goals || '')
           .split('\n')
@@ -556,8 +600,8 @@
         if (metaBits.length) document.getElementById('oneYearMeta').innerHTML = metaBits.join(' &nbsp;&middot;&nbsp; ');
       }
 
-      // ── Core Values panel ──
-      const cv = readLS('coach4u_core_values', null);
+      // ── Core Values panel (Supabase core_values) ──
+      const cv = valuesRes.data;
       if (cv) {
         const pills = [];
         for (let i = 1; i <= 8; i++) {
@@ -620,7 +664,11 @@
       }
 
       ensureSeeds();
-      renderDashboard();
+      try {
+        await renderDashboard(activeId);
+      } catch (e) {
+        console.warn('Dashboard render error:', e);
+      }
       document.body.style.opacity = '1';
       document.getElementById('signOutBtn').addEventListener('click', async () => {
         await supabase.auth.signOut(); window.location.href = 'login.html';

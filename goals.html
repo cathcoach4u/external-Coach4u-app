@@ -39,6 +39,7 @@
     .sb-off_track{background:#fee2e2;color:#991b1b}
     .sb-at_risk{background:#fef3c7;color:#92400e}
     .sb-done{background:#e0e7ff;color:#3730a3}
+    .sb-not_started{background:#f3f4f6;color:#6b7280}
     .company-tag{background:#eff6ff;color:#1d4ed8;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em}
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
     .modal-overlay.hidden{display:none}
@@ -95,13 +96,7 @@
     <div class="page-controls">
       <div style="display:flex;align-items:center;gap:10px;">
         <span style="font-family:inherit;font-weight:600;color:var(--primary);font-size:.9rem;">Quarter:</span>
-        <select class="field-select" id="quarter-select">
-          <option value="Q1 2026">Q1 2026</option>
-          <option value="Q2 2026" selected>Q2 2026</option>
-          <option value="Q3 2026">Q3 2026</option>
-          <option value="Q4 2026">Q4 2026</option>
-          <option value="Q1 2027">Q1 2027</option>
-        </select>
+        <select class="field-select" id="quarter-select"></select>
       </div>
       <button class="ws-btn" id="add-goal-btn">+ Add Goal</button>
     </div>
@@ -140,17 +135,12 @@
             <option value="at_risk">At Risk</option>
             <option value="off_track">Off Track</option>
             <option value="done">Done</option>
+            <option value="not_started">Not Started</option>
           </select>
         </div>
         <div>
           <label class="modal-label">Quarter</label>
-          <select class="modal-select" id="goal-quarter">
-            <option value="Q1 2026">Q1 2026</option>
-            <option value="Q2 2026">Q2 2026</option>
-            <option value="Q3 2026">Q3 2026</option>
-            <option value="Q4 2026">Q4 2026</option>
-            <option value="Q1 2027">Q1 2027</option>
-          </select>
+          <select class="modal-select" id="goal-quarter"></select>
         </div>
       </div>
       <div class="modal-field">
@@ -182,59 +172,74 @@
   <script type="module">
   'use strict';
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-  const _sb=createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
-  document.getElementById('signOutBtn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
-  let currentBusinessId=1,_goals=[];
-  function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  const supabase = createClient(
+    'https://eekefsuaefgpqmjdyniy.supabase.co',
+    'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+  );
+
+  /* Previous localStorage SEED (kept here as a reference for sample data only —
+     no longer auto-applied. New businesses start with no rocks.)
+     SEED = [
+       { description: 'Launch new "Strategy in a Day" workshop', owner: 'Cath',   status: 'on_track',  company_rock: true },
+       { description: 'Hire 1 senior coach',                      owner: 'Lou',    status: 'at_risk',   company_rock: true },
+       { description: 'Move CRM to HubSpot',                      owner: 'Andrew', status: 'on_track',  company_rock: false },
+       { description: 'Run 3 prospect events in Manchester',      owner: 'Cath',   status: 'off_track', company_rock: false }
+     ]
+  */
+
+  let orgId = null;
+  let _goals = [];
+
+  function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
-  // localStorage demo data stub (replaces non-existent /api/... backend). See CLAUDE.md v0.5.50.
-  const _LS_KEY='coach4u_demo_rocks';
-  function _genId(){return Date.now()*1000+Math.floor(Math.random()*1000)}
-  function _goalsSeed(){
-    // Match the quarter dropdown's default selected option so seeded goals are visible on first visit.
-    const q='Q2 2026';
-    return[
-      {id:2001,description:'Launch new "Strategy in a Day" workshop',owner:'Cath',status:'on_track',quarter:q,company_rock:1,business_id:1,sort_order:1,seat_id:null},
-      {id:2002,description:'Hire 1 senior coach',owner:'Lou',status:'at_risk',quarter:q,company_rock:1,business_id:1,sort_order:2,seat_id:null},
-      {id:2003,description:'Move CRM to HubSpot',owner:'Andrew',status:'on_track',quarter:q,company_rock:0,business_id:1,sort_order:3,seat_id:null},
-      {id:2004,description:'Run 3 prospect events in Manchester',owner:'Cath',status:'off_track',quarter:q,company_rock:0,business_id:1,sort_order:4,seat_id:null}
-    ];
+
+  function currentQuarter(){
+    const d = new Date();
+    return 'Q' + (Math.floor(d.getMonth() / 3) + 1) + ' ' + d.getFullYear();
   }
-  function _goalsLoad(){let d;try{d=JSON.parse(localStorage.getItem(_LS_KEY))}catch(_){d=null}if(!d||!Array.isArray(d)){d=_goalsSeed();_goalsSave(d)}return d}
-  function _goalsSave(d){localStorage.setItem(_LS_KEY,JSON.stringify(d))}
-  async function api(method,path,body){
-    await new Promise(r=>setTimeout(r,30));
-    const [pathname,query='']=path.split('?');
-    const qp={};query.split('&').filter(Boolean).forEach(p=>{const[k,v]=p.split('=');qp[k]=decodeURIComponent(v||'')});
-    if(method==='GET'&&pathname==='/businesses')return[{id:1,name:'Demo Business',type:'holding'}];
-    const d=_goalsLoad();
-    if(method==='GET'&&pathname==='/rocks'){
-      const q=qp.quarter;
-      return d.filter(r=>!q||r.quarter===q).slice().sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+  function buildQuarterOptions(){
+    // Build a 5-quarter window (previous, current, next 3)
+    const now = new Date();
+    const baseQ = Math.floor(now.getMonth() / 3) + 1;
+    const baseY = now.getFullYear();
+    const out = [];
+    for (let offset = -1; offset <= 3; offset++) {
+      let q = baseQ + offset, y = baseY;
+      while (q > 4) { q -= 4; y += 1; }
+      while (q < 1) { q += 4; y -= 1; }
+      out.push('Q' + q + ' ' + y);
     }
-    if(method==='POST'&&pathname==='/rocks'){
-      const g={id:_genId(),description:body.description,owner:body.owner||'',status:body.status||'on_track',quarter:body.quarter,company_rock:body.company_rock?1:0,seat_id:body.seat_id||null,business_id:body.business_id||1,sort_order:d.length+1};
-      d.push(g);_goalsSave(d);return g;
-    }
-    if(method==='PUT'&&pathname.startsWith('/rocks/')){
-      const id=parseInt(pathname.split('/').pop());const g=d.find(x=>x.id===id);
-      if(g){g.description=body.description;g.owner=body.owner||'';g.status=body.status;g.quarter=body.quarter;g.company_rock=body.company_rock?1:0;g.seat_id=body.seat_id||null;_goalsSave(d)}
-      return g||{};
-    }
-    if(method==='DELETE'&&pathname.startsWith('/rocks/')){
-      const id=parseInt(pathname.split('/').pop());
-      const idx=d.findIndex(x=>x.id===id);if(idx>-1){d.splice(idx,1);_goalsSave(d)}return{ok:true};
-    }
-    throw new Error('Unhandled api path: '+method+' '+pathname);
+    return out;
   }
-  const get=p=>api('GET',p),post=(p,b)=>api('POST',p,b),put=(p,b)=>api('PUT',p,b),del=p=>api('DELETE',p);
-  const STATUS_ICON={on_track:'&#x1F7E2;',at_risk:'&#x1F7E1;',off_track:'&#x1F534;',done:'&#x2705;'};
-  const STATUS_LABEL={on_track:'On Track',at_risk:'At Risk',off_track:'Off Track',done:'Done'};
+
+  function populateQuarterSelects(){
+    const options = buildQuarterOptions();
+    const cur = currentQuarter();
+    const html = options.map(q => `<option value="${q}" ${q===cur?'selected':''}>${q}</option>`).join('');
+    document.getElementById('quarter-select').innerHTML = html;
+    document.getElementById('goal-quarter').innerHTML = html;
+  }
+
+  const STATUS_ICON={on_track:'&#x1F7E2;',at_risk:'&#x1F7E1;',off_track:'&#x1F534;',done:'&#x2705;',not_started:'&#x26AA;'};
+  const STATUS_LABEL={on_track:'On Track',at_risk:'At Risk',off_track:'Off Track',done:'Done',not_started:'Not Started'};
+
   async function loadGoals(){
-    const quarter=document.getElementById('quarter-select').value;
-    try{_goals=await get('/rocks?quarter='+encodeURIComponent(quarter)+'&business_id='+currentBusinessId);renderBoard(_goals)}
-    catch(e){showToast('Could not load goals','error')}
+    const quarter = document.getElementById('quarter-select').value;
+    const { data, error } = await supabase
+      .from('rocks')
+      .select('*')
+      .eq('organisation_id', orgId)
+      .eq('quarter', quarter)
+      .order('sort_order', { ascending: true });
+    if (error) {
+      console.warn('Load rocks failed:', error.message);
+      _goals = [];
+    } else {
+      _goals = Array.isArray(data) ? data : [];
+    }
+    renderBoard(_goals);
   }
+
   function renderBoard(goals){
     const board=document.getElementById('goals-board');
     board.innerHTML='';
@@ -243,7 +248,7 @@
     const company=goals.filter(g=>g.company_rock);
     if(company.length)board.appendChild(renderGroup('&#x25C9; Company Goals',company));
     const individual=goals.filter(g=>!g.company_rock);
-    [...new Set(individual.map(g=>g.owner||'Unassigned'))].forEach(owner=>board.appendChild(renderGroup(owner,individual.filter(g=>(g.owner||'Unassigned')===owner))));
+    [...new Set(individual.map(g=>g.owner||'Unassigned'))].forEach(owner=>board.appendChild(renderGroup(escHtml(owner),individual.filter(g=>(g.owner||'Unassigned')===owner))));
   }
   function renderGroup(label,goals){
     const group=document.createElement('div');group.className='goals-group';
@@ -251,7 +256,8 @@
     goals.forEach(g=>{
       const card=document.createElement('div');card.className='goal-card';
       card.innerHTML=`<div class="goal-icon">${STATUS_ICON[g.status]||'&#x26AA;'}</div><div style="flex:1"><div class="goal-desc">${escHtml(g.description)}</div><div class="goal-meta">${g.owner?escHtml(g.owner):'<em>Unassigned</em>'}<span class="status-badge sb-${g.status}">${STATUS_LABEL[g.status]||g.status}</span>${g.company_rock?'<span class="company-tag">Company</span>':''}</div></div>`;
-      card.addEventListener('click',()=>openModal(_goals.find(x=>x.id===g.id)));group.appendChild(card);
+      card.addEventListener('click',()=>openModal(_goals.find(x=>String(x.id)===String(g.id))));
+      group.appendChild(card);
     });
     return group;
   }
@@ -261,8 +267,10 @@
     document.getElementById('goals-progress-pct').textContent=pct+'%';
     document.getElementById('goals-progress-fill').style.width=pct+'%';
   }
+
   document.getElementById('quarter-select').addEventListener('change',loadGoals);
   document.getElementById('add-goal-btn').addEventListener('click',()=>openModal(null));
+
   function openModal(goal){
     const isNew=!goal;
     document.getElementById('goal-modal-title').textContent=isNew?'Add Goal':'Edit Goal';
@@ -280,40 +288,72 @@
   document.getElementById('goal-modal-close').addEventListener('click',closeModal);
   document.getElementById('goal-modal-cancel').addEventListener('click',closeModal);
   document.getElementById('goal-modal').addEventListener('click',e=>{if(e.target===document.getElementById('goal-modal'))closeModal()});
+
   document.getElementById('goal-modal-save').addEventListener('click',async()=>{
     const id=document.getElementById('goal-id').value;
     const description=document.getElementById('goal-description').value.trim();
     const owner=document.getElementById('goal-owner').value.trim();
     const status=document.getElementById('goal-status').value;
     const quarter=document.getElementById('goal-quarter').value;
-    const company_rock=document.getElementById('goal-company').checked?1:0;
+    const company_rock=document.getElementById('goal-company').checked;
     if(!description){showToast('Description is required','error');return}
     try{
-      if(id){await put(`/rocks/${id}`,{description,owner,status,quarter,company_rock,seat_id:null});showToast('Goal updated','success')}
-      else{await post('/rocks',{description,owner,status,quarter,company_rock,seat_id:null,business_id:currentBusinessId});showToast('Goal created','success')}
-      closeModal();await loadGoals();
+      if(id){
+        const { error } = await supabase
+          .from('rocks')
+          .update({ description, owner: owner||null, status, quarter, company_rock })
+          .eq('id', id);
+        if (error) { console.warn('Update rock failed:', error.message); showToast('Save failed: '+error.message,'error'); return; }
+        showToast('Goal updated','success');
+      } else {
+        const nextOrder = _goals.length ? Math.max(..._goals.map(g => Number(g.sort_order)||0)) + 1 : 0;
+        const { error } = await supabase
+          .from('rocks')
+          .insert({
+            organisation_id: orgId,
+            description, owner: owner||null, status, quarter,
+            company_rock, sort_order: nextOrder
+          });
+        if (error) { console.warn('Insert rock failed:', error.message); showToast('Save failed: '+error.message,'error'); return; }
+        showToast('Goal created','success');
+      }
+      closeModal();
+      // If quarter changed, refresh dropdown selection so user stays on the goal's new quarter
+      if (quarter && quarter !== document.getElementById('quarter-select').value) {
+        document.getElementById('quarter-select').value = quarter;
+      }
+      await loadGoals();
     }catch(e){showToast('Save failed: '+e.message,'error')}
   });
+
   document.getElementById('goal-modal-delete').addEventListener('click',async()=>{
     const id=document.getElementById('goal-id').value;
     if(!id||!confirm('Delete this goal?'))return;
-    try{await del('/rocks/'+id);showToast('Deleted','success');closeModal();await loadGoals()}
-    catch(e){showToast('Delete failed','error')}
+    const { error } = await supabase.from('rocks').delete().eq('id', id);
+    if (error) { console.warn('Delete rock failed:', error.message); showToast('Delete failed','error'); return; }
+    showToast('Deleted','success');
+    closeModal();
+    await loadGoals();
   });
+
   (async()=>{
-    const{data:{user}}=await _sb.auth.getUser();
-    if(!user){window.location.href='login.html';return}
-    const { data: profile } = await _sb
+    const{data:{user}, error: authError}=await supabase.auth.getUser();
+    if(!user||authError){window.location.href='login.html';return}
+    const { data: profile } = await supabase
       .from('users').select('membership_status').eq('id', user.id).single();
     if (!profile || profile.membership_status !== 'active') {
       window.location.href = 'inactive.html'; return;
     }
-    try{
-      const businesses=await get('/businesses');
-      const biz=businesses.find(b=>b.type==='holding')||businesses[0];
-      if(biz)currentBusinessId=biz.id;
-      await loadGoals();
-    }catch(e){console.error(e)}
+    orgId = window.activeOrg && window.activeOrg.get();
+    if (!orgId) { window.location.href = 'index.html'; return; }
+
+    document.getElementById('signOutBtn').addEventListener('click',async()=>{
+      await supabase.auth.signOut(); window.location.href='login.html';
+    });
+
+    populateQuarterSelects();
+    try { await loadGoals(); }
+    catch(e){ console.warn('Load error:', e); }
     document.body.style.opacity='1';
   })();
   </script>

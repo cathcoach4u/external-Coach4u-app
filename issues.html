@@ -152,83 +152,78 @@
   <script type="module">
   'use strict';
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-  const _sb=createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
-  document.getElementById('signOutBtn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
-  let currentBusinessId=1,_issues=[];
-  function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  const supabase = createClient(
+    'https://eekefsuaefgpqmjdyniy.supabase.co',
+    'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+  );
+
+  /* Previous localStorage SEED (kept here as a reference for sample data only —
+     no longer auto-applied. New businesses start with empty inputs.)
+     SEED = [
+       { description: 'Onboarding flow takes new clients 3+ weeks...', owner: 'Cath',   status: 'open',     solution: '' },
+       { description: 'Coach utilisation below 70% target...',         owner: 'Lou',    status: 'open',     solution: '' },
+       { description: 'No standard scorecard for coach performance...', owner: 'Andrew', status: 'open',    solution: '' },
+       { description: 'Website conversion rate dropped 30%...',        owner: 'Andrew', status: 'resolved', solution: '...' }
+     ]
+  */
+
+  let orgId = null;
+  let _issues = [];
+
+  function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
-  // localStorage demo data stub (replaces non-existent /api/... backend). See CLAUDE.md v0.5.50.
-  const _LS_KEY='coach4u_demo_issues';
-  function _genId(){return Date.now()*1000+Math.floor(Math.random()*1000)}
-  function _isoOffsetDays(n){const d=new Date();d.setDate(d.getDate()+n);return d.toISOString()}
-  function _issuesSeed(){
-    return[
-      {id:3001,description:'Onboarding flow takes new clients 3+ weeks — intake forms and scheduling drag on. We need to simplify or automate.',owner:'Cath',status:'open',solution:'',business_id:1,created_at:_isoOffsetDays(-5)},
-      {id:3002,description:'Coach utilisation below 70% target — Q1 hit 64%. Either we have too many coaches or pipeline is weak.',owner:'Lou',status:'open',solution:'',business_id:1,created_at:_isoOffsetDays(-12)},
-      {id:3003,description:'No standard scorecard for coach performance — each coach is measured differently, we need a unified scorecard.',owner:'Andrew',status:'open',solution:'',business_id:1,created_at:_isoOffsetDays(-21)},
-      {id:3004,description:'Website conversion rate dropped 30% after last redesign — visitors aren’t getting to the booking form.',owner:'Andrew',status:'resolved',solution:'Reverted hero CTA to previous copy, moved booking widget above the fold, conversion back to baseline within a week.',business_id:1,created_at:_isoOffsetDays(-30)}
-    ];
-  }
-  function _issuesLoad(){let d;try{d=JSON.parse(localStorage.getItem(_LS_KEY))}catch(_){d=null}if(!d||!Array.isArray(d)){d=_issuesSeed();_issuesSave(d)}return d}
-  function _issuesSave(d){localStorage.setItem(_LS_KEY,JSON.stringify(d))}
-  async function api(method,path,body){
-    await new Promise(r=>setTimeout(r,30));
-    const [pathname,query='']=path.split('?');
-    const qp={};query.split('&').filter(Boolean).forEach(p=>{const[k,v]=p.split('=');qp[k]=decodeURIComponent(v||'')});
-    if(method==='GET'&&pathname==='/businesses')return[{id:1,name:'Demo Business',type:'holding'}];
-    const d=_issuesLoad();
-    if(method==='GET'&&pathname==='/issues'){
-      let list=d.slice();
-      if(qp.owner)list=list.filter(i=>i.owner===qp.owner);
-      return list.sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
-    }
-    if(method==='POST'&&pathname==='/issues'){
-      const i={id:_genId(),description:body.description,owner:body.owner||'',status:body.status||'open',solution:body.solution||'',business_id:body.business_id||1,created_at:new Date().toISOString()};
-      d.push(i);_issuesSave(d);return i;
-    }
-    if(method==='PUT'&&pathname.startsWith('/issues/')){
-      const id=parseInt(pathname.split('/').pop());const i=d.find(x=>x.id===id);
-      if(i){i.description=body.description;i.owner=body.owner||'';i.status=body.status||'open';i.solution=body.solution||'';_issuesSave(d)}
-      return i||{};
-    }
-    if(method==='DELETE'&&pathname.startsWith('/issues/')){
-      const id=parseInt(pathname.split('/').pop());
-      const idx=d.findIndex(x=>x.id===id);if(idx>-1){d.splice(idx,1);_issuesSave(d)}return{ok:true};
-    }
-    throw new Error('Unhandled api path: '+method+' '+pathname);
-  }
-  const get=p=>api('GET',p),post=(p,b)=>api('POST',p,b),put=(p,b)=>api('PUT',p,b),del=p=>api('DELETE',p);
+
   async function loadIssues(){
-    const owner=document.getElementById('owner-filter').value;
-    let url='/issues?business_id='+currentBusinessId;
-    if(owner)url+='&owner='+encodeURIComponent(owner);
-    try{_issues=await get(url);renderBoard(_issues);}
-    catch(e){showToast('Could not load issues','error')}
+    const ownerFilter = document.getElementById('owner-filter').value;
+    let query = supabase
+      .from('issues')
+      .select('*')
+      .eq('organisation_id', orgId)
+      .order('created_at', { ascending: false });
+    const { data, error } = await query;
+    if (error) {
+      console.warn('Load issues failed:', error.message);
+      _issues = [];
+    } else {
+      _issues = Array.isArray(data) ? data : [];
+    }
+    const filtered = ownerFilter ? _issues.filter(i => i.owner === ownerFilter) : _issues;
+    renderBoard(filtered);
   }
+
   function renderBoard(issues){
     const open=issues.filter(i=>i.status!=='resolved');
     const resolved=issues.filter(i=>i.status==='resolved');
     document.getElementById('count-open').textContent=open.length;
     document.getElementById('count-resolved').textContent=resolved.length;
-    renderCards('cards-open',open);renderCards('cards-resolved',resolved);
-    populateOwnerFilter(issues);
+    renderCards('cards-open',open);
+    renderCards('cards-resolved',resolved);
+    populateOwnerFilter(_issues);
   }
   function populateOwnerFilter(issues){
     const owners=[...new Set(issues.map(i=>i.owner).filter(Boolean))];
-    const sel=document.getElementById('owner-filter');const cur=sel.value;
+    const sel=document.getElementById('owner-filter');
+    const cur=sel.value;
     sel.innerHTML='<option value="">All Owners</option>'+owners.map(o=>`<option value="${escHtml(o)}" ${o===cur?'selected':''}>${escHtml(o)}</option>`).join('');
   }
   function renderCards(containerId,issues){
     const c=document.getElementById(containerId);
     if(!issues.length){c.innerHTML='<div class="kanban-empty">None</div>';return;}
     c.innerHTML=issues.map(i=>`<div class="issue-card" data-id="${i.id}"><div class="issue-desc">${escHtml(i.description)}</div>${i.owner?`<div class="issue-meta"><span class="issue-owner">${escHtml(i.owner)}</span></div>`:''}</div>`).join('');
-    c.querySelectorAll('.issue-card').forEach(card=>card.addEventListener('click',()=>openModal(_issues.find(x=>x.id===parseInt(card.dataset.id)))));
+    c.querySelectorAll('.issue-card').forEach(card=>card.addEventListener('click',()=>openModal(_issues.find(x=>String(x.id)===card.dataset.id))));
   }
-  document.getElementById('owner-filter').addEventListener('change',loadIssues);
+
+  document.getElementById('owner-filter').addEventListener('change',()=>{
+    const filtered = document.getElementById('owner-filter').value
+      ? _issues.filter(i => i.owner === document.getElementById('owner-filter').value)
+      : _issues;
+    renderBoard(filtered);
+  });
   document.getElementById('add-issue-btn').addEventListener('click',()=>openModal(null));
   const statusSel=document.getElementById('issue-status');
   const solutionField=document.getElementById('solution-field');
   statusSel.addEventListener('change',()=>solutionField.style.display=statusSel.value==='resolved'?'':'none');
+
   function openModal(issue){
     const isNew=!issue;
     document.getElementById('issue-modal-title').textContent=isNew?'Add Issue':'Edit Issue';
@@ -245,6 +240,7 @@
   document.getElementById('issue-modal-close').addEventListener('click',closeModal);
   document.getElementById('issue-modal-cancel').addEventListener('click',closeModal);
   document.getElementById('issue-modal').addEventListener('click',e=>{if(e.target===document.getElementById('issue-modal'))closeModal()});
+
   document.getElementById('issue-modal-save').addEventListener('click',async()=>{
     const id=document.getElementById('issue-id').value;
     const description=document.getElementById('issue-description').value.trim();
@@ -254,31 +250,52 @@
     if(!description){showToast('Description is required','error');return}
     if(status==='resolved'&&!solution){showToast('A solution is required to resolve an issue','error');return}
     try{
-      if(id){await put('/issues/'+id,{description,owner,status,solution});showToast('Issue updated','success')}
-      else{await post('/issues',{description,owner,status,solution,business_id:currentBusinessId});showToast('Issue created','success')}
-      closeModal();await loadIssues();
+      if(id){
+        const { error } = await supabase
+          .from('issues')
+          .update({ description, owner: owner||null, status, solution: solution||null })
+          .eq('id', id);
+        if (error) { console.warn('Update issue failed:', error.message); showToast('Save failed: '+error.message,'error'); return; }
+        showToast('Issue updated','success');
+      } else {
+        const { error } = await supabase
+          .from('issues')
+          .insert({ organisation_id: orgId, description, owner: owner||null, status, solution: solution||null });
+        if (error) { console.warn('Insert issue failed:', error.message); showToast('Save failed: '+error.message,'error'); return; }
+        showToast('Issue created','success');
+      }
+      closeModal();
+      await loadIssues();
     }catch(e){showToast('Save failed: '+e.message,'error')}
   });
+
   document.getElementById('issue-modal-delete').addEventListener('click',async()=>{
     const id=document.getElementById('issue-id').value;
     if(!id||!confirm('Delete this issue?'))return;
-    try{await del('/issues/'+id);showToast('Deleted','success');closeModal();await loadIssues()}
-    catch(e){showToast('Delete failed','error')}
+    const { error } = await supabase.from('issues').delete().eq('id', id);
+    if (error) { console.warn('Delete issue failed:', error.message); showToast('Delete failed','error'); return; }
+    showToast('Deleted','success');
+    closeModal();
+    await loadIssues();
   });
+
   (async()=>{
-    const{data:{user}}=await _sb.auth.getUser();
-    if(!user){window.location.href='login.html';return}
-    const { data: profile } = await _sb
+    const{data:{user}, error: authError}=await supabase.auth.getUser();
+    if(!user||authError){window.location.href='login.html';return}
+    const { data: profile } = await supabase
       .from('users').select('membership_status').eq('id', user.id).single();
     if (!profile || profile.membership_status !== 'active') {
       window.location.href = 'inactive.html'; return;
     }
-    try{
-      const businesses=await get('/businesses');
-      const biz=businesses.find(b=>b.type==='holding')||businesses[0];
-      if(biz)currentBusinessId=biz.id;
-      await loadIssues();
-    }catch(e){console.error(e)}
+    orgId = window.activeOrg && window.activeOrg.get();
+    if (!orgId) { window.location.href = 'index.html'; return; }
+
+    document.getElementById('signOutBtn').addEventListener('click',async()=>{
+      await supabase.auth.signOut(); window.location.href='login.html';
+    });
+
+    try { await loadIssues(); }
+    catch(e){ console.warn('Load error:', e); }
     document.body.style.opacity='1';
   })();
   </script>

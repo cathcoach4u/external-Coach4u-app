@@ -99,13 +99,7 @@
       </div>
       <div class="modal-field">
         <label class="modal-label">Quarter</label>
-        <select class="modal-select" id="nm-quarter">
-          <option value="Q1 2026">Q1 2026</option>
-          <option value="Q2 2026" selected>Q2 2026</option>
-          <option value="Q3 2026">Q3 2026</option>
-          <option value="Q4 2026">Q4 2026</option>
-          <option value="Q1 2027">Q1 2027</option>
-        </select>
+        <select class="modal-select" id="nm-quarter"></select>
       </div>
       <div class="modal-footer">
         <button class="ws-btn-secondary" id="nm-modal-cancel">Cancel</button>
@@ -127,67 +121,65 @@
   <script type="module">
   'use strict';
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-  const _sb=createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
-  document.getElementById('signOutBtn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
-  function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  const supabase = createClient(
+    'https://eekefsuaefgpqmjdyniy.supabase.co',
+    'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+  );
+
+  /* Previous localStorage SEED (kept here as a reference for sample data only —
+     no longer auto-applied. New businesses start with no meetings.)
+     SEED = [
+       { meeting_date: thisMonday, status: 'completed', quarter: 'Q2 2026', rating: 8,
+         notes: 'Strong week — Acme deal closed...', headlines: [...], todos: [...] },
+       { meeting_date: nextMonday, status: 'scheduled', quarter: 'Q2 2026', rating: null, notes: '' }
+     ]
+  */
+
+  let orgId = null;
+
+  function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
-  const _LS_KEY='coach4u_demo_meetings';
-  function _genId(){return Date.now()*1000+Math.floor(Math.random()*1000)}
-  function _mondayISO(d){const dt=new Date(d);const day=dt.getDay();const diff=(day===0?-6:1)-day;dt.setDate(dt.getDate()+diff);return dt.toISOString().slice(0,10)}
-  function _isoAddDays(iso,n){const dt=new Date(iso+'T00:00:00');dt.setDate(dt.getDate()+n);return dt.toISOString().slice(0,10)}
-  function _meetingsSeed(){
-    const thisMon=_mondayISO(new Date());
-    const nextMon=_isoAddDays(thisMon,7);
-    return{
-      meetings:[
-        {id:4001,meeting_date:thisMon,status:'completed',quarter:'Q2 2026',rating:8,notes:'Strong week — Acme deal closed. Need to keep an eye on coach capacity.',business_id:1,
-          headlines:[
-            {id:4101,type:'good_news',description:'Closed largest deal of the year — £42k MRR with Acme Corp'},
-            {id:4102,type:'good_news',description:'Lou completed her ICF Master certification'},
-            {id:4103,type:'headline',description:'Two coaches off sick same week, capacity pressure'}
-          ],
-          todos:[
-            {id:4201,description:'Send Q3 proposal to Globex by Friday',owner:'Cath',done:false},
-            {id:4202,description:'Draft new coach JD',owner:'Lou',done:false},
-            {id:4203,description:'Migrate Pipedrive contacts → HubSpot',owner:'Andrew',done:false},
-            {id:4204,description:'Book Manchester event venue',owner:'Cath',done:true}
-          ]
-        },
-        {id:4002,meeting_date:nextMon,status:'scheduled',quarter:'Q2 2026',rating:null,notes:'',business_id:1,headlines:[],todos:[]}
-      ]
-    };
-  }
-  function _meetingsLoad(){let d;try{d=JSON.parse(localStorage.getItem(_LS_KEY))}catch(_){d=null}if(!d||!d.meetings){d=_meetingsSeed();_meetingsSave(d)}return d}
-  function _meetingsSave(d){localStorage.setItem(_LS_KEY,JSON.stringify(d))}
-  async function api(method,path,body){
-    await new Promise(r=>setTimeout(r,30));
-    const [pathname]=path.split('?');
-    const d=_meetingsLoad();
-    if(method==='GET'&&pathname==='/meetings'){
-      return d.meetings.slice().sort((a,b)=>(b.meeting_date||'').localeCompare(a.meeting_date||''))
-        .map(m=>({id:m.id,meeting_date:m.meeting_date,status:m.status,quarter:m.quarter,rating:m.rating}));
-    }
-    if(method==='POST'&&pathname==='/meetings'){
-      const m={id:_genId(),meeting_date:body.meeting_date,quarter:body.quarter||'',status:body.status||'scheduled',rating:null,notes:'',business_id:body.business_id||1,headlines:[],todos:[]};
-      d.meetings.push(m);_meetingsSave(d);return m;
-    }
-    throw new Error('Unhandled api path: '+method+' '+pathname);
-  }
-  const get=p=>api('GET',p),post=(p,b)=>api('POST',p,b);
   function fmtDate(d){if(!d)return '';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}
   const STATUS_LABEL={scheduled:'Scheduled',in_progress:'In Progress',completed:'Completed'};
   const STATUS_CLASS={scheduled:'sp-scheduled',in_progress:'sp-in_progress',completed:'sp-completed'};
-  async function loadMeetings(){
-    try{
-      const meetings=await get('/meetings');
-      renderMeetingsList(meetings);
-    }catch(e){showToast('Could not load meetings','error')}
+
+  function currentQuarter(){
+    const d = new Date();
+    return 'Q' + (Math.floor(d.getMonth() / 3) + 1) + ' ' + d.getFullYear();
   }
+  function buildQuarterOptions(){
+    const now = new Date();
+    const baseQ = Math.floor(now.getMonth() / 3) + 1;
+    const baseY = now.getFullYear();
+    const out = [];
+    for (let offset = -1; offset <= 3; offset++) {
+      let q = baseQ + offset, y = baseY;
+      while (q > 4) { q -= 4; y += 1; }
+      while (q < 1) { q += 4; y -= 1; }
+      out.push('Q' + q + ' ' + y);
+    }
+    return out;
+  }
+
+  async function loadMeetings(){
+    const { data, error } = await supabase
+      .from('meetings')
+      .select('id, meeting_date, status, quarter, rating')
+      .eq('organisation_id', orgId)
+      .order('meeting_date', { ascending: false });
+    if (error) {
+      console.warn('Load meetings failed:', error.message);
+      renderMeetingsList([]);
+      return;
+    }
+    renderMeetingsList(Array.isArray(data) ? data : []);
+  }
+
   function renderMeetingsList(meetings){
     const list=document.getElementById('meetings-list');
     if(!meetings.length){list.innerHTML='<div class="empty-state">No meetings yet. Create one with "+ New Meeting".</div>';return;}
     list.innerHTML=meetings.map(m=>`
-      <a href="run-meeting.html?id=${m.id}" class="meeting-item" style="text-decoration:none;color:inherit;">
+      <a href="run-meeting.html?id=${encodeURIComponent(m.id)}" class="meeting-item" style="text-decoration:none;color:inherit;">
         <div>
           <div class="meeting-item-date">${fmtDate(m.meeting_date)}</div>
           <div class="meeting-item-meta">
@@ -200,6 +192,14 @@
       </a>
     `).join('');
   }
+
+  function populateQuarterSelect(){
+    const cur = currentQuarter();
+    document.getElementById('nm-quarter').innerHTML = buildQuarterOptions()
+      .map(q => `<option value="${q}" ${q===cur?'selected':''}>${q}</option>`)
+      .join('');
+  }
+
   document.getElementById('new-meeting-btn').addEventListener('click',()=>{
     document.getElementById('nm-date').value=new Date().toISOString().slice(0,10);
     document.getElementById('new-meeting-modal').classList.remove('hidden');
@@ -211,20 +211,37 @@
     const meeting_date=document.getElementById('nm-date').value;
     const quarter=document.getElementById('nm-quarter').value;
     if(!meeting_date){showToast('Date is required','error');return}
-    try{
-      const m=await post('/meetings',{meeting_date,quarter,status:'scheduled'});
-      window.location.href='run-meeting.html?id='+m.id;
-    }catch(e){showToast('Create failed: '+e.message,'error')}
+    const { data, error } = await supabase
+      .from('meetings')
+      .insert({ organisation_id: orgId, meeting_date, quarter, status: 'scheduled' })
+      .select()
+      .single();
+    if (error || !data) {
+      console.warn('Create meeting failed:', error && error.message);
+      showToast('Create failed: ' + (error ? error.message : 'unknown'),'error');
+      return;
+    }
+    window.location.href='run-meeting.html?id=' + encodeURIComponent(data.id);
   });
+
   (async()=>{
-    const{data:{user}}=await _sb.auth.getUser();
-    if(!user){window.location.href='login.html';return}
-    const { data: profile } = await _sb
+    const{data:{user}, error: authError}=await supabase.auth.getUser();
+    if(!user||authError){window.location.href='login.html';return}
+    const { data: profile } = await supabase
       .from('users').select('membership_status').eq('id', user.id).single();
     if (!profile || profile.membership_status !== 'active') {
       window.location.href = 'inactive.html'; return;
     }
-    await loadMeetings();
+    orgId = window.activeOrg && window.activeOrg.get();
+    if (!orgId) { window.location.href = 'index.html'; return; }
+
+    document.getElementById('signOutBtn').addEventListener('click',async()=>{
+      await supabase.auth.signOut(); window.location.href='login.html';
+    });
+
+    populateQuarterSelect();
+    try { await loadMeetings(); }
+    catch(e){ console.warn('Load error:', e); }
     document.body.style.opacity='1';
   })();
   </script>

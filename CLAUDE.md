@@ -130,11 +130,11 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.99
+v0.5.100
 
 ## Latest
+- **v0.5.100** — Operations batch wired to Supabase. The 4 operations tools (scorecard, goals, meeting, run-meeting, issues) now read/write to the corresponding Supabase tables scoped by active org. business.html dashboard panels (Open Issues, Goals On Track, This Week todos, This Quarter rocks) also migrated. Fresh-data approach — localStorage SEEDs removed; new businesses start with empty inputs. 300ms debounced upserts preserved. Account-level carousel pages (account-numbers / account-goals / account-meetings / account-issues) now light up with real data automatically once a tool is used.
 - **v0.5.99** — Strategy batch wired to Supabase. The 5 strategy worksheets (core-values, core-focus, targets, marketing-strategy, leadership-team) now read/write to the corresponding Supabase tables scoped by the active org, and one-page-plan.html reads from Supabase. Fresh-data approach — localStorage SEEDs removed; new businesses start with empty inputs. No-active-org guards added (redirect to index.html). 300ms debounced upserts preserved from the old pattern. Account-level carousel pages (account-values / account-focus / account-targets / account-marketing / account-leadership / account-plans) now light up with real data automatically once a worksheet is filled in.
-- **v0.5.98** — **Business name pill on every business-level page header.** Visiting a business now always shows `🏢 [Business Name]` as a teal pill next to the page title — solves the "I can't tell which business I'm in" / "looks identical to the account view" problem. `js/active-org.js` extended to track the org name alongside the ID (stored under `coach4u_active_org_name`), with auto-render into a `#activeBizName` element on every page load. `index.html` (account dashboard) caches the name when a business card "Open" is clicked. `business.html` caches the name when it resolves the active org. Added the pill markup to all 20 business-level pages (`business.html` + 5 strategy worksheets + `one-page-plan.html` + 3 hubs + 5 operations tools + 4 planning pages + `learning-vault.html`). `.biz-pill` CSS lives in `css/style.css`. Account-level pages don't include the pill — they're already clearly labelled "Account" / "Across All Businesses".
 
 ## Current Status
 - **Account dashboard** (`index.html`) — post-login landing; SARUBA account header + stats + businesses snapshot + users (Supabase-backed)

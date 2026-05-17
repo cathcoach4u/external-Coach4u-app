@@ -154,9 +154,10 @@
       <div class="modal-field">
         <label class="modal-label">Measurement Type</label>
         <select class="modal-select" id="metric-type">
-          <option value="number">Number</option>
+          <option value="count">Number</option>
           <option value="currency">Currency ($)</option>
           <option value="percentage">Percentage (%)</option>
+          <option value="score">Score</option>
         </select>
       </div>
       <div class="modal-footer">
@@ -182,105 +183,118 @@
   <script type="module">
   'use strict';
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-  const _sb=createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
-  document.getElementById('signOutBtn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
-  let currentBusinessId=1,_scorecard={metrics:[],weeks:[]},_activeMeta=null;
-  function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  const supabase = createClient(
+    'https://eekefsuaefgpqmjdyniy.supabase.co',
+    'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+  );
+
+  /* Previous localStorage SEED (kept here as a reference for sample data only —
+     no longer auto-applied. New businesses start with no metrics.)
+     SEED metrics = [
+       { name:'New Leads', owner:'Cath', goal:10, measurement_type:'count' },
+       { name:'Discovery Calls Booked', owner:'Lou', goal:8, measurement_type:'count' },
+       { name:'Proposals Sent', owner:'Andrew', goal:5, measurement_type:'count' },
+       { name:'Revenue (£k)', owner:'Cath', goal:25, measurement_type:'currency' },
+       { name:'Client NPS', owner:'Lou', goal:9, measurement_type:'score' },
+       { name:'Marketing Posts', owner:'Andrew', goal:3, measurement_type:'count' }
+     ];
+     Each metric had 6 weeks of historical entry values.
+  */
+
+  let orgId = null;
+  let _metrics = [];        // array of { id, name, owner, goal, measurement_type, sort_order }
+  let _entries = {};        // { [metric_id]: { [week_date]: value } }
+  let _weeks = [];          // ISO week-Monday dates, oldest-first
+
+  function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
-  // localStorage demo data stub (replaces non-existent /api/... backend). See CLAUDE.md v0.5.50.
-  const _LS_KEY='coach4u_demo_scorecard';
-  function _genId(){return Date.now()*1000+Math.floor(Math.random()*1000)}
+
   function _mondayISO(d){const dt=new Date(d);const day=dt.getDay();const diff=(day===0?-6:1)-day;dt.setDate(dt.getDate()+diff);return dt.toISOString().slice(0,10)}
   function _isoAddWeeks(iso,wk){const dt=new Date(iso+'T00:00:00');dt.setDate(dt.getDate()+wk*7);return dt.toISOString().slice(0,10)}
-  function _scSeed(){
+  function computeWeeks(){
     const thisMonday=_mondayISO(new Date());
-    const weeks=[-5,-4,-3,-2,-1,0].map(o=>_isoAddWeeks(thisMonday,o));
-    const metrics=[
-      {id:1001,name:'New Leads',owner:'Cath',goal:10,measurement_type:'number',sort_order:1},
-      {id:1002,name:'Discovery Calls Booked',owner:'Lou',goal:8,measurement_type:'number',sort_order:2},
-      {id:1003,name:'Proposals Sent',owner:'Andrew',goal:5,measurement_type:'number',sort_order:3},
-      {id:1004,name:'Revenue (£k)',owner:'Cath',goal:25,measurement_type:'currency',sort_order:4},
-      {id:1005,name:'Client NPS',owner:'Lou',goal:9,measurement_type:'number',sort_order:5},
-      {id:1006,name:'Marketing Posts',owner:'Andrew',goal:3,measurement_type:'number',sort_order:6}
-    ];
-    const series={1001:[8,9,11,7,10,12],1002:[6,7,8,9,7,8],1003:[4,6,5,5,6,7],1004:[18,22,24,26,23,28],1005:[8.5,9,9.2,8.8,9.4,9.1],1006:[2,3,4,3,3,5]};
-    const entries=[];
-    metrics.forEach(m=>weeks.forEach((w,i)=>entries.push({id:_genId()+i,metric_id:m.id,week_date:w,value:series[m.id][i],on_track:series[m.id][i]>=m.goal?1:0})));
-    return{metrics,entries,weeks};
+    return [-5,-4,-3,-2,-1,0].map(o=>_isoAddWeeks(thisMonday,o));
   }
-  function _scLoad(){let d;try{d=JSON.parse(localStorage.getItem(_LS_KEY))}catch(_){d=null}if(!d||!d.metrics){d=_scSeed();_scSave(d)}return d}
-  function _scSave(d){localStorage.setItem(_LS_KEY,JSON.stringify(d))}
-  function _scWeeks(d){const m=_mondayISO(new Date());return[-5,-4,-3,-2,-1,0].map(o=>_isoAddWeeks(m,o))}
-  async function api(method,path,body){
-    await new Promise(r=>setTimeout(r,30));
-    const [pathname,query='']=path.split('?');
-    const qp={};query.split('&').filter(Boolean).forEach(p=>{const[k,v]=p.split('=');qp[k]=decodeURIComponent(v||'')});
-    if(method==='GET'&&pathname==='/businesses')return[{id:1,name:'Demo Business',type:'holding'}];
-    const d=_scLoad();
-    if(method==='GET'&&pathname==='/scorecard'){
-      const weeks=_scWeeks(d);
-      const metrics=d.metrics.slice().sort((a,b)=>(a.sort_order||0)-(b.sort_order||0)).map(m=>{
-        const entries=weeks.map(w=>{const e=d.entries.find(x=>x.metric_id===m.id&&x.week_date===w);return e?{value:e.value,on_track:e.on_track}:{value:null,on_track:null}});
-        return{...m,entries};
-      });
-      return{metrics,weeks};
-    }
-    if(method==='POST'&&pathname==='/scorecard/metrics'){
-      const m={id:_genId(),name:body.name,owner:body.owner||'',goal:body.goal===''||body.goal==null?null:Number(body.goal),measurement_type:body.measurement_type||'number',sort_order:body.sort_order||(d.metrics.length+1)};
-      d.metrics.push(m);_scSave(d);return m;
-    }
-    if(method==='PUT'&&pathname.startsWith('/scorecard/metrics/')){
-      const id=parseInt(pathname.split('/').pop());const m=d.metrics.find(x=>x.id===id);
-      if(m){m.name=body.name;m.owner=body.owner||'';m.goal=body.goal===''||body.goal==null?null:Number(body.goal);m.measurement_type=body.measurement_type||'number';_scSave(d)}
-      return m||{};
-    }
-    if(method==='DELETE'&&pathname.startsWith('/scorecard/metrics/')){
-      const id=parseInt(pathname.split('/').pop());
-      d.metrics=d.metrics.filter(x=>x.id!==id);d.entries=d.entries.filter(e=>e.metric_id!==id);_scSave(d);return{ok:true};
-    }
-    if(method==='POST'&&pathname==='/scorecard/entries'){
-      const mid=Number(body.metric_id),wk=body.week_date;
-      const idx=d.entries.findIndex(e=>e.metric_id===mid&&e.week_date===wk);
-      if(body.value===null||body.value===undefined){if(idx>-1)d.entries.splice(idx,1);_scSave(d);return{ok:true}}
-      if(idx>-1){d.entries[idx].value=body.value;d.entries[idx].on_track=body.on_track}
-      else d.entries.push({id:_genId(),metric_id:mid,week_date:wk,value:body.value,on_track:body.on_track});
-      _scSave(d);return{ok:true};
-    }
-    throw new Error('Unhandled api path: '+method+' '+pathname);
-  }
-  const get=p=>api('GET',p),post=(p,b)=>api('POST',p,b),put=(p,b)=>api('PUT',p,b),del=p=>api('DELETE',p);
   function fmtWeek(d){const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-AU',{day:'numeric',month:'short'})}
-  function fmtVal(v,type){if(v===null||v===undefined)return '&#x2014;';if(type==='currency')return '$'+Number(v).toLocaleString();if(type==='percentage')return v+'%';return String(v)}
-  async function loadScorecard(){
-    try{
-      _scorecard=await get('/scorecard?business_id='+currentBusinessId);
-      renderTable(_scorecard);
-    }catch(e){showToast('Could not load scorecard','error')}
+  function fmtVal(v,type){
+    if(v===null||v===undefined||v==='') return '&#x2014;';
+    if(type==='currency') return '$'+Number(v).toLocaleString();
+    if(type==='percentage') return v+'%';
+    return String(v);
   }
-  function renderTable({metrics,weeks}){
+
+  async function loadScorecard(){
+    _weeks = computeWeeks();
+    const { data: metrics, error: metricsErr } = await supabase
+      .from('scorecard_metrics')
+      .select('*')
+      .eq('organisation_id', orgId)
+      .order('sort_order', { ascending: true });
+    if (metricsErr) {
+      console.warn('Load metrics failed:', metricsErr.message);
+      _metrics = [];
+    } else {
+      _metrics = Array.isArray(metrics) ? metrics : [];
+    }
+
+    _entries = {};
+    if (_metrics.length) {
+      const metricIds = _metrics.map(m => m.id);
+      const oldest = _weeks[0];
+      const { data: entries, error: entriesErr } = await supabase
+        .from('scorecard_entries')
+        .select('metric_id, week_date, value')
+        .in('metric_id', metricIds)
+        .gte('week_date', oldest);
+      if (entriesErr) {
+        console.warn('Load entries failed:', entriesErr.message);
+      } else if (Array.isArray(entries)) {
+        for (const e of entries) {
+          if (!_entries[e.metric_id]) _entries[e.metric_id] = {};
+          _entries[e.metric_id][e.week_date] = e.value;
+        }
+      }
+    }
+
+    renderTable();
+  }
+
+  function renderTable(){
     const hRow=document.getElementById('scorecard-header-row');
     const tbody=document.getElementById('scorecard-body');
-    hRow.innerHTML=`<th class="col-metric" style="padding:12px 16px;">Metric</th><th class="col-owner">Owner</th><th class="col-goal">Goal</th>${weeks.map(w=>`<th class="col-week" style="text-align:center;">${fmtWeek(w)}</th>`).join('')}<th style="width:40px;"></th>`;
+    hRow.innerHTML=`<th class="col-metric" style="padding:12px 16px;">Metric</th><th class="col-owner">Owner</th><th class="col-goal">Goal</th>${_weeks.map(w=>`<th class="col-week" style="text-align:center;">${fmtWeek(w)}</th>`).join('')}<th style="width:40px;"></th>`;
     tbody.innerHTML='';
-    if(!metrics.length){tbody.innerHTML=`<tr><td colspan="${weeks.length+4}" style="padding:40px;text-align:center;color:#aaa;font-family:inherit;">No metrics yet &#x2014; add your first measurable above.</td></tr>`;return;}
-    metrics.forEach(metric=>{
+    if(!_metrics.length){
+      tbody.innerHTML=`<tr><td colspan="${_weeks.length+4}" style="padding:40px;text-align:center;color:#aaa;font-family:inherit;">No metrics yet &#x2014; add your first measurable above.</td></tr>`;
+      return;
+    }
+    _metrics.forEach(metric=>{
       const goalNum=parseFloat(metric.goal);
-      let goalDisp=metric.goal||'&#x2014;';
-      if(metric.measurement_type==='currency')goalDisp='$'+Number(metric.goal||0).toLocaleString();
-      else if(metric.measurement_type==='percentage')goalDisp=(metric.goal||0)+'%';
+      let goalDisp = (metric.goal===null||metric.goal===undefined)?'&#x2014;':metric.goal;
+      if (metric.measurement_type==='currency') goalDisp='$'+Number(metric.goal||0).toLocaleString();
+      else if (metric.measurement_type==='percentage') goalDisp=(metric.goal||0)+'%';
       const tr=document.createElement('tr');
-      tr.innerHTML=`<td class="col-metric" style="padding:10px 16px;">${escHtml(metric.name)}<span class="metric-sub">${escHtml(metric.measurement_type)}</span></td><td class="col-owner">${escHtml(metric.owner||'&#x2014;')}</td><td class="col-goal">${goalDisp}</td>${(metric.entries||[]).map((entry,i)=>{const hasVal=entry.value!==null&&entry.value!==undefined;const cls=hasVal?(entry.on_track===1?'cell-green':'cell-red'):'cell-empty';const disp=hasVal?fmtVal(entry.value,metric.measurement_type):'&#x2014;';return `<td style="text-align:center;"><div class="sc-cell ${cls}" data-metric-id="${metric.id}" data-week="${weeks[i]}" data-goal="${goalNum}" data-type="${metric.measurement_type}" data-value="${hasVal?entry.value:''}">${disp}</div></td>`}).join('')}<td><button class="metric-edit-btn" data-metric-id="${metric.id}">&#x270F;</button></td>`;
+      const entryMap = _entries[metric.id] || {};
+      tr.innerHTML=`<td class="col-metric" style="padding:10px 16px;">${escHtml(metric.name)}<span class="metric-sub">${escHtml(metric.measurement_type)}</span></td><td class="col-owner">${escHtml(metric.owner||'')||'&#x2014;'}</td><td class="col-goal">${goalDisp}</td>${_weeks.map(w=>{
+        const v = entryMap[w];
+        const hasVal = v!==null && v!==undefined;
+        const onTrack = hasVal && !isNaN(goalNum) ? (Number(v) >= goalNum) : null;
+        const cls = hasVal ? (onTrack ? 'cell-green' : 'cell-red') : 'cell-empty';
+        const disp = hasVal ? fmtVal(v, metric.measurement_type) : '&#x2014;';
+        return `<td style="text-align:center;"><div class="sc-cell ${cls}" data-metric-id="${metric.id}" data-week="${w}" data-goal="${isNaN(goalNum)?'':goalNum}" data-type="${metric.measurement_type}" data-value="${hasVal?v:''}">${disp}</div></td>`;
+      }).join('')}<td><button class="metric-edit-btn" data-metric-id="${metric.id}">&#x270F;</button></td>`;
       tbody.appendChild(tr);
     });
     tbody.querySelectorAll('.sc-cell').forEach(cell=>cell.addEventListener('click',e=>openCellPopover(cell,e)));
     tbody.querySelectorAll('.metric-edit-btn').forEach(btn=>btn.addEventListener('click',()=>{
-      const m=_scorecard.metrics.find(x=>x.id===parseInt(btn.dataset.metricId));
+      const m=_metrics.find(x=>String(x.id)===btn.dataset.metricId);
       if(m)openMetricModal(m);
     }));
   }
+
   let _popoverMeta=null;
   function openCellPopover(cell,event){
-    _popoverMeta={metricId:parseInt(cell.dataset.metricId),week:cell.dataset.week,goal:parseFloat(cell.dataset.goal),type:cell.dataset.type,cell};
+    _popoverMeta={metricId:cell.dataset.metricId,week:cell.dataset.week,goal:parseFloat(cell.dataset.goal),type:cell.dataset.type,cell};
     const input=document.getElementById('cell-input');
     input.value=cell.dataset.value||'';
     const pop=document.getElementById('cell-popover');
@@ -296,32 +310,68 @@
   document.getElementById('cell-cancel').addEventListener('click',closePop);
   document.getElementById('cell-input').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('cell-save').click();if(e.key==='Escape')closePop()});
   document.addEventListener('click',e=>{const pop=document.getElementById('cell-popover');if(!pop.classList.contains('hidden')&&!pop.contains(e.target)&&!e.target.classList.contains('sc-cell'))closePop()});
+
+  async function saveEntry(metricId, weekDate, value) {
+    const numValue = (value === '' || value == null) ? null : parseFloat(value);
+    if (numValue === null) {
+      // Delete the entry rather than store null
+      const { error } = await supabase
+        .from('scorecard_entries')
+        .delete()
+        .eq('metric_id', metricId)
+        .eq('week_date', weekDate);
+      if (error) console.warn('scorecard_entries delete failed:', error.message);
+      return { ok: !error, error };
+    }
+    const { error } = await supabase
+      .from('scorecard_entries')
+      .upsert(
+        { metric_id: metricId, week_date: weekDate, value: numValue },
+        { onConflict: 'metric_id,week_date' }
+      );
+    if (error) console.warn('scorecard_entries save failed:', error.message);
+    return { ok: !error, error };
+  }
+
   document.getElementById('cell-save').addEventListener('click',async()=>{
     if(!_popoverMeta)return;
     const{metricId,week,goal,type,cell}=_popoverMeta;
     const raw=document.getElementById('cell-input').value.trim();
     if(raw===''){
-      try{await post('/scorecard/entries',{metric_id:metricId,week_date:week,value:null,on_track:null,business_id:currentBusinessId});cell.dataset.value='';cell.className='sc-cell cell-empty';cell.innerHTML='&#x2014;';showToast('Cleared','success');closePop()}catch(e){showToast('Failed','error')}
+      const res = await saveEntry(metricId, week, null);
+      if (!res.ok) { showToast('Failed','error'); return; }
+      cell.dataset.value='';
+      cell.className='sc-cell cell-empty';
+      cell.innerHTML='&#x2014;';
+      if (_entries[metricId]) delete _entries[metricId][week];
+      showToast('Cleared','success');
+      closePop();
       return;
     }
     const value=parseFloat(raw);
     if(isNaN(value)){showToast('Enter a valid number','error');return}
-    const on_track=value>=goal?1:0;
-    try{
-      await post('/scorecard/entries',{metric_id:metricId,week_date:week,value,on_track,business_id:currentBusinessId});
-      cell.dataset.value=value;cell.className='sc-cell '+(on_track?'cell-green':'cell-red');cell.innerHTML=fmtVal(value,type);
-      showToast('Saved','success');closePop();
-    }catch(e){showToast('Save failed: '+e.message,'error')}
+    const res = await saveEntry(metricId, week, value);
+    if (!res.ok) { showToast('Save failed: '+(res.error&&res.error.message),'error'); return; }
+    const onTrack = !isNaN(goal) ? (value >= goal) : null;
+    cell.dataset.value=value;
+    cell.className='sc-cell '+(onTrack ? 'cell-green' : (onTrack === false ? 'cell-red' : 'cell-empty'));
+    cell.innerHTML=fmtVal(value,type);
+    if (!_entries[metricId]) _entries[metricId] = {};
+    _entries[metricId][week] = value;
+    showToast('Saved','success');
+    closePop();
   });
+
   document.getElementById('add-metric-btn').addEventListener('click',()=>openMetricModal(null));
+
   function openMetricModal(metric){
     const isNew=!metric;
     document.getElementById('metric-modal-title').textContent=isNew?'Add Metric':'Edit Metric';
     document.getElementById('metric-id').value=isNew?'':metric.id;
     document.getElementById('metric-name').value=isNew?'':(metric.name||'');
     document.getElementById('metric-owner').value=isNew?'':(metric.owner||'');
-    document.getElementById('metric-goal').value=isNew?'':(metric.goal||'');
-    document.getElementById('metric-type').value=isNew?'number':(metric.measurement_type||'number');
+    document.getElementById('metric-goal').value=isNew?'':(metric.goal==null?'':metric.goal);
+    document.getElementById('metric-type').value=isNew?'count':(metric.measurement_type||'count');
     document.getElementById('metric-modal-delete').classList.toggle('hidden',isNew);
     document.getElementById('metric-modal').classList.remove('hidden');
   }
@@ -329,39 +379,68 @@
   document.getElementById('metric-modal-close').addEventListener('click',closeMetricModal);
   document.getElementById('metric-modal-cancel').addEventListener('click',closeMetricModal);
   document.getElementById('metric-modal').addEventListener('click',e=>{if(e.target===document.getElementById('metric-modal'))closeMetricModal()});
+
   document.getElementById('metric-modal-save').addEventListener('click',async()=>{
     const id=document.getElementById('metric-id').value;
     const name=document.getElementById('metric-name').value.trim();
     const owner=document.getElementById('metric-owner').value.trim();
-    const goal=document.getElementById('metric-goal').value.trim();
+    const goalRaw=document.getElementById('metric-goal').value.trim();
+    const goal = goalRaw === '' ? null : Number(goalRaw);
     const measurement_type=document.getElementById('metric-type').value;
     if(!name){showToast('Metric name is required','error');return}
     try{
-      if(id){await put('/scorecard/metrics/'+id,{name,owner,goal,measurement_type});showToast('Metric updated','success')}
-      else{await post('/scorecard/metrics',{name,owner,goal,measurement_type,sort_order:0,business_id:currentBusinessId});showToast('Metric added','success')}
-      closeMetricModal();await loadScorecard();
+      if(id){
+        const { error } = await supabase
+          .from('scorecard_metrics')
+          .update({ name, owner: owner||null, goal, measurement_type })
+          .eq('id', id);
+        if (error) { console.warn('Update metric failed:', error.message); showToast('Save failed: '+error.message,'error'); return; }
+        showToast('Metric updated','success');
+      } else {
+        const nextOrder = _metrics.length ? Math.max(..._metrics.map(m => Number(m.sort_order)||0)) + 1 : 0;
+        const { error } = await supabase
+          .from('scorecard_metrics')
+          .insert({
+            organisation_id: orgId,
+            name, owner: owner||null, goal, measurement_type,
+            sort_order: nextOrder
+          });
+        if (error) { console.warn('Insert metric failed:', error.message); showToast('Save failed: '+error.message,'error'); return; }
+        showToast('Metric added','success');
+      }
+      closeMetricModal();
+      await loadScorecard();
     }catch(e){showToast('Save failed: '+e.message,'error')}
   });
+
   document.getElementById('metric-modal-delete').addEventListener('click',async()=>{
     const id=document.getElementById('metric-id').value;
     if(!id||!confirm('Delete this metric and all its data?'))return;
-    try{await del('/scorecard/metrics/'+id);showToast('Deleted','success');closeMetricModal();await loadScorecard()}
-    catch(e){showToast('Delete failed','error')}
+    // scorecard_entries are CASCADE-deleted via FK on the database side
+    const { error } = await supabase.from('scorecard_metrics').delete().eq('id', id);
+    if (error) { console.warn('Delete metric failed:', error.message); showToast('Delete failed','error'); return; }
+    showToast('Deleted','success');
+    closeMetricModal();
+    await loadScorecard();
   });
+
   (async()=>{
-    const{data:{user}}=await _sb.auth.getUser();
-    if(!user){window.location.href='login.html';return}
-    const { data: profile } = await _sb
+    const{data:{user}, error: authError}=await supabase.auth.getUser();
+    if(!user||authError){window.location.href='login.html';return}
+    const { data: profile } = await supabase
       .from('users').select('membership_status').eq('id', user.id).single();
     if (!profile || profile.membership_status !== 'active') {
       window.location.href = 'inactive.html'; return;
     }
-    try{
-      const businesses=await get('/businesses');
-      const biz=businesses.find(b=>b.type==='holding')||businesses[0];
-      if(biz)currentBusinessId=biz.id;
-      await loadScorecard();
-    }catch(e){console.error(e)}
+    orgId = window.activeOrg && window.activeOrg.get();
+    if (!orgId) { window.location.href = 'index.html'; return; }
+
+    document.getElementById('signOutBtn').addEventListener('click',async()=>{
+      await supabase.auth.signOut(); window.location.href='login.html';
+    });
+
+    try { await loadScorecard(); }
+    catch(e){ console.warn('Load error:', e); }
     document.body.style.opacity='1';
   })();
   </script>
