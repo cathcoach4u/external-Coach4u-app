@@ -4,6 +4,20 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.88
+- **SARUBA account dashboard rebuilt as an owner's snapshot view.** `my-businesses.html` used to be a business-list switcher (name + role pill + Open ›). It's now a real overview surface so the account holder sees "what's going on across my businesses" without drilling in.
+- **Stats row expanded from 2 to 4 tiles**: Businesses / Users / **Open Issues** (NEW — account-level sum of `issues.status='open'` across every org the caller is in) / **Goals On Track** (NEW — `<onTrack>/<total>` rocks for the current quarter, summed across all orgs). Tiles wrap to a 2×2 grid under 480px.
+- **Per-business cards are now snapshot "report cards"** with a 3-cell grid (stacks to 1 column under 600px):
+  - **📊 Revenue (1yr)** — `targets.one_year_revenue` (e.g. "$420K") or "Not set"
+  - **🎯 Quarter Goals** — `<onTrack> of <total>` rocks for `Q<n> YYYY` (current quarter format) or "0 of 0"
+  - **⚠️ Open Issues** — count of `issues.status='open'` for that org
+  - **📅 Next meeting** line below the grid — earliest `meetings.meeting_date` where status ≠ 'completed' AND date ≥ today, formatted as "Mon 19 May", or "None scheduled"
+- **Fetching strategy**: a single `Promise.all` batches 5 queries (memberships team rows + the 4 new snapshot tables). Each of the snapshot queries uses `.in('organisation_id', orgIds)` — so it stays at 1 round-trip per table regardless of how many businesses the user has. Results are grouped client-side into a `snapshotByOrg` Map for O(1) lookup per card.
+- **Goals on-track logic**: a rock counts as on-track if `status IN ('on_track','done','complete')` — matches the existing seed-data values.
+- **Empty-state handling**: every snapshot field renders gracefully when the underlying tables return zero rows (still localStorage-backed in most pages). Revenue → "Not set", Goals → "0 of 0", Issues → "0", Next meeting → "None scheduled". No errors, no broken UI.
+- **Header tweaks**: "Account overview — what's happening across your businesses." subhead replaces the previous "Manage every business and teammate". Section header is now "Your Businesses" / "Your Team (N)" — added a header-aligned `+ New Business` and `+ Invite User` button next to each section title for quicker access (the wide CTA buttons at the bottom of each section are unchanged).
+- All admin-only functionality preserved: ⋮ menu (Rename / Delete), `bootstrap_organisation` / `rename_business` / `delete_business` / `invite_team_member` / `remove_team_member` RPC calls, `Open ›` → set active org + `index.html` navigation, "Rename account ›" link. No SQL changes — all schema already exists from v0.5.79 + v0.5.84.
+
 ## v0.5.87
 - **Removed "Seats: X of Y" stat tile** from the SARUBA account dashboard. It duplicated the Users tile in plan-capacity framing — "1 of 3" felt ambiguous (status? error?). The stats row is now a clean 2-tile grid: **Businesses** + **Users**. Seat-allowance / billing context can surface later in a proper "Account / Billing" section when Stripe is wired up.
 

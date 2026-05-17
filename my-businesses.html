@@ -26,74 +26,118 @@
     }
     .acct-link:hover { text-decoration: underline; }
 
-    /* ── Section B: Stats row ── */
+    /* ── Section B: Stats row (4 tiles) ── */
     .stats-row {
-      display: grid; grid-template-columns: repeat(2, 1fr);
+      display: grid; grid-template-columns: repeat(4, 1fr);
       gap: 8px; padding: 12px 16px 6px;
     }
     .stat-card {
       background: white; border-radius: 10px;
       border: 1px solid var(--border);
-      padding: 12px 10px 10px;
+      padding: 14px 8px 10px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       text-align: center;
     }
     .stat-num {
       font-size: 1.5rem; font-weight: 900; color: var(--primary); line-height: 1;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
     .stat-num .stat-total {
       font-size: 0.9rem; font-weight: 700; color: #aaa;
     }
-    .stat-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #999; }
+    .stat-label { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #999; line-height: 1.3; }
     @media (max-width: 480px) {
       .stats-row { grid-template-columns: repeat(2, 1fr); }
-      .stat-num { font-size: 1.2rem; }
+      .stat-num { font-size: 1.3rem; }
     }
 
     /* ── Sections ── */
-    .section { padding: 0 16px; margin-top: 18px; }
+    .section { padding: 0 16px; margin-top: 22px; }
     .section-head {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 0 8px;
+      padding: 0 0 10px;
     }
     .section-title { font-size: 0.95rem; font-weight: 800; color: var(--primary); }
     .section-meta { font-size: 0.72rem; color: #888; font-weight: 600; }
+    .section-action {
+      font-size: 0.78rem; font-weight: 700; color: var(--accent);
+      background: none; border: none; cursor: pointer;
+      padding: 4px 8px; border-radius: 6px; font-family: inherit;
+      transition: background .15s;
+    }
+    .section-action:hover { background: rgba(13,148,136,0.08); }
 
-    /* ── Biz cards ── */
-    .biz-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+    /* ── Biz snapshot cards ── */
+    .biz-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
     .biz-card {
       background: white; border: 1.5px solid var(--border); border-radius: 12px;
-      padding: 14px 14px; transition: box-shadow .15s, border-color .15s;
-      display: flex; align-items: center; gap: 12px; position: relative;
+      padding: 18px 18px; transition: box-shadow .15s, border-color .15s;
+      position: relative;
     }
-    .biz-card:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(13,148,136,0.1); }
-    .biz-card.active { border-color: var(--accent); background: #f0fdfa; }
-    .biz-icon {
-      width: 40px; height: 40px; border-radius: 10px;
-      background: rgba(13,148,136,0.1);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; flex-shrink: 0;
+    .biz-card:hover { border-color: var(--accent); box-shadow: 0 2px 10px rgba(13,148,136,0.1); }
+
+    .biz-card-head {
+      display: flex; align-items: center; gap: 10px;
+      flex-wrap: wrap; margin-bottom: 14px;
     }
-    .biz-body { flex: 1; min-width: 0; cursor: pointer; }
-    .biz-name { font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 3px; }
-    .biz-meta { font-size: 0.76rem; color: #888; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .biz-name {
+      font-size: 1.05rem; font-weight: 800; color: var(--primary);
+      flex: 1; min-width: 0;
+    }
     .role-pill {
       display: inline-block; font-size: 0.66rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.4px; padding: 2px 8px; border-radius: 20px;
+      letter-spacing: 0.4px; padding: 3px 9px; border-radius: 20px;
     }
     .role-admin  { background: #dbeafe; color: #1e40af; }
     .role-member { background: #f3f4f6; color: #6B7280; }
     .role-pending { background: #fef3c7; color: #92400e; font-style: italic; }
-    .active-pill { background: rgba(13,148,136,0.15); color: #0D9488; }
 
     .biz-open {
-      font-size: 0.76rem; font-weight: 700; color: var(--accent);
-      padding: 6px 10px; border-radius: 8px; text-decoration: none;
+      font-size: 0.78rem; font-weight: 700; color: var(--accent);
+      padding: 7px 12px; border-radius: 8px; text-decoration: none;
       background: rgba(13,148,136,0.08); cursor: pointer;
       transition: background .15s; border: none; font-family: inherit;
     }
-    .biz-open:hover { background: rgba(13,148,136,0.18); text-decoration: none; color: var(--accent); }
+    .biz-open:hover { background: rgba(13,148,136,0.18); color: var(--accent); }
+
+    /* ── Snapshot grid ── */
+    .snapshot-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 12px 0 4px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .snapshot-cell {
+      background: #f8fafc; border-radius: 8px;
+      padding: 10px 10px 9px;
+      display: flex; flex-direction: column; gap: 4px;
+      min-width: 0;
+    }
+    .snapshot-label {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.45px; color: #888; line-height: 1.3;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .snapshot-value {
+      font-size: 1.02rem; font-weight: 800; color: var(--primary);
+      line-height: 1.2; word-break: break-word;
+    }
+    .snapshot-empty { color: #aaa; font-weight: 700; font-size: 0.95rem; }
+    @media (max-width: 600px) {
+      .snapshot-grid { grid-template-columns: 1fr; gap: 6px; }
+      .snapshot-cell { flex-direction: row; align-items: center; justify-content: space-between; padding: 9px 12px; }
+      .snapshot-value { font-size: 0.95rem; text-align: right; }
+    }
+
+    .biz-next-meeting {
+      margin-top: 12px;
+      font-size: 0.82rem; color: var(--text);
+      display: flex; align-items: center; gap: 6px;
+      padding-top: 10px; border-top: 1px solid #f0f0f0;
+    }
+    .biz-next-meeting .nm-label { color: #888; font-weight: 600; }
+    .biz-next-meeting .nm-value { font-weight: 700; color: var(--primary); }
+    .biz-next-meeting .nm-empty { color: #aaa; font-weight: 600; }
 
     /* ── Actions menu (•••) ── */
     .actions-wrap { position: relative; flex-shrink: 0; }
@@ -248,13 +292,13 @@
     <!-- Section A: Account header -->
     <div class="acct-header">
       <h1 class="acct-title" id="accountName">&#x1F3E2; Your account</h1>
-      <p class="acct-sub">Manage every business and teammate on your subscription from one place.</p>
+      <p class="acct-sub">Your account overview &mdash; what&rsquo;s happening across your businesses.</p>
       <div class="acct-actions">
         <a href="#" id="renameAccountLink" class="acct-link" style="display:none;">Rename account &rsaquo;</a>
       </div>
     </div>
 
-    <!-- Section B: Stats row -->
+    <!-- Section B: Stats row (4 tiles) -->
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-num" id="statBizCount">&mdash;</div>
@@ -264,13 +308,21 @@
         <div class="stat-num" id="statUserCount">&mdash;</div>
         <div class="stat-label">Users</div>
       </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statOpenIssues">&mdash;</div>
+        <div class="stat-label">Open Issues</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statGoalsOnTrack">&mdash;</div>
+        <div class="stat-label">Goals On Track</div>
+      </div>
     </div>
 
-    <!-- Section C: Businesses -->
+    <!-- Section C: Businesses snapshot -->
     <div class="section">
       <div class="section-head">
-        <span class="section-title">&#x1F4BC; Businesses</span>
-        <span class="section-meta" id="bizSectionMeta"></span>
+        <span class="section-title">&#x1F4BC; Your Businesses</span>
+        <button id="addBusinessHeaderBtn" class="section-action">+ New Business</button>
       </div>
       <div id="bizList" class="biz-list"></div>
       <button id="addBusinessBtn" class="add-btn">+ Create New Business</button>
@@ -279,14 +331,14 @@
     <!-- Section D: Users (Team) -->
     <div class="section">
       <div class="section-head">
-        <span class="section-title">&#x1F465; Team</span>
-        <span class="section-meta" id="userSectionMeta"></span>
+        <span class="section-title">&#x1F465; Your Team <span class="section-meta" id="userSectionMeta"></span></span>
+        <button id="inviteUserHeaderBtn" class="section-action">+ Invite User</button>
       </div>
       <div id="userList" class="user-list"></div>
       <button id="inviteUserBtn" class="add-btn add-btn-secondary">+ Invite User</button>
     </div>
 
-    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.84</p>
+    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.88</p>
 
   </div>
 
@@ -461,12 +513,29 @@
       if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
       return s.slice(0, 2).toUpperCase();
     }
+    function currentQuarterString() {
+      const d = new Date();
+      return 'Q' + (Math.floor(d.getMonth() / 3) + 1) + ' ' + d.getFullYear();
+    }
+    function formatMeetingDate(iso) {
+      if (!iso) return '';
+      // iso is 'YYYY-MM-DD'; parse safely
+      const parts = String(iso).split('-');
+      if (parts.length !== 3) return iso;
+      const dt = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      if (isNaN(dt)) return iso;
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      return days[dt.getDay()] + ' ' + dt.getDate() + ' ' + months[dt.getMonth()];
+    }
 
     /* ============== state ============== */
     let myMemberships = [];   // caller's active team_members
     let teamRows = [];        // all team_members in orgs where caller is admin (not removed)
     let sub = null;           // subscription row
     let openMenuEl = null;    // currently open ⋮ menu
+    // Per-org rollup data:
+    let snapshotByOrg = new Map();   // orgId → { revenue, rocksOnTrack, rocksTotal, openIssues, nextMeeting }
 
     /* ============== loaders ============== */
     async function loadAll() {
@@ -502,15 +571,79 @@
       const adminOrgIds = myMemberships
         .filter(m => m.role === 'admin')
         .map(m => m.organisation_id);
-      if (adminOrgIds.length) {
-        const { data: tm, error: tmErr } = await sb
-          .from('team_members')
-          .select('id, organisation_id, user_id, invited_email, role, status, display_name, organisations!inner(id, name)')
-          .in('organisation_id', adminOrgIds)
-          .neq('status', 'removed');
-        teamRows = tmErr ? [] : (tm || []);
-      } else {
-        teamRows = [];
+      const teamPromise = adminOrgIds.length
+        ? sb.from('team_members')
+            .select('id, organisation_id, user_id, invited_email, role, status, display_name, organisations!inner(id, name)')
+            .in('organisation_id', adminOrgIds)
+            .neq('status', 'removed')
+        : Promise.resolve({ data: [], error: null });
+
+      // 4) Snapshot data — fire 4 parallel queries across all the caller's orgs
+      const orgIds = myMemberships.map(m => m.organisation_id);
+      const currentQuarter = currentQuarterString();
+      const todayIso = new Date().toISOString().slice(0, 10);
+
+      const [teamResult, targetsResult, rocksResult, issuesResult, meetingsResult] = await Promise.all([
+        teamPromise,
+        sb.from('targets')
+          .select('organisation_id, one_year_revenue')
+          .in('organisation_id', orgIds),
+        sb.from('rocks')
+          .select('organisation_id, status')
+          .in('organisation_id', orgIds)
+          .eq('quarter', currentQuarter),
+        sb.from('issues')
+          .select('organisation_id, status')
+          .in('organisation_id', orgIds)
+          .eq('status', 'open'),
+        sb.from('meetings')
+          .select('organisation_id, meeting_date, status')
+          .in('organisation_id', orgIds)
+          .neq('status', 'completed')
+          .gte('meeting_date', todayIso)
+          .order('meeting_date', { ascending: true })
+      ]);
+
+      teamRows = (teamResult && !teamResult.error) ? (teamResult.data || []) : [];
+
+      // Build snapshot map keyed by orgId
+      snapshotByOrg = new Map();
+      orgIds.forEach(id => snapshotByOrg.set(id, {
+        revenue: null,
+        rocksOnTrack: 0,
+        rocksTotal: 0,
+        openIssues: 0,
+        nextMeeting: null
+      }));
+
+      if (targetsResult && !targetsResult.error && targetsResult.data) {
+        targetsResult.data.forEach(t => {
+          const snap = snapshotByOrg.get(t.organisation_id);
+          if (snap) snap.revenue = t.one_year_revenue || null;
+        });
+      }
+      if (rocksResult && !rocksResult.error && rocksResult.data) {
+        rocksResult.data.forEach(r => {
+          const snap = snapshotByOrg.get(r.organisation_id);
+          if (!snap) return;
+          snap.rocksTotal += 1;
+          if (r.status === 'on_track' || r.status === 'done' || r.status === 'complete') {
+            snap.rocksOnTrack += 1;
+          }
+        });
+      }
+      if (issuesResult && !issuesResult.error && issuesResult.data) {
+        issuesResult.data.forEach(i => {
+          const snap = snapshotByOrg.get(i.organisation_id);
+          if (snap) snap.openIssues += 1;
+        });
+      }
+      if (meetingsResult && !meetingsResult.error && meetingsResult.data) {
+        // Already ordered ascending — first row per org wins
+        meetingsResult.data.forEach(mtg => {
+          const snap = snapshotByOrg.get(mtg.organisation_id);
+          if (snap && !snap.nextMeeting) snap.nextMeeting = mtg.meeting_date;
+        });
       }
     }
 
@@ -530,6 +663,7 @@
 
     /* ============== render: stats ============== */
     function renderStats() {
+      // Businesses
       document.getElementById('statBizCount').textContent = myMemberships.length;
 
       // Distinct users + pending emails across the team rows
@@ -538,18 +672,30 @@
         if (r.user_id) uniqUsers.add('u:' + r.user_id);
         else if (r.invited_email) uniqUsers.add('e:' + r.invited_email.toLowerCase());
       });
-      // If the caller isn't an admin anywhere, teamRows is empty — still count self
       if (!uniqUsers.size) uniqUsers.add('u:' + user.id);
       document.getElementById('statUserCount').textContent = uniqUsers.size;
+
+      // Account-level rollup: open issues + goals on-track / total across all businesses
+      let totalOpenIssues = 0;
+      let totalGoalsOnTrack = 0;
+      let totalGoalsTotal = 0;
+      snapshotByOrg.forEach(snap => {
+        totalOpenIssues += snap.openIssues;
+        totalGoalsOnTrack += snap.rocksOnTrack;
+        totalGoalsTotal += snap.rocksTotal;
+      });
+      document.getElementById('statOpenIssues').textContent = totalOpenIssues;
+      const goalsEl = document.getElementById('statGoalsOnTrack');
+      if (totalGoalsTotal === 0) {
+        goalsEl.innerHTML = '&mdash;';
+      } else {
+        goalsEl.innerHTML = totalGoalsOnTrack + '<span class="stat-total">/' + totalGoalsTotal + '</span>';
+      }
     }
 
     /* ============== render: businesses ============== */
     function renderBusinesses() {
       const wrap = document.getElementById('bizList');
-      const meta = document.getElementById('bizSectionMeta');
-      const activeId = (window.activeOrg && window.activeOrg.get()) || null;
-
-      meta.textContent = myMemberships.length ? (myMemberships.length + ' total') : '';
 
       if (!myMemberships.length) {
         wrap.innerHTML = '<div class="empty-state">You haven&rsquo;t created a business yet.</div>';
@@ -560,25 +706,55 @@
         const name  = m.organisations.name;
         const role  = m.role;
         const isAdmin = role === 'admin';
+        const snap = snapshotByOrg.get(orgId) || { revenue: null, rocksOnTrack: 0, rocksTotal: 0, openIssues: 0, nextMeeting: null };
+
+        const revenueHtml = (snap.revenue && String(snap.revenue).trim())
+          ? '<div class="snapshot-value">' + escHtml(snap.revenue) + '</div>'
+          : '<div class="snapshot-value snapshot-empty">Not set</div>';
+
+        const goalsHtml = (snap.rocksTotal === 0)
+          ? '<div class="snapshot-value snapshot-empty">0 of 0</div>'
+          : '<div class="snapshot-value">' + snap.rocksOnTrack + ' of ' + snap.rocksTotal + '</div>';
+
+        const issuesHtml = '<div class="snapshot-value' + (snap.openIssues === 0 ? ' snapshot-empty' : '') + '">' + snap.openIssues + '</div>';
+
+        const nextMeetingHtml = snap.nextMeeting
+          ? '<span class="nm-label">&#x1F4C5; Next meeting:</span> <span class="nm-value">' + escHtml(formatMeetingDate(snap.nextMeeting)) + '</span>'
+          : '<span class="nm-label">&#x1F4C5; Next meeting:</span> <span class="nm-empty">None scheduled</span>';
+
         return `
           <div class="biz-card" data-org-id="${orgId}" data-org-name="${escHtml(name)}">
-            <div class="biz-icon">&#x1F4BC;</div>
-            <div class="biz-body" data-action="open">
+            <div class="biz-card-head">
               <div class="biz-name">${escHtml(name)}</div>
-              <div class="biz-meta">
-                <span class="role-pill role-${role}">${role}</span>
+              <span class="role-pill role-${role}">${role}</span>
+              <button class="biz-open" data-action="open">Open &rsaquo;</button>
+              ${isAdmin ? `
+                <div class="actions-wrap">
+                  <button class="actions-btn" data-action="menu" aria-label="More actions">&#x22EE;</button>
+                  <div class="actions-menu hidden">
+                    <button data-action="rename-biz">Rename</button>
+                    <button class="danger" data-action="delete-biz">Delete</button>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="snapshot-grid">
+              <div class="snapshot-cell">
+                <div class="snapshot-label">&#x1F4CA; Revenue (1yr)</div>
+                ${revenueHtml}
+              </div>
+              <div class="snapshot-cell">
+                <div class="snapshot-label">&#x1F3AF; Quarter Goals</div>
+                ${goalsHtml}
+              </div>
+              <div class="snapshot-cell">
+                <div class="snapshot-label">&#x26A0;&#xFE0F; Open Issues</div>
+                ${issuesHtml}
               </div>
             </div>
-            <button class="biz-open" data-action="open">Open &rsaquo;</button>
-            ${isAdmin ? `
-              <div class="actions-wrap">
-                <button class="actions-btn" data-action="menu" aria-label="More actions">&#x22EE;</button>
-                <div class="actions-menu hidden">
-                  <button data-action="rename-biz">Rename</button>
-                  <button class="danger" data-action="delete-biz">Delete</button>
-                </div>
-              </div>
-            ` : ''}
+
+            <div class="biz-next-meeting">${nextMeetingHtml}</div>
           </div>`;
       }).join('');
 
@@ -651,7 +827,7 @@
         g.rows.push(r);
       });
 
-      meta.textContent = groups.size + ' total';
+      meta.textContent = '(' + groups.size + ')';
 
       const cards = [];
       for (const g of groups.values()) {
@@ -732,15 +908,16 @@
     });
 
     /* ============== add business ============== */
-    const addBtn  = document.getElementById('addBusinessBtn');
     const addName = document.getElementById('addName');
     const addErr  = document.getElementById('addErr');
     const addSave = document.getElementById('addSave');
-    addBtn.addEventListener('click', () => {
+    function openAddBusiness() {
       addErr.textContent = ''; addName.value = '';
       openModal('addModal');
       setTimeout(() => addName.focus(), 50);
-    });
+    }
+    document.getElementById('addBusinessBtn').addEventListener('click', openAddBusiness);
+    document.getElementById('addBusinessHeaderBtn').addEventListener('click', openAddBusiness);
     document.getElementById('addClose').addEventListener('click', () => closeModal('addModal'));
     document.getElementById('addCancel').addEventListener('click', () => closeModal('addModal'));
     addSave.addEventListener('click', async () => {
@@ -847,7 +1024,7 @@
       }).join('');
     }
 
-    document.getElementById('inviteUserBtn').addEventListener('click', () => {
+    function openInviteUser() {
       inviteEmail.value = '';
       inviteRole.value = 'member';
       inviteDisplay.value = '';
@@ -855,7 +1032,9 @@
       populateInviteBizList();
       openModal('inviteModal');
       setTimeout(() => inviteEmail.focus(), 50);
-    });
+    }
+    document.getElementById('inviteUserBtn').addEventListener('click', openInviteUser);
+    document.getElementById('inviteUserHeaderBtn').addEventListener('click', openInviteUser);
     document.getElementById('inviteClose').addEventListener('click', () => closeModal('inviteModal'));
     document.getElementById('inviteCancel').addEventListener('click', () => closeModal('inviteModal'));
 

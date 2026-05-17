@@ -128,9 +128,10 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.87
+v0.5.88
 
 ## Latest
+- **v0.5.88** — SARUBA account dashboard rebuilt as an **owner's snapshot view** rather than just a switcher. `my-businesses.html` now shows: 4-tile stats row (Businesses / Users / Open Issues / Goals On Track — the latter two are account-level rollups summed across every business the caller is in) + per-business "report card" snapshot grid (Revenue 1yr from `targets.one_year_revenue`, Quarter Goals as `<onTrack> of <total>` rocks for the current quarter, Open Issues count) + "Next meeting" line (earliest non-completed `meetings.meeting_date`). Four new parallel Supabase queries fire on page load (targets / rocks / issues / meetings) — all `.in('organisation_id', orgIds)` so it's still one round-trip per table regardless of business count. Renders cleanly when every read returns zero rows (the data layer is still mid-migration). No SQL changes needed.
 - **v0.5.87** — Removed the "Seats: X of Y" stat tile from the SARUBA dashboard. It was duplicating the Users tile in confusing framing ("1 of 3" felt like ambiguous status). The stats row is now 2 tiles: Businesses + Users. Plan-capacity / billing info will surface later in a dedicated billing area.
 - **v0.5.86** — Removed the "Active" pill from business cards on `my-businesses.html`. Previously one business always showed as "Active" on login (the localStorage-stored default selection), which implied state ("you have this open") when the user hadn't actually done anything yet. Now the account dashboard is a clean list — users tap "Open ›" to enter a business. The underlying `coach4u_active_org_id` mechanism still drives which business `index.html` and other tools load when navigated to directly.
 - **v0.5.85** — Account dashboard is now the first thing seen after sign-in. `login.html` now redirects to `my-businesses.html` (was `index.html`), so every user lands on the SARUBA parent dashboard first — sees all businesses, can switch between them, manage users, then tap into a specific business. Brand-new users (no team_members) get auto-redirected from `my-businesses.html` → `setup.html` so the first-business wizard still fires correctly.
