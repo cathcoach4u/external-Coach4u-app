@@ -167,50 +167,21 @@
       'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
     );
 
-    const STORAGE_KEY = 'coach4u_leadership_team';
-    const DEFAULTS = [
-      {
-        name: 'Cath Baker',
-        role: 'Founder and Lead Coach',
-        responsibilities: 'Responsible for client delivery, coaching methodology, business development and overall strategic direction. Key focus: growing the client base and developing the Coach4U program.',
-        placeholder: false
-      },
-      {
-        name: 'Lou Henderson',
-        role: 'Operations Manager',
-        responsibilities: 'Responsible for client administration, scheduling, invoicing, GoCardless payments and day-to-day business operations. Key focus: keeping everything running smoothly so Cath can focus on coaching.',
-        placeholder: false
-      },
-      {
-        name: 'Andrew Baker',
-        role: 'Marketing and Technology Advisor',
-        responsibilities: 'Responsible for ABMS Marketing support, website oversight and technical input on digital projects. Key focus: brand visibility and digital infrastructure.',
-        placeholder: false
-      },
-      {
-        name: '[Add your name]',
-        role: 'Head of Delivery',
-        responsibilities: 'Responsible for program facilitation, group coaching sessions and client onboarding. Key focus: delivering an exceptional client experience.',
-        placeholder: true
-      },
-      {
-        name: '[Add your name]',
-        role: 'Client Success',
-        responsibilities: 'Responsible for client check-ins, progress tracking and retention. Key focus: ensuring clients get results and stay engaged.',
-        placeholder: true
-      }
-    ];
+    /* Previous localStorage DEFAULTS (kept here as a reference for sample data only —
+       no longer auto-applied. New businesses start with an empty team list.)
+       DEFAULTS = [
+         { name: 'Cath Baker', role: 'Founder and Lead Coach', responsibilities: '…', placeholder: false },
+         { name: 'Lou Henderson', role: 'Operations Manager', responsibilities: '…', placeholder: false },
+         { name: 'Andrew Baker', role: 'Marketing and Technology Advisor', responsibilities: '…', placeholder: false },
+         { name: '[Add your name]', role: 'Head of Delivery', responsibilities: '…', placeholder: true },
+         { name: '[Add your name]', role: 'Client Success', responsibilities: '…', placeholder: true }
+       ]
+    */
 
-    function loadTeam() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return JSON.parse(JSON.stringify(DEFAULTS));
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : JSON.parse(JSON.stringify(DEFAULTS));
-      } catch (e) {
-        return JSON.parse(JSON.stringify(DEFAULTS));
-      }
-    }
+    let orgId = null;
+    let team = []; // each item: { id, name, role, responsibilities, placeholder, sort_order }
+    const DEBOUNCE_MS = 300;
+    const rowSaveTimers = new Map(); // id -> setTimeout handle
 
     function escapeHtml(s) {
       return String(s || '').replace(/[&<>"']/g, c => ({
@@ -218,15 +189,101 @@
       }[c]));
     }
 
-    let team = loadTeam();
+    function markDirty() {
+      document.getElementById('saveStatus').textContent = 'Saving…';
+      document.getElementById('saveStatus').style.color = '#c98a00';
+    }
+    function markSaved() {
+      document.getElementById('saveStatus').textContent = 'Saved ✓';
+      document.getElementById('saveStatus').style.color = '#0F766E';
+    }
+    function markFailed() {
+      document.getElementById('saveStatus').textContent = 'Save failed';
+      document.getElementById('saveStatus').style.color = '#c33';
+    }
+
+    async function loadTeam() {
+      const { data, error } = await supabase
+        .from('leadership_team_members')
+        .select('*')
+        .eq('organisation_id', orgId)
+        .order('sort_order', { ascending: true });
+      if (error) {
+        console.warn('Load failed:', error.message);
+        return [];
+      }
+      return Array.isArray(data) ? data : [];
+    }
+
+    async function insertRow() {
+      const nextOrder = team.length
+        ? Math.max(...team.map(m => Number(m.sort_order) || 0)) + 1
+        : 0;
+      const { data, error } = await supabase
+        .from('leadership_team_members')
+        .insert({
+          organisation_id: orgId,
+          name: '', role: '', responsibilities: '',
+          placeholder: false,
+          sort_order: nextOrder
+        })
+        .select()
+        .single();
+      if (error) {
+        console.warn('Insert failed:', error.message);
+        markFailed();
+        return null;
+      }
+      return data;
+    }
+
+    async function deleteRow(id) {
+      const { error } = await supabase
+        .from('leadership_team_members')
+        .delete()
+        .eq('id', id);
+      if (error) {
+        console.warn('Delete failed:', error.message);
+        markFailed();
+        return false;
+      }
+      return true;
+    }
+
+    async function updateRow(id, updates) {
+      const { error } = await supabase
+        .from('leadership_team_members')
+        .update(updates)
+        .eq('id', id);
+      if (error) {
+        console.warn('Update failed:', error.message);
+        markFailed();
+      } else {
+        markSaved();
+      }
+    }
+
+    function scheduleRowSave(id, updates) {
+      // merge into local model immediately
+      const m = team.find(t => t.id === id);
+      if (m) Object.assign(m, updates);
+      markDirty();
+      const existing = rowSaveTimers.get(id);
+      if (existing) clearTimeout(existing);
+      const handle = setTimeout(() => {
+        rowSaveTimers.delete(id);
+        updateRow(id, updates);
+      }, DEBOUNCE_MS);
+      rowSaveTimers.set(id, handle);
+    }
 
     function renderTeam() {
       const wrap = document.getElementById('memberList');
       wrap.innerHTML = '';
-      team.forEach((m, i) => {
+      team.forEach((m) => {
         const card = document.createElement('div');
         card.className = 'member-card' + (m.placeholder ? ' placeholder' : '');
-        card.dataset.idx = i;
+        card.dataset.id = m.id;
         card.innerHTML = `
           <button class="m-edit" title="Edit" aria-label="Edit">&#x270F;&#xFE0F;</button>
           <button class="m-delete" title="Delete">&#x1F5D1;&#xFE0F;</button>
@@ -246,46 +303,57 @@
         `;
         wrap.appendChild(card);
 
+        // Debounced per-field saves while typing in the edit form
+        card.querySelectorAll('[data-field]').forEach(inputEl => {
+          inputEl.addEventListener('input', () => {
+            const updates = { [inputEl.dataset.field]: inputEl.value.trim() };
+            // promote placeholder once user types real content
+            if (m.placeholder && inputEl.dataset.field === 'name' &&
+                inputEl.value.trim() && !inputEl.value.trim().startsWith('[Add')) {
+              updates.placeholder = false;
+            }
+            scheduleRowSave(m.id, updates);
+          });
+        });
+
         card.querySelector('.m-edit').addEventListener('click', () => {
           card.classList.toggle('editing');
-          // when leaving edit mode, sync inputs back to the model
+          // when leaving edit mode, flush any pending debounce and re-render display
           if (!card.classList.contains('editing')) {
-            commitCardInputs(card, i);
-            // if the user filled in a placeholder, promote it
-            if (m.placeholder && team[i].name && !team[i].name.startsWith('[Add')) {
-              team[i].placeholder = false;
+            const pending = rowSaveTimers.get(m.id);
+            if (pending) {
+              clearTimeout(pending);
+              rowSaveTimers.delete(m.id);
+              updateRow(m.id, {
+                name: m.name || '',
+                role: m.role || '',
+                responsibilities: m.responsibilities || '',
+                placeholder: !!m.placeholder
+              });
             }
             renderTeam();
-            markDirty();
           }
         });
 
-        card.querySelector('.m-delete').addEventListener('click', () => {
-          team.splice(i, 1);
-          renderTeam();
-          markDirty();
+        card.querySelector('.m-delete').addEventListener('click', async () => {
+          // cancel any pending update for this row
+          const pending = rowSaveTimers.get(m.id);
+          if (pending) { clearTimeout(pending); rowSaveTimers.delete(m.id); }
+          const ok = await deleteRow(m.id);
+          if (ok) {
+            team = team.filter(t => t.id !== m.id);
+            renderTeam();
+            markSaved();
+          }
         });
       });
     }
 
-    function commitCardInputs(card, i) {
-      card.querySelectorAll('[data-field]').forEach(el => {
-        team[i][el.dataset.field] = el.value.trim();
-      });
-    }
-
-    function markDirty() {
-      document.getElementById('saveStatus').textContent = 'Unsaved changes';
-      document.getElementById('saveStatus').style.color = '#c98a00';
-    }
-
-    function markSaved() {
-      document.getElementById('saveStatus').textContent = 'Saved ✓';
-      document.getElementById('saveStatus').style.color = '#0F766E';
-    }
-
-    document.getElementById('addBtn').addEventListener('click', () => {
-      team.push({ name: '', role: '', responsibilities: '', placeholder: false });
+    document.getElementById('addBtn').addEventListener('click', async () => {
+      markDirty();
+      const newRow = await insertRow();
+      if (!newRow) return;
+      team.push(newRow);
       renderTeam();
       // open the new card in edit mode
       const wrap = document.getElementById('memberList');
@@ -295,24 +363,24 @@
         const firstInput = last.querySelector('input[data-field="name"]');
         if (firstInput) firstInput.focus();
       }
-      markDirty();
+      markSaved();
     });
 
     document.getElementById('saveBtn').addEventListener('click', () => {
-      // collect any open editors first
+      // Flush any pending debounced saves immediately
       document.querySelectorAll('.member-card.editing').forEach(card => {
-        commitCardInputs(card, parseInt(card.dataset.idx, 10));
+        const id = card.dataset.id;
+        const updates = {};
+        card.querySelectorAll('[data-field]').forEach(el => {
+          updates[el.dataset.field] = el.value.trim();
+        });
+        const m = team.find(t => t.id === id);
+        if (m) Object.assign(m, updates);
+        const pending = rowSaveTimers.get(id);
+        if (pending) { clearTimeout(pending); rowSaveTimers.delete(id); }
+        updateRow(id, updates);
       });
-      // drop empty rows
-      team = team.filter(m => m.name || m.role || m.responsibilities);
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(team));
-        markSaved();
-        renderTeam();
-      } catch (e) {
-        document.getElementById('saveStatus').textContent = 'Save failed';
-        document.getElementById('saveStatus').style.color = '#c33';
-      }
+      renderTeam();
     });
 
     async function init() {
@@ -323,11 +391,21 @@
       if (!profile || profile.membership_status !== 'active') {
         window.location.href = 'inactive.html'; return;
       }
-      document.body.style.opacity = '1';
+      orgId = window.activeOrg && window.activeOrg.get();
+      if (!orgId) { window.location.href = 'index.html'; return; }
+
       document.getElementById('signOutBtn').addEventListener('click', async () => {
         await supabase.auth.signOut(); window.location.href = 'login.html';
       });
+
+      try {
+        team = await loadTeam();
+      } catch (e) {
+        console.warn('Load error:', e);
+        team = [];
+      }
       renderTeam();
+      document.body.style.opacity = '1';
     }
     init();
   </script>

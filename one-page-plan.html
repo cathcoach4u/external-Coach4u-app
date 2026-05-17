@@ -369,15 +369,6 @@
       return (match ? match[1] : s).trim();
     }
 
-    function readLS(key) {
-      try {
-        const raw = localStorage.getItem(key);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        return (parsed && typeof parsed === 'object') ? parsed : null;
-      } catch (e) { return null; }
-    }
-
     function setText(id, value) {
       if (value == null || value === '') return;
       const el = document.getElementById(id);
@@ -415,20 +406,17 @@
       ).join('');
     }
 
-    function applyWorksheetData() {
+    function applyWorksheetData(cv, cf, tg, ms) {
       // Core values pills
-      const cv = readLS('coach4u_core_values');
       if (cv) renderValuesPills(cv);
 
       // Core focus
-      const cf = readLS('coach4u_core_focus');
       if (cf) {
         setText('opp-purpose', cf.purpose);
         setText('opp-niche', cf.niche);
       }
 
       // Targets
-      const tg = readLS('coach4u_targets');
       if (tg) {
         setText('opp-ten-year', tg.ten_year);
         setText('opp-3yr-date', tg.three_year_date);
@@ -442,7 +430,6 @@
       }
 
       // Marketing strategy
-      const ms = readLS('coach4u_marketing_strategy');
       if (ms) {
         setText('opp-target-market', ms.target_market);
         renderNumList('opp-uniques', ms.uniques);
@@ -451,17 +438,15 @@
       }
     }
 
-    function renderTeamTable() {
+    function renderTeamTable(team) {
       const wrap = document.getElementById('opp-team-compact');
       if (!wrap) return;
-      let team = [];
-      try {
-        const raw = localStorage.getItem('coach4u_leadership_team');
-        if (raw) team = JSON.parse(raw) || [];
-      } catch (e) { team = []; }
 
-      // Filter out empty placeholder rows (no name AND no role)
-      const filled = (Array.isArray(team) ? team : []).filter(m => (m.name && m.name.trim()) || (m.role && m.role.trim()));
+      // Filter out empty placeholder rows (no name AND no role) — same rule as the localStorage version.
+      const filled = (Array.isArray(team) ? team : []).filter(m => {
+        if (m.placeholder) return false;
+        return (m.name && m.name.trim()) || (m.role && m.role.trim());
+      });
 
       if (!filled.length) {
         wrap.innerHTML = '<div class="team-empty">Add your leadership team in the Strategy section.</div>';
@@ -484,9 +469,33 @@
       if (!profile || profile.membership_status !== 'active') {
         window.location.href = 'inactive.html'; return;
       }
+
+      const orgId = window.activeOrg && window.activeOrg.get();
+      if (!orgId) { window.location.href = 'index.html'; return; }
+
+      try {
+        const [cv, cf, tg, ms, lt] = await Promise.all([
+          supabase.from('core_values').select('*').eq('organisation_id', orgId).maybeSingle(),
+          supabase.from('core_focus').select('*').eq('organisation_id', orgId).maybeSingle(),
+          supabase.from('targets').select('*').eq('organisation_id', orgId).maybeSingle(),
+          supabase.from('marketing_strategy').select('*').eq('organisation_id', orgId).maybeSingle(),
+          supabase.from('leadership_team_members').select('*').eq('organisation_id', orgId).order('sort_order', { ascending: true })
+        ]);
+
+        const cvRow = (cv && !cv.error && cv.data) ? cv.data : null;
+        const cfRow = (cf && !cf.error && cf.data) ? cf.data : null;
+        const tgRow = (tg && !tg.error && tg.data) ? tg.data : null;
+        const msRow = (ms && !ms.error && ms.data) ? ms.data : null;
+        const ltRows = (lt && !lt.error && Array.isArray(lt.data)) ? lt.data : [];
+
+        applyWorksheetData(cvRow, cfRow, tgRow, msRow);
+        renderTeamTable(ltRows);
+      } catch (e) {
+        console.warn('Plan load error:', e);
+        renderTeamTable([]);
+      }
+
       document.body.style.opacity = '1';
-      applyWorksheetData();
-      renderTeamTable();
     }
     init();
   </script>

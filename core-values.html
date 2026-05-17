@@ -153,27 +153,22 @@
       'https://eekefsuaefgpqmjdyniy.supabase.co',
       'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
     );
-    const STORAGE_KEY = 'coach4u_core_values';
-    const SEED = {
-      value_1: 'Integrity',
-      value_2: 'Growth mindset',
-      value_3: 'Client first',
-      value_4: 'Accountability',
-      value_5: 'Better together'
-    };
 
-    function loadData() {
-      let data = null;
-      try { data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (e) {}
-      if (!data || typeof data !== 'object' || Array.isArray(data)) data = {};
-      // Fill in any SEED keys that are missing (preserves user edits including intentional empty strings)
-      let dirty = false;
-      for (const k of Object.keys(SEED)) {
-        if (data[k] === undefined) { data[k] = SEED[k]; dirty = true; }
-      }
-      if (dirty) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {} }
-      return data;
-    }
+    /* Previous localStorage SEED (kept here as a reference for sample data only —
+       no longer auto-applied. New businesses start with empty inputs.)
+       SEED = {
+         value_1: 'Integrity',
+         value_2: 'Growth mindset',
+         value_3: 'Client first',
+         value_4: 'Accountability',
+         value_5: 'Better together'
+       }
+    */
+
+    let orgId = null;
+    const data = {};
+    const DEBOUNCE_MS = 300;
+    let saveTimer = null;
 
     function setSavedStatus() {
       const el = document.getElementById('saveStatus');
@@ -187,17 +182,48 @@
       }, 1200);
     }
 
+    async function saveRow() {
+      const payload = { organisation_id: orgId };
+      for (let i = 1; i <= 8; i++) {
+        const k = 'value_' + i;
+        payload[k] = data[k] || null;
+      }
+      const { error } = await supabase
+        .from('core_values')
+        .upsert(payload, { onConflict: 'organisation_id' });
+      if (error) {
+        console.warn('Save failed:', error.message);
+      } else {
+        setSavedStatus();
+      }
+    }
+
+    function scheduleSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveRow, DEBOUNCE_MS);
+    }
+
+    async function loadRow() {
+      const { data: row, error } = await supabase
+        .from('core_values')
+        .select('*')
+        .eq('organisation_id', orgId)
+        .maybeSingle();
+      if (error) console.warn('Load failed:', error.message);
+      const r = (row && !error) ? row : {};
+      for (let i = 1; i <= 8; i++) {
+        const k = 'value_' + i;
+        data[k] = r[k] || '';
+      }
+    }
+
     function wireWorksheet() {
-      const data = loadData();
       document.querySelectorAll('[data-key]').forEach(el => {
         const k = el.dataset.key;
         el.value = data[k] || '';
         el.addEventListener('input', () => {
           data[k] = el.value;
-          try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            setSavedStatus();
-          } catch (e) {}
+          scheduleSave();
         });
       });
     }
@@ -210,11 +236,20 @@
       if (!profile || profile.membership_status !== 'active') {
         window.location.href = 'inactive.html'; return;
       }
-      document.body.style.opacity = '1';
+      orgId = window.activeOrg && window.activeOrg.get();
+      if (!orgId) { window.location.href = 'index.html'; return; }
+
       document.getElementById('signOutBtn').addEventListener('click', async () => {
         await supabase.auth.signOut(); window.location.href = 'login.html';
       });
+
+      try {
+        await loadRow();
+      } catch (e) {
+        console.warn('Load error:', e);
+      }
       wireWorksheet();
+      document.body.style.opacity = '1';
     }
     init();
   </script>

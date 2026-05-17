@@ -130,12 +130,11 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.98
+v0.5.99
 
 ## Latest
+- **v0.5.99** — Strategy batch wired to Supabase. The 5 strategy worksheets (core-values, core-focus, targets, marketing-strategy, leadership-team) now read/write to the corresponding Supabase tables scoped by the active org, and one-page-plan.html reads from Supabase. Fresh-data approach — localStorage SEEDs removed; new businesses start with empty inputs. No-active-org guards added (redirect to index.html). 300ms debounced upserts preserved from the old pattern. Account-level carousel pages (account-values / account-focus / account-targets / account-marketing / account-leadership / account-plans) now light up with real data automatically once a worksheet is filled in.
 - **v0.5.98** — **Business name pill on every business-level page header.** Visiting a business now always shows `🏢 [Business Name]` as a teal pill next to the page title — solves the "I can't tell which business I'm in" / "looks identical to the account view" problem. `js/active-org.js` extended to track the org name alongside the ID (stored under `coach4u_active_org_name`), with auto-render into a `#activeBizName` element on every page load. `index.html` (account dashboard) caches the name when a business card "Open" is clicked. `business.html` caches the name when it resolves the active org. Added the pill markup to all 20 business-level pages (`business.html` + 5 strategy worksheets + `one-page-plan.html` + 3 hubs + 5 operations tools + 4 planning pages + `learning-vault.html`). `.biz-pill` CSS lives in `css/style.css`. Account-level pages don't include the pill — they're already clearly labelled "Account" / "Across All Businesses".
-- **v0.5.97** — **Cleanup pass before the data-layer migration.** Renamed `my-businesses.html` → `index.html` (account dashboard is now the root), and the former `index.html` → `business.html` (per-business dashboard).
-- **v0.5.96** — Built all 12 cross-business carousel leaf pages so every card on the 3 account-level hub pages now opens to a real navigable page (Strategy ×5, Planning ×3, Operations ×4). Same carousel chrome as `account-plans.html`: prev/next arrows + business name + dot indicators + keyboard arrows + print-current-view. Hub-page cards (`account-strategy.html` / `account-planning.html` / `account-operations.html`) flipped from "Coming soon" to "Open" for all 12. Data layer is still localStorage for most worksheet/operations pages, so empty businesses show the data-layer-pending banner — same pattern as `account-plans.html`.
 
 ## Current Status
 - **Account dashboard** (`index.html`) — post-login landing; SARUBA account header + stats + businesses snapshot + users (Supabase-backed)

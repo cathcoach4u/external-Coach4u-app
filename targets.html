@@ -103,30 +103,31 @@
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
     const supabase = createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
-    const STORAGE_KEY = 'coach4u_targets';
-    const SEED = {
-      ten_year: "Australia's most trusted business coaching practice — 500 thriving client businesses, a team of 10 coaches, delivering measurable results nationwide.",
-      three_year_date: 'June 2029',
-      three_year_revenue: '$1.2M',
-      three_year_profit: '$360K',
-      three_year_desc: '4 coaches, 80 active clients, systemised 12-month program, recurring revenue model established.',
-      one_year_date: 'Dec 2026',
-      one_year_revenue: '$420K',
-      one_year_profit: '$105K',
-      one_year_goals: '1. Sign 20 new clients through referral and speaking\n2. Launch group coaching program (min. 8 participants)\n3. Hire first associate coach by Q3\n4. Complete and publish Signature Program workbook'
-    };
 
-    function loadData() {
-      let data = null;
-      try { data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (e) {}
-      if (!data || typeof data !== 'object' || Array.isArray(data)) data = {};
-      let dirty = false;
-      for (const k of Object.keys(SEED)) {
-        if (data[k] === undefined) { data[k] = SEED[k]; dirty = true; }
-      }
-      if (dirty) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {} }
-      return data;
-    }
+    /* Previous localStorage SEED (kept here as a reference for sample data only —
+       no longer auto-applied. New businesses start with empty inputs.)
+       SEED = {
+         ten_year: "Australia's most trusted business coaching practice — 500 thriving client businesses, a team of 10 coaches, delivering measurable results nationwide.",
+         three_year_date: 'June 2029',
+         three_year_revenue: '$1.2M',
+         three_year_profit: '$360K',
+         three_year_desc: '4 coaches, 80 active clients, systemised 12-month program, recurring revenue model established.',
+         one_year_date: 'Dec 2026',
+         one_year_revenue: '$420K',
+         one_year_profit: '$105K',
+         one_year_goals: '1. Sign 20 new clients through referral and speaking\n2. Launch group coaching program (min. 8 participants)\n3. Hire first associate coach by Q3\n4. Complete and publish Signature Program workbook'
+       }
+    */
+
+    const FIELDS = [
+      'ten_year',
+      'three_year_date', 'three_year_revenue', 'three_year_profit', 'three_year_desc',
+      'one_year_date', 'one_year_revenue', 'one_year_profit', 'one_year_goals'
+    ];
+    let orgId = null;
+    const data = {};
+    const DEBOUNCE_MS = 300;
+    let saveTimer = null;
 
     function setSavedStatus() {
       const el = document.getElementById('saveStatus');
@@ -140,13 +141,41 @@
       }, 1200);
     }
 
+    async function saveRow() {
+      const payload = { organisation_id: orgId };
+      FIELDS.forEach(k => { payload[k] = data[k] || null; });
+      const { error } = await supabase
+        .from('targets')
+        .upsert(payload, { onConflict: 'organisation_id' });
+      if (error) {
+        console.warn('Save failed:', error.message);
+      } else {
+        setSavedStatus();
+      }
+    }
+
+    function scheduleSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveRow, DEBOUNCE_MS);
+    }
+
+    async function loadRow() {
+      const { data: row, error } = await supabase
+        .from('targets')
+        .select('*')
+        .eq('organisation_id', orgId)
+        .maybeSingle();
+      if (error) console.warn('Load failed:', error.message);
+      const r = (row && !error) ? row : {};
+      FIELDS.forEach(k => { data[k] = r[k] || ''; });
+    }
+
     function autoGrow(el) {
       if (!el || el.tagName !== 'TEXTAREA') return;
       el.style.height = 'auto';
       el.style.height = (el.scrollHeight + 2) + 'px';
     }
     function wireWorksheet() {
-      const data = loadData();
       document.querySelectorAll('[data-key]').forEach(el => {
         const k = el.dataset.key;
         el.value = data[k] || '';
@@ -154,10 +183,7 @@
         el.addEventListener('input', () => {
           autoGrow(el);
           data[k] = el.value;
-          try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            setSavedStatus();
-          } catch (e) {}
+          scheduleSave();
         });
       });
     }
@@ -167,9 +193,14 @@
       if (!user || error) { window.location.href = 'login.html'; return; }
       const { data: profile } = await supabase.from('users').select('membership_status').eq('id', user.id).single();
       if (!profile || profile.membership_status !== 'active') { window.location.href = 'inactive.html'; return; }
-      document.body.style.opacity = '1';
+      orgId = window.activeOrg && window.activeOrg.get();
+      if (!orgId) { window.location.href = 'index.html'; return; }
+
       document.getElementById('signOutBtn').addEventListener('click', async () => { await supabase.auth.signOut(); window.location.href = 'login.html'; });
+
+      try { await loadRow(); } catch (e) { console.warn('Load error:', e); }
       wireWorksheet();
+      document.body.style.opacity = '1';
     }
     init();
   </script>
