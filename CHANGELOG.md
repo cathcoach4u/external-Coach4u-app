@@ -4,6 +4,24 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.97
+- **Cleanup pass before the data-layer migration.** Two changes shipped here.
+- **(1) File rename — account dashboard is now the root `index.html`.**
+  - `my-businesses.html` (account dashboard, post-login landing) → `index.html`
+  - Former `index.html` (single-business dashboard) → `business.html`
+  - Why: visiting the root URL was loading the business dashboard, which only made sense if you had a single active business already selected. The account dashboard is the true "home" — it shows every business, the stats, the team. Root URL now serves the account dashboard.
+  - Update mechanics: two ordered `sed` passes across all HTML files. First pass replaced `index.html` URLs → `business.html` (in `href=`, `'…'`, `"…"` contexts). Second pass replaced `my-businesses.html` URLs → `index.html`. 38 HTML files modified; no broken references left after grep verification.
+  - `setup.html` line 70 redirect (when a user with existing memberships hits the wizard) now goes to `index.html` (account picker) instead of `business.html` (specific biz), since multi-business users with no stale active org should land on the picker.
+  - `business.html` already had the right guards: no memberships → setup, multi-biz + stale active org → `index.html`, single biz → use it.
+  - GitHub Pages serves `/` from `index.html`, so the root URL `https://cathcoach4u.github.io/yourbusinesscoach/` now opens the SARUBA account dashboard directly.
+- **(2) Dead CSS removed from the account dashboard.**
+  - Stripped `.topic-section`, `.topic-section-title`, `.topic-grid`, `.topic-card`, `.tc-icon`, `.tc-name`, `.topic-card.available:hover`, `.topic-card.coming-soon`, `.coming-soon-pill`, `.available-pill` — all leftover from the v0.5.89 topic launcher that v0.5.95 removed.
+  - Also stripped the placeholder comment that said "Hub navigation lives in the bottom-nav" — the bottom-nav speaks for itself.
+- **Version label** moved to `business.html` footer (it travelled with the renamed file). CLAUDE.md's version-bump checklist updated to point to `business.html` instead of `index.html`.
+- **Next: v0.5.98+** starts wiring the business-level worksheet pages to write to Supabase (fresh-data approach — no localStorage migration). Strategy batch first (5 worksheets + one-page-plan reader).
+
+---
+
 ## v0.5.96
 - **Built all 12 cross-business carousel leaf pages.** Every card on the 3 account-level hub pages (`account-strategy.html`, `account-planning.html`, `account-operations.html`) now opens to a real navigable page. Same carousel chrome as `account-plans.html`: sticky toolbar with "← Account" back-link + page title + Print/PDF button, page intro, optional yellow data-banner, prev/next buttons hinting the neighbour business name, centre showing current business name + "Business X of Y" + dot indicators, keyboard ArrowLeft / ArrowRight nav, print-current-view via `@media print` hiding everything except the active card. Each page is a leaf page (no bottom-nav), mirroring `one-page-plan.html` at the business level.
 - **Strategy ×5:**

@@ -53,7 +53,7 @@
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const { data: { session } } = await supabase.auth.getSession();
-    if (session) window.location.href = 'my-businesses.html';
+    if (session) window.location.href = 'index.html';
 
     const form    = document.getElementById('loginForm');
     const msgEl   = document.getElementById('message');
@@ -90,7 +90,7 @@
         btn.disabled = false;
         btn.textContent = 'Sign In';
       } else {
-        window.location.href = 'my-businesses.html';
+        window.location.href = 'index.html';
       }
     });
   </script>

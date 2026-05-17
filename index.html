@@ -1,138 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your Business Coach</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Account | Your Business Coach</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#003366">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Your Business Coach">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="apple-touch-icon" href="favicon.svg">
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css"/>
   <style>
     body { opacity: 0; transition: opacity 0.2s ease; background: #f4f6f9; }
-    .container { padding-bottom: 88px; }
+    .container { padding-bottom: 90px; }
 
-    /* ── Page title ── */
-    .greeting-row {
-      padding: 18px 16px 10px;
-    }
-    .greeting-name {
-      font-size: 1.2rem; font-weight: 900; color: var(--primary); line-height: 1.2;
-      letter-spacing: -0.2px;
-    }
-    .greeting-date { font-size: 0.78rem; color: #888; margin-top: 2px; }
-    .switch-biz-link {
-      display: inline-block; margin-top: 6px;
-      font-size: 0.72rem; font-weight: 700; color: var(--accent);
-      text-decoration: none; letter-spacing: 0.3px;
-    }
-    .switch-biz-link:hover { text-decoration: underline; }
-
-    /* ── Stat tiles ── */
-    .stat-row {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 8px; padding: 0 16px 14px;
-    }
-    .stat-tile {
-      background: white; border-radius: 10px;
-      border: 1px solid var(--border);
-      padding: 10px 10px 9px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      text-decoration: none; display: block;
-      transition: box-shadow 0.15s;
-    }
-    .stat-tile:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-decoration: none; }
-    .stat-num {
-      font-size: 1.45rem; font-weight: 900; color: var(--primary); line-height: 1;
-      margin-bottom: 3px;
-    }
-    .stat-num.accent { color: var(--accent); }
-    .stat-num.amber  { color: #D97706; }
-    .stat-num.red    { color: #DC2626; }
-    .stat-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #999; }
-
-    /* ── 1-Year Goal ── */
-    .goal-text { font-size: 0.82rem; color: var(--primary); font-weight: 600; line-height: 1.5; margin-bottom: 5px; }
-    .goal-meta { font-size: 0.71rem; color: #aaa; }
-
-    /* ── Core Values ── */
-    .values-pills { display: flex; flex-wrap: wrap; gap: 6px; }
-    .value-pill {
-      background: rgba(13,148,136,0.08); color: #0D9488;
-      border: 1px solid rgba(13,148,136,0.2);
-      border-radius: 20px; padding: 4px 11px;
-      font-size: 0.75rem; font-weight: 700;
-    }
-
-    /* ── Meeting button ── */
-    .meeting-btn {
-      display: flex; align-items: center; justify-content: space-between;
-      margin: 0 16px 10px; padding: 13px 16px;
-      background: var(--accent); color: white;
-      border-radius: 10px; text-decoration: none;
-      font-size: 0.88rem; font-weight: 700;
-      transition: background 0.15s;
-    }
-    .meeting-btn:hover { background: var(--accent-dark); color: white; text-decoration: none; }
-    .meeting-btn-arrow { font-size: 18px; }
-
-    /* ── Panels ── */
-    .dash-panel {
-      background: white; border-radius: 10px;
-      border: 1px solid var(--border);
-      margin: 0 16px 10px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      overflow: hidden;
-    }
-    .panel-head {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 11px 14px 9px; border-bottom: 1px solid #f0f0f0;
-    }
-    .panel-title { font-size: 0.82rem; font-weight: 800; color: var(--primary); }
-    .panel-link { font-size: 0.72rem; font-weight: 700; color: var(--accent); text-decoration: none; }
-    .panel-link:hover { text-decoration: underline; }
-    .panel-body { padding: 10px 14px 12px; }
-
-    /* ── This Week ── */
-    .todo-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-    .todo-item { display: flex; align-items: flex-start; gap: 9px; }
-    .todo-check {
-      width: 16px; height: 16px; border-radius: 4px;
-      border: 2px solid #ccc; flex-shrink: 0; margin-top: 2px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 10px; color: white;
-    }
-    .todo-check.done { background: #0D9488; border-color: #0D9488; }
-    .todo-check.done::after { content: '✓'; }
-    .todo-desc { font-size: 0.8rem; font-weight: 600; color: var(--primary); line-height: 1.3; }
-    .todo-desc.done { text-decoration: line-through; color: #bbb; }
-    .todo-meta { font-size: 0.7rem; color: #aaa; margin-top: 1px; }
-
-    /* ── This Quarter ── */
-    .progress-wrap { background: #f0f0f0; border-radius: 99px; height: 5px; margin-bottom: 3px; overflow: hidden; }
-    .progress-fill { height: 100%; border-radius: 99px; background: #0D9488; }
-    .progress-label { font-size: 0.7rem; color: #aaa; margin-bottom: 10px; }
-    .rock-list { display: flex; flex-direction: column; gap: 7px; }
-    .rock-row { display: flex; align-items: center; gap: 8px; }
-    .rock-desc { font-size: 0.78rem; font-weight: 600; color: var(--primary); flex: 1; line-height: 1.3; }
-    .status-pill {
-      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.4px; padding: 2px 7px; border-radius: 99px; white-space: nowrap; flex-shrink: 0;
-    }
-    .pill-green { background: #D1FAE5; color: #059669; }
-    .pill-amber { background: #FEF3C7; color: #D97706; }
-    .pill-red   { background: #FEE2E2; color: #DC2626; }
-    .pill-grey  { background: #F3F4F6; color: #6B7280; }
-
-    /* ── Bottom nav ── */
+    /* ===== Bottom nav (account-level destinations) ===== */
     .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: white; border-top: 1px solid #e5e7eb;
-      display: flex; z-index: 100;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      z-index: 100;
       padding-bottom: env(safe-area-inset-bottom);
       box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
     }
@@ -146,6 +36,247 @@
     }
     .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
     .bottom-nav-icon { font-size: 20px; line-height: 1; }
+
+    /* ── Section A: Account header ── */
+    .acct-header { padding: 20px 16px 4px; }
+    .acct-title { font-size: 1.25rem; font-weight: 900; color: var(--primary); margin: 0 0 4px; letter-spacing: -0.2px; }
+    .acct-sub { font-size: 0.82rem; color: #666; margin: 0 0 8px; line-height: 1.5; }
+    .acct-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+    .acct-link {
+      font-size: 0.78rem; font-weight: 700; color: var(--accent);
+      text-decoration: none; letter-spacing: 0.2px;
+    }
+    .acct-link:hover { text-decoration: underline; }
+
+    /* ── Section B: Stats row (4 tiles) ── */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 8px; padding: 12px 16px 6px;
+    }
+    .stat-card {
+      background: white; border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 14px 8px 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 1.5rem; font-weight: 900; color: var(--primary); line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-num .stat-total {
+      font-size: 0.9rem; font-weight: 700; color: #aaa;
+    }
+    .stat-label { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #999; line-height: 1.3; }
+    @media (max-width: 480px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .stat-num { font-size: 1.3rem; }
+    }
+
+    /* ── Sections ── */
+    .section { padding: 0 16px; margin-top: 22px; }
+    .section-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 0 10px;
+    }
+    .section-title { font-size: 0.95rem; font-weight: 800; color: var(--primary); }
+    .section-meta { font-size: 0.72rem; color: #888; font-weight: 600; }
+    .section-action {
+      font-size: 0.78rem; font-weight: 700; color: var(--accent);
+      background: none; border: none; cursor: pointer;
+      padding: 4px 8px; border-radius: 6px; font-family: inherit;
+      transition: background .15s;
+    }
+    .section-action:hover { background: rgba(13,148,136,0.08); }
+
+    /* ── Biz snapshot cards ── */
+    .biz-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
+    .biz-card {
+      background: white; border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 18px 18px; transition: box-shadow .15s, border-color .15s;
+      position: relative;
+    }
+    .biz-card:hover { border-color: var(--accent); box-shadow: 0 2px 10px rgba(13,148,136,0.1); }
+
+    .biz-card-head {
+      display: flex; align-items: center; gap: 10px;
+      flex-wrap: wrap; margin-bottom: 14px;
+    }
+    .biz-name {
+      font-size: 1.05rem; font-weight: 800; color: var(--primary);
+      flex: 1; min-width: 0;
+    }
+    .role-pill {
+      display: inline-block; font-size: 0.66rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.4px; padding: 3px 9px; border-radius: 20px;
+    }
+    .role-admin  { background: #dbeafe; color: #1e40af; }
+    .role-member { background: #f3f4f6; color: #6B7280; }
+    .role-pending { background: #fef3c7; color: #92400e; font-style: italic; }
+
+    .biz-open {
+      font-size: 0.78rem; font-weight: 700; color: var(--accent);
+      padding: 7px 12px; border-radius: 8px; text-decoration: none;
+      background: rgba(13,148,136,0.08); cursor: pointer;
+      transition: background .15s; border: none; font-family: inherit;
+    }
+    .biz-open:hover { background: rgba(13,148,136,0.18); color: var(--accent); }
+
+    /* ── Snapshot grid ── */
+    .snapshot-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 12px 0 4px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .snapshot-cell {
+      background: #f8fafc; border-radius: 8px;
+      padding: 10px 10px 9px;
+      display: flex; flex-direction: column; gap: 4px;
+      min-width: 0;
+    }
+    .snapshot-label {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.45px; color: #888; line-height: 1.3;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .snapshot-value {
+      font-size: 1.02rem; font-weight: 800; color: var(--primary);
+      line-height: 1.2; word-break: break-word;
+    }
+    .snapshot-empty { color: #aaa; font-weight: 700; font-size: 0.95rem; }
+    @media (max-width: 600px) {
+      .snapshot-grid { grid-template-columns: 1fr; gap: 6px; }
+      .snapshot-cell { flex-direction: row; align-items: center; justify-content: space-between; padding: 9px 12px; }
+      .snapshot-value { font-size: 0.95rem; text-align: right; }
+    }
+
+    .biz-next-meeting {
+      margin-top: 12px;
+      font-size: 0.82rem; color: var(--text);
+      display: flex; align-items: center; gap: 6px;
+      padding-top: 10px; border-top: 1px solid #f0f0f0;
+    }
+    .biz-next-meeting .nm-label { color: #888; font-weight: 600; }
+    .biz-next-meeting .nm-value { font-weight: 700; color: var(--primary); }
+    .biz-next-meeting .nm-empty { color: #aaa; font-weight: 600; }
+
+    /* ── Actions menu (•••) ── */
+    .actions-wrap { position: relative; flex-shrink: 0; }
+    .actions-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 18px; color: #888; line-height: 1;
+      padding: 6px 10px; border-radius: 6px;
+      transition: background .15s;
+    }
+    .actions-btn:hover { background: #f3f4f6; color: var(--primary); }
+    .actions-menu {
+      position: absolute; right: 0; top: 100%; margin-top: 4px;
+      background: white; border: 1px solid var(--border); border-radius: 10px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+      min-width: 160px; z-index: 50; overflow: hidden;
+    }
+    .actions-menu.hidden { display: none; }
+    .actions-menu button {
+      display: block; width: 100%; padding: 10px 14px;
+      background: none; border: none; cursor: pointer;
+      text-align: left; font-size: 0.85rem; color: var(--text);
+      font-weight: 600; font-family: inherit;
+    }
+    .actions-menu button:hover { background: #f8fafc; }
+    .actions-menu button.danger { color: #b91c1c; }
+    .actions-menu button.danger:hover { background: #fef2f2; }
+
+    /* ── Users / team cards ── */
+    .user-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+    .user-card {
+      background: white; border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 14px 14px; display: flex; align-items: flex-start; gap: 12px;
+    }
+    .user-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #003366 0%, #0D9488 100%);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 800; font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+    .user-body { flex: 1; min-width: 0; }
+    .user-name { font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-bottom: 2px; }
+    .user-email { font-size: 0.78rem; color: #888; margin-bottom: 8px; word-break: break-all; }
+    .user-orgs { display: flex; flex-direction: column; gap: 4px; }
+    .user-org-row {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; color: var(--text);
+      flex-wrap: wrap;
+    }
+    .user-org-name { font-weight: 600; color: var(--primary); }
+    .user-remove-btn {
+      background: none; border: none; cursor: pointer;
+      color: #b91c1c; font-size: 0.72rem; font-weight: 700;
+      padding: 2px 6px; border-radius: 4px;
+      font-family: inherit;
+    }
+    .user-remove-btn:hover { background: #fef2f2; text-decoration: underline; }
+
+    .empty-state {
+      text-align: center; padding: 26px 16px; color: #888;
+      background: #f8fafc; border-radius: 12px; border: 1.5px dashed #d4d4d4;
+      font-size: 0.88rem;
+    }
+    .add-btn {
+      display: block; width: 100%; padding: 13px;
+      background: var(--accent); color: white;
+      border: none; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 700;
+      cursor: pointer; text-align: center; text-decoration: none;
+      transition: background .15s; font-family: inherit;
+    }
+    .add-btn:hover { background: var(--accent-dark); color: white; text-decoration: none; }
+    .add-btn-secondary {
+      background: white; color: var(--primary);
+      border: 1.5px solid var(--border);
+    }
+    .add-btn-secondary:hover { border-color: var(--accent); color: var(--accent); background: white; }
+
+    /* ── Modal ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+    .modal-overlay.hidden { display: none; }
+    .modal { background: white; border-radius: 16px; padding: 26px; max-width: 460px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.2); max-height: 92vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-title { font-weight: 700; color: var(--primary); font-size: 1.05rem; }
+    .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #888; line-height: 1; padding: 0 4px; }
+    .modal-field { margin-bottom: 14px; }
+    .modal-label { font-weight: 600; color: var(--primary); font-size: 0.86rem; margin-bottom: 6px; display: block; }
+    .modal-input, .modal-select { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 0.95rem; color: var(--text); font-family: inherit; background: white; box-sizing: border-box; }
+    .modal-input:focus, .modal-select:focus { outline: none; border-color: var(--accent); }
+    .modal-help { font-size: 11px; color: #888; margin-top: 4px; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+    .modal-err { font-size: 0.83rem; color: #b91c1c; margin-top: 6px; min-height: 1em; }
+    .btn-primary { padding: 9px 18px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary.danger { background: #b91c1c; }
+    .btn-primary.danger:hover { background: #991b1b; }
+    .btn-secondary { padding: 9px 18px; background: white; color: var(--primary); border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+
+    .biz-check-list {
+      display: flex; flex-direction: column; gap: 6px;
+      max-height: 200px; overflow-y: auto;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 10px; background: #f8fafc;
+    }
+    .biz-check-row {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.88rem; color: var(--text);
+      cursor: pointer; padding: 4px 2px;
+    }
+    .biz-check-row input { cursor: pointer; }
+
+    .confirm-note {
+      background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;
+      padding: 12px; font-size: 0.85rem; color: #7f1d1d; line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
   </style>
   <script src="js/active-org.js" defer></script>
   <script src="js/active-session.js" defer></script>
@@ -154,477 +285,855 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="header-left">
-        <a href="my-businesses.html" class="header-back">&#x2190; Account</a>
-        <span class="header-title">Your Business Coach</span>
+        <span class="header-title">Account</span>
       </div>
-      <button id="signOutBtn" class="sign-out-btn">Sign Out</button>
+      <button class="sign-out-btn" id="signOutBtn">Sign Out</button>
     </div>
   </header>
 
   <div class="container">
 
-    <!-- Page title -->
-    <div class="greeting-row">
-      <div class="greeting-name" id="bizName">Business Dashboard</div>
-      <div class="greeting-date" id="todayDate"></div>
-      <a href="my-businesses.html" id="switchBizLink" class="switch-biz-link" style="display:none;">Switch business &rsaquo;</a>
+    <!-- Section A: Account header -->
+    <div class="acct-header">
+      <h1 class="acct-title" id="accountName">&#x1F3E2; Your account</h1>
+      <p class="acct-sub">Your account &mdash; switch between businesses, see across them, manage your team.</p>
+      <div class="acct-actions">
+        <a href="#" id="renameAccountLink" class="acct-link" style="display:none;">Rename account &rsaquo;</a>
+      </div>
     </div>
 
-    <!-- Stat tiles -->
-    <div class="stat-row">
-      <a class="stat-tile" href="issues.html">
-        <div class="stat-num red" id="statOpenIssues">&mdash;</div>
+    <!-- Section B: Stats row (4 tiles) -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num" id="statBizCount">&mdash;</div>
+        <div class="stat-label">Businesses</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statUserCount">&mdash;</div>
+        <div class="stat-label">Users</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statOpenIssues">&mdash;</div>
         <div class="stat-label">Open Issues</div>
-      </a>
-      <a class="stat-tile" href="goals.html">
-        <div class="stat-num accent" id="statGoalsOnTrack">&mdash;</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statGoalsOnTrack">&mdash;</div>
         <div class="stat-label">Goals On Track</div>
-      </a>
-      <a class="stat-tile" id="statNextMeetingTile" href="meeting.html">
-        <div class="stat-num" style="font-size:1rem;padding-top:3px;" id="statNextMeeting">&mdash;</div>
-        <div class="stat-label">Next Meeting</div>
-      </a>
-    </div>
-
-    <!-- 1-Year Goal -->
-    <div class="dash-panel">
-      <div class="panel-head">
-        <span class="panel-title">&#x1F3AF; 1-Year Goal</span>
-        <a class="panel-link" href="targets.html">Edit &#x203A;</a>
-      </div>
-      <div class="panel-body">
-        <div class="goal-text" id="oneYearGoal">Sign 20 new clients, launch group coaching program, hire first associate coach by Q3, and publish Signature Program workbook.</div>
-        <div class="goal-meta" id="oneYearMeta">Target: Dec 2025 &nbsp;&middot;&nbsp; Revenue: $420K</div>
       </div>
     </div>
 
-    <!-- Core Values -->
-    <div class="dash-panel">
-      <div class="panel-head">
-        <span class="panel-title">&#x2B50; Core Values</span>
-        <a class="panel-link" href="core-values.html">Edit &#x203A;</a>
+    <div class="section" id="businesses">
+      <div class="section-head">
+        <span class="section-title">&#x1F4BC; Your Businesses</span>
+        <button id="addBusinessHeaderBtn" class="section-action">+ New Business</button>
       </div>
-      <div class="panel-body">
-        <div class="values-pills" id="valuesPills">
-          <span class="value-pill">Integrity</span>
-          <span class="value-pill">Growth Mindset</span>
-          <span class="value-pill">Client First</span>
-          <span class="value-pill">Accountability</span>
-        </div>
-      </div>
+      <div id="bizList" class="biz-list"></div>
+      <button id="addBusinessBtn" class="add-btn">+ Create New Business</button>
     </div>
 
-    <!-- Meeting link -->
-    <a class="meeting-btn" id="thisWeekMeetingBtn" href="meeting.html">
-      <span>&#x1F5D3;&#xFE0F;&nbsp; Go to This Week&#x2019;s Meeting</span>
-      <span class="meeting-btn-arrow">&#x203A;</span>
-    </a>
-
-    <!-- This Week -->
-    <div class="dash-panel">
-      <div class="panel-head">
-        <span class="panel-title">This Week</span>
-        <a class="panel-link" id="thisWeekViewLink" href="meeting.html">View Meeting &#x203A;</a>
+    <!-- Section E: Users (Team) -->
+    <div class="section" id="team">
+      <div class="section-head">
+        <span class="section-title">&#x1F465; Your Team <span class="section-meta" id="userSectionMeta"></span></span>
+        <button id="inviteUserHeaderBtn" class="section-action">+ Invite User</button>
       </div>
-      <div class="panel-body">
-        <ul class="todo-list" id="thisWeekTodos">
-          <li class="todo-item"><div class="todo-check"></div><div><div class="todo-desc" style="color:#aaa;">No todos for this week yet.</div></div></li>
-        </ul>
-      </div>
+      <div id="userList" class="user-list"></div>
+      <button id="inviteUserBtn" class="add-btn add-btn-secondary">+ Invite User</button>
     </div>
 
-    <!-- This Quarter -->
-    <div class="dash-panel">
-      <div class="panel-head">
-        <span class="panel-title">This Quarter</span>
-        <a class="panel-link" href="goals.html">View Goals &#x203A;</a>
-      </div>
-      <div class="panel-body">
-        <div class="progress-wrap">
-          <div class="progress-fill" id="quarterProgressFill" style="width:0%"></div>
-        </div>
-        <div class="progress-label" id="quarterProgressLabel">No goals set yet</div>
-        <div class="rock-list" id="quarterRocks"></div>
-      </div>
-    </div>
-
-    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.96</p>
+    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.89</p>
 
   </div>
 
-  <nav class="bottom-nav">
-    <a class="bottom-nav-item active" href="index.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
-    <a class="bottom-nav-item" href="planning.html"><span class="bottom-nav-icon">&#x1F5FA;&#xFE0F;</span><span>Planning</span></a>
-    <a class="bottom-nav-item" href="strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
-    <a class="bottom-nav-item" href="operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
-    <a class="bottom-nav-item" href="learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
-  </nav>
+  <!-- Rename Account modal -->
+  <div class="modal-overlay hidden" id="renameModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Rename account</span>
+        <button class="modal-close" id="renameClose">&times;</button>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Account / company name *</label>
+        <input type="text" class="modal-input" id="renameInput" placeholder="e.g. SARUBA" maxlength="80"/>
+        <div class="modal-help">This is the parent that owns your businesses (what shows on your invoice).</div>
+        <div class="modal-err" id="renameErr"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="renameCancel">Cancel</button>
+        <button class="btn-primary" id="renameSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Business modal -->
+  <div class="modal-overlay hidden" id="addModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Create new business</span>
+        <button class="modal-close" id="addClose">&times;</button>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Business name *</label>
+        <input type="text" class="modal-input" id="addName" placeholder="e.g. IAS Entity 2" maxlength="80"/>
+        <div class="modal-err" id="addErr"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="addCancel">Cancel</button>
+        <button class="btn-primary" id="addSave">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rename Business modal -->
+  <div class="modal-overlay hidden" id="renameBizModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Rename business</span>
+        <button class="modal-close" id="renameBizClose">&times;</button>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Business name *</label>
+        <input type="text" class="modal-input" id="renameBizInput" maxlength="80"/>
+        <div class="modal-err" id="renameBizErr"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="renameBizCancel">Cancel</button>
+        <button class="btn-primary" id="renameBizSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Business modal -->
+  <div class="modal-overlay hidden" id="deleteBizModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Delete business</span>
+        <button class="modal-close" id="deleteBizClose">&times;</button>
+      </div>
+      <div class="confirm-note" id="deleteBizNote">
+        This will permanently delete <strong id="deleteBizName"></strong> and ALL of its data &mdash;
+        worksheets, scorecard, sessions, team members and history. This cannot be undone.
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Type the business name to confirm</label>
+        <input type="text" class="modal-input" id="deleteBizInput" placeholder="Business name"/>
+        <div class="modal-err" id="deleteBizErr"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="deleteBizCancel">Cancel</button>
+        <button class="btn-primary danger" id="deleteBizConfirm" disabled>Delete forever</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invite User modal -->
+  <div class="modal-overlay hidden" id="inviteModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Invite a teammate</span>
+        <button class="modal-close" id="inviteClose">&times;</button>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Email *</label>
+        <input type="email" class="modal-input" id="inviteEmail" placeholder="name@company.com" autocomplete="off"/>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Role</label>
+        <select class="modal-select" id="inviteRole">
+          <option value="member">Member &mdash; can read team data</option>
+          <option value="admin">Admin &mdash; can edit everything</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Display name (optional)</label>
+        <input type="text" class="modal-input" id="inviteDisplay" placeholder="e.g. Lou Henderson" maxlength="80"/>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Business access *</label>
+        <div class="biz-check-list" id="inviteBizList"></div>
+        <div class="modal-help">Pick one or more businesses to give this person access to.</div>
+      </div>
+      <div class="modal-err" id="inviteErr"></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="inviteCancel">Cancel</button>
+        <button class="btn-primary" id="inviteSend">Send invite</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Remove Member confirm modal -->
+  <div class="modal-overlay hidden" id="removeMemberModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Remove team member</span>
+        <button class="modal-close" id="removeMemberClose">&times;</button>
+      </div>
+      <div class="confirm-note">
+        Remove <strong id="removeMemberName"></strong> from <strong id="removeMemberOrg"></strong>?
+        They&rsquo;ll lose access immediately. You can re-invite them anytime.
+      </div>
+      <div class="modal-err" id="removeMemberErr"></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="removeMemberCancel">Cancel</button>
+        <button class="btn-primary danger" id="removeMemberConfirm">Remove</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-    const supabase = createClient(
-      'https://eekefsuaefgpqmjdyniy.supabase.co',
-      'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
-    );
 
-    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const now = new Date();
-    document.getElementById('todayDate').textContent =
-      `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+    const SUPABASE_URL      = 'https://eekefsuaefgpqmjdyniy.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y';
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    function seedIfEmpty(key, value) {
-      try {
-        const raw = localStorage.getItem(key);
-        if (raw == null) { localStorage.setItem(key, JSON.stringify(value)); return; }
-        // Defensive merge: if stored value is empty/broken, fill missing keys/items from seed
-        let existing;
-        try { existing = JSON.parse(raw); } catch (_) { existing = null; }
-        if (Array.isArray(value)) {
-          if (!Array.isArray(existing) || existing.length === 0) {
-            localStorage.setItem(key, JSON.stringify(value));
-          }
-        } else if (value && typeof value === 'object') {
-          const merged = (existing && typeof existing === 'object' && !Array.isArray(existing)) ? existing : {};
-          let dirty = Object.keys(merged).length === 0;
-          for (const k of Object.keys(value)) {
-            if (merged[k] === undefined) { merged[k] = value[k]; dirty = true; }
-          }
-          if (dirty) localStorage.setItem(key, JSON.stringify(merged));
-        }
-      } catch (_) {}
-    }
-    function ensureSeeds() {
-      // Strategy worksheets
-      seedIfEmpty('coach4u_core_values', {
-        value_1:'Integrity', value_2:'Growth mindset', value_3:'Client first', value_4:'Accountability', value_5:'Better together'
-      });
-      seedIfEmpty('coach4u_core_focus', {
-        purpose: 'To help business owners build thriving, self-managing businesses so they can achieve freedom and fulfilment.',
-        niche: 'Strengths-based business coaching for small and medium businesses across Australia.'
-      });
-      seedIfEmpty('coach4u_targets', {
-        ten_year:"Australia's most trusted business coaching practice — 500 thriving client businesses, a team of 10 coaches, delivering measurable results nationwide.",
-        three_year_date:'June 2029', three_year_revenue:'$1.2M', three_year_profit:'$360K',
-        three_year_desc:'4 coaches, 80 active clients, systemised 12-month program, recurring revenue model established.',
-        one_year_date:'Dec 2026', one_year_revenue:'$420K', one_year_profit:'$105K',
-        one_year_goals:'1. Sign 20 new clients through referral and speaking\n2. Launch group coaching program (min. 8 participants)\n3. Hire first associate coach by Q3\n4. Complete and publish Signature Program workbook'
-      });
-      seedIfEmpty('coach4u_marketing_strategy', {
-        target_market: 'Business owners with 2–20 employees in professional services, trades, and health. Revenue $500K–$5M. Feel stuck or overwhelmed.',
-        uniques: "1. Strengths-based methodology — build on what's working\n2. Structured accountability — weekly check-ins, measurable outcomes\n3. Real-world experience — founded by a former business owner",
-        proven_process: 'Coach4U 4-Step System: Clarity → Strategy → Execution → Momentum. 12 months, monthly 1:1 sessions, weekly check-ins.',
-        guarantee: "No measurable progress in your first 90 days? We'll refund your last month's coaching fee — no questions asked."
-      });
-      seedIfEmpty('coach4u_leadership_team', [
-        { name: 'Cath Baker', role: 'Founder and Lead Coach',
-          responsibilities: 'Responsible for client delivery, coaching methodology, business development and overall strategic direction. Key focus: growing the client base and developing the Coach4U program.',
-          placeholder: false },
-        { name: 'Lou Henderson', role: 'Operations Manager',
-          responsibilities: 'Responsible for client administration, scheduling, invoicing, GoCardless payments and day-to-day business operations. Key focus: keeping everything running smoothly so Cath can focus on coaching.',
-          placeholder: false },
-        { name: 'Andrew Baker', role: 'Marketing and Technology Advisor',
-          responsibilities: 'Responsible for ABMS Marketing support, website oversight and technical input on digital projects. Key focus: brand visibility and digital infrastructure.',
-          placeholder: false },
-        { name: '[Add your name]', role: 'Head of Delivery',
-          responsibilities: 'Responsible for program facilitation, group coaching sessions and client onboarding. Key focus: delivering an exceptional client experience.',
-          placeholder: true },
-        { name: '[Add your name]', role: 'Client Success',
-          responsibilities: 'Responsible for client check-ins, progress tracking and retention. Key focus: ensuring clients get results and stay engaged.',
-          placeholder: true }
-      ]);
-      // Operations tools
-      const today = new Date();
-      const mon = new Date(today);
-      mon.setDate(today.getDate() + ((today.getDay() === 0 ? -6 : 1) - today.getDay()));
-      const monIso = mon.toISOString().slice(0, 10);
-      const nextMon = new Date(mon); nextMon.setDate(mon.getDate() + 7);
-      const nextMonIso = nextMon.toISOString().slice(0, 10);
-      const q = 'Q' + (Math.floor(today.getMonth() / 3) + 1) + ' ' + today.getFullYear();
-      seedIfEmpty('coach4u_demo_meetings', {
-        meetings: [
-          { id: 4001, meeting_date: monIso, status: 'completed', quarter: q, rating: 8, notes: 'Strong week — Acme deal closed. Need to keep an eye on coach capacity.', business_id: 1,
-            headlines: [
-              { id: 4101, type: 'good_news', description: 'Closed largest deal of the year — £42k MRR with Acme Corp' },
-              { id: 4102, type: 'good_news', description: 'Lou completed her ICF Master certification' },
-              { id: 4103, type: 'headline', description: 'Two coaches off sick same week, capacity pressure' }
-            ],
-            todos: [
-              { id: 4201, description: 'Send Q3 proposal to Globex by Friday', owner: 'Cath', done: false },
-              { id: 4202, description: 'Draft new coach JD', owner: 'Lou', done: false },
-              { id: 4203, description: 'Migrate Pipedrive contacts → HubSpot', owner: 'Andrew', done: false },
-              { id: 4204, description: 'Book Manchester event venue', owner: 'Cath', done: true }
-            ]
-          },
-          { id: 4002, meeting_date: nextMonIso, status: 'scheduled', quarter: q, rating: null, notes: '', business_id: 1, headlines: [], todos: [] }
-        ]
-      });
-      seedIfEmpty('coach4u_demo_rocks', [
-        { id:2001, description:'Launch new "Strategy in a Day" workshop', owner:'Cath',   status:'on_track',  quarter:q, company_rock:1, business_id:1, sort_order:1, seat_id:null },
-        { id:2002, description:'Hire 1 senior coach',                     owner:'Lou',    status:'at_risk',   quarter:q, company_rock:1, business_id:1, sort_order:2, seat_id:null },
-        { id:2003, description:'Move CRM to HubSpot',                     owner:'Andrew', status:'on_track',  quarter:q, company_rock:0, business_id:1, sort_order:3, seat_id:null },
-        { id:2004, description:'Run 3 prospect events in Manchester',     owner:'Cath',   status:'off_track', quarter:q, company_rock:0, business_id:1, sort_order:4, seat_id:null }
-      ]);
-      // Weekly Numbers (scorecard) demo seed
-      (function _seedScorecard(){
-        const monIsoLocal = monIso;
-        function _isoAddWeeks(iso,wk){const dt=new Date(iso+'T00:00:00');dt.setDate(dt.getDate()+wk*7);return dt.toISOString().slice(0,10)}
-        const weeks=[-5,-4,-3,-2,-1,0].map(o=>_isoAddWeeks(monIsoLocal,o));
-        const metrics=[
-          {id:1001,name:'New Leads',owner:'Cath',goal:10,measurement_type:'number',sort_order:1},
-          {id:1002,name:'Discovery Calls Booked',owner:'Lou',goal:8,measurement_type:'number',sort_order:2},
-          {id:1003,name:'Proposals Sent',owner:'Andrew',goal:5,measurement_type:'number',sort_order:3},
-          {id:1004,name:'Revenue (£k)',owner:'Cath',goal:25,measurement_type:'currency',sort_order:4},
-          {id:1005,name:'Client NPS',owner:'Lou',goal:9,measurement_type:'number',sort_order:5},
-          {id:1006,name:'Marketing Posts',owner:'Andrew',goal:3,measurement_type:'number',sort_order:6}
-        ];
-        const series={1001:[8,9,11,7,10,12],1002:[6,7,8,9,7,8],1003:[4,6,5,5,6,7],1004:[18,22,24,26,23,28],1005:[8.5,9,9.2,8.8,9.4,9.1],1006:[2,3,4,3,3,5]};
-        let nextEntryId = 7000;
-        const entries=[];
-        metrics.forEach(m=>weeks.forEach((w,i)=>entries.push({id:++nextEntryId,metric_id:m.id,week_date:w,value:series[m.id][i],on_track:series[m.id][i]>=m.goal?1:0})));
-        seedIfEmpty('coach4u_demo_scorecard', { metrics, entries, weeks });
-      })();
-      seedIfEmpty('coach4u_demo_issues', [
-        { id:3001, description:'Onboarding flow takes new clients 3+ weeks — intake forms and scheduling drag on. We need to simplify or automate.', owner:'Cath',   status:'open',     solution:'', business_id:1, created_at:new Date(Date.now()-5*86400000).toISOString() },
-        { id:3002, description:'Coach utilisation below 70% target — Q1 hit 64%. Either we have too many coaches or pipeline is weak.',             owner:'Lou',    status:'open',     solution:'', business_id:1, created_at:new Date(Date.now()-12*86400000).toISOString() },
-        { id:3003, description:'No standard scorecard for coach performance — each coach is measured differently, we need a unified scorecard.',     owner:'Andrew', status:'open',     solution:'', business_id:1, created_at:new Date(Date.now()-21*86400000).toISOString() },
-        { id:3004, description:"Website conversion rate dropped 30% after last redesign — visitors aren't getting to the booking form.",            owner:'Andrew', status:'resolved', solution:'Reverted hero CTA, moved booking widget above the fold, conversion back to baseline within a week.', business_id:1, created_at:new Date(Date.now()-30*86400000).toISOString() }
-      ]);
-      // Planning sessions
-      const thisYear = today.getFullYear();
-      const nextYear = thisYear + 1;
-      seedIfEmpty('coach4u_annual_sessions', [
-        { id:5001, session_date:thisYear+'-01-01', year:String(thisYear), status:'completed',
-          attendance:'Cath, Lou, Andrew',
-          areas_completed:{1:true,2:true,3:true,4:true}
-        },
-        { id:5002, session_date:nextYear+'-01-01', year:String(nextYear), status:'scheduled',
-          attendance:'',
-          areas_completed:{}
-        }
-      ]);
-      // Pick next-upcoming quarter for the scheduled quarterly session
-      const _curQ = Math.floor(today.getMonth() / 3) + 1;
-      let _nextQ = _curQ + 1, _nextQYr = thisYear;
-      if (_nextQ > 4) { _nextQ = 1; _nextQYr = thisYear + 1; }
-      const _nextQuarterLabel = 'Q' + _nextQ + ' ' + _nextQYr;
-      // Quarter-end date for setting _nextQ goals (i.e. end of prior quarter)
-      let _priorQ = _nextQ - 1, _priorQYr = _nextQYr; if (_priorQ < 1) { _priorQ = 4; _priorQYr = _nextQYr - 1; }
-      const _endMonth = [3, 6, 9, 12][_priorQ - 1];
-      const _endDay = [31, 30, 30, 31][_priorQ - 1];
-      const _qSessionDate = _priorQYr + '-' + String(_endMonth).padStart(2, '0') + '-' + String(_endDay).padStart(2, '0');
-      seedIfEmpty('coach4u_quarterly_sessions', [
-        { id:6001, session_date:'2026-03-31', target_quarter:'Q2 2026', status:'completed',
-          attendance:'Cath, Lou, Andrew',
-          areas_completed:{1:true,2:true,3:true}
-        },
-        { id:6002, session_date:'2026-06-30', target_quarter:'Q3 2026', status:'completed',
-          attendance:'Cath, Lou, Andrew, Sarah',
-          areas_completed:{1:true,2:true,3:true}
-        },
-        { id:6003, session_date:_qSessionDate, target_quarter:_nextQuarterLabel, status:'scheduled',
-          attendance:'',
-          areas_completed:{}
-        }
-      ]);
-    }
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) { window.location.href = 'login.html'; }
 
-    function escapeHtml(s) {
+    document.getElementById('signOutBtn').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      window.location.href = 'login.html';
+    });
+
+    /* ============== utilities ============== */
+    function escHtml(s) {
       return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
         '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
       }[c]));
     }
-    function readLS(key, fallback) {
-      try { const raw = localStorage.getItem(key); if (raw) return JSON.parse(raw); } catch (_) {}
-      return fallback;
+    function initials(nameOrEmail) {
+      const s = (nameOrEmail || '').trim();
+      if (!s) return '?';
+      const parts = s.split(/[\s@._-]+/).filter(Boolean);
+      if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+      return s.slice(0, 2).toUpperCase();
     }
-    function thisMondayIso() {
-      const d = new Date();
-      d.setDate(d.getDate() + ((d.getDay() === 0 ? -6 : 1) - d.getDay()));
-      return d.toISOString().slice(0, 10);
-    }
-    function currentQuarter() {
+    function currentQuarterString() {
       const d = new Date();
       return 'Q' + (Math.floor(d.getMonth() / 3) + 1) + ' ' + d.getFullYear();
     }
-    function fmtShortDate(iso) {
-      if (!iso) return '—';
-      const d = new Date(iso + 'T00:00:00');
-      return days[d.getDay()].slice(0,3) + ' ' + d.getDate();
-    }
-    function fmtDueDate(iso) {
+    function formatMeetingDate(iso) {
       if (!iso) return '';
-      const d = new Date(iso + 'T00:00:00');
-      return d.getDate() + ' ' + months[d.getMonth()];
+      // iso is 'YYYY-MM-DD'; parse safely
+      const parts = String(iso).split('-');
+      if (parts.length !== 3) return iso;
+      const dt = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      if (isNaN(dt)) return iso;
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      return days[dt.getDay()] + ' ' + dt.getDate() + ' ' + months[dt.getMonth()];
     }
 
-    function renderDashboard() {
-      // ── Meetings ──
-      const meetingsData = readLS('coach4u_demo_meetings', { meetings: [] });
-      const meetings = (meetingsData && meetingsData.meetings) || [];
-      const mondayIso = thisMondayIso();
-      const todayIso = new Date().toISOString().slice(0, 10);
-      const thisWeekMeeting = meetings.find(x => x.meeting_date === mondayIso);
-      const upcoming = meetings.slice().filter(m => m.status !== 'completed' && m.meeting_date >= todayIso)
-                                .sort((a,b) => a.meeting_date.localeCompare(b.meeting_date))[0];
-      const nextMeeting = thisWeekMeeting || upcoming || meetings.find(m => m.status !== 'completed') || meetings[0];
+    /* ============== state ============== */
+    let myMemberships = [];   // caller's active team_members
+    let teamRows = [];        // all team_members in orgs where caller is admin (not removed)
+    let sub = null;           // subscription row
+    let openMenuEl = null;    // currently open ⋮ menu
+    // Per-org rollup data:
+    let snapshotByOrg = new Map();   // orgId → { revenue, rocksOnTrack, rocksTotal, openIssues, nextMeeting }
 
-      // Stat tile: Next Meeting
-      document.getElementById('statNextMeeting').textContent = nextMeeting ? fmtShortDate(nextMeeting.meeting_date) : 'None';
+    /* ============== loaders ============== */
+    async function loadAll() {
+      // 1) Subscription
+      const { data: subRow } = await sb
+        .from('subscriptions')
+        .select('id, name, seat_count, included_businesses')
+        .eq('owner_user_id', user.id)
+        .maybeSingle();
+      sub = subRow || null;
 
-      // "Go to This Week's Meeting" button + Next Meeting tile + "View Meeting" link all open the actual meeting
-      if (nextMeeting) {
-        const meetingUrl = 'run-meeting.html?id=' + nextMeeting.id;
-        document.getElementById('thisWeekMeetingBtn').href = meetingUrl;
-        document.getElementById('thisWeekViewLink').href = meetingUrl;
-        document.getElementById('statNextMeetingTile').href = meetingUrl;
-      }
-
-      // This Week todos panel
-      const todosWrap = document.getElementById('thisWeekTodos');
-      const focusMeeting = thisWeekMeeting || upcoming || meetings.find(m => (m.todos || []).length) || meetings[0];
-      const todos = (focusMeeting && focusMeeting.todos) || [];
-      if (todos.length) {
-        todosWrap.innerHTML = todos.slice(0, 4).map(t => `
-          <li class="todo-item">
-            <div class="todo-check ${t.done ? 'done' : ''}"></div>
-            <div>
-              <div class="todo-desc ${t.done ? 'done' : ''}">${escapeHtml(t.description || '')}</div>
-              <div class="todo-meta">${escapeHtml(t.owner || '')}${t.due_date ? ' &middot; Due ' + fmtDueDate(t.due_date) : ''}</div>
-            </div>
-          </li>
-        `).join('');
-      }
-
-      // ── Issues stat tile ──
-      const issues = readLS('coach4u_demo_issues', []);
-      const openCount = (Array.isArray(issues) ? issues : []).filter(i => i.status !== 'resolved').length;
-      document.getElementById('statOpenIssues').textContent = openCount;
-
-      // ── Goals (rocks) ──
-      const rocks = readLS('coach4u_demo_rocks', []);
-      const quarter = currentQuarter();
-      let quarterRocks = (Array.isArray(rocks) ? rocks : []).filter(r => r.quarter === quarter);
-      // Fall back to all rocks if none match this quarter (handles seed Q2 2026 vs real current quarter)
-      if (!quarterRocks.length) quarterRocks = Array.isArray(rocks) ? rocks : [];
-
-      const onTrack = quarterRocks.filter(r => r.status === 'on_track').length;
-      const total = quarterRocks.length;
-
-      // Stat tile: Goals On Track
-      document.getElementById('statGoalsOnTrack').innerHTML = total
-        ? `${onTrack}<span style="font-size:0.9rem;font-weight:700;color:#aaa;">/${total}</span>`
-        : '0';
-
-      // This Quarter panel
-      const STATUS_LABEL = { on_track:'On Track', at_risk:'At Risk', off_track:'Off Track', done:'Done', not_started:'Not Started' };
-      const STATUS_PILL  = { on_track:'pill-green', at_risk:'pill-amber', off_track:'pill-red', done:'pill-green', not_started:'pill-grey' };
-      const pct = total ? Math.round((onTrack / total) * 100) : 0;
-      document.getElementById('quarterProgressFill').style.width = pct + '%';
-      document.getElementById('quarterProgressLabel').textContent = total
-        ? `${onTrack} of ${total} ${total === 1 ? 'priority' : 'priorities'} on track`
-        : 'No goals set yet';
-      const rocksWrap = document.getElementById('quarterRocks');
-      if (quarterRocks.length) {
-        rocksWrap.innerHTML = quarterRocks.slice(0, 5).map(r => `
-          <div class="rock-row">
-            <div class="rock-desc">${escapeHtml(r.description || '')}</div>
-            <span class="status-pill ${STATUS_PILL[r.status] || 'pill-grey'}">${STATUS_LABEL[r.status] || (r.status || '—')}</span>
-          </div>
-        `).join('');
-      } else {
-        rocksWrap.innerHTML = '<div style="font-size:0.78rem;color:#aaa;padding:6px 0;">Add quarterly goals to see them here.</div>';
-      }
-
-      // ── 1-Year Goal panel ──
-      const targets = readLS('coach4u_targets', null);
-      if (targets) {
-        const goals = (targets.one_year_goals || '')
-          .split('\n')
-          .map(s => s.replace(/^\s*(?:\d+[.)]|[-*•])\s+/, '').trim())
-          .filter(Boolean);
-        if (goals.length) {
-          const joined = goals.length > 1
-            ? goals.slice(0, -1).join(', ') + ', and ' + goals[goals.length - 1]
-            : goals[0];
-          document.getElementById('oneYearGoal').textContent = joined;
-        }
-        const metaBits = [];
-        if (targets.one_year_date) metaBits.push('Target: ' + targets.one_year_date);
-        if (targets.one_year_revenue) metaBits.push('Revenue: ' + targets.one_year_revenue);
-        if (metaBits.length) document.getElementById('oneYearMeta').innerHTML = metaBits.join(' &nbsp;&middot;&nbsp; ');
-      }
-
-      // ── Core Values panel ──
-      const cv = readLS('coach4u_core_values', null);
-      if (cv) {
-        const pills = [];
-        for (let i = 1; i <= 8; i++) {
-          const v = (cv['value_' + i] || '').toString().trim();
-          if (v) pills.push(v);
-        }
-        if (pills.length) {
-          document.getElementById('valuesPills').innerHTML = pills.map(v =>
-            `<span class="value-pill">${escapeHtml(v)}</span>`
-          ).join('');
-        }
-      }
-    }
-
-    async function init() {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      if (!user || error) { window.location.href = 'login.html'; return; }
-      const { data: profile } = await supabase
-        .from('users').select('membership_status').eq('id', user.id).single();
-      if (!profile || profile.membership_status !== 'active') {
-        window.location.href = 'inactive.html'; return;
-      }
-      // Resolve the user's team memberships
-      const { data: memberships } = await supabase
+      // 2) Caller's memberships
+      const { data: mems, error: memErr } = await sb
         .from('team_members')
-        .select('organisation_id, role, organisations!inner(id, name)')
+        .select('id, organisation_id, role, status, organisations!inner(id, name)')
         .eq('user_id', user.id)
         .eq('status', 'active');
-
-      if (!memberships || memberships.length === 0) {
-        window.location.href = 'setup.html'; return;
+      if (memErr) {
+        document.getElementById('bizList').innerHTML =
+          '<div class="empty-state">Could not load businesses: ' + escHtml(memErr.message) + '</div>';
+        myMemberships = [];
+      } else {
+        myMemberships = mems || [];
       }
 
-      // Resolve which org is active. Use stored selection if still valid; otherwise...
-      let activeId = (window.activeOrg && window.activeOrg.get()) || null;
-      let activeRow = memberships.find(m => m.organisation_id === activeId);
-      if (!activeRow) {
-        // Multi-business user with no valid active org → take them to the parent dashboard
-        if (memberships.length > 1) {
-          window.location.href = 'my-businesses.html'; return;
+      // First-run guard: brand-new user with no team_members → go through setup
+      if (!myMemberships.length) {
+        window.location.href = 'setup.html';
+        return;
+      }
+
+      // 3) Team rows across orgs where the caller is admin
+      const adminOrgIds = myMemberships
+        .filter(m => m.role === 'admin')
+        .map(m => m.organisation_id);
+      const teamPromise = adminOrgIds.length
+        ? sb.from('team_members')
+            .select('id, organisation_id, user_id, invited_email, role, status, display_name, organisations!inner(id, name)')
+            .in('organisation_id', adminOrgIds)
+            .neq('status', 'removed')
+        : Promise.resolve({ data: [], error: null });
+
+      // 4) Snapshot data — fire 4 parallel queries across all the caller's orgs
+      const orgIds = myMemberships.map(m => m.organisation_id);
+      const currentQuarter = currentQuarterString();
+      const todayIso = new Date().toISOString().slice(0, 10);
+
+      const [teamResult, targetsResult, rocksResult, issuesResult, meetingsResult] = await Promise.all([
+        teamPromise,
+        sb.from('targets')
+          .select('organisation_id, one_year_revenue')
+          .in('organisation_id', orgIds),
+        sb.from('rocks')
+          .select('organisation_id, status')
+          .in('organisation_id', orgIds)
+          .eq('quarter', currentQuarter),
+        sb.from('issues')
+          .select('organisation_id, status')
+          .in('organisation_id', orgIds)
+          .eq('status', 'open'),
+        sb.from('meetings')
+          .select('organisation_id, meeting_date, status')
+          .in('organisation_id', orgIds)
+          .neq('status', 'completed')
+          .gte('meeting_date', todayIso)
+          .order('meeting_date', { ascending: true })
+      ]);
+
+      teamRows = (teamResult && !teamResult.error) ? (teamResult.data || []) : [];
+
+      // Build snapshot map keyed by orgId
+      snapshotByOrg = new Map();
+      orgIds.forEach(id => snapshotByOrg.set(id, {
+        revenue: null,
+        rocksOnTrack: 0,
+        rocksTotal: 0,
+        openIssues: 0,
+        nextMeeting: null
+      }));
+
+      if (targetsResult && !targetsResult.error && targetsResult.data) {
+        targetsResult.data.forEach(t => {
+          const snap = snapshotByOrg.get(t.organisation_id);
+          if (snap) snap.revenue = t.one_year_revenue || null;
+        });
+      }
+      if (rocksResult && !rocksResult.error && rocksResult.data) {
+        rocksResult.data.forEach(r => {
+          const snap = snapshotByOrg.get(r.organisation_id);
+          if (!snap) return;
+          snap.rocksTotal += 1;
+          if (r.status === 'on_track' || r.status === 'done' || r.status === 'complete') {
+            snap.rocksOnTrack += 1;
+          }
+        });
+      }
+      if (issuesResult && !issuesResult.error && issuesResult.data) {
+        issuesResult.data.forEach(i => {
+          const snap = snapshotByOrg.get(i.organisation_id);
+          if (snap) snap.openIssues += 1;
+        });
+      }
+      if (meetingsResult && !meetingsResult.error && meetingsResult.data) {
+        // Already ordered ascending — first row per org wins
+        meetingsResult.data.forEach(mtg => {
+          const snap = snapshotByOrg.get(mtg.organisation_id);
+          if (snap && !snap.nextMeeting) snap.nextMeeting = mtg.meeting_date;
+        });
+      }
+    }
+
+    /* ============== render: account header ============== */
+    function renderAccountHeader() {
+      const el = document.getElementById('accountName');
+      const link = document.getElementById('renameAccountLink');
+      if (sub && sub.name && sub.name.trim()) {
+        el.innerHTML = '&#x1F3E2; ' + escHtml(sub.name);
+        link.textContent = 'Rename account ›';
+      } else {
+        el.innerHTML = '&#x1F3E2; Your account <span style="font-size:.7em;color:#888;font-weight:600;">(unnamed)</span>';
+        link.textContent = 'Set account name ›';
+      }
+      link.style.display = 'inline-block';
+    }
+
+    /* ============== render: stats ============== */
+    function renderStats() {
+      // Businesses
+      document.getElementById('statBizCount').textContent = myMemberships.length;
+
+      // Distinct users + pending emails across the team rows
+      const uniqUsers = new Set();
+      teamRows.forEach(r => {
+        if (r.user_id) uniqUsers.add('u:' + r.user_id);
+        else if (r.invited_email) uniqUsers.add('e:' + r.invited_email.toLowerCase());
+      });
+      if (!uniqUsers.size) uniqUsers.add('u:' + user.id);
+      document.getElementById('statUserCount').textContent = uniqUsers.size;
+
+      // Account-level rollup: open issues + goals on-track / total across all businesses
+      let totalOpenIssues = 0;
+      let totalGoalsOnTrack = 0;
+      let totalGoalsTotal = 0;
+      snapshotByOrg.forEach(snap => {
+        totalOpenIssues += snap.openIssues;
+        totalGoalsOnTrack += snap.rocksOnTrack;
+        totalGoalsTotal += snap.rocksTotal;
+      });
+      document.getElementById('statOpenIssues').textContent = totalOpenIssues;
+      const goalsEl = document.getElementById('statGoalsOnTrack');
+      if (totalGoalsTotal === 0) {
+        goalsEl.innerHTML = '&mdash;';
+      } else {
+        goalsEl.innerHTML = totalGoalsOnTrack + '<span class="stat-total">/' + totalGoalsTotal + '</span>';
+      }
+    }
+
+    /* ============== render: businesses ============== */
+    function renderBusinesses() {
+      const wrap = document.getElementById('bizList');
+
+      if (!myMemberships.length) {
+        wrap.innerHTML = '<div class="empty-state">You haven&rsquo;t created a business yet.</div>';
+        return;
+      }
+      wrap.innerHTML = myMemberships.map(m => {
+        const orgId = m.organisations.id;
+        const name  = m.organisations.name;
+        const role  = m.role;
+        const isAdmin = role === 'admin';
+        const snap = snapshotByOrg.get(orgId) || { revenue: null, rocksOnTrack: 0, rocksTotal: 0, openIssues: 0, nextMeeting: null };
+
+        const revenueHtml = (snap.revenue && String(snap.revenue).trim())
+          ? '<div class="snapshot-value">' + escHtml(snap.revenue) + '</div>'
+          : '<div class="snapshot-value snapshot-empty">Not set</div>';
+
+        const goalsHtml = (snap.rocksTotal === 0)
+          ? '<div class="snapshot-value snapshot-empty">0 of 0</div>'
+          : '<div class="snapshot-value">' + snap.rocksOnTrack + ' of ' + snap.rocksTotal + '</div>';
+
+        const issuesHtml = '<div class="snapshot-value' + (snap.openIssues === 0 ? ' snapshot-empty' : '') + '">' + snap.openIssues + '</div>';
+
+        const nextMeetingHtml = snap.nextMeeting
+          ? '<span class="nm-label">&#x1F4C5; Next meeting:</span> <span class="nm-value">' + escHtml(formatMeetingDate(snap.nextMeeting)) + '</span>'
+          : '<span class="nm-label">&#x1F4C5; Next meeting:</span> <span class="nm-empty">None scheduled</span>';
+
+        return `
+          <div class="biz-card" data-org-id="${orgId}" data-org-name="${escHtml(name)}">
+            <div class="biz-card-head">
+              <div class="biz-name">${escHtml(name)}</div>
+              <span class="role-pill role-${role}">${role}</span>
+              <button class="biz-open" data-action="open">Open &rsaquo;</button>
+              ${isAdmin ? `
+                <div class="actions-wrap">
+                  <button class="actions-btn" data-action="menu" aria-label="More actions">&#x22EE;</button>
+                  <div class="actions-menu hidden">
+                    <button data-action="rename-biz">Rename</button>
+                    <button class="danger" data-action="delete-biz">Delete</button>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="snapshot-grid">
+              <div class="snapshot-cell">
+                <div class="snapshot-label">&#x1F4CA; Revenue (1yr)</div>
+                ${revenueHtml}
+              </div>
+              <div class="snapshot-cell">
+                <div class="snapshot-label">&#x1F3AF; Quarter Goals</div>
+                ${goalsHtml}
+              </div>
+              <div class="snapshot-cell">
+                <div class="snapshot-label">&#x26A0;&#xFE0F; Open Issues</div>
+                ${issuesHtml}
+              </div>
+            </div>
+
+            <div class="biz-next-meeting">${nextMeetingHtml}</div>
+          </div>`;
+      }).join('');
+
+      wrap.querySelectorAll('.biz-card').forEach(card => {
+        const orgId   = card.dataset.orgId;
+        const orgName = card.dataset.orgName;
+        card.querySelectorAll('[data-action="open"]').forEach(el => {
+          el.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.activeOrg) window.activeOrg.set(orgId);
+            window.location.href = 'business.html';
+          });
+        });
+        const menuBtn = card.querySelector('[data-action="menu"]');
+        const menu = card.querySelector('.actions-menu');
+        if (menuBtn && menu) {
+          menuBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (openMenuEl && openMenuEl !== menu) openMenuEl.classList.add('hidden');
+            menu.classList.toggle('hidden');
+            openMenuEl = menu.classList.contains('hidden') ? null : menu;
+          });
+          menu.querySelector('[data-action="rename-biz"]').addEventListener('click', (e) => {
+            e.preventDefault(); e.stopPropagation();
+            menu.classList.add('hidden'); openMenuEl = null;
+            openRenameBiz(orgId, orgName);
+          });
+          menu.querySelector('[data-action="delete-biz"]').addEventListener('click', (e) => {
+            e.preventDefault(); e.stopPropagation();
+            menu.classList.add('hidden'); openMenuEl = null;
+            openDeleteBiz(orgId, orgName);
+          });
         }
-        activeRow = memberships[0];
-        activeId = activeRow.organisation_id;
-        if (window.activeOrg) window.activeOrg.set(activeId);
-      }
-
-      // Display the current business name + show the switcher when user has more than one
-      const bizNameEl = document.getElementById('bizName');
-      if (bizNameEl && activeRow.organisations) {
-        bizNameEl.textContent = activeRow.organisations.name;
-      }
-      const switchEl = document.getElementById('switchBizLink');
-      if (switchEl) {
-        switchEl.style.display = 'inline-block';
-        switchEl.textContent = memberships.length > 1 ? 'Account dashboard ›' : 'Account dashboard ›';
-      }
-
-      ensureSeeds();
-      renderDashboard();
-      document.body.style.opacity = '1';
-      document.getElementById('signOutBtn').addEventListener('click', async () => {
-        await supabase.auth.signOut(); window.location.href = 'login.html';
       });
     }
-    init();
+
+    // Close ⋮ menus on outside click
+    document.addEventListener('click', () => {
+      if (openMenuEl) { openMenuEl.classList.add('hidden'); openMenuEl = null; }
+    });
+
+    /* ============== render: users ============== */
+    function renderUsers() {
+      const wrap = document.getElementById('userList');
+      const meta = document.getElementById('userSectionMeta');
+
+      if (!teamRows.length) {
+        meta.textContent = '';
+        wrap.innerHTML = '<div class="empty-state">Only admins see the team list. Once you&rsquo;re admin of a business, teammates appear here.</div>';
+        return;
+      }
+
+      // Group by user_id (signed-up) OR invited_email (pending)
+      const groups = new Map();
+      teamRows.forEach(r => {
+        const key = r.user_id ? ('u:' + r.user_id) : ('e:' + (r.invited_email || '').toLowerCase());
+        if (!groups.has(key)) {
+          groups.set(key, {
+            key,
+            user_id: r.user_id,
+            invited_email: r.invited_email,
+            display_name: r.display_name,
+            rows: []
+          });
+        }
+        const g = groups.get(key);
+        if (!g.display_name && r.display_name) g.display_name = r.display_name;
+        g.rows.push(r);
+      });
+
+      meta.textContent = '(' + groups.size + ')';
+
+      const cards = [];
+      for (const g of groups.values()) {
+        const isMe = g.user_id === user.id;
+        const nameDisplay = g.display_name
+          || (isMe ? ((user.user_metadata && user.user_metadata.full_name) || user.email) : null)
+          || g.invited_email
+          || '(unnamed teammate)';
+        const emailDisplay = isMe ? user.email : (g.invited_email || '');
+        const ini = initials(nameDisplay || emailDisplay);
+
+        const orgRows = g.rows.map(r => {
+          const isPending = r.status === 'pending';
+          const rolePill  = isPending
+            ? '<span class="role-pill role-pending">Pending</span>'
+            : '<span class="role-pill role-' + r.role + '">' + r.role + '</span>';
+          const canRemove = !isMe;
+          const removeBtn = canRemove
+            ? `<button class="user-remove-btn" data-action="remove-member" data-member-id="${r.id}" data-member-name="${escHtml(nameDisplay)}" data-org-name="${escHtml(r.organisations.name)}">Remove</button>`
+            : '';
+          return `
+            <div class="user-org-row">
+              <span class="user-org-name">${escHtml(r.organisations.name)}</span>
+              ${rolePill}
+              ${removeBtn}
+            </div>`;
+        }).join('');
+
+        cards.push(`
+          <div class="user-card">
+            <div class="user-avatar">${escHtml(ini)}</div>
+            <div class="user-body">
+              <div class="user-name">${escHtml(nameDisplay)} ${isMe ? '<span style="font-size:.7em;color:#888;font-weight:600;">(you)</span>' : ''}</div>
+              ${emailDisplay ? '<div class="user-email">' + escHtml(emailDisplay) + '</div>' : ''}
+              <div class="user-orgs">${orgRows}</div>
+            </div>
+          </div>`);
+      }
+      wrap.innerHTML = cards.join('');
+
+      wrap.querySelectorAll('[data-action="remove-member"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          openRemoveMember(btn.dataset.memberId, btn.dataset.memberName, btn.dataset.orgName);
+        });
+      });
+    }
+
+    /* ============== modal helpers ============== */
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    /* ============== rename account ============== */
+    const renameLinkEl = document.getElementById('renameAccountLink');
+    const renameInput  = document.getElementById('renameInput');
+    const renameErr    = document.getElementById('renameErr');
+    const renameSave   = document.getElementById('renameSave');
+    renameLinkEl.addEventListener('click', (e) => {
+      e.preventDefault();
+      renameInput.value = (sub && sub.name) ? sub.name : '';
+      renameErr.textContent = '';
+      openModal('renameModal');
+      setTimeout(() => renameInput.focus(), 50);
+    });
+    document.getElementById('renameClose').addEventListener('click', () => closeModal('renameModal'));
+    document.getElementById('renameCancel').addEventListener('click', () => closeModal('renameModal'));
+    renameSave.addEventListener('click', async () => {
+      const newName = renameInput.value.trim();
+      if (!newName) { renameErr.textContent = 'Please enter a name.'; return; }
+      renameSave.disabled = true; renameSave.textContent = 'Saving…';
+      const { error } = await sb.rpc('update_account_name', { new_name: newName });
+      if (error) {
+        renameErr.textContent = error.message || 'Save failed.';
+        renameSave.disabled = false; renameSave.textContent = 'Save';
+        return;
+      }
+      window.location.reload();
+    });
+
+    /* ============== add business ============== */
+    const addName = document.getElementById('addName');
+    const addErr  = document.getElementById('addErr');
+    const addSave = document.getElementById('addSave');
+    function openAddBusiness() {
+      addErr.textContent = ''; addName.value = '';
+      openModal('addModal');
+      setTimeout(() => addName.focus(), 50);
+    }
+    document.getElementById('addBusinessBtn').addEventListener('click', openAddBusiness);
+    document.getElementById('addBusinessHeaderBtn').addEventListener('click', openAddBusiness);
+    document.getElementById('addClose').addEventListener('click', () => closeModal('addModal'));
+    document.getElementById('addCancel').addEventListener('click', () => closeModal('addModal'));
+    addSave.addEventListener('click', async () => {
+      const name = addName.value.trim();
+      if (!name) { addErr.textContent = 'Please enter a business name.'; return; }
+      addSave.disabled = true; addSave.textContent = 'Creating…'; addErr.textContent = '';
+      const { data: newOrgId, error } = await sb.rpc('bootstrap_organisation', { business_name: name });
+      if (error) {
+        addErr.textContent = error.message || 'Could not create business.';
+        addSave.disabled = false; addSave.textContent = 'Create';
+        return;
+      }
+      if (window.activeOrg) window.activeOrg.set(newOrgId);
+      window.location.href = 'business.html';
+    });
+
+    /* ============== rename business ============== */
+    const renameBizInput = document.getElementById('renameBizInput');
+    const renameBizErr   = document.getElementById('renameBizErr');
+    const renameBizSave  = document.getElementById('renameBizSave');
+    let renameBizTargetId = null;
+    function openRenameBiz(orgId, currentName) {
+      renameBizTargetId = orgId;
+      renameBizInput.value = currentName || '';
+      renameBizErr.textContent = '';
+      openModal('renameBizModal');
+      setTimeout(() => renameBizInput.focus(), 50);
+    }
+    document.getElementById('renameBizClose').addEventListener('click', () => closeModal('renameBizModal'));
+    document.getElementById('renameBizCancel').addEventListener('click', () => closeModal('renameBizModal'));
+    renameBizSave.addEventListener('click', async () => {
+      const newName = renameBizInput.value.trim();
+      if (!newName) { renameBizErr.textContent = 'Please enter a name.'; return; }
+      renameBizSave.disabled = true; renameBizSave.textContent = 'Saving…';
+      const { error } = await sb.rpc('rename_business', { business_id: renameBizTargetId, new_name: newName });
+      renameBizSave.disabled = false; renameBizSave.textContent = 'Save';
+      if (error) { renameBizErr.textContent = error.message || 'Save failed.'; return; }
+      closeModal('renameBizModal');
+      await refresh();
+    });
+
+    /* ============== delete business ============== */
+    const deleteBizInput   = document.getElementById('deleteBizInput');
+    const deleteBizConfirm = document.getElementById('deleteBizConfirm');
+    const deleteBizErr     = document.getElementById('deleteBizErr');
+    const deleteBizNameEl  = document.getElementById('deleteBizName');
+    let deleteBizTargetId   = null;
+    let deleteBizTargetName = '';
+    function openDeleteBiz(orgId, name) {
+      deleteBizTargetId = orgId;
+      deleteBizTargetName = name;
+      deleteBizNameEl.textContent = name;
+      deleteBizInput.value = '';
+      deleteBizErr.textContent = '';
+      deleteBizConfirm.disabled = true;
+      openModal('deleteBizModal');
+      setTimeout(() => deleteBizInput.focus(), 50);
+    }
+    deleteBizInput.addEventListener('input', () => {
+      deleteBizConfirm.disabled = deleteBizInput.value.trim() !== deleteBizTargetName;
+    });
+    document.getElementById('deleteBizClose').addEventListener('click', () => closeModal('deleteBizModal'));
+    document.getElementById('deleteBizCancel').addEventListener('click', () => closeModal('deleteBizModal'));
+    deleteBizConfirm.addEventListener('click', async () => {
+      deleteBizConfirm.disabled = true; deleteBizConfirm.textContent = 'Deleting…';
+      const { error } = await sb.rpc('delete_business', { business_id: deleteBizTargetId });
+      deleteBizConfirm.textContent = 'Delete forever';
+      if (error) {
+        deleteBizErr.textContent = error.message || 'Delete failed.';
+        deleteBizConfirm.disabled = false;
+        return;
+      }
+      if (window.activeOrg && window.activeOrg.get() === deleteBizTargetId) {
+        window.activeOrg.clear();
+      }
+      closeModal('deleteBizModal');
+      await refresh();
+    });
+
+    /* ============== invite user ============== */
+    const inviteEmail   = document.getElementById('inviteEmail');
+    const inviteRole    = document.getElementById('inviteRole');
+    const inviteDisplay = document.getElementById('inviteDisplay');
+    const inviteBizList = document.getElementById('inviteBizList');
+    const inviteErr     = document.getElementById('inviteErr');
+    const inviteSend    = document.getElementById('inviteSend');
+
+    function populateInviteBizList() {
+      const adminMems = myMemberships.filter(m => m.role === 'admin');
+      const activeId  = (window.activeOrg && window.activeOrg.get()) || null;
+      if (!adminMems.length) {
+        inviteBizList.innerHTML = '<div style="font-size:.85rem;color:#888;padding:6px;">You aren&rsquo;t an admin of any business yet.</div>';
+        return;
+      }
+      inviteBizList.innerHTML = adminMems.map(m => {
+        const orgId = m.organisations.id;
+        const name  = m.organisations.name;
+        const checked = orgId === activeId ? 'checked' : '';
+        return `
+          <label class="biz-check-row">
+            <input type="checkbox" value="${orgId}" ${checked}/>
+            <span>${escHtml(name)}</span>
+          </label>`;
+      }).join('');
+    }
+
+    function openInviteUser() {
+      inviteEmail.value = '';
+      inviteRole.value = 'member';
+      inviteDisplay.value = '';
+      inviteErr.textContent = '';
+      populateInviteBizList();
+      openModal('inviteModal');
+      setTimeout(() => inviteEmail.focus(), 50);
+    }
+    document.getElementById('inviteUserBtn').addEventListener('click', openInviteUser);
+    document.getElementById('inviteUserHeaderBtn').addEventListener('click', openInviteUser);
+    document.getElementById('inviteClose').addEventListener('click', () => closeModal('inviteModal'));
+    document.getElementById('inviteCancel').addEventListener('click', () => closeModal('inviteModal'));
+
+    inviteSend.addEventListener('click', async () => {
+      const email = inviteEmail.value.trim();
+      const role  = inviteRole.value;
+      const display = inviteDisplay.value.trim();
+      const selected = Array.from(inviteBizList.querySelectorAll('input[type=checkbox]:checked'))
+                            .map(c => c.value);
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        inviteErr.textContent = 'Please enter a valid email address.'; return;
+      }
+      if (!selected.length) {
+        inviteErr.textContent = 'Pick at least one business.'; return;
+      }
+
+      inviteSend.disabled = true; inviteSend.textContent = 'Sending…';
+      inviteErr.textContent = '';
+
+      const errors = [];
+      for (const bizId of selected) {
+        const { error } = await sb.rpc('invite_team_member', {
+          business_id: bizId,
+          email: email,
+          role: role,
+          display_name: display || null
+        });
+        if (error) errors.push(error.message || 'invite failed');
+      }
+      inviteSend.disabled = false; inviteSend.textContent = 'Send invite';
+      if (errors.length) {
+        inviteErr.textContent = errors.join(' — ');
+        return;
+      }
+      closeModal('inviteModal');
+      await refresh();
+    });
+
+    /* ============== remove member ============== */
+    const removeMemberNameEl  = document.getElementById('removeMemberName');
+    const removeMemberOrgEl   = document.getElementById('removeMemberOrg');
+    const removeMemberErr     = document.getElementById('removeMemberErr');
+    const removeMemberConfirm = document.getElementById('removeMemberConfirm');
+    let removeMemberTargetId  = null;
+    function openRemoveMember(memberId, name, orgName) {
+      removeMemberTargetId = memberId;
+      removeMemberNameEl.textContent = name;
+      removeMemberOrgEl.textContent  = orgName;
+      removeMemberErr.textContent    = '';
+      openModal('removeMemberModal');
+    }
+    document.getElementById('removeMemberClose').addEventListener('click', () => closeModal('removeMemberModal'));
+    document.getElementById('removeMemberCancel').addEventListener('click', () => closeModal('removeMemberModal'));
+    removeMemberConfirm.addEventListener('click', async () => {
+      removeMemberConfirm.disabled = true; removeMemberConfirm.textContent = 'Removing…';
+      const { error } = await sb.rpc('remove_team_member', { member_id: removeMemberTargetId });
+      removeMemberConfirm.disabled = false; removeMemberConfirm.textContent = 'Remove';
+      if (error) {
+        removeMemberErr.textContent = error.message || 'Remove failed.';
+        return;
+      }
+      closeModal('removeMemberModal');
+      await refresh();
+    });
+
+    /* ============== boot ============== */
+    async function refresh() {
+      await loadAll();
+      renderAccountHeader();
+      renderStats();
+      renderBusinesses();
+      renderUsers();
+    }
+
+    await refresh();
+    if (myMemberships.length && (!window.activeOrg || !window.activeOrg.get())) {
+      window.activeOrg.set(myMemberships[0].organisation_id);
+    }
+    document.body.style.opacity = '1';
   </script>
-  <script>
-    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
-  </script>
+
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item active" href="index.html">
+      <span class="bottom-nav-icon">&#x1F3E0;</span>
+      <span>Home</span>
+    </a>
+    <a class="bottom-nav-item" href="account-planning.html">
+      <span class="bottom-nav-icon">&#x1F5FA;&#xFE0F;</span>
+      <span>Planning</span>
+    </a>
+    <a class="bottom-nav-item" href="account-strategy.html">
+      <span class="bottom-nav-icon">&#x1F9ED;</span>
+      <span>Strategy</span>
+    </a>
+    <a class="bottom-nav-item" href="account-operations.html">
+      <span class="bottom-nav-icon">&#x2699;&#xFE0F;</span>
+      <span>Operations</span>
+    </a>
+    <a class="bottom-nav-item" href="learning-vault.html">
+      <span class="bottom-nav-icon">&#x1F4DA;</span>
+      <span>Learn</span>
+    </a>
+  </nav>
+
 </body>
 </html>

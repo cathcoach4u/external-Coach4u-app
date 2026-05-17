@@ -10,7 +10,7 @@
   1. `CLAUDE.md` → `## Current Version` line
   2. `VERSION` (just the number, e.g. `0.5.74`)
   3. `sw.js` → `CACHE_VERSION = 'coach4u-vX.Y.Z'`
-  4. `index.html` → visible label at the bottom of the dashboard footer (`<p ...>vX.Y.Z</p>`)
+  4. `business.html` → visible label at the bottom of the dashboard footer (`<p ...>vX.Y.Z</p>`)
 - Append a new entry to `CHANGELOG.md` for every bump. Keep the most recent 1–2 entries duplicated under `## Latest` in this file as a pointer.
 - For large file changes: split into small focused files (each under ~8KB) to avoid push timeouts
 
@@ -37,7 +37,9 @@ Stylesheets:
 
 ## File Structure
 ```
-index.html              — root portal / dashboard
+index.html              — root portal: SARUBA account dashboard (formerly my-businesses.html)
+business.html           — business-level dashboard (formerly index.html)
+setup.html              — first-business wizard
 strategy.html           — Strategy hub (cards link to root worksheets)
 operations.html         — Operations hub (cards link to root tools)
 planning.html           — Planning hub (2 activity cards → annual + quarterly session lists)
@@ -93,7 +95,7 @@ js/
 - Planning sessions use `coach4u_annual_sessions` (array) and `coach4u_quarterly_sessions` (array). No nested wrapper.
 - Team check-in submissions: `coach4u_team_checkins` (array of `{ id, session_id, session_type, name, role, submitted_at, scores: number[17], comments: string[17] }`).
 - Active planning session (for the Resume pill): `coach4u_active_planning_session` (single object).
-- **Dashboard pre-seeds** all keys on first visit via `ensureSeeds()` in `index.html`.
+- **Dashboard pre-seeds** all keys on first visit via `ensureSeeds()` in `business.html`.
 
 ## Login Page Standard (Gold Standard v2.2)
 
@@ -128,14 +130,15 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.96
+v0.5.97
 
 ## Latest
+- **v0.5.97** — **Cleanup pass before the data-layer migration.** Renamed `my-businesses.html` → `index.html` (account dashboard is now the root), and the former `index.html` → `business.html` (per-business dashboard). All href / location refs across 38 HTML files updated in two ordered sed passes. Stripped dead `.topic-*` / `.coming-soon-pill` / `.available-pill` CSS from the account dashboard (leftover from the v0.5.89 topic launcher that v0.5.95 removed). `setup.html` "already-onboarded" redirect goes to the account dashboard (`index.html`) instead of `business.html` so multi-business users land on the picker. Version label moved to `business.html`'s footer; CLAUDE.md updated. **Next: v0.5.98+ wires the strategy worksheets to Supabase** (fresh-data approach — no localStorage migration).
 - **v0.5.96** — Built all 12 cross-business carousel leaf pages so every card on the 3 account-level hub pages now opens to a real navigable page (Strategy ×5, Planning ×3, Operations ×4). Same carousel chrome as `account-plans.html`: prev/next arrows + business name + dot indicators + keyboard arrows + print-current-view. Hub-page cards (`account-strategy.html` / `account-planning.html` / `account-operations.html`) flipped from "Coming soon" to "Open" for all 12. Data layer is still localStorage for most worksheet/operations pages, so empty businesses show the data-layer-pending banner — same pattern as `account-plans.html`.
-- **v0.5.95** — Removed the 4 big hub cards from `my-businesses.html` (Planning / Strategy / Operations / Learn). They duplicated the bottom-nav added in v0.5.94. Dashboard now shows: account name + stats + businesses snapshot + team. Hub navigation is bottom-nav only. Dead `.hub-*` CSS stripped too.
 
 ## Current Status
-- **Dashboard** (`index.html`) — live, reads all panels from localStorage (`coach4u_*` keys), pre-seeds on first visit via `ensureSeeds()`
+- **Account dashboard** (`index.html`) — post-login landing; SARUBA account header + stats + businesses snapshot + users (Supabase-backed)
+- **Business dashboard** (`business.html`) — single-business workspace; reads all panels from localStorage (`coach4u_*` keys), pre-seeds on first visit via `ensureSeeds()`
 - **Hubs** — `strategy.html`, `operations.html`, `planning.html`, `learning-vault.html` — uniform Design 1 layout (CTA + activity cards)
 - **Strategy worksheets** at root — core-values, core-focus, targets, marketing-strategy, leadership-team. Auto-save to localStorage, seed on first visit, feed `one-page-plan.html`
 - **Operations tools** at root — scorecard (Weekly Numbers), goals (Quarterly Goals), meeting (Past list) + run-meeting (workspace), issues. localStorage demo data stub in place of `/api/...` calls
