@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Businesses | Your Business Coach</title>
+  <title>Account Dashboard | Your Business Coach</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#003366">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,41 +12,150 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css"/>
   <style>
-    body { opacity: 0; transition: opacity 0.2s ease; }
+    body { opacity: 0; transition: opacity 0.2s ease; background: #f4f6f9; }
     .container { padding-bottom: 100px; }
-    .ws-header { padding: 20px 16px 0; }
-    .ws-title { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin: 0 0 4px; }
-    .ws-sub { font-size: 0.85rem; color: #666; margin: 0 0 20px; line-height: 1.5; }
-    .biz-section { padding: 0 16px; }
-    .biz-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
+    /* ── Section A: Account header ── */
+    .acct-header { padding: 20px 16px 4px; }
+    .acct-title { font-size: 1.25rem; font-weight: 900; color: var(--primary); margin: 0 0 4px; letter-spacing: -0.2px; }
+    .acct-sub { font-size: 0.82rem; color: #666; margin: 0 0 8px; line-height: 1.5; }
+    .acct-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+    .acct-link {
+      font-size: 0.78rem; font-weight: 700; color: var(--accent);
+      text-decoration: none; letter-spacing: 0.2px;
+    }
+    .acct-link:hover { text-decoration: underline; }
+
+    /* ── Section B: Stats row ── */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px; padding: 12px 16px 6px;
+    }
+    .stat-card {
+      background: white; border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 12px 10px 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 1.5rem; font-weight: 900; color: var(--primary); line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-num .stat-total {
+      font-size: 0.9rem; font-weight: 700; color: #aaa;
+    }
+    .stat-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #999; }
+    @media (max-width: 480px) {
+      .stats-row { grid-template-columns: repeat(3, 1fr); }
+      .stat-num { font-size: 1.2rem; }
+    }
+
+    /* ── Sections ── */
+    .section { padding: 0 16px; margin-top: 18px; }
+    .section-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 0 8px;
+    }
+    .section-title { font-size: 0.95rem; font-weight: 800; color: var(--primary); }
+    .section-meta { font-size: 0.72rem; color: #888; font-weight: 600; }
+
+    /* ── Biz cards ── */
+    .biz-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
     .biz-card {
       background: white; border: 1.5px solid var(--border); border-radius: 12px;
-      padding: 16px 16px; cursor: pointer; transition: box-shadow .15s, border-color .15s;
-      text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;
+      padding: 14px 14px; transition: box-shadow .15s, border-color .15s;
+      display: flex; align-items: center; gap: 12px; position: relative;
     }
-    .biz-card:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(13,148,136,0.1); text-decoration: none; }
+    .biz-card:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(13,148,136,0.1); }
     .biz-card.active { border-color: var(--accent); background: #f0fdfa; }
     .biz-icon {
-      width: 42px; height: 42px; border-radius: 10px;
+      width: 40px; height: 40px; border-radius: 10px;
       background: rgba(13,148,136,0.1);
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px; flex-shrink: 0;
+      font-size: 20px; flex-shrink: 0;
     }
-    .biz-body { flex: 1; min-width: 0; }
+    .biz-body { flex: 1; min-width: 0; cursor: pointer; }
     .biz-name { font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 3px; }
-    .biz-meta { font-size: 0.78rem; color: #888; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .biz-meta { font-size: 0.76rem; color: #888; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
     .role-pill {
-      display: inline-block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      display: inline-block; font-size: 0.66rem; font-weight: 700; text-transform: uppercase;
       letter-spacing: 0.4px; padding: 2px 8px; border-radius: 20px;
     }
     .role-admin  { background: #dbeafe; color: #1e40af; }
     .role-member { background: #f3f4f6; color: #6B7280; }
+    .role-pending { background: #fef3c7; color: #92400e; font-style: italic; }
     .active-pill { background: rgba(13,148,136,0.15); color: #0D9488; }
-    .biz-arrow { font-size: 18px; color: var(--accent); flex-shrink: 0; }
+
+    .biz-open {
+      font-size: 0.76rem; font-weight: 700; color: var(--accent);
+      padding: 6px 10px; border-radius: 8px; text-decoration: none;
+      background: rgba(13,148,136,0.08); cursor: pointer;
+      transition: background .15s; border: none; font-family: inherit;
+    }
+    .biz-open:hover { background: rgba(13,148,136,0.18); text-decoration: none; color: var(--accent); }
+
+    /* ── Actions menu (•••) ── */
+    .actions-wrap { position: relative; flex-shrink: 0; }
+    .actions-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 18px; color: #888; line-height: 1;
+      padding: 6px 10px; border-radius: 6px;
+      transition: background .15s;
+    }
+    .actions-btn:hover { background: #f3f4f6; color: var(--primary); }
+    .actions-menu {
+      position: absolute; right: 0; top: 100%; margin-top: 4px;
+      background: white; border: 1px solid var(--border); border-radius: 10px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+      min-width: 160px; z-index: 50; overflow: hidden;
+    }
+    .actions-menu.hidden { display: none; }
+    .actions-menu button {
+      display: block; width: 100%; padding: 10px 14px;
+      background: none; border: none; cursor: pointer;
+      text-align: left; font-size: 0.85rem; color: var(--text);
+      font-weight: 600; font-family: inherit;
+    }
+    .actions-menu button:hover { background: #f8fafc; }
+    .actions-menu button.danger { color: #b91c1c; }
+    .actions-menu button.danger:hover { background: #fef2f2; }
+
+    /* ── Users / team cards ── */
+    .user-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+    .user-card {
+      background: white; border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 14px 14px; display: flex; align-items: flex-start; gap: 12px;
+    }
+    .user-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #003366 0%, #0D9488 100%);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 800; font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+    .user-body { flex: 1; min-width: 0; }
+    .user-name { font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-bottom: 2px; }
+    .user-email { font-size: 0.78rem; color: #888; margin-bottom: 8px; word-break: break-all; }
+    .user-orgs { display: flex; flex-direction: column; gap: 4px; }
+    .user-org-row {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; color: var(--text);
+      flex-wrap: wrap;
+    }
+    .user-org-name { font-weight: 600; color: var(--primary); }
+    .user-remove-btn {
+      background: none; border: none; cursor: pointer;
+      color: #b91c1c; font-size: 0.72rem; font-weight: 700;
+      padding: 2px 6px; border-radius: 4px;
+      font-family: inherit;
+    }
+    .user-remove-btn:hover { background: #fef2f2; text-decoration: underline; }
+
     .empty-state {
-      text-align: center; padding: 30px 16px; color: #888;
+      text-align: center; padding: 26px 16px; color: #888;
       background: #f8fafc; border-radius: 12px; border: 1.5px dashed #d4d4d4;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
     }
     .add-btn {
       display: block; width: 100%; padding: 13px;
@@ -54,72 +163,53 @@
       border: none; border-radius: 10px;
       font-size: 0.9rem; font-weight: 700;
       cursor: pointer; text-align: center; text-decoration: none;
-      transition: background .15s;
+      transition: background .15s; font-family: inherit;
     }
     .add-btn:hover { background: var(--accent-dark); color: white; text-decoration: none; }
+    .add-btn-secondary {
+      background: white; color: var(--primary);
+      border: 1.5px solid var(--border);
+    }
+    .add-btn-secondary:hover { border-color: var(--accent); color: var(--accent); background: white; }
 
-    /* Modal */
+    /* ── Modal ── */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
     .modal-overlay.hidden { display: none; }
-    .modal { background: white; border-radius: 16px; padding: 28px; max-width: 440px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .modal { background: white; border-radius: 16px; padding: 26px; max-width: 460px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.2); max-height: 92vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .modal-title { font-weight: 700; color: var(--primary); font-size: 1.05rem; }
     .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #888; line-height: 1; padding: 0 4px; }
-    .modal-field { margin-bottom: 16px; }
-    .modal-label { font-weight: 600; color: var(--primary); font-size: 0.88rem; margin-bottom: 6px; display: block; }
-    .modal-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 0.95rem; color: var(--text); font-family: inherit; background: white; box-sizing: border-box; }
-    .modal-input:focus { outline: none; border-color: var(--accent); }
+    .modal-field { margin-bottom: 14px; }
+    .modal-label { font-weight: 600; color: var(--primary); font-size: 0.86rem; margin-bottom: 6px; display: block; }
+    .modal-input, .modal-select { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 0.95rem; color: var(--text); font-family: inherit; background: white; box-sizing: border-box; }
+    .modal-input:focus, .modal-select:focus { outline: none; border-color: var(--accent); }
+    .modal-help { font-size: 11px; color: #888; margin-top: 4px; }
     .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
     .modal-err { font-size: 0.83rem; color: #b91c1c; margin-top: 6px; min-height: 1em; }
-    .btn-primary { padding: 9px 18px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+    .btn-primary { padding: 9px 18px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; font-family: inherit; }
     .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-secondary { padding: 9px 18px; background: white; color: var(--primary); border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
-    .btn-danger    { padding: 9px 18px; background: #b91c1c; color: white; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
-    .btn-danger:hover { background: #991b1b; }
+    .btn-primary.danger { background: #b91c1c; }
+    .btn-primary.danger:hover { background: #991b1b; }
+    .btn-secondary { padding: 9px 18px; background: white; color: var(--primary); border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; font-family: inherit; }
 
-    /* Stats row */
-    .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin: 0 16px 18px; }
-    .stat-tile { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center; }
-    .stat-num { font-size: 1.5rem; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 4px; }
-    .stat-num .of { font-size: 0.85rem; font-weight: 700; color: #aaa; }
-    .stat-label { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #999; }
+    .biz-check-list {
+      display: flex; flex-direction: column; gap: 6px;
+      max-height: 200px; overflow-y: auto;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 10px; background: #f8fafc;
+    }
+    .biz-check-row {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.88rem; color: var(--text);
+      cursor: pointer; padding: 4px 2px;
+    }
+    .biz-check-row input { cursor: pointer; }
 
-    /* Section heading */
-    .section-h { padding: 0 16px; margin: 16px 0 8px; display: flex; justify-content: space-between; align-items: center; }
-    .section-title { font-size: 0.95rem; font-weight: 800; color: var(--primary); }
-    .section-action { font-size: 0.78rem; font-weight: 700; color: var(--accent); text-decoration: none; cursor: pointer; }
-    .section-action:hover { text-decoration: underline; }
-
-    /* User list */
-    .user-list { display: flex; flex-direction: column; gap: 8px; padding: 0 16px; margin-bottom: 16px; }
-    .user-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; gap: 12px; align-items: center; }
-    .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(13,148,136,0.12); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; }
-    .user-body { flex: 1; min-width: 0; }
-    .user-name { font-size: 0.9rem; font-weight: 700; color: var(--primary); }
-    .user-email { font-size: 0.75rem; color: #888; }
-    .user-roles { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; font-size: 0.7rem; }
-    .user-role-chip { background: #f3f4f6; color: #444; padding: 2px 7px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px; }
-    .user-role-chip .uc-role { font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; font-size: 0.62rem; color: #1e40af; }
-    .user-role-chip.member .uc-role { color: #6b7280; }
-    .user-role-chip.pending { font-style: italic; opacity: 0.7; }
-    .user-role-chip .uc-x { color: #aaa; margin-left: 2px; cursor: pointer; }
-    .user-role-chip .uc-x:hover { color: #b91c1c; }
-
-    /* Business action menu */
-    .biz-action { position: relative; margin-left: 6px; }
-    .biz-action-btn { background: none; border: none; color: #aaa; cursor: pointer; padding: 4px 6px; font-size: 1rem; line-height: 1; border-radius: 4px; }
-    .biz-action-btn:hover { background: #f3f4f6; color: var(--primary); }
-    .biz-action-menu { position: absolute; right: 0; top: 100%; background: white; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.1); padding: 4px 0; min-width: 130px; z-index: 50; display: none; }
-    .biz-action-menu.open { display: block; }
-    .biz-action-menu button { display: block; width: 100%; text-align: left; background: none; border: none; padding: 8px 14px; font-size: 0.85rem; cursor: pointer; color: var(--primary); }
-    .biz-action-menu button:hover { background: #f0fdfa; }
-    .biz-action-menu button.danger { color: #b91c1c; }
-    .biz-action-menu button.danger:hover { background: #fee2e2; }
-
-    /* Invite modal: business checkbox list */
-    .inv-list { display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
-    .inv-list label { font-size: 0.88rem; color: var(--text); display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 2px 0; }
-    .inv-list input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+    .confirm-note {
+      background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;
+      padding: 12px; font-size: 0.85rem; color: #7f1d1d; line-height: 1.5;
+      margin-bottom: 12px;
+    }
 
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0;
@@ -147,38 +237,64 @@
     <div class="header-inner">
       <div class="header-left">
         <a href="index.html" class="header-back">&#x2190; Home</a>
-        <span class="header-title">My Businesses</span>
+        <span class="header-title">Account Dashboard</span>
       </div>
       <button class="sign-out-btn" id="signOutBtn">Sign Out</button>
     </div>
   </header>
 
   <div class="container">
-    <div class="ws-header">
-      <h1 class="ws-title" id="accountName">&#x1F3E2; Your account</h1>
-      <p class="ws-sub">All the businesses on your subscription. Tap one to switch into it.</p>
-      <a href="#" id="renameAccountLink" style="display:none;font-size:12px;color:var(--accent);font-weight:600;text-decoration:none;">Rename account &rsaquo;</a>
+
+    <!-- Section A: Account header -->
+    <div class="acct-header">
+      <h1 class="acct-title" id="accountName">&#x1F3E2; Your account</h1>
+      <p class="acct-sub">Manage every business and teammate on your subscription from one place.</p>
+      <div class="acct-actions">
+        <a href="#" id="renameAccountLink" class="acct-link" style="display:none;">Rename account &rsaquo;</a>
+      </div>
     </div>
 
+    <!-- Section B: Stats row -->
     <div class="stats-row">
-      <div class="stat-tile"><div class="stat-num" id="statBiz">—</div><div class="stat-label">Businesses</div></div>
-      <div class="stat-tile"><div class="stat-num" id="statUsers">—</div><div class="stat-label">Users</div></div>
-      <div class="stat-tile"><div class="stat-num" id="statSeats">—</div><div class="stat-label">Seats Used</div></div>
+      <div class="stat-card">
+        <div class="stat-num" id="statBizCount">&mdash;</div>
+        <div class="stat-label">Businesses</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statUserCount">&mdash;</div>
+        <div class="stat-label">Users</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statSeats">&mdash;</div>
+        <div class="stat-label">Seats</div>
+      </div>
     </div>
 
-    <div class="section-h"><div class="section-title">Businesses</div></div>
-    <div class="biz-section">
+    <!-- Section C: Businesses -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">&#x1F4BC; Businesses</span>
+        <span class="section-meta" id="bizSectionMeta"></span>
+      </div>
       <div id="bizList" class="biz-list"></div>
       <button id="addBusinessBtn" class="add-btn">+ Create New Business</button>
     </div>
 
-    <div class="section-h">
-      <div class="section-title">Users</div>
-      <a class="section-action" id="inviteUserLink">+ Invite User</a>
+    <!-- Section D: Users (Team) -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">&#x1F465; Team</span>
+        <span class="section-meta" id="userSectionMeta"></span>
+      </div>
+      <div id="userList" class="user-list"></div>
+      <button id="inviteUserBtn" class="add-btn add-btn-secondary">+ Invite User</button>
     </div>
-    <div id="userList" class="user-list"></div>
+
+    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.84</p>
+
   </div>
 
+  <!-- Rename Account modal -->
   <div class="modal-overlay hidden" id="renameModal">
     <div class="modal">
       <div class="modal-header">
@@ -188,7 +304,7 @@
       <div class="modal-field">
         <label class="modal-label">Account / company name *</label>
         <input type="text" class="modal-input" id="renameInput" placeholder="e.g. SARUBA" maxlength="80"/>
-        <div style="font-size:11px;color:#888;margin-top:4px;">This is the parent that owns your businesses (what shows on your invoice).</div>
+        <div class="modal-help">This is the parent that owns your businesses (what shows on your invoice).</div>
         <div class="modal-err" id="renameErr"></div>
       </div>
       <div class="modal-footer">
@@ -198,6 +314,7 @@
     </div>
   </div>
 
+  <!-- Add Business modal -->
   <div class="modal-overlay hidden" id="addModal">
     <div class="modal">
       <div class="modal-header">
@@ -217,40 +334,43 @@
   </div>
 
   <!-- Rename Business modal -->
-  <div class="modal-overlay hidden" id="bizRenameModal">
+  <div class="modal-overlay hidden" id="renameBizModal">
     <div class="modal">
       <div class="modal-header">
         <span class="modal-title">Rename business</span>
-        <button class="modal-close" id="bizRenameClose">&times;</button>
+        <button class="modal-close" id="renameBizClose">&times;</button>
       </div>
       <div class="modal-field">
-        <label class="modal-label">New business name *</label>
-        <input type="text" class="modal-input" id="bizRenameInput" maxlength="80"/>
-        <div class="modal-err" id="bizRenameErr"></div>
+        <label class="modal-label">Business name *</label>
+        <input type="text" class="modal-input" id="renameBizInput" maxlength="80"/>
+        <div class="modal-err" id="renameBizErr"></div>
       </div>
       <div class="modal-footer">
-        <button class="btn-secondary" id="bizRenameCancel">Cancel</button>
-        <button class="btn-primary" id="bizRenameSave">Save</button>
+        <button class="btn-secondary" id="renameBizCancel">Cancel</button>
+        <button class="btn-primary" id="renameBizSave">Save</button>
       </div>
     </div>
   </div>
 
   <!-- Delete Business modal -->
-  <div class="modal-overlay hidden" id="bizDeleteModal">
+  <div class="modal-overlay hidden" id="deleteBizModal">
     <div class="modal">
       <div class="modal-header">
         <span class="modal-title">Delete business</span>
-        <button class="modal-close" id="bizDeleteClose">&times;</button>
+        <button class="modal-close" id="deleteBizClose">&times;</button>
+      </div>
+      <div class="confirm-note" id="deleteBizNote">
+        This will permanently delete <strong id="deleteBizName"></strong> and ALL of its data &mdash;
+        worksheets, scorecard, sessions, team members and history. This cannot be undone.
       </div>
       <div class="modal-field">
-        <p style="font-size:0.88rem;color:var(--text);line-height:1.5;margin:0 0 10px;">You're about to permanently delete <strong id="bizDeleteName"></strong> and all its data. This cannot be undone.</p>
         <label class="modal-label">Type the business name to confirm</label>
-        <input type="text" class="modal-input" id="bizDeleteConfirm" maxlength="80"/>
-        <div class="modal-err" id="bizDeleteErr"></div>
+        <input type="text" class="modal-input" id="deleteBizInput" placeholder="Business name"/>
+        <div class="modal-err" id="deleteBizErr"></div>
       </div>
       <div class="modal-footer">
-        <button class="btn-secondary" id="bizDeleteCancel">Cancel</button>
-        <button class="btn-danger" id="bizDeleteSave" disabled>Delete business</button>
+        <button class="btn-secondary" id="deleteBizCancel">Cancel</button>
+        <button class="btn-primary danger" id="deleteBizConfirm" disabled>Delete forever</button>
       </div>
     </div>
   </div>
@@ -264,33 +384,53 @@
       </div>
       <div class="modal-field">
         <label class="modal-label">Email *</label>
-        <input type="email" class="modal-input" id="inviteEmail" placeholder="teammate@company.com" autocomplete="email"/>
-      </div>
-      <div class="modal-field">
-        <label class="modal-label">Display name (optional)</label>
-        <input type="text" class="modal-input" id="inviteName" placeholder="e.g. Lou Henderson" maxlength="80"/>
+        <input type="email" class="modal-input" id="inviteEmail" placeholder="name@company.com" autocomplete="off"/>
       </div>
       <div class="modal-field">
         <label class="modal-label">Role</label>
-        <select class="modal-input" id="inviteRole">
-          <option value="member" selected>Member — read only + check-ins</option>
-          <option value="admin">Admin — full access</option>
+        <select class="modal-select" id="inviteRole">
+          <option value="member">Member &mdash; can read team data</option>
+          <option value="admin">Admin &mdash; can edit everything</option>
         </select>
       </div>
       <div class="modal-field">
-        <label class="modal-label">Grant access to which businesses?</label>
-        <div class="inv-list" id="inviteBizList"></div>
+        <label class="modal-label">Display name (optional)</label>
+        <input type="text" class="modal-input" id="inviteDisplay" placeholder="e.g. Lou Henderson" maxlength="80"/>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Business access *</label>
+        <div class="biz-check-list" id="inviteBizList"></div>
+        <div class="modal-help">Pick one or more businesses to give this person access to.</div>
       </div>
       <div class="modal-err" id="inviteErr"></div>
       <div class="modal-footer">
         <button class="btn-secondary" id="inviteCancel">Cancel</button>
-        <button class="btn-primary" id="inviteSave">Send invite</button>
+        <button class="btn-primary" id="inviteSend">Send invite</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Remove Member confirm modal -->
+  <div class="modal-overlay hidden" id="removeMemberModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Remove team member</span>
+        <button class="modal-close" id="removeMemberClose">&times;</button>
+      </div>
+      <div class="confirm-note">
+        Remove <strong id="removeMemberName"></strong> from <strong id="removeMemberOrg"></strong>?
+        They&rsquo;ll lose access immediately. You can re-invite them anytime.
+      </div>
+      <div class="modal-err" id="removeMemberErr"></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="removeMemberCancel">Cancel</button>
+        <button class="btn-primary danger" id="removeMemberConfirm">Remove</button>
       </div>
     </div>
   </div>
 
   <nav class="bottom-nav">
-    <a class="bottom-nav-item" href="index.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
+    <a class="bottom-nav-item active" href="index.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
     <a class="bottom-nav-item" href="planning.html"><span class="bottom-nav-icon">&#x1F5FA;&#xFE0F;</span><span>Planning</span></a>
     <a class="bottom-nav-item" href="strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
     <a class="bottom-nav-item" href="operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
@@ -312,438 +452,494 @@
       window.location.href = 'login.html';
     });
 
+    /* ============== utilities ============== */
     function escHtml(s) {
       return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
         '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
       }[c]));
     }
-
-    async function loadOrgs() {
-      // Query active team_members + their org via inner join
-      const { data, error } = await sb
-        .from('team_members')
-        .select('organisation_id, role, status, organisations!inner(id, name)')
-        .eq('user_id', user.id)
-        .eq('status', 'active');
-
-      if (error) {
-        document.getElementById('bizList').innerHTML =
-          '<div class="empty-state">Could not load businesses: ' + escHtml(error.message) + '</div>';
-        return [];
-      }
-      return data || [];
+    function initials(nameOrEmail) {
+      const s = (nameOrEmail || '').trim();
+      if (!s) return '?';
+      const parts = s.split(/[\s@._-]+/).filter(Boolean);
+      if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+      return s.slice(0, 2).toUpperCase();
     }
 
-    function render(orgs) {
+    /* ============== state ============== */
+    let myMemberships = [];   // caller's active team_members
+    let teamRows = [];        // all team_members in orgs where caller is admin (not removed)
+    let sub = null;           // subscription row
+    let openMenuEl = null;    // currently open ⋮ menu
+
+    /* ============== loaders ============== */
+    async function loadAll() {
+      // 1) Subscription
+      const { data: subRow } = await sb
+        .from('subscriptions')
+        .select('id, name, seat_count, included_businesses')
+        .eq('owner_user_id', user.id)
+        .maybeSingle();
+      sub = subRow || null;
+
+      // 2) Caller's memberships
+      const { data: mems, error: memErr } = await sb
+        .from('team_members')
+        .select('id, organisation_id, role, status, organisations!inner(id, name)')
+        .eq('user_id', user.id)
+        .eq('status', 'active');
+      if (memErr) {
+        document.getElementById('bizList').innerHTML =
+          '<div class="empty-state">Could not load businesses: ' + escHtml(memErr.message) + '</div>';
+        myMemberships = [];
+      } else {
+        myMemberships = mems || [];
+      }
+
+      // 3) Team rows across orgs where the caller is admin
+      const adminOrgIds = myMemberships
+        .filter(m => m.role === 'admin')
+        .map(m => m.organisation_id);
+      if (adminOrgIds.length) {
+        const { data: tm, error: tmErr } = await sb
+          .from('team_members')
+          .select('id, organisation_id, user_id, invited_email, role, status, display_name, organisations!inner(id, name)')
+          .in('organisation_id', adminOrgIds)
+          .neq('status', 'removed');
+        teamRows = tmErr ? [] : (tm || []);
+      } else {
+        teamRows = [];
+      }
+    }
+
+    /* ============== render: account header ============== */
+    function renderAccountHeader() {
+      const el = document.getElementById('accountName');
+      const link = document.getElementById('renameAccountLink');
+      if (sub && sub.name && sub.name.trim()) {
+        el.innerHTML = '&#x1F3E2; ' + escHtml(sub.name);
+        link.textContent = 'Rename account ›';
+      } else {
+        el.innerHTML = '&#x1F3E2; Your account <span style="font-size:.7em;color:#888;font-weight:600;">(unnamed)</span>';
+        link.textContent = 'Set account name ›';
+      }
+      link.style.display = 'inline-block';
+    }
+
+    /* ============== render: stats ============== */
+    function renderStats() {
+      document.getElementById('statBizCount').textContent = myMemberships.length;
+
+      // Distinct users + pending emails across the team rows
+      const uniqUsers = new Set();
+      teamRows.forEach(r => {
+        if (r.user_id) uniqUsers.add('u:' + r.user_id);
+        else if (r.invited_email) uniqUsers.add('e:' + r.invited_email.toLowerCase());
+      });
+      // If the caller isn't an admin anywhere, teamRows is empty — still count self
+      if (!uniqUsers.size) uniqUsers.add('u:' + user.id);
+      document.getElementById('statUserCount').textContent = uniqUsers.size;
+
+      const seats = (sub && sub.seat_count) || 3;
+      document.getElementById('statSeats').innerHTML =
+        uniqUsers.size + '<span class="stat-total"> of ' + seats + '</span>';
+    }
+
+    /* ============== render: businesses ============== */
+    function renderBusinesses() {
       const wrap = document.getElementById('bizList');
-      const activeId = window.activeOrg.get();
-      if (!orgs.length) {
-        wrap.innerHTML = '<div class="empty-state">You haven’t created a business yet.</div>';
+      const meta = document.getElementById('bizSectionMeta');
+      const activeId = (window.activeOrg && window.activeOrg.get()) || null;
+
+      meta.textContent = myMemberships.length ? (myMemberships.length + ' total') : '';
+
+      if (!myMemberships.length) {
+        wrap.innerHTML = '<div class="empty-state">You haven&rsquo;t created a business yet.</div>';
         return;
       }
-      wrap.innerHTML = orgs.map(o => {
-        const orgId = o.organisations.id;
-        const name  = o.organisations.name;
-        const role  = o.role;
+      wrap.innerHTML = myMemberships.map(m => {
+        const orgId = m.organisations.id;
+        const name  = m.organisations.name;
+        const role  = m.role;
+        const isAdmin = role === 'admin';
         const isActive = orgId === activeId;
-        const showMenu = role === 'admin';
         return `
           <div class="biz-card ${isActive ? 'active' : ''}" data-org-id="${orgId}" data-org-name="${escHtml(name)}">
             <div class="biz-icon">&#x1F4BC;</div>
-            <div class="biz-body" data-open="${orgId}" style="cursor:pointer;">
+            <div class="biz-body" data-action="open">
               <div class="biz-name">${escHtml(name)}</div>
               <div class="biz-meta">
                 <span class="role-pill role-${role}">${role}</span>
                 ${isActive ? '<span class="role-pill active-pill">Active</span>' : ''}
               </div>
             </div>
-            ${showMenu ? `
-              <div class="biz-action">
-                <button class="biz-action-btn" data-menu="${orgId}" aria-label="Actions">⋯</button>
-                <div class="biz-action-menu" id="menu-${orgId}">
-                  <button data-action="rename" data-org="${orgId}">Rename</button>
-                  <button data-action="delete" data-org="${orgId}" class="danger">Delete</button>
+            <button class="biz-open" data-action="open">Open &rsaquo;</button>
+            ${isAdmin ? `
+              <div class="actions-wrap">
+                <button class="actions-btn" data-action="menu" aria-label="More actions">&#x22EE;</button>
+                <div class="actions-menu hidden">
+                  <button data-action="rename-biz">Rename</button>
+                  <button class="danger" data-action="delete-biz">Delete</button>
                 </div>
-              </div>` : ''}
+              </div>
+            ` : ''}
           </div>`;
       }).join('');
 
-      // Open (switch to) business when row body clicked
-      wrap.querySelectorAll('.biz-body[data-open]').forEach(el => {
-        el.addEventListener('click', () => {
-          const orgId = el.dataset.open;
-          window.activeOrg.set(orgId);
-          window.location.href = 'index.html';
+      wrap.querySelectorAll('.biz-card').forEach(card => {
+        const orgId   = card.dataset.orgId;
+        const orgName = card.dataset.orgName;
+        card.querySelectorAll('[data-action="open"]').forEach(el => {
+          el.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.activeOrg) window.activeOrg.set(orgId);
+            window.location.href = 'index.html';
+          });
         });
-      });
-      // Toggle action menu
-      wrap.querySelectorAll('.biz-action-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const menuId = 'menu-' + btn.dataset.menu;
-          // close other menus
-          wrap.querySelectorAll('.biz-action-menu.open').forEach(m => { if (m.id !== menuId) m.classList.remove('open'); });
-          document.getElementById(menuId).classList.toggle('open');
-        });
-      });
-      // Action menu items
-      wrap.querySelectorAll('.biz-action-menu button').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const action = btn.dataset.action;
-          const orgId  = btn.dataset.org;
-          const card   = wrap.querySelector(`.biz-card[data-org-id="${orgId}"]`);
-          const name   = card ? card.dataset.orgName : '';
-          // close menu
-          wrap.querySelectorAll('.biz-action-menu.open').forEach(m => m.classList.remove('open'));
-          if (action === 'rename') openBizRename(orgId, name);
-          else if (action === 'delete') openBizDelete(orgId, name);
-        });
+        const menuBtn = card.querySelector('[data-action="menu"]');
+        const menu = card.querySelector('.actions-menu');
+        if (menuBtn && menu) {
+          menuBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (openMenuEl && openMenuEl !== menu) openMenuEl.classList.add('hidden');
+            menu.classList.toggle('hidden');
+            openMenuEl = menu.classList.contains('hidden') ? null : menu;
+          });
+          menu.querySelector('[data-action="rename-biz"]').addEventListener('click', (e) => {
+            e.preventDefault(); e.stopPropagation();
+            menu.classList.add('hidden'); openMenuEl = null;
+            openRenameBiz(orgId, orgName);
+          });
+          menu.querySelector('[data-action="delete-biz"]').addEventListener('click', (e) => {
+            e.preventDefault(); e.stopPropagation();
+            menu.classList.add('hidden'); openMenuEl = null;
+            openDeleteBiz(orgId, orgName);
+          });
+        }
       });
     }
-    // Close menus when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.biz-action')) {
-        document.querySelectorAll('.biz-action-menu.open').forEach(m => m.classList.remove('open'));
-      }
+
+    // Close ⋮ menus on outside click
+    document.addEventListener('click', () => {
+      if (openMenuEl) { openMenuEl.classList.add('hidden'); openMenuEl = null; }
     });
 
-    let orgs = await loadOrgs();
-    // Ensure activeOrg is set if there's at least one org
-    if (orgs.length && !window.activeOrg.get()) {
-      window.activeOrg.set(orgs[0].organisations.id);
-    }
-    render(orgs);
+    /* ============== render: users ============== */
+    function renderUsers() {
+      const wrap = document.getElementById('userList');
+      const meta = document.getElementById('userSectionMeta');
 
-    // Fetch + display the account name (subscription.name)
-    const { data: sub } = await sb
-      .from('subscriptions')
-      .select('id, name')
-      .eq('owner_user_id', user.id)
-      .maybeSingle();
-    const accNameEl = document.getElementById('accountName');
+      if (!teamRows.length) {
+        meta.textContent = '';
+        wrap.innerHTML = '<div class="empty-state">Only admins see the team list. Once you&rsquo;re admin of a business, teammates appear here.</div>';
+        return;
+      }
+
+      // Group by user_id (signed-up) OR invited_email (pending)
+      const groups = new Map();
+      teamRows.forEach(r => {
+        const key = r.user_id ? ('u:' + r.user_id) : ('e:' + (r.invited_email || '').toLowerCase());
+        if (!groups.has(key)) {
+          groups.set(key, {
+            key,
+            user_id: r.user_id,
+            invited_email: r.invited_email,
+            display_name: r.display_name,
+            rows: []
+          });
+        }
+        const g = groups.get(key);
+        if (!g.display_name && r.display_name) g.display_name = r.display_name;
+        g.rows.push(r);
+      });
+
+      meta.textContent = groups.size + ' total';
+
+      const cards = [];
+      for (const g of groups.values()) {
+        const isMe = g.user_id === user.id;
+        const nameDisplay = g.display_name
+          || (isMe ? ((user.user_metadata && user.user_metadata.full_name) || user.email) : null)
+          || g.invited_email
+          || '(unnamed teammate)';
+        const emailDisplay = isMe ? user.email : (g.invited_email || '');
+        const ini = initials(nameDisplay || emailDisplay);
+
+        const orgRows = g.rows.map(r => {
+          const isPending = r.status === 'pending';
+          const rolePill  = isPending
+            ? '<span class="role-pill role-pending">Pending</span>'
+            : '<span class="role-pill role-' + r.role + '">' + r.role + '</span>';
+          const canRemove = !isMe;
+          const removeBtn = canRemove
+            ? `<button class="user-remove-btn" data-action="remove-member" data-member-id="${r.id}" data-member-name="${escHtml(nameDisplay)}" data-org-name="${escHtml(r.organisations.name)}">Remove</button>`
+            : '';
+          return `
+            <div class="user-org-row">
+              <span class="user-org-name">${escHtml(r.organisations.name)}</span>
+              ${rolePill}
+              ${removeBtn}
+            </div>`;
+        }).join('');
+
+        cards.push(`
+          <div class="user-card">
+            <div class="user-avatar">${escHtml(ini)}</div>
+            <div class="user-body">
+              <div class="user-name">${escHtml(nameDisplay)} ${isMe ? '<span style="font-size:.7em;color:#888;font-weight:600;">(you)</span>' : ''}</div>
+              ${emailDisplay ? '<div class="user-email">' + escHtml(emailDisplay) + '</div>' : ''}
+              <div class="user-orgs">${orgRows}</div>
+            </div>
+          </div>`);
+      }
+      wrap.innerHTML = cards.join('');
+
+      wrap.querySelectorAll('[data-action="remove-member"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          openRemoveMember(btn.dataset.memberId, btn.dataset.memberName, btn.dataset.orgName);
+        });
+      });
+    }
+
+    /* ============== modal helpers ============== */
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    /* ============== rename account ============== */
     const renameLinkEl = document.getElementById('renameAccountLink');
-    if (sub && sub.name && sub.name.trim()) {
-      accNameEl.innerHTML = '🏢 ' + escHtml(sub.name);
-    } else {
-      accNameEl.innerHTML = '🏢 Your account <span style="font-size:.7em;color:#888;font-weight:600;">(unnamed)</span>';
-    }
-    if (renameLinkEl) {
-      renameLinkEl.style.display = 'inline-block';
-      renameLinkEl.textContent = (sub && sub.name && sub.name.trim()) ? 'Rename account ›' : 'Set account name ›';
-    }
-
-    document.body.style.opacity = '1';
-
-    // Rename account modal
-    const renameModal  = document.getElementById('renameModal');
-    const renameClose  = document.getElementById('renameClose');
-    const renameCancel = document.getElementById('renameCancel');
-    const renameSave   = document.getElementById('renameSave');
     const renameInput  = document.getElementById('renameInput');
     const renameErr    = document.getElementById('renameErr');
-
+    const renameSave   = document.getElementById('renameSave');
     renameLinkEl.addEventListener('click', (e) => {
       e.preventDefault();
       renameInput.value = (sub && sub.name) ? sub.name : '';
       renameErr.textContent = '';
-      renameModal.classList.remove('hidden');
+      openModal('renameModal');
       setTimeout(() => renameInput.focus(), 50);
     });
-    function closeRename() { renameModal.classList.add('hidden'); }
-    renameClose.addEventListener('click', closeRename);
-    renameCancel.addEventListener('click', closeRename);
-
+    document.getElementById('renameClose').addEventListener('click', () => closeModal('renameModal'));
+    document.getElementById('renameCancel').addEventListener('click', () => closeModal('renameModal'));
     renameSave.addEventListener('click', async () => {
       const newName = renameInput.value.trim();
       if (!newName) { renameErr.textContent = 'Please enter a name.'; return; }
-      renameSave.disabled = true;
-      renameSave.textContent = 'Saving…';
+      renameSave.disabled = true; renameSave.textContent = 'Saving…';
       const { error } = await sb.rpc('update_account_name', { new_name: newName });
       if (error) {
         renameErr.textContent = error.message || 'Save failed.';
-        renameSave.disabled = false;
-        renameSave.textContent = 'Save';
+        renameSave.disabled = false; renameSave.textContent = 'Save';
         return;
       }
       window.location.reload();
     });
 
-    // Add new business modal
-    const modal       = document.getElementById('addModal');
-    const addBtn      = document.getElementById('addBusinessBtn');
-    const addClose    = document.getElementById('addClose');
-    const addCancel   = document.getElementById('addCancel');
-    const addSave     = document.getElementById('addSave');
-    const addName     = document.getElementById('addName');
-    const addErr      = document.getElementById('addErr');
-
-    function openModal() {
-      addErr.textContent = '';
-      addName.value = '';
-      modal.classList.remove('hidden');
+    /* ============== add business ============== */
+    const addBtn  = document.getElementById('addBusinessBtn');
+    const addName = document.getElementById('addName');
+    const addErr  = document.getElementById('addErr');
+    const addSave = document.getElementById('addSave');
+    addBtn.addEventListener('click', () => {
+      addErr.textContent = ''; addName.value = '';
+      openModal('addModal');
       setTimeout(() => addName.focus(), 50);
-    }
-    function closeModal() {
-      modal.classList.add('hidden');
-    }
-
-    addBtn.addEventListener('click', openModal);
-    addClose.addEventListener('click', closeModal);
-    addCancel.addEventListener('click', closeModal);
-
+    });
+    document.getElementById('addClose').addEventListener('click', () => closeModal('addModal'));
+    document.getElementById('addCancel').addEventListener('click', () => closeModal('addModal'));
     addSave.addEventListener('click', async () => {
       const name = addName.value.trim();
       if (!name) { addErr.textContent = 'Please enter a business name.'; return; }
-      addSave.disabled = true;
-      addSave.textContent = 'Creating…';
-      addErr.textContent = '';
-
+      addSave.disabled = true; addSave.textContent = 'Creating…'; addErr.textContent = '';
       const { data: newOrgId, error } = await sb.rpc('bootstrap_organisation', { business_name: name });
-
       if (error) {
         addErr.textContent = error.message || 'Could not create business.';
-        addSave.disabled = false;
-        addSave.textContent = 'Create';
+        addSave.disabled = false; addSave.textContent = 'Create';
         return;
       }
-
-      // Set as active + go to dashboard
-      window.activeOrg.set(newOrgId);
+      if (window.activeOrg) window.activeOrg.set(newOrgId);
       window.location.href = 'index.html';
     });
 
-    // ============== STATS, USERS, INVITES (v0.5.84) ==============
-
-    function initials(name, email) {
-      const src = (name && name.trim()) || (email || '').split('@')[0] || '?';
-      return src.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+    /* ============== rename business ============== */
+    const renameBizInput = document.getElementById('renameBizInput');
+    const renameBizErr   = document.getElementById('renameBizErr');
+    const renameBizSave  = document.getElementById('renameBizSave');
+    let renameBizTargetId = null;
+    function openRenameBiz(orgId, currentName) {
+      renameBizTargetId = orgId;
+      renameBizInput.value = currentName || '';
+      renameBizErr.textContent = '';
+      openModal('renameBizModal');
+      setTimeout(() => renameBizInput.focus(), 50);
     }
-
-    async function loadAllTeamMembers(orgIds) {
-      if (!orgIds.length) return [];
-      const { data, error } = await sb
-        .from('team_members')
-        .select('id, organisation_id, user_id, invited_email, role, status, display_name, joined_at')
-        .in('organisation_id', orgIds)
-        .neq('status', 'removed');
-      if (error) return [];
-      return data || [];
-    }
-
-    async function loadUserEmails(userIds) {
-      if (!userIds.length) return {};
-      // Try to get emails from public.users (read policy allows own row only, but admins may see more via RLS)
-      const { data } = await sb.from('users').select('id, email, name').in('id', userIds);
-      const map = {};
-      (data || []).forEach(u => { map[u.id] = u; });
-      return map;
-    }
-
-    function renderStats(orgsCount, usersCount, seatCount) {
-      document.getElementById('statBiz').textContent   = orgsCount;
-      document.getElementById('statUsers').textContent = usersCount;
-      const used = usersCount;
-      const cap  = seatCount || 3;
-      document.getElementById('statSeats').innerHTML = `${used}<span class="of"> / ${cap}</span>`;
-    }
-
-    function renderUsers(members, orgsById, userEmails) {
-      const wrap = document.getElementById('userList');
-      if (!members.length) {
-        wrap.innerHTML = '<div class="empty-state">No teammates yet. Tap "+ Invite User" to add one.</div>';
-        return;
-      }
-      // Group by user_id (or by invited_email for pending invites)
-      const groups = new Map();
-      members.forEach(m => {
-        const key = m.user_id || ('email:' + (m.invited_email || '').toLowerCase());
-        if (!groups.has(key)) groups.set(key, { user_id: m.user_id, email: m.invited_email, rows: [] });
-        groups.get(key).rows.push(m);
-      });
-
-      wrap.innerHTML = [...groups.entries()].map(([key, g]) => {
-        const profile = (g.user_id && userEmails[g.user_id]) || {};
-        const displayName = (g.rows.find(r => r.display_name)?.display_name) || profile.name || '';
-        const email = profile.email || g.email || '—';
-        const chips = g.rows.map(r => {
-          const org = orgsById[r.organisation_id] || { name: '?' };
-          const isPending = r.status === 'pending';
-          const cls = (r.role === 'admin' ? '' : 'member') + (isPending ? ' pending' : '');
-          return `<span class="user-role-chip ${cls}" data-member-id="${r.id}">
-            <span class="uc-role">${r.role}</span>
-            ${escHtml(org.name)}
-            ${isPending ? ' <em style="font-size:.62rem;color:#aaa;">pending</em>' : ''}
-            <span class="uc-x" title="Remove from this business" data-remove="${r.id}">×</span>
-          </span>`;
-        }).join('');
-        return `
-          <div class="user-card">
-            <div class="user-avatar">${escHtml(initials(displayName, email))}</div>
-            <div class="user-body">
-              <div class="user-name">${escHtml(displayName || email)}</div>
-              ${displayName ? `<div class="user-email">${escHtml(email)}</div>` : ''}
-              <div class="user-roles">${chips}</div>
-            </div>
-          </div>`;
-      }).join('');
-
-      // Wire remove handlers
-      wrap.querySelectorAll('.uc-x[data-remove]').forEach(el => {
-        el.addEventListener('click', async (e) => {
-          e.stopPropagation();
-          const memberId = el.dataset.remove;
-          if (!confirm('Remove this person from this business?')) return;
-          const { error } = await sb.rpc('remove_team_member', { member_id: memberId });
-          if (error) { alert(error.message); return; }
-          window.location.reload();
-        });
-      });
-    }
-
-    // ---------- Load + render account-wide data ----------
-    const orgIds = orgs.map(o => o.organisation_id);
-    const orgsById = {};
-    orgs.forEach(o => { orgsById[o.organisation_id] = { id: o.organisation_id, name: o.organisations.name, role: o.role }; });
-    // Only admin orgs can have user list mgmt
-    const adminOrgIds = orgs.filter(o => o.role === 'admin').map(o => o.organisation_id);
-
-    const allMembers = await loadAllTeamMembers(adminOrgIds.length ? adminOrgIds : orgIds);
-    const distinctUserIds = [...new Set(allMembers.filter(m => m.user_id).map(m => m.user_id))];
-    const userEmails = await loadUserEmails(distinctUserIds);
-    // Seat usage = distinct active users + pending invites
-    const seatUsed = new Set();
-    allMembers.forEach(m => {
-      if (m.status === 'active' && m.user_id) seatUsed.add(m.user_id);
-      else if (m.status === 'pending' && m.invited_email) seatUsed.add('email:' + m.invited_email.toLowerCase());
+    document.getElementById('renameBizClose').addEventListener('click', () => closeModal('renameBizModal'));
+    document.getElementById('renameBizCancel').addEventListener('click', () => closeModal('renameBizModal'));
+    renameBizSave.addEventListener('click', async () => {
+      const newName = renameBizInput.value.trim();
+      if (!newName) { renameBizErr.textContent = 'Please enter a name.'; return; }
+      renameBizSave.disabled = true; renameBizSave.textContent = 'Saving…';
+      const { error } = await sb.rpc('rename_business', { business_id: renameBizTargetId, new_name: newName });
+      renameBizSave.disabled = false; renameBizSave.textContent = 'Save';
+      if (error) { renameBizErr.textContent = error.message || 'Save failed.'; return; }
+      closeModal('renameBizModal');
+      await refresh();
     });
 
-    renderStats(orgs.length, seatUsed.size, (sub && sub.seat_count) || 3);
-    renderUsers(allMembers, orgsById, userEmails);
-
-    // ---------- Rename business modal ----------
-    const bizRenameModal  = document.getElementById('bizRenameModal');
-    const bizRenameInput  = document.getElementById('bizRenameInput');
-    const bizRenameErr    = document.getElementById('bizRenameErr');
-    const bizRenameSave   = document.getElementById('bizRenameSave');
-    let renameOrgId = null;
-    function openBizRename(orgId, currentName) {
-      renameOrgId = orgId;
-      bizRenameInput.value = currentName || '';
-      bizRenameErr.textContent = '';
-      bizRenameSave.disabled = false; bizRenameSave.textContent = 'Save';
-      bizRenameModal.classList.remove('hidden');
-      setTimeout(() => bizRenameInput.focus(), 50);
+    /* ============== delete business ============== */
+    const deleteBizInput   = document.getElementById('deleteBizInput');
+    const deleteBizConfirm = document.getElementById('deleteBizConfirm');
+    const deleteBizErr     = document.getElementById('deleteBizErr');
+    const deleteBizNameEl  = document.getElementById('deleteBizName');
+    let deleteBizTargetId   = null;
+    let deleteBizTargetName = '';
+    function openDeleteBiz(orgId, name) {
+      deleteBizTargetId = orgId;
+      deleteBizTargetName = name;
+      deleteBizNameEl.textContent = name;
+      deleteBizInput.value = '';
+      deleteBizErr.textContent = '';
+      deleteBizConfirm.disabled = true;
+      openModal('deleteBizModal');
+      setTimeout(() => deleteBizInput.focus(), 50);
     }
-    function closeBizRename() { bizRenameModal.classList.add('hidden'); }
-    document.getElementById('bizRenameClose').addEventListener('click', closeBizRename);
-    document.getElementById('bizRenameCancel').addEventListener('click', closeBizRename);
-    bizRenameSave.addEventListener('click', async () => {
-      const newName = bizRenameInput.value.trim();
-      if (!newName) { bizRenameErr.textContent = 'Please enter a name.'; return; }
-      bizRenameSave.disabled = true; bizRenameSave.textContent = 'Saving…';
-      const { error } = await sb.rpc('rename_business', { business_id: renameOrgId, new_name: newName });
+    deleteBizInput.addEventListener('input', () => {
+      deleteBizConfirm.disabled = deleteBizInput.value.trim() !== deleteBizTargetName;
+    });
+    document.getElementById('deleteBizClose').addEventListener('click', () => closeModal('deleteBizModal'));
+    document.getElementById('deleteBizCancel').addEventListener('click', () => closeModal('deleteBizModal'));
+    deleteBizConfirm.addEventListener('click', async () => {
+      deleteBizConfirm.disabled = true; deleteBizConfirm.textContent = 'Deleting…';
+      const { error } = await sb.rpc('delete_business', { business_id: deleteBizTargetId });
+      deleteBizConfirm.textContent = 'Delete forever';
       if (error) {
-        bizRenameErr.textContent = error.message || 'Save failed.';
-        bizRenameSave.disabled = false; bizRenameSave.textContent = 'Save';
+        deleteBizErr.textContent = error.message || 'Delete failed.';
+        deleteBizConfirm.disabled = false;
         return;
       }
-      window.location.reload();
-    });
-
-    // ---------- Delete business modal ----------
-    const bizDeleteModal   = document.getElementById('bizDeleteModal');
-    const bizDeleteNameEl  = document.getElementById('bizDeleteName');
-    const bizDeleteConfirm = document.getElementById('bizDeleteConfirm');
-    const bizDeleteSave    = document.getElementById('bizDeleteSave');
-    const bizDeleteErr     = document.getElementById('bizDeleteErr');
-    let deleteOrgId = null, deleteOrgName = '';
-    function openBizDelete(orgId, name) {
-      deleteOrgId = orgId; deleteOrgName = name;
-      bizDeleteNameEl.textContent = name;
-      bizDeleteConfirm.value = '';
-      bizDeleteErr.textContent = '';
-      bizDeleteSave.disabled = true; bizDeleteSave.textContent = 'Delete business';
-      bizDeleteModal.classList.remove('hidden');
-      setTimeout(() => bizDeleteConfirm.focus(), 50);
-    }
-    function closeBizDelete() { bizDeleteModal.classList.add('hidden'); }
-    document.getElementById('bizDeleteClose').addEventListener('click', closeBizDelete);
-    document.getElementById('bizDeleteCancel').addEventListener('click', closeBizDelete);
-    bizDeleteConfirm.addEventListener('input', () => {
-      bizDeleteSave.disabled = (bizDeleteConfirm.value.trim() !== deleteOrgName);
-    });
-    bizDeleteSave.addEventListener('click', async () => {
-      if (bizDeleteConfirm.value.trim() !== deleteOrgName) return;
-      bizDeleteSave.disabled = true; bizDeleteSave.textContent = 'Deleting…';
-      const { error } = await sb.rpc('delete_business', { business_id: deleteOrgId });
-      if (error) {
-        bizDeleteErr.textContent = error.message || 'Delete failed.';
-        bizDeleteSave.disabled = false; bizDeleteSave.textContent = 'Delete business';
-        return;
+      if (window.activeOrg && window.activeOrg.get() === deleteBizTargetId) {
+        window.activeOrg.clear();
       }
-      // If the deleted org was the active one, clear it
-      if (window.activeOrg && window.activeOrg.get() === deleteOrgId) window.activeOrg.clear();
-      window.location.reload();
+      closeModal('deleteBizModal');
+      await refresh();
     });
 
-    // ---------- Invite user modal ----------
-    const inviteModal   = document.getElementById('inviteModal');
+    /* ============== invite user ============== */
     const inviteEmail   = document.getElementById('inviteEmail');
-    const inviteName    = document.getElementById('inviteName');
     const inviteRole    = document.getElementById('inviteRole');
+    const inviteDisplay = document.getElementById('inviteDisplay');
     const inviteBizList = document.getElementById('inviteBizList');
-    const inviteSave    = document.getElementById('inviteSave');
     const inviteErr     = document.getElementById('inviteErr');
+    const inviteSend    = document.getElementById('inviteSend');
 
-    function openInvite() {
-      inviteEmail.value = '';
-      inviteName.value  = '';
-      inviteRole.value  = 'member';
-      inviteErr.textContent = '';
-      inviteSave.disabled = false; inviteSave.textContent = 'Send invite';
-      // Populate the business checkbox list (admin orgs only)
-      const adminOrgs = orgs.filter(o => o.role === 'admin');
-      const activeId  = window.activeOrg.get();
-      inviteBizList.innerHTML = adminOrgs.length
-        ? adminOrgs.map(o => `
-            <label>
-              <input type="checkbox" value="${o.organisation_id}" ${o.organisation_id === activeId ? 'checked' : ''}/>
-              ${escHtml(o.organisations.name)}
-            </label>`).join('')
-        : '<div style="font-size:0.85rem;color:#888;">You are not admin of any business.</div>';
-      inviteModal.classList.remove('hidden');
-      setTimeout(() => inviteEmail.focus(), 50);
+    function populateInviteBizList() {
+      const adminMems = myMemberships.filter(m => m.role === 'admin');
+      const activeId  = (window.activeOrg && window.activeOrg.get()) || null;
+      if (!adminMems.length) {
+        inviteBizList.innerHTML = '<div style="font-size:.85rem;color:#888;padding:6px;">You aren&rsquo;t an admin of any business yet.</div>';
+        return;
+      }
+      inviteBizList.innerHTML = adminMems.map(m => {
+        const orgId = m.organisations.id;
+        const name  = m.organisations.name;
+        const checked = orgId === activeId ? 'checked' : '';
+        return `
+          <label class="biz-check-row">
+            <input type="checkbox" value="${orgId}" ${checked}/>
+            <span>${escHtml(name)}</span>
+          </label>`;
+      }).join('');
     }
-    function closeInvite() { inviteModal.classList.add('hidden'); }
-    document.getElementById('inviteUserLink').addEventListener('click', openInvite);
-    document.getElementById('inviteClose').addEventListener('click', closeInvite);
-    document.getElementById('inviteCancel').addEventListener('click', closeInvite);
 
-    inviteSave.addEventListener('click', async () => {
+    document.getElementById('inviteUserBtn').addEventListener('click', () => {
+      inviteEmail.value = '';
+      inviteRole.value = 'member';
+      inviteDisplay.value = '';
+      inviteErr.textContent = '';
+      populateInviteBizList();
+      openModal('inviteModal');
+      setTimeout(() => inviteEmail.focus(), 50);
+    });
+    document.getElementById('inviteClose').addEventListener('click', () => closeModal('inviteModal'));
+    document.getElementById('inviteCancel').addEventListener('click', () => closeModal('inviteModal'));
+
+    inviteSend.addEventListener('click', async () => {
       const email = inviteEmail.value.trim();
       const role  = inviteRole.value;
-      const dname = inviteName.value.trim() || null;
-      const selectedOrgIds = [...inviteBizList.querySelectorAll('input[type=checkbox]:checked')].map(c => c.value);
-      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { inviteErr.textContent = 'Enter a valid email.'; return; }
-      if (!selectedOrgIds.length) { inviteErr.textContent = 'Pick at least one business.'; return; }
-      inviteErr.textContent = '';
-      inviteSave.disabled = true; inviteSave.textContent = 'Sending…';
+      const display = inviteDisplay.value.trim();
+      const selected = Array.from(inviteBizList.querySelectorAll('input[type=checkbox]:checked'))
+                            .map(c => c.value);
 
-      let failures = [];
-      for (const bid of selectedOrgIds) {
-        const { error } = await sb.rpc('invite_team_member', {
-          business_id: bid, email: email, role: role, display_name: dname
-        });
-        if (error) failures.push((orgsById[bid]?.name || bid) + ': ' + error.message);
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        inviteErr.textContent = 'Please enter a valid email address.'; return;
       }
-      if (failures.length) {
-        inviteErr.innerHTML = 'Could not invite to: ' + failures.map(escHtml).join('<br>');
-        inviteSave.disabled = false; inviteSave.textContent = 'Send invite';
+      if (!selected.length) {
+        inviteErr.textContent = 'Pick at least one business.'; return;
+      }
+
+      inviteSend.disabled = true; inviteSend.textContent = 'Sending…';
+      inviteErr.textContent = '';
+
+      const errors = [];
+      for (const bizId of selected) {
+        const { error } = await sb.rpc('invite_team_member', {
+          business_id: bizId,
+          email: email,
+          role: role,
+          display_name: display || null
+        });
+        if (error) errors.push(error.message || 'invite failed');
+      }
+      inviteSend.disabled = false; inviteSend.textContent = 'Send invite';
+      if (errors.length) {
+        inviteErr.textContent = errors.join(' — ');
         return;
       }
-      window.location.reload();
+      closeModal('inviteModal');
+      await refresh();
     });
+
+    /* ============== remove member ============== */
+    const removeMemberNameEl  = document.getElementById('removeMemberName');
+    const removeMemberOrgEl   = document.getElementById('removeMemberOrg');
+    const removeMemberErr     = document.getElementById('removeMemberErr');
+    const removeMemberConfirm = document.getElementById('removeMemberConfirm');
+    let removeMemberTargetId  = null;
+    function openRemoveMember(memberId, name, orgName) {
+      removeMemberTargetId = memberId;
+      removeMemberNameEl.textContent = name;
+      removeMemberOrgEl.textContent  = orgName;
+      removeMemberErr.textContent    = '';
+      openModal('removeMemberModal');
+    }
+    document.getElementById('removeMemberClose').addEventListener('click', () => closeModal('removeMemberModal'));
+    document.getElementById('removeMemberCancel').addEventListener('click', () => closeModal('removeMemberModal'));
+    removeMemberConfirm.addEventListener('click', async () => {
+      removeMemberConfirm.disabled = true; removeMemberConfirm.textContent = 'Removing…';
+      const { error } = await sb.rpc('remove_team_member', { member_id: removeMemberTargetId });
+      removeMemberConfirm.disabled = false; removeMemberConfirm.textContent = 'Remove';
+      if (error) {
+        removeMemberErr.textContent = error.message || 'Remove failed.';
+        return;
+      }
+      closeModal('removeMemberModal');
+      await refresh();
+    });
+
+    /* ============== boot ============== */
+    async function refresh() {
+      await loadAll();
+      renderAccountHeader();
+      renderStats();
+      renderBusinesses();
+      renderUsers();
+    }
+
+    await refresh();
+    if (myMemberships.length && (!window.activeOrg || !window.activeOrg.get())) {
+      window.activeOrg.set(myMemberships[0].organisation_id);
+    }
+    document.body.style.opacity = '1';
   </script>
 
 </body>
