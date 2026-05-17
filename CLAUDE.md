@@ -128,11 +128,11 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.74
+v0.5.75
 
 ## Latest
+- **v0.5.75** — Documented the planned **team-scoped, role-based** Supabase architecture (Admin + Member roles; team-shared data; 1 subscription = N seats allocated by Admin; check-in results visible to all team members). Captured the pre-migration cleanup list from the v0.5.74 audit. Project-memory-only change, no code touched.
 - **v0.5.74** — Restructured docs. Moved full version history out of `CLAUDE.md` into `CHANGELOG.md`. Tightened CLAUDE.md to project memory + conventions only. Added explicit canonical sign-out ID, 300ms debounce convention, no-Google-Fonts rule, and Supabase key-exposure note to Key Rules. Listed all 4 version-sync targets explicitly. Clarified team-checkin question count (17 rated + 1 name + 1 optional role).
-- **v0.5.73** — Planning session workspaces simplified to attendance + checklist + share link. Dropped per-step notes, 1–10 rating, inline aggregated check-in results table. New fields on each session: `attendance` (string) + `areas_completed` (object). See `CHANGELOG.md` for full detail.
 
 ## Current Status
 - **Dashboard** (`index.html`) — live, reads all panels from localStorage (`coach4u_*` keys), pre-seeds on first visit via `ensureSeeds()`
@@ -145,6 +145,65 @@ v0.5.74
 - **Mobile**: Responsive at 390px and 768px breakpoints
 - **Login**: Gold standard v2.2
 - **Accountability Chart & Team Alignment**: MOVED to `yourteamcoach`
+
+## Planned Architecture (Supabase Migration)
+
+The localStorage layer is a stopgap. When wired to Supabase, the app moves to a **team-scoped, role-based** model. Locked-in design decisions:
+
+### Team model
+- A **business buys the subscription** with N seats and becomes the org's first Admin.
+- Each team member has their own login (per-user auth) but data is **team-scoped, not user-scoped** — one shared dataset per organisation. Cath edits Core Values → Lou + Andrew see the change.
+- **2 roles only** (MVP):
+  - **Admin** — manages seats (invite/remove), edits ALL team data, schedules planning sessions, sends check-in invites, sees aggregated results.
+  - **Member** — reads team data, fills check-in forms when invited. **Cannot edit team data.**
+
+### Schema sketch
+```
+organisations         (id, name, seat_count, owner_user_id, created_at)
+team_members          (id, organisation_id, user_id, invited_email, role, status, display_name, joined_at)
+                      -- role: 'admin' | 'member' | status: 'pending' | 'active' | 'removed'
+
+[all data tables]     -- core_values, core_focus, targets, marketing_strategy, leadership_team_members,
+                      --   scorecard_metrics + scorecard_entries, rocks, issues,
+                      --   meetings + meeting_headlines + meeting_todos,
+                      --   annual_sessions, quarterly_sessions, team_checkins
+                      -- scoped by `organisation_id` column (replaces today's hardcoded `business_id: 1`)
+```
+
+### RLS pattern
+- **READ** (most tables): any active team member can read team data
+  ```sql
+  USING (organisation_id IN (SELECT organisation_id FROM team_members
+                              WHERE user_id = auth.uid() AND status = 'active'))
+  ```
+- **WRITE** (most tables): only Admins can write
+  ```sql
+  WITH CHECK (organisation_id IN (SELECT organisation_id FROM team_members
+                                   WHERE user_id = auth.uid() AND status = 'active' AND role = 'admin'))
+  ```
+- **`team_checkins`** (special):
+  - READ: any active member of the org (everyone on the team sees aggregated results — including individual comments grouped by author, per the agreed transparency model).
+  - INSERT: any active member can submit their own check-in.
+
+### Check-in flow (Supabase version)
+1. Admin schedules a planning session in the app.
+2. Admin clicks **Send Check-in Invitations** → invitation emails go out with a link to the form (MVP: Admin copies/pastes link; later: Supabase Edge Function auto-sends).
+3. Members open the link → log in with their own credentials → submit the 17-question form.
+4. Submissions auto-aggregate; the session workspace shows averages + lowest-scoring areas + comments grouped by question (re-introduces the v0.5.72 results display that was stripped in v0.5.73 — it was right for the public-form model, wrong for the team model).
+5. Admin uses aggregated results to set planning priorities.
+
+### Pre-migration cleanup required (per v0.5.74 audit)
+Must fix BEFORE the migration so data lands clean:
+1. Session shape divergence — `coach4u_annual_sessions` / `_quarterly_sessions` are written with `agenda + rating` in some paths and `attendance + areas_completed` in others. Align to the v0.5.73 shape everywhere.
+2. Meeting seed status conflict — `index.html` seeds meeting 4001 as `scheduled`, but `meeting.html` / `run-meeting.html` seed the same id as `completed`. Pick one.
+3. Sign-out class regression on 5 Operations tool pages (`scorecard / goals / meeting / run-meeting / issues` use `class="signOutBtn"` — should be `class="sign-out-btn"`).
+4. Dead links — `learn/values-discovery.html:239` → `../strategy/core-values.html` (dir removed v0.5.45); `404.html:169` → `/dashboard.html` (doesn't exist).
+5. `index.html ensureSeeds()` is missing 4 keys: `coach4u_core_focus`, `coach4u_marketing_strategy`, `coach4u_leadership_team`, `coach4u_demo_scorecard`.
+6. 9 pages skip the `membership_status` check (all 5 Ops tools + 4 Planning session pages + planning hub). Add to all.
+7. `sw.js` precaches non-existent `dashboard.html`; missing `favicon.svg` + `js/active-session.js`.
+8. Two Supabase SDK styles in use (ESM + UMD) — consolidate to ESM per Key Rules.
+9. `js/auth.js` + `js/supabase.js` are dead files (referenced by no HTML); remove or wire up.
+10. Re-add aggregated check-in results to session workspaces (reverse the v0.5.73 simplification — wrong for the team model).
 
 ## Add a New Member (SQL)
 

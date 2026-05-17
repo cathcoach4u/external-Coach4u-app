@@ -4,6 +4,22 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.75
+- **Documented the planned Supabase team architecture in CLAUDE.md.** Locked-in decisions:
+  - **2-tier roles**: Admin (manages seats, edits all data, sends invites) vs. Member (reads team data, fills check-ins only).
+  - **Subscription model**: a business buys N seats; first buyer is Admin; Admin allocates seats by email invite.
+  - **Team-scoped data**: every data table scoped by `organisation_id`; all team members see ONE shared dataset (One-Page Plan, sessions, scorecard, etc.). Replaces the per-user assumption baked into today's localStorage.
+  - **Check-in flow**: Admin schedules session → emails invite link to members → members log in + submit → aggregated results visible to **everyone on the team** (max-transparency model) for setting planning priorities. This reverses the v0.5.73 simplification (which stripped the aggregated results because the form was thought to be public; now that it's authenticated + team-scoped, the aggregation comes back).
+- Captured the pre-migration cleanup checklist from the v0.5.74 audit (10 items) into CLAUDE.md so it's not lost.
+- Docs-only change — no code touched.
+
+## v0.5.74
+- **Restructured project docs.** Moved full version history out of `CLAUDE.md` into `CHANGELOG.md` (this file). CLAUDE.md is now lean project memory + conventions + planned architecture; this file is the version log.
+- Tightened `CLAUDE.md` Key Rules: added canonical sign-out ID (`signOutBtn` + class `sign-out-btn`), 300ms debounce convention for auto-save text inputs, explicit no-Google-Fonts rule, and a Supabase key-exposure note (anon key is intentionally publishable; security via RLS; never commit `service_role`).
+- Listed all 4 version-sync targets explicitly (CLAUDE.md / VERSION / sw.js / index.html footer label).
+- Clarified the team-checkin question count: 17 rated statements + 1 required name field + 1 optional role field (was reported as "17 questions" / "18 questions" depending on whether the name field was counted).
+- Documented that the repo is intentionally public (GitHub Pages) and the Supabase anon key in the file is the `sb_publishable_*` variant.
+
 ## v0.5.73
 - **Planning session workspaces simplified to attendance + checklist + share link.** Both `run-annual-session.html` and `run-quarterly-session.html` previously had a multi-step agenda accordion with per-step notes textareas, a 1–10 session-rating step, a "Review Team Check-in" agenda step, and a big inline aggregated check-in results table at the top. Stripped all of that.
 - New workspace shape (both files): **status dropdown + timer**, then a **📋 Attendance** block (single textarea, debounced ~300ms auto-save), then **✅ Areas to Cover** (one checkbox per area with the existing Strategy/Goals deep-links inline beside each row + a "{n} of {total} areas completed" progress hint), then a **🌟 Team Check-in** block reduced to two buttons — **Copy Check-in Link** (teal, clipboard + toast) and **Open Form** (secondary). No count, no aggregated table, no comments view.
