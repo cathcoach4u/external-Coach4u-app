@@ -568,15 +568,13 @@
         const name  = m.organisations.name;
         const role  = m.role;
         const isAdmin = role === 'admin';
-        const isActive = orgId === activeId;
         return `
-          <div class="biz-card ${isActive ? 'active' : ''}" data-org-id="${orgId}" data-org-name="${escHtml(name)}">
+          <div class="biz-card" data-org-id="${orgId}" data-org-name="${escHtml(name)}">
             <div class="biz-icon">&#x1F4BC;</div>
             <div class="biz-body" data-action="open">
               <div class="biz-name">${escHtml(name)}</div>
               <div class="biz-meta">
                 <span class="role-pill role-${role}">${role}</span>
-                ${isActive ? '<span class="role-pill active-pill">Active</span>' : ''}
               </div>
             </div>
             <button class="biz-open" data-action="open">Open &rsaquo;</button>

@@ -4,6 +4,9 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.86
+- **Removed the "Active" pill from `my-businesses.html` business cards.** Previously the page auto-marked one business as "Active" on every visit (the localStorage-default selection), which felt like phantom state — implied a business was open even when the user had just logged in and not done anything. Now the account dashboard is a clean list with role pills only. Users tap "Open ›" on a card to enter that business. The underlying `coach4u_active_org_id` localStorage mechanism is unchanged and still drives which business `index.html` and other tools load when navigated to directly.
+
 ## v0.5.85
 - **Account dashboard is the first landing page after sign-in.** `login.html` now redirects to `my-businesses.html` (was `index.html`) on a successful sign-in AND when an existing session is detected. Every user lands on their SARUBA parent dashboard first, seeing all businesses, can switch into one, manage users, etc. before drilling into a specific business's data.
 - **First-run guard added to `my-businesses.html`**: if a signed-in user has zero active `team_members` rows, the page auto-redirects to `setup.html` so the new-user wizard still fires. Avoids the awkward "empty businesses list" state for brand-new users.
