@@ -74,6 +74,52 @@
     .btn-primary { padding: 9px 18px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
     .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
     .btn-secondary { padding: 9px 18px; background: white; color: var(--primary); border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+    .btn-danger    { padding: 9px 18px; background: #b91c1c; color: white; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+    .btn-danger:hover { background: #991b1b; }
+
+    /* Stats row */
+    .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin: 0 16px 18px; }
+    .stat-tile { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center; }
+    .stat-num { font-size: 1.5rem; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 4px; }
+    .stat-num .of { font-size: 0.85rem; font-weight: 700; color: #aaa; }
+    .stat-label { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #999; }
+
+    /* Section heading */
+    .section-h { padding: 0 16px; margin: 16px 0 8px; display: flex; justify-content: space-between; align-items: center; }
+    .section-title { font-size: 0.95rem; font-weight: 800; color: var(--primary); }
+    .section-action { font-size: 0.78rem; font-weight: 700; color: var(--accent); text-decoration: none; cursor: pointer; }
+    .section-action:hover { text-decoration: underline; }
+
+    /* User list */
+    .user-list { display: flex; flex-direction: column; gap: 8px; padding: 0 16px; margin-bottom: 16px; }
+    .user-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; gap: 12px; align-items: center; }
+    .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(13,148,136,0.12); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; }
+    .user-body { flex: 1; min-width: 0; }
+    .user-name { font-size: 0.9rem; font-weight: 700; color: var(--primary); }
+    .user-email { font-size: 0.75rem; color: #888; }
+    .user-roles { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; font-size: 0.7rem; }
+    .user-role-chip { background: #f3f4f6; color: #444; padding: 2px 7px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px; }
+    .user-role-chip .uc-role { font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; font-size: 0.62rem; color: #1e40af; }
+    .user-role-chip.member .uc-role { color: #6b7280; }
+    .user-role-chip.pending { font-style: italic; opacity: 0.7; }
+    .user-role-chip .uc-x { color: #aaa; margin-left: 2px; cursor: pointer; }
+    .user-role-chip .uc-x:hover { color: #b91c1c; }
+
+    /* Business action menu */
+    .biz-action { position: relative; margin-left: 6px; }
+    .biz-action-btn { background: none; border: none; color: #aaa; cursor: pointer; padding: 4px 6px; font-size: 1rem; line-height: 1; border-radius: 4px; }
+    .biz-action-btn:hover { background: #f3f4f6; color: var(--primary); }
+    .biz-action-menu { position: absolute; right: 0; top: 100%; background: white; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.1); padding: 4px 0; min-width: 130px; z-index: 50; display: none; }
+    .biz-action-menu.open { display: block; }
+    .biz-action-menu button { display: block; width: 100%; text-align: left; background: none; border: none; padding: 8px 14px; font-size: 0.85rem; cursor: pointer; color: var(--primary); }
+    .biz-action-menu button:hover { background: #f0fdfa; }
+    .biz-action-menu button.danger { color: #b91c1c; }
+    .biz-action-menu button.danger:hover { background: #fee2e2; }
+
+    /* Invite modal: business checkbox list */
+    .inv-list { display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
+    .inv-list label { font-size: 0.88rem; color: var(--text); display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 2px 0; }
+    .inv-list input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
 
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0;
@@ -114,10 +160,23 @@
       <a href="#" id="renameAccountLink" style="display:none;font-size:12px;color:var(--accent);font-weight:600;text-decoration:none;">Rename account &rsaquo;</a>
     </div>
 
+    <div class="stats-row">
+      <div class="stat-tile"><div class="stat-num" id="statBiz">—</div><div class="stat-label">Businesses</div></div>
+      <div class="stat-tile"><div class="stat-num" id="statUsers">—</div><div class="stat-label">Users</div></div>
+      <div class="stat-tile"><div class="stat-num" id="statSeats">—</div><div class="stat-label">Seats Used</div></div>
+    </div>
+
+    <div class="section-h"><div class="section-title">Businesses</div></div>
     <div class="biz-section">
       <div id="bizList" class="biz-list"></div>
       <button id="addBusinessBtn" class="add-btn">+ Create New Business</button>
     </div>
+
+    <div class="section-h">
+      <div class="section-title">Users</div>
+      <a class="section-action" id="inviteUserLink">+ Invite User</a>
+    </div>
+    <div id="userList" class="user-list"></div>
   </div>
 
   <div class="modal-overlay hidden" id="renameModal">
@@ -153,6 +212,79 @@
       <div class="modal-footer">
         <button class="btn-secondary" id="addCancel">Cancel</button>
         <button class="btn-primary" id="addSave">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rename Business modal -->
+  <div class="modal-overlay hidden" id="bizRenameModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Rename business</span>
+        <button class="modal-close" id="bizRenameClose">&times;</button>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">New business name *</label>
+        <input type="text" class="modal-input" id="bizRenameInput" maxlength="80"/>
+        <div class="modal-err" id="bizRenameErr"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="bizRenameCancel">Cancel</button>
+        <button class="btn-primary" id="bizRenameSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Business modal -->
+  <div class="modal-overlay hidden" id="bizDeleteModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Delete business</span>
+        <button class="modal-close" id="bizDeleteClose">&times;</button>
+      </div>
+      <div class="modal-field">
+        <p style="font-size:0.88rem;color:var(--text);line-height:1.5;margin:0 0 10px;">You're about to permanently delete <strong id="bizDeleteName"></strong> and all its data. This cannot be undone.</p>
+        <label class="modal-label">Type the business name to confirm</label>
+        <input type="text" class="modal-input" id="bizDeleteConfirm" maxlength="80"/>
+        <div class="modal-err" id="bizDeleteErr"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="bizDeleteCancel">Cancel</button>
+        <button class="btn-danger" id="bizDeleteSave" disabled>Delete business</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invite User modal -->
+  <div class="modal-overlay hidden" id="inviteModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Invite a teammate</span>
+        <button class="modal-close" id="inviteClose">&times;</button>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Email *</label>
+        <input type="email" class="modal-input" id="inviteEmail" placeholder="teammate@company.com" autocomplete="email"/>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Display name (optional)</label>
+        <input type="text" class="modal-input" id="inviteName" placeholder="e.g. Lou Henderson" maxlength="80"/>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Role</label>
+        <select class="modal-input" id="inviteRole">
+          <option value="member" selected>Member — read only + check-ins</option>
+          <option value="admin">Admin — full access</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Grant access to which businesses?</label>
+        <div class="inv-list" id="inviteBizList"></div>
+      </div>
+      <div class="modal-err" id="inviteErr"></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="inviteCancel">Cancel</button>
+        <button class="btn-primary" id="inviteSave">Send invite</button>
       </div>
     </div>
   </div>
@@ -214,29 +346,67 @@
         const name  = o.organisations.name;
         const role  = o.role;
         const isActive = orgId === activeId;
+        const showMenu = role === 'admin';
         return `
-          <a href="#" class="biz-card ${isActive ? 'active' : ''}" data-org-id="${orgId}">
+          <div class="biz-card ${isActive ? 'active' : ''}" data-org-id="${orgId}" data-org-name="${escHtml(name)}">
             <div class="biz-icon">&#x1F4BC;</div>
-            <div class="biz-body">
+            <div class="biz-body" data-open="${orgId}" style="cursor:pointer;">
               <div class="biz-name">${escHtml(name)}</div>
               <div class="biz-meta">
                 <span class="role-pill role-${role}">${role}</span>
                 ${isActive ? '<span class="role-pill active-pill">Active</span>' : ''}
               </div>
             </div>
-            <span class="biz-arrow">&#x203A;</span>
-          </a>`;
+            ${showMenu ? `
+              <div class="biz-action">
+                <button class="biz-action-btn" data-menu="${orgId}" aria-label="Actions">⋯</button>
+                <div class="biz-action-menu" id="menu-${orgId}">
+                  <button data-action="rename" data-org="${orgId}">Rename</button>
+                  <button data-action="delete" data-org="${orgId}" class="danger">Delete</button>
+                </div>
+              </div>` : ''}
+          </div>`;
       }).join('');
 
-      wrap.querySelectorAll('.biz-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-          e.preventDefault();
-          const orgId = card.dataset.orgId;
+      // Open (switch to) business when row body clicked
+      wrap.querySelectorAll('.biz-body[data-open]').forEach(el => {
+        el.addEventListener('click', () => {
+          const orgId = el.dataset.open;
           window.activeOrg.set(orgId);
           window.location.href = 'index.html';
         });
       });
+      // Toggle action menu
+      wrap.querySelectorAll('.biz-action-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const menuId = 'menu-' + btn.dataset.menu;
+          // close other menus
+          wrap.querySelectorAll('.biz-action-menu.open').forEach(m => { if (m.id !== menuId) m.classList.remove('open'); });
+          document.getElementById(menuId).classList.toggle('open');
+        });
+      });
+      // Action menu items
+      wrap.querySelectorAll('.biz-action-menu button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const action = btn.dataset.action;
+          const orgId  = btn.dataset.org;
+          const card   = wrap.querySelector(`.biz-card[data-org-id="${orgId}"]`);
+          const name   = card ? card.dataset.orgName : '';
+          // close menu
+          wrap.querySelectorAll('.biz-action-menu.open').forEach(m => m.classList.remove('open'));
+          if (action === 'rename') openBizRename(orgId, name);
+          else if (action === 'delete') openBizDelete(orgId, name);
+        });
+      });
     }
+    // Close menus when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.biz-action')) {
+        document.querySelectorAll('.biz-action-menu.open').forEach(m => m.classList.remove('open'));
+      }
+    });
 
     let orgs = await loadOrgs();
     // Ensure activeOrg is set if there's at least one org
@@ -341,6 +511,238 @@
       // Set as active + go to dashboard
       window.activeOrg.set(newOrgId);
       window.location.href = 'index.html';
+    });
+
+    // ============== STATS, USERS, INVITES (v0.5.84) ==============
+
+    function initials(name, email) {
+      const src = (name && name.trim()) || (email || '').split('@')[0] || '?';
+      return src.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+    }
+
+    async function loadAllTeamMembers(orgIds) {
+      if (!orgIds.length) return [];
+      const { data, error } = await sb
+        .from('team_members')
+        .select('id, organisation_id, user_id, invited_email, role, status, display_name, joined_at')
+        .in('organisation_id', orgIds)
+        .neq('status', 'removed');
+      if (error) return [];
+      return data || [];
+    }
+
+    async function loadUserEmails(userIds) {
+      if (!userIds.length) return {};
+      // Try to get emails from public.users (read policy allows own row only, but admins may see more via RLS)
+      const { data } = await sb.from('users').select('id, email, name').in('id', userIds);
+      const map = {};
+      (data || []).forEach(u => { map[u.id] = u; });
+      return map;
+    }
+
+    function renderStats(orgsCount, usersCount, seatCount) {
+      document.getElementById('statBiz').textContent   = orgsCount;
+      document.getElementById('statUsers').textContent = usersCount;
+      const used = usersCount;
+      const cap  = seatCount || 3;
+      document.getElementById('statSeats').innerHTML = `${used}<span class="of"> / ${cap}</span>`;
+    }
+
+    function renderUsers(members, orgsById, userEmails) {
+      const wrap = document.getElementById('userList');
+      if (!members.length) {
+        wrap.innerHTML = '<div class="empty-state">No teammates yet. Tap "+ Invite User" to add one.</div>';
+        return;
+      }
+      // Group by user_id (or by invited_email for pending invites)
+      const groups = new Map();
+      members.forEach(m => {
+        const key = m.user_id || ('email:' + (m.invited_email || '').toLowerCase());
+        if (!groups.has(key)) groups.set(key, { user_id: m.user_id, email: m.invited_email, rows: [] });
+        groups.get(key).rows.push(m);
+      });
+
+      wrap.innerHTML = [...groups.entries()].map(([key, g]) => {
+        const profile = (g.user_id && userEmails[g.user_id]) || {};
+        const displayName = (g.rows.find(r => r.display_name)?.display_name) || profile.name || '';
+        const email = profile.email || g.email || '—';
+        const chips = g.rows.map(r => {
+          const org = orgsById[r.organisation_id] || { name: '?' };
+          const isPending = r.status === 'pending';
+          const cls = (r.role === 'admin' ? '' : 'member') + (isPending ? ' pending' : '');
+          return `<span class="user-role-chip ${cls}" data-member-id="${r.id}">
+            <span class="uc-role">${r.role}</span>
+            ${escHtml(org.name)}
+            ${isPending ? ' <em style="font-size:.62rem;color:#aaa;">pending</em>' : ''}
+            <span class="uc-x" title="Remove from this business" data-remove="${r.id}">×</span>
+          </span>`;
+        }).join('');
+        return `
+          <div class="user-card">
+            <div class="user-avatar">${escHtml(initials(displayName, email))}</div>
+            <div class="user-body">
+              <div class="user-name">${escHtml(displayName || email)}</div>
+              ${displayName ? `<div class="user-email">${escHtml(email)}</div>` : ''}
+              <div class="user-roles">${chips}</div>
+            </div>
+          </div>`;
+      }).join('');
+
+      // Wire remove handlers
+      wrap.querySelectorAll('.uc-x[data-remove]').forEach(el => {
+        el.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const memberId = el.dataset.remove;
+          if (!confirm('Remove this person from this business?')) return;
+          const { error } = await sb.rpc('remove_team_member', { member_id: memberId });
+          if (error) { alert(error.message); return; }
+          window.location.reload();
+        });
+      });
+    }
+
+    // ---------- Load + render account-wide data ----------
+    const orgIds = orgs.map(o => o.organisation_id);
+    const orgsById = {};
+    orgs.forEach(o => { orgsById[o.organisation_id] = { id: o.organisation_id, name: o.organisations.name, role: o.role }; });
+    // Only admin orgs can have user list mgmt
+    const adminOrgIds = orgs.filter(o => o.role === 'admin').map(o => o.organisation_id);
+
+    const allMembers = await loadAllTeamMembers(adminOrgIds.length ? adminOrgIds : orgIds);
+    const distinctUserIds = [...new Set(allMembers.filter(m => m.user_id).map(m => m.user_id))];
+    const userEmails = await loadUserEmails(distinctUserIds);
+    // Seat usage = distinct active users + pending invites
+    const seatUsed = new Set();
+    allMembers.forEach(m => {
+      if (m.status === 'active' && m.user_id) seatUsed.add(m.user_id);
+      else if (m.status === 'pending' && m.invited_email) seatUsed.add('email:' + m.invited_email.toLowerCase());
+    });
+
+    renderStats(orgs.length, seatUsed.size, (sub && sub.seat_count) || 3);
+    renderUsers(allMembers, orgsById, userEmails);
+
+    // ---------- Rename business modal ----------
+    const bizRenameModal  = document.getElementById('bizRenameModal');
+    const bizRenameInput  = document.getElementById('bizRenameInput');
+    const bizRenameErr    = document.getElementById('bizRenameErr');
+    const bizRenameSave   = document.getElementById('bizRenameSave');
+    let renameOrgId = null;
+    function openBizRename(orgId, currentName) {
+      renameOrgId = orgId;
+      bizRenameInput.value = currentName || '';
+      bizRenameErr.textContent = '';
+      bizRenameSave.disabled = false; bizRenameSave.textContent = 'Save';
+      bizRenameModal.classList.remove('hidden');
+      setTimeout(() => bizRenameInput.focus(), 50);
+    }
+    function closeBizRename() { bizRenameModal.classList.add('hidden'); }
+    document.getElementById('bizRenameClose').addEventListener('click', closeBizRename);
+    document.getElementById('bizRenameCancel').addEventListener('click', closeBizRename);
+    bizRenameSave.addEventListener('click', async () => {
+      const newName = bizRenameInput.value.trim();
+      if (!newName) { bizRenameErr.textContent = 'Please enter a name.'; return; }
+      bizRenameSave.disabled = true; bizRenameSave.textContent = 'Saving…';
+      const { error } = await sb.rpc('rename_business', { business_id: renameOrgId, new_name: newName });
+      if (error) {
+        bizRenameErr.textContent = error.message || 'Save failed.';
+        bizRenameSave.disabled = false; bizRenameSave.textContent = 'Save';
+        return;
+      }
+      window.location.reload();
+    });
+
+    // ---------- Delete business modal ----------
+    const bizDeleteModal   = document.getElementById('bizDeleteModal');
+    const bizDeleteNameEl  = document.getElementById('bizDeleteName');
+    const bizDeleteConfirm = document.getElementById('bizDeleteConfirm');
+    const bizDeleteSave    = document.getElementById('bizDeleteSave');
+    const bizDeleteErr     = document.getElementById('bizDeleteErr');
+    let deleteOrgId = null, deleteOrgName = '';
+    function openBizDelete(orgId, name) {
+      deleteOrgId = orgId; deleteOrgName = name;
+      bizDeleteNameEl.textContent = name;
+      bizDeleteConfirm.value = '';
+      bizDeleteErr.textContent = '';
+      bizDeleteSave.disabled = true; bizDeleteSave.textContent = 'Delete business';
+      bizDeleteModal.classList.remove('hidden');
+      setTimeout(() => bizDeleteConfirm.focus(), 50);
+    }
+    function closeBizDelete() { bizDeleteModal.classList.add('hidden'); }
+    document.getElementById('bizDeleteClose').addEventListener('click', closeBizDelete);
+    document.getElementById('bizDeleteCancel').addEventListener('click', closeBizDelete);
+    bizDeleteConfirm.addEventListener('input', () => {
+      bizDeleteSave.disabled = (bizDeleteConfirm.value.trim() !== deleteOrgName);
+    });
+    bizDeleteSave.addEventListener('click', async () => {
+      if (bizDeleteConfirm.value.trim() !== deleteOrgName) return;
+      bizDeleteSave.disabled = true; bizDeleteSave.textContent = 'Deleting…';
+      const { error } = await sb.rpc('delete_business', { business_id: deleteOrgId });
+      if (error) {
+        bizDeleteErr.textContent = error.message || 'Delete failed.';
+        bizDeleteSave.disabled = false; bizDeleteSave.textContent = 'Delete business';
+        return;
+      }
+      // If the deleted org was the active one, clear it
+      if (window.activeOrg && window.activeOrg.get() === deleteOrgId) window.activeOrg.clear();
+      window.location.reload();
+    });
+
+    // ---------- Invite user modal ----------
+    const inviteModal   = document.getElementById('inviteModal');
+    const inviteEmail   = document.getElementById('inviteEmail');
+    const inviteName    = document.getElementById('inviteName');
+    const inviteRole    = document.getElementById('inviteRole');
+    const inviteBizList = document.getElementById('inviteBizList');
+    const inviteSave    = document.getElementById('inviteSave');
+    const inviteErr     = document.getElementById('inviteErr');
+
+    function openInvite() {
+      inviteEmail.value = '';
+      inviteName.value  = '';
+      inviteRole.value  = 'member';
+      inviteErr.textContent = '';
+      inviteSave.disabled = false; inviteSave.textContent = 'Send invite';
+      // Populate the business checkbox list (admin orgs only)
+      const adminOrgs = orgs.filter(o => o.role === 'admin');
+      const activeId  = window.activeOrg.get();
+      inviteBizList.innerHTML = adminOrgs.length
+        ? adminOrgs.map(o => `
+            <label>
+              <input type="checkbox" value="${o.organisation_id}" ${o.organisation_id === activeId ? 'checked' : ''}/>
+              ${escHtml(o.organisations.name)}
+            </label>`).join('')
+        : '<div style="font-size:0.85rem;color:#888;">You are not admin of any business.</div>';
+      inviteModal.classList.remove('hidden');
+      setTimeout(() => inviteEmail.focus(), 50);
+    }
+    function closeInvite() { inviteModal.classList.add('hidden'); }
+    document.getElementById('inviteUserLink').addEventListener('click', openInvite);
+    document.getElementById('inviteClose').addEventListener('click', closeInvite);
+    document.getElementById('inviteCancel').addEventListener('click', closeInvite);
+
+    inviteSave.addEventListener('click', async () => {
+      const email = inviteEmail.value.trim();
+      const role  = inviteRole.value;
+      const dname = inviteName.value.trim() || null;
+      const selectedOrgIds = [...inviteBizList.querySelectorAll('input[type=checkbox]:checked')].map(c => c.value);
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { inviteErr.textContent = 'Enter a valid email.'; return; }
+      if (!selectedOrgIds.length) { inviteErr.textContent = 'Pick at least one business.'; return; }
+      inviteErr.textContent = '';
+      inviteSave.disabled = true; inviteSave.textContent = 'Sending…';
+
+      let failures = [];
+      for (const bid of selectedOrgIds) {
+        const { error } = await sb.rpc('invite_team_member', {
+          business_id: bid, email: email, role: role, display_name: dname
+        });
+        if (error) failures.push((orgsById[bid]?.name || bid) + ': ' + error.message);
+      }
+      if (failures.length) {
+        inviteErr.innerHTML = 'Could not invite to: ' + failures.map(escHtml).join('<br>');
+        inviteSave.disabled = false; inviteSave.textContent = 'Send invite';
+        return;
+      }
+      window.location.reload();
     });
   </script>
 

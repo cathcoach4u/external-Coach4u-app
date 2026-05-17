@@ -4,6 +4,23 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.84
+- **SARUBA account dashboard** — `my-businesses.html` rebuilt from a simple switcher into the comprehensive parent dashboard:
+  - Account header (existing — shows the subscription name)
+  - **Stats row** (NEW) — 3 tiles: Businesses count, Users count (de-duplicated across the user's admin orgs + pending invites), Seats used / total
+  - **Businesses section** — each card now has a "•••" menu (admin-only) with Rename and Delete actions. Click the row body to switch into that business and go to the dashboard
+  - **Users section** (NEW) — lists all teammates the caller can see, grouped by user, with a role-pill per business + × to remove. "+ Invite User" button at section header opens a modal: email + display name + role + checkbox list of admin businesses to grant access to. Pending invites show with a "pending" pill until the invited person signs up.
+- **5 new Supabase RPC functions** (`SECURITY DEFINER`, granted to `authenticated`):
+  - `invite_team_member(business_id, email, role, display_name)` — admin-only. Creates `team_members` row. If the email already maps to an `auth.users` id, sets `user_id` + `status='active'` immediately. Otherwise stores `invited_email` + `status='pending'`.
+  - `remove_team_member(member_id)` — admin-only. Soft-removes by setting `status='removed'`. Prevents removing yourself if you're the sole admin.
+  - `rename_business(business_id, new_name)` — admin-only. `UPDATE organisations SET name = …`.
+  - `delete_business(business_id)` — admin + subscription owner. `DELETE FROM organisations`. Cascades all team_members + domain data.
+  - `link_pending_invites()` — trigger function on `auth.users INSERT`. Auto-converts pending invites matching the new user's email into active memberships.
+- **Routing change**: in `index.html`, if the user has >1 membership AND no valid active org is selected, redirect to `my-businesses.html`. Single-business users still go straight to their dashboard. This makes the parent dashboard the natural landing page for multi-business users.
+
+### SQL delta to paste
+The new SQL is already appended to `supabase/schema.sql`. To apply, you can either re-paste the whole file (idempotent — DROP block at top handles re-runs) or paste just the new functions from lines 730 onwards.
+
 ## v0.5.83
 - **Parent account / business hierarchy introduced.**
   - `subscriptions` now has a `name` column representing the account / license-holder name (e.g. "SARUBA").
