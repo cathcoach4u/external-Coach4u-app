@@ -4,6 +4,13 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.90
+- **Topic launcher fix — Businesses & Team are now `available` cards, not "Coming soon".** The v0.5.89 agent over-applied the "only Learning Vault is clickable" rule and marked all three "Learning & Account" cards as coming-soon. But the Businesses and Team sections exist right below on the same page — their `#businesses` and `#team` anchors are real navigation, not future work. Flipped both cards from `class="topic-card coming-soon"` to `class="topic-card available"` with an "Open" pill.
+- Dashboard now has **3 available topic cards** (Learning Vault → `learning-vault.html`, Businesses → `#businesses` anchor, Team → `#team` anchor) and **13 coming-soon** (the cross-business pages still to be built in v0.5.91+).
+- No other functional changes. VERSION / `sw.js` / `index.html` footer all bumped to v0.5.90 per the convention.
+
+---
+
 ## v0.5.89
 - **SARUBA dashboard restructured from a per-business snapshot view into a topic launcher.** `my-businesses.html` now leads with **14 topic cards** organised into 4 themed sections — Strategy / Operations / Planning / Learning & Account — each card a future cross-business view (e.g. "see Core Values for every business side-by-side"). This is the structural step; the actual cross-business pages get built one-by-one in v0.5.90+.
 - **Topic card sections** (14 cards total):
