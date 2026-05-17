@@ -4,6 +4,20 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.83
+- **Parent account / business hierarchy introduced.**
+  - `subscriptions` now has a `name` column representing the account / license-holder name (e.g. "SARUBA").
+  - Organisations under it are the operational businesses (e.g. "Coach4U Coaching", "Coach4U Development").
+- **Two new Supabase RPC functions:**
+  - `bootstrap_account_and_business(account_name, business_name)` — called by `setup.html` on first signup. Creates the subscription with the account name, creates the first organisation, makes the user the admin in one transaction.
+  - `update_account_name(new_name)` — called by the "Rename account" modal on `my-businesses.html` so existing users can set their account name.
+- **`setup.html` now asks for two names**: account / company (parent) + first business. Submits to `bootstrap_account_and_business`, redirects to `my-businesses.html` (the parent dashboard) instead of straight to the business dashboard.
+- **`my-businesses.html` becomes the parent dashboard:**
+  - Shows the account name at the top as the page heading.
+  - "Rename account ›" link in the header opens a modal that calls `update_account_name`. Shows "Set account name" if the name is still null (handles existing v0.5.81 users).
+- **Dashboard "Manage businesses ›" link relabelled to "Account dashboard ›"** to match the parent/child mental model.
+- **`supabase/schema.sql` needs re-running OR a small delta** — chat message has the SQL delta block.
+
 ## v0.5.82
 - **Dashboard "Manage businesses" link always visible.** Previously the link was only rendered when the user belonged to 2+ businesses, leaving single-business users with no in-app way to reach `my-businesses.html` to add their second business. Now the link always shows, with adaptive label: "Switch business ›" if the user has 2+ orgs, "Manage businesses ›" if they have 1.
 

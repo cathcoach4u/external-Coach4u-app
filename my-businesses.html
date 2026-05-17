@@ -109,13 +109,33 @@
 
   <div class="container">
     <div class="ws-header">
-      <h1 class="ws-title">&#x1F3E2; My Businesses</h1>
-      <p class="ws-sub">Tap a business to switch into it. Add another business with the button below.</p>
+      <h1 class="ws-title" id="accountName">&#x1F3E2; Your account</h1>
+      <p class="ws-sub">All the businesses on your subscription. Tap one to switch into it.</p>
+      <a href="#" id="renameAccountLink" style="display:none;font-size:12px;color:var(--accent);font-weight:600;text-decoration:none;">Rename account &rsaquo;</a>
     </div>
 
     <div class="biz-section">
       <div id="bizList" class="biz-list"></div>
       <button id="addBusinessBtn" class="add-btn">+ Create New Business</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="renameModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Rename account</span>
+        <button class="modal-close" id="renameClose">&times;</button>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Account / company name *</label>
+        <input type="text" class="modal-input" id="renameInput" placeholder="e.g. SARUBA" maxlength="80"/>
+        <div style="font-size:11px;color:#888;margin-top:4px;">This is the parent that owns your businesses (what shows on your invoice).</div>
+        <div class="modal-err" id="renameErr"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="renameCancel">Cancel</button>
+        <button class="btn-primary" id="renameSave">Save</button>
+      </div>
     </div>
   </div>
 
@@ -224,7 +244,60 @@
       window.activeOrg.set(orgs[0].organisations.id);
     }
     render(orgs);
+
+    // Fetch + display the account name (subscription.name)
+    const { data: sub } = await sb
+      .from('subscriptions')
+      .select('id, name')
+      .eq('owner_user_id', user.id)
+      .maybeSingle();
+    const accNameEl = document.getElementById('accountName');
+    const renameLinkEl = document.getElementById('renameAccountLink');
+    if (sub && sub.name && sub.name.trim()) {
+      accNameEl.innerHTML = '🏢 ' + escHtml(sub.name);
+    } else {
+      accNameEl.innerHTML = '🏢 Your account <span style="font-size:.7em;color:#888;font-weight:600;">(unnamed)</span>';
+    }
+    if (renameLinkEl) {
+      renameLinkEl.style.display = 'inline-block';
+      renameLinkEl.textContent = (sub && sub.name && sub.name.trim()) ? 'Rename account ›' : 'Set account name ›';
+    }
+
     document.body.style.opacity = '1';
+
+    // Rename account modal
+    const renameModal  = document.getElementById('renameModal');
+    const renameClose  = document.getElementById('renameClose');
+    const renameCancel = document.getElementById('renameCancel');
+    const renameSave   = document.getElementById('renameSave');
+    const renameInput  = document.getElementById('renameInput');
+    const renameErr    = document.getElementById('renameErr');
+
+    renameLinkEl.addEventListener('click', (e) => {
+      e.preventDefault();
+      renameInput.value = (sub && sub.name) ? sub.name : '';
+      renameErr.textContent = '';
+      renameModal.classList.remove('hidden');
+      setTimeout(() => renameInput.focus(), 50);
+    });
+    function closeRename() { renameModal.classList.add('hidden'); }
+    renameClose.addEventListener('click', closeRename);
+    renameCancel.addEventListener('click', closeRename);
+
+    renameSave.addEventListener('click', async () => {
+      const newName = renameInput.value.trim();
+      if (!newName) { renameErr.textContent = 'Please enter a name.'; return; }
+      renameSave.disabled = true;
+      renameSave.textContent = 'Saving…';
+      const { error } = await sb.rpc('update_account_name', { new_name: newName });
+      if (error) {
+        renameErr.textContent = error.message || 'Save failed.';
+        renameSave.disabled = false;
+        renameSave.textContent = 'Save';
+        return;
+      }
+      window.location.reload();
+    });
 
     // Add new business modal
     const modal       = document.getElementById('addModal');

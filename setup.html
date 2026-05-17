@@ -23,17 +23,23 @@
         <img src="Assets/COACH4U (Final).jpg" alt="Coach4U" style="height:48px;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;">
         <h1>Welcome</h1>
       </div>
-      <p class="login-subtitle">Let's set up your first business. You can add more later.</p>
+      <p class="login-subtitle">Set up your account and create your first business. The account is the license holder; you can add more businesses under it later.</p>
 
       <form id="setupForm">
         <div class="form-group">
-          <label for="businessName">Business name</label>
-          <input type="text" id="businessName" required autocomplete="organization" placeholder="e.g. Acme Coaching" maxlength="80">
+          <label for="accountName">Your account / company name</label>
+          <input type="text" id="accountName" required autocomplete="organization" placeholder="e.g. SARUBA" maxlength="80">
+          <div style="font-size:11px;color:#888;margin-top:4px;">The parent — what shows on your invoice.</div>
+        </div>
+        <div class="form-group">
+          <label for="businessName">Your first business</label>
+          <input type="text" id="businessName" required autocomplete="off" placeholder="e.g. Coach4U Coaching" maxlength="80">
+          <div style="font-size:11px;color:#888;margin-top:4px;">A business has its own One-Page Plan, scorecard, sessions.</div>
         </div>
 
         <div id="message" class="login-message"></div>
 
-        <button type="submit" class="login-btn" id="submitBtn">Create my business</button>
+        <button type="submit" class="login-btn" id="submitBtn">Create account &amp; business</button>
       </form>
 
       <a href="#" id="signOutLink" class="login-forgot" style="display:block;margin-top:14px;">Sign out</a>
@@ -64,11 +70,12 @@
       window.location.href = 'index.html';
     }
 
-    const form    = document.getElementById('setupForm');
-    const msgEl   = document.getElementById('message');
-    const btn     = document.getElementById('submitBtn');
-    const nameEl  = document.getElementById('businessName');
-    const signOut = document.getElementById('signOutLink');
+    const form      = document.getElementById('setupForm');
+    const msgEl     = document.getElementById('message');
+    const btn       = document.getElementById('submitBtn');
+    const accountEl = document.getElementById('accountName');
+    const bizEl     = document.getElementById('businessName');
+    const signOut   = document.getElementById('signOutLink');
 
     signOut.addEventListener('click', async (e) => {
       e.preventDefault();
@@ -78,27 +85,31 @@
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = nameEl.value.trim();
-      if (!name) return;
+      const accountName  = accountEl.value.trim();
+      const businessName = bizEl.value.trim();
+      if (!accountName || !businessName) return;
 
       btn.disabled = true;
       btn.textContent = 'Setting up…';
       msgEl.style.display = 'none';
       msgEl.className = 'login-message';
 
-      const { data: newOrgId, error } = await supabase.rpc('bootstrap_organisation', { business_name: name });
+      const { data: newOrgId, error } = await supabase.rpc('bootstrap_account_and_business', {
+        account_name: accountName,
+        business_name: businessName
+      });
 
       if (error) {
         msgEl.textContent = error.message || 'Setup failed. Please try again.';
         msgEl.classList.add('error');
         msgEl.style.display = 'block';
         btn.disabled = false;
-        btn.textContent = 'Create my business';
+        btn.textContent = 'Create account & business';
         return;
       }
 
       if (newOrgId && window.activeOrg) window.activeOrg.set(newOrgId);
-      window.location.href = 'index.html';
+      window.location.href = 'my-businesses.html';
     });
   </script>
 

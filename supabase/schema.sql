@@ -81,6 +81,7 @@ CREATE POLICY "Users can read own row" ON public.users
 CREATE TABLE public.subscriptions (
   id                     uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   owner_user_id          uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  name                   text,                              -- the account / parent company name (e.g. "SARUBA")
   status                 text NOT NULL DEFAULT 'active'
                          CHECK (status IN ('active','past_due','canceled','trial')),
   seat_count             int  NOT NULL DEFAULT 3,        -- included users in the base plan
@@ -634,6 +635,85 @@ END;
 $$;
 
 GRANT EXECUTE ON FUNCTION public.bootstrap_organisation(text) TO authenticated;
+
+
+-- =============================================================
+-- 11. ACCOUNT NAME helpers (v0.5.83)
+-- =============================================================
+-- Companion to bootstrap_organisation that ALSO sets the account name on
+-- first-time setup. Use this from setup.html for new users.
+
+CREATE OR REPLACE FUNCTION public.bootstrap_account_and_business(
+  account_name  text,
+  business_name text
+)
+RETURNS uuid
+LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  uid                  uuid := auth.uid();
+  v_subscription_id    uuid;
+  v_organisation_id    uuid;
+BEGIN
+  IF uid IS NULL THEN
+    RAISE EXCEPTION 'Not authenticated';
+  END IF;
+  IF business_name IS NULL OR length(trim(business_name)) = 0 THEN
+    RAISE EXCEPTION 'Business name is required';
+  END IF;
+
+  SELECT id INTO v_subscription_id
+  FROM public.subscriptions
+  WHERE owner_user_id = uid
+  LIMIT 1;
+
+  IF v_subscription_id IS NULL THEN
+    INSERT INTO public.subscriptions (owner_user_id, name)
+    VALUES (uid, NULLIF(trim(coalesce(account_name, '')), ''))
+    RETURNING id INTO v_subscription_id;
+  ELSIF account_name IS NOT NULL AND length(trim(account_name)) > 0 THEN
+    UPDATE public.subscriptions
+    SET name = trim(account_name), updated_at = now()
+    WHERE id = v_subscription_id;
+  END IF;
+
+  INSERT INTO public.organisations (subscription_id, name)
+  VALUES (v_subscription_id, trim(business_name))
+  RETURNING id INTO v_organisation_id;
+
+  INSERT INTO public.team_members (
+    organisation_id, user_id, role, status, joined_at
+  ) VALUES (
+    v_organisation_id, uid, 'admin', 'active', now()
+  );
+
+  RETURN v_organisation_id;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.bootstrap_account_and_business(text, text) TO authenticated;
+
+-- Rename the calling user's account (subscription) at any time
+CREATE OR REPLACE FUNCTION public.update_account_name(new_name text)
+RETURNS void
+LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  uid uuid := auth.uid();
+BEGIN
+  IF uid IS NULL THEN
+    RAISE EXCEPTION 'Not authenticated';
+  END IF;
+  UPDATE public.subscriptions
+  SET name = NULLIF(trim(coalesce(new_name, '')), ''),
+      updated_at = now()
+  WHERE owner_user_id = uid;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.update_account_name(text) TO authenticated;
 
 
 -- =============================================================
