@@ -4,6 +4,23 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.89
+- **SARUBA dashboard restructured from a per-business snapshot view into a topic launcher.** `my-businesses.html` now leads with **14 topic cards** organised into 4 themed sections — Strategy / Operations / Planning / Learning & Account — each card a future cross-business view (e.g. "see Core Values for every business side-by-side"). This is the structural step; the actual cross-business pages get built one-by-one in v0.5.90+.
+- **Topic card sections** (14 cards total):
+  - **📋 Strategy** (6): One-Page Plans, Core Values, Core Focus, Targets, Marketing, Leadership
+  - **🎯 Operations** (4): Quarter Goals, Weekly Numbers, Issues, Meetings
+  - **🗓️ Planning** (3): Annual Sessions, Quarterly Sessions, Team Check-ins
+  - **📚 Learning & Account** (3): Learning Vault, Businesses, Team
+- **Topic card states**:
+  - **`.coming-soon`** — opacity 0.55, `pointer-events: none`, grey "Coming soon" pill. All 13 cross-business cards.
+  - **`.available`** — full opacity, hover lift, teal "Open" pill. **Learning Vault → `learning-vault.html`** + Businesses / Team → scroll-anchor to existing sections on the same page (`#businesses`, `#team`).
+- **Destination URLs locked in** for the future cards so v0.5.90+ only has to ship the pages: `account-plans.html`, `account-values.html`, `account-focus.html`, `account-targets.html`, `account-marketing.html`, `account-leadership.html`, `account-goals.html`, `account-numbers.html`, `account-issues.html`, `account-meetings.html`, `account-annual.html`, `account-quarterly.html`, `account-checkins.html`.
+- **Account-level scoping cleaned up** — `my-businesses.html` no longer has the business-tools bottom-nav (Home / Planning / Strategy / Operations / Learn) or the "← Home" back link in the site-header. The account dashboard is the top of the hierarchy; there's nothing above. Header is now just **"Account"** + Sign Out.
+- **Business dashboard (`index.html`) gains a "← Account" back link** so users can navigate upward from their business view to SARUBA. Other per-business pages (planning.html, strategy.html, operations.html, all worksheets, all tools) keep their existing "← Home" back link — those still point to the business dashboard, which is correct.
+- **Existing snapshot cards + team section retained** below the topic launcher (now anchored at `#businesses` and `#team`) so the v0.5.88 snapshot view is still one scroll away. Per-business cards keep their snapshot grid, ⋮ menu (Rename / Delete), and "Open ›" button — full v0.5.88 functionality intact, just no longer the centrepiece.
+- **CSS additions**: `.topic-section`, `.topic-section-title`, `.topic-grid`, `.topic-card`, `.topic-card.coming-soon`, `.topic-card.available`, `.coming-soon-pill`, `.available-pill`. Responsive grid: 3 cols desktop, 2 cols tablet, 1 col phone.
+- No SQL changes. No data layer changes.
+
 ## v0.5.88
 - **SARUBA account dashboard rebuilt as an owner's snapshot view.** `my-businesses.html` used to be a business-list switcher (name + role pill + Open ›). It's now a real overview surface so the account holder sees "what's going on across my businesses" without drilling in.
 - **Stats row expanded from 2 to 4 tiles**: Businesses / Users / **Open Issues** (NEW — account-level sum of `issues.status='open'` across every org the caller is in) / **Goals On Track** (NEW — `<onTrack>/<total>` rocks for the current quarter, summed across all orgs). Tiles wrap to a 2×2 grid under 480px.

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Account Dashboard | Your Business Coach</title>
+  <title>Account | Your Business Coach</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#003366">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="css/style.css"/>
   <style>
     body { opacity: 0; transition: opacity 0.2s ease; background: #f4f6f9; }
-    .container { padding-bottom: 100px; }
+    .container { padding-bottom: 40px; }
 
     /* ── Section A: Account header ── */
     .acct-header { padding: 20px 16px 4px; }
@@ -255,23 +255,68 @@
       margin-bottom: 12px;
     }
 
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: white; border-top: 1px solid #e5e7eb;
-      display: flex; z-index: 100;
-      padding-bottom: env(safe-area-inset-bottom);
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+    /* ── Topic launcher ── */
+    .topic-section { padding: 0 16px; margin-top: 26px; }
+    .topic-section-title {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.76rem; font-weight: 800; color: var(--primary);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      padding: 0 0 12px;
     }
-    .bottom-nav-item {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 8px 0 6px; text-decoration: none;
-      color: #aaa; font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.5px;
-      gap: 3px; transition: color 0.15s;
+    .topic-section-title .topic-icon { font-size: 1.05rem; }
+    .topic-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
     }
-    .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
-    .bottom-nav-icon { font-size: 20px; line-height: 1; }
+    @media (max-width: 768px) {
+      .topic-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .topic-grid { grid-template-columns: 1fr; }
+    }
+    .topic-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 14px 12px;
+      text-decoration: none;
+      color: var(--text);
+      display: flex; flex-direction: column; gap: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: border-color .15s, box-shadow .15s, transform .15s;
+      position: relative;
+      min-height: 78px;
+    }
+    .topic-card .tc-icon {
+      font-size: 1.25rem; line-height: 1;
+    }
+    .topic-card .tc-name {
+      font-size: 0.92rem; font-weight: 800; color: var(--primary);
+      line-height: 1.25;
+    }
+    .topic-card.available:hover {
+      border-color: var(--accent);
+      box-shadow: 0 3px 12px rgba(13,148,136,0.12);
+      transform: translateY(-1px);
+      text-decoration: none; color: var(--text);
+    }
+    .topic-card.coming-soon {
+      opacity: 0.55;
+      pointer-events: none;
+      cursor: default;
+    }
+    .coming-soon-pill, .available-pill {
+      position: absolute; top: 10px; right: 10px;
+      font-size: 0.58rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.5px; padding: 3px 7px; border-radius: 20px;
+      line-height: 1;
+    }
+    .coming-soon-pill {
+      background: #f3f4f6; color: #6B7280;
+    }
+    .available-pill {
+      background: rgba(13,148,136,0.12); color: var(--accent);
+    }
   </style>
   <script src="js/active-org.js" defer></script>
   <script src="js/active-session.js" defer></script>
@@ -280,8 +325,7 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="header-left">
-        <a href="index.html" class="header-back">&#x2190; Home</a>
-        <span class="header-title">Account Dashboard</span>
+        <span class="header-title">Account</span>
       </div>
       <button class="sign-out-btn" id="signOutBtn">Sign Out</button>
     </div>
@@ -292,7 +336,7 @@
     <!-- Section A: Account header -->
     <div class="acct-header">
       <h1 class="acct-title" id="accountName">&#x1F3E2; Your account</h1>
-      <p class="acct-sub">Your account overview &mdash; what&rsquo;s happening across your businesses.</p>
+      <p class="acct-sub">Your account &mdash; switch between businesses, see across them, manage your team.</p>
       <div class="acct-actions">
         <a href="#" id="renameAccountLink" class="acct-link" style="display:none;">Rename account &rsaquo;</a>
       </div>
@@ -318,8 +362,113 @@
       </div>
     </div>
 
-    <!-- Section C: Businesses snapshot -->
-    <div class="section">
+    <!-- Section C: Topic launcher — across your businesses -->
+    <div class="topic-section">
+      <div class="topic-section-title"><span class="topic-icon">&#x1F4CB;</span> Strategy</div>
+      <div class="topic-grid">
+        <a href="account-plans.html" class="topic-card coming-soon">
+          <span class="tc-icon">&#x1F4C4;</span>
+          <span class="tc-name">One-Page Plans</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+        <a href="account-values.html" class="topic-card coming-soon">
+          <span class="tc-icon">&#x2764;&#xFE0F;</span>
+          <span class="tc-name">Core Values</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+        <a href="account-focus.html" class="topic-card coming-soon">
+          <span class="tc-icon">&#x1F9ED;</span>
+          <span class="tc-name">Core Focus</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+        <a href="account-targets.html" class="topic-card coming-soon">
+          <span class="tc-icon">&#x1F3AF;</span>
+          <span class="tc-name">Targets</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+        <a href="account-marketing.html" class="topic-card coming-soon">
+          <span class="tc-icon">&#x1F4E3;</span>
+          <span class="tc-name">Marketing</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+        <a href="account-leadership.html" class="topic-card coming-soon">
+          <span class="tc-icon">&#x1F465;</span>
+          <span class="tc-name">Leadership</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="topic-section">
+      <div class="topic-section-title"><span class="topic-icon">&#x1F3AF;</span> Operations</div>
+      <div class="topic-grid">
+        <a href="account-goals.html" class="topic-card coming-soon">
+          <span class="tc-icon">&#x1F3C1;</span>
+          <span class="tc-name">Quarter Goals</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+        <a href="account-numbers.html" class="topic-card coming-soon">
+          <span class="tc-icon">&#x1F4CA;</span>
+          <span class="tc-name">Weekly Numbers</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+        <a href="account-issues.html" class="topic-card coming-soon">
+          <span class="tc-icon">&#x26A0;&#xFE0F;</span>
+          <span class="tc-name">Issues</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+        <a href="account-meetings.html" class="topic-card coming-soon">
+          <span class="tc-icon">&#x1F5D3;&#xFE0F;</span>
+          <span class="tc-name">Meetings</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="topic-section">
+      <div class="topic-section-title"><span class="topic-icon">&#x1F5D3;&#xFE0F;</span> Planning</div>
+      <div class="topic-grid">
+        <a href="account-annual.html" class="topic-card coming-soon">
+          <span class="tc-icon">&#x1F4C5;</span>
+          <span class="tc-name">Annual Sessions</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+        <a href="account-quarterly.html" class="topic-card coming-soon">
+          <span class="tc-icon">&#x1F5D3;&#xFE0F;</span>
+          <span class="tc-name">Quarterly Sessions</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+        <a href="account-checkins.html" class="topic-card coming-soon">
+          <span class="tc-icon">&#x2705;</span>
+          <span class="tc-name">Team Check-ins</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="topic-section">
+      <div class="topic-section-title"><span class="topic-icon">&#x1F4DA;</span> Learning &amp; Account</div>
+      <div class="topic-grid">
+        <a href="learning-vault.html" class="topic-card available">
+          <span class="tc-icon">&#x1F4DA;</span>
+          <span class="tc-name">Learning Vault</span>
+          <span class="available-pill">Open</span>
+        </a>
+        <a href="#businesses" class="topic-card coming-soon">
+          <span class="tc-icon">&#x1F4BC;</span>
+          <span class="tc-name">Businesses</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+        <a href="#team" class="topic-card coming-soon">
+          <span class="tc-icon">&#x1F465;</span>
+          <span class="tc-name">Team</span>
+          <span class="coming-soon-pill">Coming soon</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Section D: Businesses snapshot (drill-in) -->
+    <div class="section" id="businesses">
       <div class="section-head">
         <span class="section-title">&#x1F4BC; Your Businesses</span>
         <button id="addBusinessHeaderBtn" class="section-action">+ New Business</button>
@@ -328,8 +477,8 @@
       <button id="addBusinessBtn" class="add-btn">+ Create New Business</button>
     </div>
 
-    <!-- Section D: Users (Team) -->
-    <div class="section">
+    <!-- Section E: Users (Team) -->
+    <div class="section" id="team">
       <div class="section-head">
         <span class="section-title">&#x1F465; Your Team <span class="section-meta" id="userSectionMeta"></span></span>
         <button id="inviteUserHeaderBtn" class="section-action">+ Invite User</button>
@@ -338,7 +487,7 @@
       <button id="inviteUserBtn" class="add-btn add-btn-secondary">+ Invite User</button>
     </div>
 
-    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.88</p>
+    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.89</p>
 
   </div>
 
@@ -476,14 +625,6 @@
       </div>
     </div>
   </div>
-
-  <nav class="bottom-nav">
-    <a class="bottom-nav-item active" href="index.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
-    <a class="bottom-nav-item" href="planning.html"><span class="bottom-nav-icon">&#x1F5FA;&#xFE0F;</span><span>Planning</span></a>
-    <a class="bottom-nav-item" href="strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
-    <a class="bottom-nav-item" href="operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
-    <a class="bottom-nav-item" href="learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
-  </nav>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
