@@ -4,6 +4,18 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.81
+- **New page `my-businesses.html`** — lists every organisation the user is an active member of with role pill, highlights the current active one, and has a "+ Create New Business" modal that calls the existing `bootstrap_organisation` RPC (handles both first business and additional). Tapping a different business sets it active and redirects back to the dashboard.
+- **New helper `js/active-org.js`** — tiny module exposing `window.activeOrg.get() / set(orgId) / clear()` backed by `localStorage.coach4u_active_org_id`. Loaded via `<script defer>` on every page that needs to know which business is currently selected.
+- **`index.html` (dashboard) extended**:
+  - Resolves the user's team memberships on load.
+  - Picks the active org (stored selection if still valid, else first).
+  - Shows the business name at the top of the dashboard (replaces the static "Business Dashboard" heading).
+  - Shows a "Switch business ›" link below the date when the user belongs to more than one business — link goes to `my-businesses.html`.
+- **`setup.html`** sets the newly-created org as active immediately after creation, so the user lands on the dashboard with the correct business pre-selected.
+- `sw.js` precache adds `js/active-org.js`.
+- **Data layer still on localStorage** — every tool reads/writes localStorage as before. v0.5.83 will wire each tool's `api()` to read Supabase scoped by active org.
+
 ## v0.5.80
 - **First-business setup flow.** New `setup.html` page asks a brand-new user for their business name. On submit it calls a single Supabase RPC (`bootstrap_organisation`) that creates the user's `subscriptions` row + first `organisations` row + admin `team_members` row in one transaction.
 - **`bootstrap_organisation(business_name text)` function** added to `supabase/schema.sql`. Marked SECURITY DEFINER so it can write the bootstrap rows that the user's own RLS policies would block (you can't INSERT a team_member admin row when you have no admin team_member row yet). Also handles the case where a user already has a subscription and just wants to add another business — same function, different code path. Granted to the `authenticated` role only.

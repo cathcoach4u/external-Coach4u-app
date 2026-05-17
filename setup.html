@@ -12,6 +12,7 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="apple-touch-icon" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/active-org.js" defer></script>
 </head>
 <body class="login-page">
 
@@ -85,7 +86,7 @@
       msgEl.style.display = 'none';
       msgEl.className = 'login-message';
 
-      const { error } = await supabase.rpc('bootstrap_organisation', { business_name: name });
+      const { data: newOrgId, error } = await supabase.rpc('bootstrap_organisation', { business_name: name });
 
       if (error) {
         msgEl.textContent = error.message || 'Setup failed. Please try again.';
@@ -96,6 +97,7 @@
         return;
       }
 
+      if (newOrgId && window.activeOrg) window.activeOrg.set(newOrgId);
       window.location.href = 'index.html';
     });
   </script>

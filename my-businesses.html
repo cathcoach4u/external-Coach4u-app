@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Businesses | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#003366">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Your Business Coach">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    body { opacity: 0; transition: opacity 0.2s ease; }
+    .container { padding-bottom: 100px; }
+    .ws-header { padding: 20px 16px 0; }
+    .ws-title { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin: 0 0 4px; }
+    .ws-sub { font-size: 0.85rem; color: #666; margin: 0 0 20px; line-height: 1.5; }
+    .biz-section { padding: 0 16px; }
+    .biz-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .biz-card {
+      background: white; border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 16px 16px; cursor: pointer; transition: box-shadow .15s, border-color .15s;
+      text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;
+    }
+    .biz-card:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(13,148,136,0.1); text-decoration: none; }
+    .biz-card.active { border-color: var(--accent); background: #f0fdfa; }
+    .biz-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: rgba(13,148,136,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .biz-body { flex: 1; min-width: 0; }
+    .biz-name { font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 3px; }
+    .biz-meta { font-size: 0.78rem; color: #888; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .role-pill {
+      display: inline-block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.4px; padding: 2px 8px; border-radius: 20px;
+    }
+    .role-admin  { background: #dbeafe; color: #1e40af; }
+    .role-member { background: #f3f4f6; color: #6B7280; }
+    .active-pill { background: rgba(13,148,136,0.15); color: #0D9488; }
+    .biz-arrow { font-size: 18px; color: var(--accent); flex-shrink: 0; }
+    .empty-state {
+      text-align: center; padding: 30px 16px; color: #888;
+      background: #f8fafc; border-radius: 12px; border: 1.5px dashed #d4d4d4;
+      font-size: 0.9rem;
+    }
+    .add-btn {
+      display: block; width: 100%; padding: 13px;
+      background: var(--accent); color: white;
+      border: none; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 700;
+      cursor: pointer; text-align: center; text-decoration: none;
+      transition: background .15s;
+    }
+    .add-btn:hover { background: var(--accent-dark); color: white; text-decoration: none; }
+
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+    .modal-overlay.hidden { display: none; }
+    .modal { background: white; border-radius: 16px; padding: 28px; max-width: 440px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .modal-title { font-weight: 700; color: var(--primary); font-size: 1.05rem; }
+    .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #888; line-height: 1; padding: 0 4px; }
+    .modal-field { margin-bottom: 16px; }
+    .modal-label { font-weight: 600; color: var(--primary); font-size: 0.88rem; margin-bottom: 6px; display: block; }
+    .modal-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 0.95rem; color: var(--text); font-family: inherit; background: white; box-sizing: border-box; }
+    .modal-input:focus { outline: none; border-color: var(--accent); }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+    .modal-err { font-size: 0.83rem; color: #b91c1c; margin-top: 6px; min-height: 1em; }
+    .btn-primary { padding: 9px 18px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-secondary { padding: 9px 18px; background: white; color: var(--primary); border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white; border-top: 1px solid #e5e7eb;
+      display: flex; z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+    }
+    .bottom-nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 8px 0 6px; text-decoration: none;
+      color: #aaa; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      gap: 3px; transition: color 0.15s;
+    }
+    .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
+    .bottom-nav-icon { font-size: 20px; line-height: 1; }
+  </style>
+  <script src="js/active-org.js" defer></script>
+  <script src="js/active-session.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="index.html" class="header-back">&#x2190; Home</a>
+        <span class="header-title">My Businesses</span>
+      </div>
+      <button class="sign-out-btn" id="signOutBtn">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="ws-header">
+      <h1 class="ws-title">&#x1F3E2; My Businesses</h1>
+      <p class="ws-sub">Tap a business to switch into it. Add another business with the button below.</p>
+    </div>
+
+    <div class="biz-section">
+      <div id="bizList" class="biz-list"></div>
+      <button id="addBusinessBtn" class="add-btn">+ Create New Business</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="addModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Create new business</span>
+        <button class="modal-close" id="addClose">&times;</button>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Business name *</label>
+        <input type="text" class="modal-input" id="addName" placeholder="e.g. IAS Entity 2" maxlength="80"/>
+        <div class="modal-err" id="addErr"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="addCancel">Cancel</button>
+        <button class="btn-primary" id="addSave">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item" href="index.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
+    <a class="bottom-nav-item" href="planning.html"><span class="bottom-nav-icon">&#x1F5FA;&#xFE0F;</span><span>Planning</span></a>
+    <a class="bottom-nav-item" href="strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
+    <a class="bottom-nav-item" href="operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
+    <a class="bottom-nav-item" href="learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
+  </nav>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const SUPABASE_URL      = 'https://eekefsuaefgpqmjdyniy.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y';
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) { window.location.href = 'login.html'; }
+
+    document.getElementById('signOutBtn').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      window.location.href = 'login.html';
+    });
+
+    function escHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    async function loadOrgs() {
+      // Query active team_members + their org via inner join
+      const { data, error } = await sb
+        .from('team_members')
+        .select('organisation_id, role, status, organisations!inner(id, name)')
+        .eq('user_id', user.id)
+        .eq('status', 'active');
+
+      if (error) {
+        document.getElementById('bizList').innerHTML =
+          '<div class="empty-state">Could not load businesses: ' + escHtml(error.message) + '</div>';
+        return [];
+      }
+      return data || [];
+    }
+
+    function render(orgs) {
+      const wrap = document.getElementById('bizList');
+      const activeId = window.activeOrg.get();
+      if (!orgs.length) {
+        wrap.innerHTML = '<div class="empty-state">You haven’t created a business yet.</div>';
+        return;
+      }
+      wrap.innerHTML = orgs.map(o => {
+        const orgId = o.organisations.id;
+        const name  = o.organisations.name;
+        const role  = o.role;
+        const isActive = orgId === activeId;
+        return `
+          <a href="#" class="biz-card ${isActive ? 'active' : ''}" data-org-id="${orgId}">
+            <div class="biz-icon">&#x1F4BC;</div>
+            <div class="biz-body">
+              <div class="biz-name">${escHtml(name)}</div>
+              <div class="biz-meta">
+                <span class="role-pill role-${role}">${role}</span>
+                ${isActive ? '<span class="role-pill active-pill">Active</span>' : ''}
+              </div>
+            </div>
+            <span class="biz-arrow">&#x203A;</span>
+          </a>`;
+      }).join('');
+
+      wrap.querySelectorAll('.biz-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          e.preventDefault();
+          const orgId = card.dataset.orgId;
+          window.activeOrg.set(orgId);
+          window.location.href = 'index.html';
+        });
+      });
+    }
+
+    let orgs = await loadOrgs();
+    // Ensure activeOrg is set if there's at least one org
+    if (orgs.length && !window.activeOrg.get()) {
+      window.activeOrg.set(orgs[0].organisations.id);
+    }
+    render(orgs);
+    document.body.style.opacity = '1';
+
+    // Add new business modal
+    const modal       = document.getElementById('addModal');
+    const addBtn      = document.getElementById('addBusinessBtn');
+    const addClose    = document.getElementById('addClose');
+    const addCancel   = document.getElementById('addCancel');
+    const addSave     = document.getElementById('addSave');
+    const addName     = document.getElementById('addName');
+    const addErr      = document.getElementById('addErr');
+
+    function openModal() {
+      addErr.textContent = '';
+      addName.value = '';
+      modal.classList.remove('hidden');
+      setTimeout(() => addName.focus(), 50);
+    }
+    function closeModal() {
+      modal.classList.add('hidden');
+    }
+
+    addBtn.addEventListener('click', openModal);
+    addClose.addEventListener('click', closeModal);
+    addCancel.addEventListener('click', closeModal);
+
+    addSave.addEventListener('click', async () => {
+      const name = addName.value.trim();
+      if (!name) { addErr.textContent = 'Please enter a business name.'; return; }
+      addSave.disabled = true;
+      addSave.textContent = 'Creating…';
+      addErr.textContent = '';
+
+      const { data: newOrgId, error } = await sb.rpc('bootstrap_organisation', { business_name: name });
+
+      if (error) {
+        addErr.textContent = error.message || 'Could not create business.';
+        addSave.disabled = false;
+        addSave.textContent = 'Create';
+        return;
+      }
+
+      // Set as active + go to dashboard
+      window.activeOrg.set(newOrgId);
+      window.location.href = 'index.html';
+    });
+  </script>
+
+</body>
+</html>
