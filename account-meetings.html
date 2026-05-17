@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meetings &mdash; All Businesses | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#003366">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Your Business Coach">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body { opacity: 0; transition: opacity 0.2s ease; background: #e8edf2; min-height: 100vh; padding-bottom: 32px; }
+    .screen-toolbar { background: white; border-bottom: 1px solid #e5e7eb; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; position: sticky; top: 0; z-index: 50; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .toolbar-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .toolbar-back { font-size: 0.82rem; font-weight: 700; color: #0D9488; text-decoration: none; white-space: nowrap; }
+    .toolbar-back:hover { text-decoration: underline; }
+    .toolbar-title { font-size: 0.85rem; font-weight: 700; color: #003366; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .toolbar-hint { font-size: 0.72rem; color: #999; }
+    @media (max-width: 600px) { .toolbar-hint { display: none; } }
+    .print-btn { display: flex; align-items: center; gap: 5px; padding: 8px 14px; background: #0D9488; color: white; border: none; border-radius: 8px; font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: background 0.15s; }
+    .print-btn:hover { background: #0F766E; }
+    .page-intro { max-width: 1100px; margin: 20px auto 12px; padding: 0 20px; }
+    .page-intro h1 { font-size: 1.3rem; font-weight: 800; color: #003366; margin: 0 0 4px; }
+    .page-intro p { font-size: 0.85rem; color: #555; margin: 0; line-height: 1.45; }
+    .data-banner { max-width: 1100px; margin: 14px auto 0; padding: 10px 14px; background: #fef3c7; border: 1px solid #fde68a; border-left: 4px solid #d97706; border-radius: 8px; font-size: 0.78rem; color: #78350f; line-height: 1.5; }
+    .data-banner strong { color: #78350f; }
+    .mobile-hint { display: none; max-width: 1100px; margin: 12px auto 0; background: #f0fdfa; border: 1px solid #d1fae5; border-radius: 8px; padding: 8px 14px; font-size: 0.75rem; color: #065f46; }
+    @media (max-width: 900px) { .mobile-hint { display: block; } }
+    .plans-wrap { max-width: 1100px; margin: 16px auto 0; padding: 0 20px; }
+    .carousel-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: white; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .carousel-btn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: #003366; color: white; border: none; border-radius: 8px; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: background 0.15s; min-width: 110px; justify-content: center; }
+    .carousel-btn:hover:not(:disabled) { background: #002244; }
+    .carousel-btn .biz-name-hint { font-weight: 500; opacity: 0.85; font-size: 0.72rem; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    @media (max-width: 700px) { .carousel-btn { min-width: 0; padding: 8px 10px; } .carousel-btn .biz-name-hint { display: none; } }
+    .carousel-center { text-align: center; flex: 1; min-width: 0; }
+    .carousel-business-name { font-size: 1rem; font-weight: 800; color: #003366; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .carousel-counter { font-size: 0.72rem; color: #888; letter-spacing: 0.5px; margin-top: 2px; }
+    .carousel-dots { display: flex; gap: 6px; justify-content: center; margin-top: 6px; flex-wrap: wrap; }
+    .carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: #d1d5db; cursor: pointer; transition: background 0.15s, transform 0.15s; border: none; padding: 0; }
+    .carousel-dot:hover { background: #9ca3af; }
+    .carousel-dot.active { background: #0D9488; transform: scale(1.3); }
+
+    .biz-card { background: white; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.10); overflow: hidden; font-family: 'Aptos', 'Segoe UI', system-ui, sans-serif; }
+    .biz-header { background: #003366; color: white; padding: 14px 22px; display: flex; align-items: center; justify-content: space-between; }
+    .biz-name { font-size: 1.05rem; font-weight: 800; letter-spacing: 0.3px; }
+    .biz-section-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; }
+    .biz-body { padding: 24px 28px 28px; }
+
+    .meeting-list { display: flex; flex-direction: column; gap: 12px; }
+    .meeting-row { padding: 14px 16px; background: #f8fafc; border-left: 3px solid #0D9488; border-radius: 8px; }
+    .meeting-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 6px; }
+    .meeting-date { font-size: 0.95rem; font-weight: 800; color: #003366; }
+    .meeting-quarter { font-size: 0.82rem; font-weight: 700; color: #0D9488; }
+    .meeting-rating { font-size: 0.78rem; color: #64748b; }
+    .meeting-notes { font-size: 0.82rem; color: #4b5563; line-height: 1.45; white-space: pre-wrap; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+    .status-pill { display: inline-block; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; padding: 3px 8px; border-radius: 10px; }
+    .status-pill.completed { background: rgba(34,197,94,0.12); color: #15803d; }
+    .status-pill.in_progress { background: rgba(13,148,136,0.12); color: #0F766E; }
+    .status-pill.scheduled { background: #e5e7eb; color: #475569; }
+    .empty-state { color: #94a3b8; font-style: italic; font-size: 0.95rem; text-align: center; padding: 30px 12px; }
+
+    .state-msg { max-width: 1100px; margin: 24px auto; padding: 24px; text-align: center; background: white; border-radius: 10px; border: 1px solid #e5e7eb; color: #666; font-size: 0.9rem; }
+    .state-msg.error { border-left: 4px solid #dc2626; color: #7f1d1d; background: #fef2f2; }
+
+    @media print {
+      body { opacity: 1 !important; background: white !important; padding: 0 !important; }
+      .screen-toolbar, .mobile-hint, .data-banner, .carousel-nav, .page-intro { display: none !important; }
+      .plans-wrap { padding: 0; margin: 0; max-width: none; }
+      .biz-card { box-shadow: none !important; border-radius: 0 !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="screen-toolbar">
+    <div class="toolbar-left">
+      <a href="my-businesses.html" class="toolbar-back">&#x2190; Account</a>
+      <span class="toolbar-title">Meetings &mdash; All Businesses</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+      <span class="toolbar-hint">Arrow through your businesses &middot; Print current view</span>
+      <button class="print-btn" onclick="window.print()">&#x1F5A8;&nbsp; Print / PDF</button>
+    </div>
+  </div>
+
+  <div class="mobile-hint">&#x21C4; Use the arrows or swipe to switch between your businesses</div>
+
+  <div class="page-intro">
+    <h1>&#x1F4C5; Meetings &mdash; Across All Businesses</h1>
+    <p>Recent meetings per business &mdash; status, ratings and a quick look at notes.</p>
+  </div>
+
+  <div id="dataBanner" class="data-banner" style="display:none;">
+    <strong>Heads up:</strong> Meetings currently save locally on each business. Once the data layer migration lands (v0.5.97+), edits sync to Supabase and this page populates automatically.
+  </div>
+
+  <div id="plansWrap" class="plans-wrap">
+    <div class="state-msg">Loading your businesses&hellip;</div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const sb = createClient(
+      'https://eekefsuaefgpqmjdyniy.supabase.co',
+      'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+    );
+
+    function escHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    function formatDate(d) {
+      if (!d) return '—';
+      try {
+        const date = new Date(d);
+        if (Number.isNaN(date.getTime())) return escHtml(d);
+        return date.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+      } catch { return escHtml(d); }
+    }
+
+    function statusLabel(s) {
+      if (s === 'completed') return 'Completed';
+      if (s === 'in_progress') return 'In progress';
+      if (s === 'scheduled') return 'Scheduled';
+      return s || '—';
+    }
+
+    function meetingList(meetings) {
+      if (!meetings || !meetings.length) return '<div class="empty-state">No meetings recorded yet for this business.</div>';
+      return '<div class="meeting-list">' + meetings.map(m => {
+        const statusCls = (m.status || 'scheduled').replace(/[^a-z_]/gi, '');
+        const ratingHtml = m.status === 'completed' && m.rating != null && m.rating !== ''
+          ? `<span class="meeting-rating">${escHtml(String(m.rating))}/10</span>` : '';
+        const notesHtml = (m.notes || '').toString().trim()
+          ? `<div class="meeting-notes">${escHtml(m.notes)}</div>` : '';
+        return `
+          <div class="meeting-row">
+            <div class="meeting-head">
+              <span class="meeting-date">${escHtml(formatDate(m.meeting_date))}</span>
+              ${m.quarter ? `<span class="meeting-quarter">${escHtml(m.quarter)}</span>` : ''}
+              <span class="status-pill ${statusCls}">${escHtml(statusLabel(m.status))}</span>
+              ${ratingHtml}
+            </div>
+            ${notesHtml}
+          </div>
+        `;
+      }).join('') + '</div>';
+    }
+
+    function renderCard(org, data) {
+      return `
+        <div class="biz-card">
+          <div class="biz-header">
+            <div class="biz-name">${escHtml(org.name)}</div>
+            <div class="biz-section-title">Meetings</div>
+          </div>
+          <div class="biz-body">${meetingList(data.meetings || [])}</div>
+        </div>
+      `;
+    }
+
+    async function init() {
+      const { data: { user }, error: authErr } = await sb.auth.getUser();
+      if (!user || authErr) { window.location.href = 'login.html'; return; }
+      const { data: profile } = await sb.from('users').select('membership_status').eq('id', user.id).single();
+      if (!profile || profile.membership_status !== 'active') { window.location.href = 'inactive.html'; return; }
+      document.body.style.opacity = '1';
+
+      const { data: mems, error: memErr } = await sb
+        .from('team_members')
+        .select('organisation_id, organisations!inner(id, name)')
+        .eq('user_id', user.id).eq('status', 'active');
+
+      const wrap = document.getElementById('plansWrap');
+      if (memErr) { wrap.innerHTML = `<div class="state-msg error">Could not load businesses: ${escHtml(memErr.message)}</div>`; return; }
+      if (!mems || !mems.length) { wrap.innerHTML = `<div class="state-msg">You don&rsquo;t have any businesses yet. <a href="setup.html">Create your first business</a>.</div>`; return; }
+
+      const orgs = mems.map(m => ({ id: m.organisations.id, name: m.organisations.name }))
+        .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      const orgIds = orgs.map(o => o.id);
+
+      const { data: meetingsData } = await sb.from('meetings').select('*')
+        .in('organisation_id', orgIds).order('meeting_date', { ascending: false });
+
+      // Bucket and keep latest 10 per org
+      const byOrg = new Map();
+      orgs.forEach(o => byOrg.set(o.id, { meetings: [] }));
+      (meetingsData || []).forEach(r => {
+        const e = byOrg.get(r.organisation_id);
+        if (e && e.meetings.length < 10) e.meetings.push(r);
+      });
+
+      const anyData = orgs.some(o => ((byOrg.get(o.id) || {}).meetings || []).length > 0);
+      if (!anyData) document.getElementById('dataBanner').style.display = 'block';
+
+      let currentIdx = 0;
+      function renderCurrent() {
+        const o = orgs[currentIdx];
+        const total = orgs.length;
+        const prevIdx = (currentIdx - 1 + total) % total;
+        const nextIdx = (currentIdx + 1) % total;
+        const prevName = orgs[prevIdx].name;
+        const nextName = orgs[nextIdx].name;
+        const dots = orgs.map((biz, i) =>
+          `<button class="carousel-dot ${i === currentIdx ? 'active' : ''}" data-idx="${i}" aria-label="View ${escHtml(biz.name)}" title="${escHtml(biz.name)}"></button>`
+        ).join('');
+        const navHtml = total <= 1
+          ? `<div class="carousel-center"><div class="carousel-business-name">${escHtml(o.name)}</div><div class="carousel-counter">Your only business</div></div>`
+          : `
+            <button class="carousel-btn" id="prevBtn" title="${escHtml(prevName)}"><span>&#x2190;</span><span class="biz-name-hint">${escHtml(prevName)}</span></button>
+            <div class="carousel-center">
+              <div class="carousel-business-name">${escHtml(o.name)}</div>
+              <div class="carousel-counter">Business ${currentIdx + 1} of ${total}</div>
+              <div class="carousel-dots">${dots}</div>
+            </div>
+            <button class="carousel-btn" id="nextBtn" title="${escHtml(nextName)}"><span class="biz-name-hint">${escHtml(nextName)}</span><span>&#x2192;</span></button>
+          `;
+        wrap.innerHTML = `<div class="carousel-nav">${navHtml}</div>` + renderCard(o, byOrg.get(o.id));
+        const prev = document.getElementById('prevBtn');
+        const next = document.getElementById('nextBtn');
+        if (prev) prev.addEventListener('click', () => { currentIdx = prevIdx; renderCurrent(); });
+        if (next) next.addEventListener('click', () => { currentIdx = nextIdx; renderCurrent(); });
+        document.querySelectorAll('.carousel-dot').forEach(btn => {
+          btn.addEventListener('click', e => {
+            const i = parseInt(e.currentTarget.dataset.idx, 10);
+            if (!Number.isNaN(i) && i !== currentIdx) { currentIdx = i; renderCurrent(); }
+          });
+        });
+      }
+
+      document.addEventListener('keydown', e => {
+        if (orgs.length <= 1) return;
+        const tag = (e.target && e.target.tagName) || '';
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+        if (e.key === 'ArrowLeft') { currentIdx = (currentIdx - 1 + orgs.length) % orgs.length; renderCurrent(); }
+        else if (e.key === 'ArrowRight') { currentIdx = (currentIdx + 1) % orgs.length; renderCurrent(); }
+      });
+
+      renderCurrent();
+    }
+    init();
+  </script>
+</body>
+</html>

@@ -4,6 +4,29 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.96
+- **Built all 12 cross-business carousel leaf pages.** Every card on the 3 account-level hub pages (`account-strategy.html`, `account-planning.html`, `account-operations.html`) now opens to a real navigable page. Same carousel chrome as `account-plans.html`: sticky toolbar with "← Account" back-link + page title + Print/PDF button, page intro, optional yellow data-banner, prev/next buttons hinting the neighbour business name, centre showing current business name + "Business X of Y" + dot indicators, keyboard ArrowLeft / ArrowRight nav, print-current-view via `@media print` hiding everything except the active card. Each page is a leaf page (no bottom-nav), mirroring `one-page-plan.html` at the business level.
+- **Strategy ×5:**
+  - `account-values.html` — reads `core_values` (PK organisation_id, columns value_1..value_8); per-business card shows big teal pills for each non-empty value (up to 8) in a responsive grid; empty state "No core values recorded yet."
+  - `account-focus.html` — reads `core_focus`; two-column layout (Purpose / Niche) that stacks on narrow screens, each in a teal-bordered block with uppercase label.
+  - `account-targets.html` — reads `targets`; three sections — 10-Year Vision (text), 3-Year Picture (date/revenue/profit financial row + description), 1-Year Plan (date/revenue/profit row + numbered goals list).
+  - `account-marketing.html` — reads `marketing_strategy`; four sections — Target Market, What Makes Us Different (numbered list from `uniques`), Our Process, Our Guarantee.
+  - `account-leadership.html` — reads `leadership_team_members` (multi-row per org, ordered by `sort_order`, filtering out `placeholder = true`); list of name (navy bold) · role (teal bold) with responsibilities below.
+- **Planning ×3:**
+  - `account-annual.html` — reads `annual_sessions`; list ordered most-recent-first with date + year + status pill (green/amber/grey for completed/in_progress/scheduled) + "Areas completed: X of Y" computed from `areas_completed` jsonb (4 areas assumed).
+  - `account-quarterly.html` — same shape as annual but uses `target_quarter` instead of year and 3 areas assumed.
+  - `account-checkins.html` — reads `team_checkins`; 3-tile stat row (submissions count, overall avg score / 5, most recent submission date) + latest 3 contributors with their average scores. Defensive handling of empty `scores` arrays so a missing-data submission won't crash averaging.
+- **Operations ×4:**
+  - `account-numbers.html` — reads `scorecard_metrics` ordered by `sort_order`, then a single batched `scorecard_entries` query (`.in('metric_id', metricIds)`, descending by `week_date`) grouped client-side into the metricId → entries map. Per-business table: Metric · Owner | Goal | Most recent value | Last 4 weeks trend.
+  - `account-goals.html` — reads `rocks`, filters to current quarter (computed in JS as `Q{n} YYYY`). Top of card: current quarter label + "X on track of Y total" summary. Each row: description (with 🏢 prefix for `company_rock`) + owner + colored status pill (done=green / on_track=teal / at_risk=amber / off_track=red / not_started=grey).
+  - `account-meetings.html` — reads `meetings`, descending by `meeting_date`, capped at 10 per business. Each row: date + quarter + status pill + rating (only when status='completed' and rating set) + 1-line notes preview.
+  - `account-issues.html` — reads `issues` filtered to `status='open'`, descending by `created_at`. Top banner: "Open issues: X". Each row: description + owner + raised date. Empty state celebrates: "No open issues for this business. 🎉"
+- **Hub pages updated:** `account-strategy.html` (5 cards), `account-planning.html` (3 cards), and `account-operations.html` (4 cards) — all 12 previously coming-soon cards flipped to available. Pattern: removed `.coming-soon` modifier class and replaced `<span class="soon-pill">Coming soon</span>` with `<span class="act-arrow">›</span>`, matching the existing available-card style on the business-level hubs.
+- **Data layer reality:** most worksheet/operations pages still save to localStorage; the Supabase tables exist (per `supabase/schema.sql`) but most queries currently return zero rows. Every new page shows the same yellow data-layer-pending banner as `account-plans.html` when all businesses return empty, with the per-page worksheet name customised. The banner disappears as soon as any business has real Supabase data.
+- **Carousel edge cases:** zero businesses → "Create your first business" link to `setup.html`; one business → no prev/next buttons, just the single card; 2+ businesses → full carousel with dots + keyboard nav (arrow keys ignored when typing in inputs/textareas).
+
+---
+
 ## v0.5.95
 - **Removed the 4 hub cards from `my-businesses.html`.** They duplicated the bottom-nav added in v0.5.94 — same labels, same destinations, just bigger and higher up the page. With the bottom-nav doing the navigation, the dashboard is cleaner and the focus shifts back to what actually belongs on a dashboard: account info, stats, business snapshots, and team management.
 - Dashboard now renders: account header (SARUBA + Rename) → stats row (Businesses / Users / Open Issues / Goals On Track) → per-business snapshot grid → users / team section.
