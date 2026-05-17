@@ -118,14 +118,102 @@
     }
     @media (max-width: 900px) { .mobile-hint { display: block; } }
 
-    /* ===== Business plan cards (stack vertically) ===== */
+    /* ===== Business carousel (one plan at a time + arrows) ===== */
     .plans-wrap {
       max-width: 1100px;
       margin: 16px auto 0;
       padding: 0 20px;
+    }
+
+    .carousel-nav {
       display: flex;
-      flex-direction: column;
-      gap: 22px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .carousel-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: #003366;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+      min-width: 110px;
+      justify-content: center;
+    }
+    .carousel-btn:hover:not(:disabled) { background: #002244; }
+    .carousel-btn:disabled {
+      background: #e5e7eb;
+      color: #b0b0b0;
+      cursor: not-allowed;
+    }
+    .carousel-btn .biz-name-hint {
+      font-weight: 500;
+      opacity: 0.85;
+      font-size: 0.72rem;
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    @media (max-width: 700px) {
+      .carousel-btn { min-width: 0; padding: 8px 10px; }
+      .carousel-btn .biz-name-hint { display: none; }
+    }
+
+    .carousel-center {
+      text-align: center;
+      flex: 1;
+      min-width: 0;
+    }
+    .carousel-business-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #003366;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .carousel-counter {
+      font-size: 0.72rem;
+      color: #888;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .carousel-dots {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #d1d5db;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s;
+      border: none;
+      padding: 0;
+    }
+    .carousel-dot:hover { background: #9ca3af; }
+    .carousel-dot.active {
+      background: #0D9488;
+      transform: scale(1.3);
     }
 
     .doc-preview {
@@ -254,19 +342,15 @@
 
     @media print {
       body { opacity: 1 !important; background: white !important; padding: 0 !important; }
-      .screen-toolbar, .mobile-hint, .data-banner { display: none !important; }
-      .page-intro { padding: 0 0 8mm 0; margin: 0; max-width: none; }
-      .plans-wrap { padding: 0; margin: 0; max-width: none; gap: 0; }
+      .screen-toolbar, .mobile-hint, .data-banner, .carousel-nav, .page-intro { display: none !important; }
+      .plans-wrap { padding: 0; margin: 0; max-width: none; }
       .doc-preview { padding: 0 !important; overflow: visible !important; }
       .plan-page {
         min-width: 0 !important;
         width: 100% !important;
         box-shadow: none !important;
         border-radius: 0 !important;
-        page-break-after: always;
-        break-after: page;
       }
-      .plan-page:last-child { page-break-after: auto; }
       .doc-body { page-break-inside: avoid; break-inside: avoid; }
       .team-line { font-size: 0.66rem; line-height: 1.3; }
       .doc-header { padding: 9px 18px; }
@@ -288,18 +372,18 @@
       <span class="toolbar-title">One-Page Plans &mdash; All Businesses</span>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-      <span class="toolbar-hint">One page per business &middot; Print for landscape A4</span>
+      <span class="toolbar-hint">Arrow through your businesses &middot; Print current view</span>
       <button class="print-btn" onclick="window.print()">&#x1F5A8;&nbsp; Print / PDF</button>
     </div>
   </div>
 
   <div class="mobile-hint">
-    &#x21C4; Scroll right inside each plan to see all three columns &nbsp;&middot;&nbsp; Print for the best result
+    &#x21C4; Use the arrows to switch between your businesses &middot; Scroll right inside the plan for the full 3-column view
   </div>
 
   <div class="page-intro">
     <h1>&#x1F4CB; One-Page Plans &mdash; All Businesses</h1>
-    <p>See every business&rsquo; strategic one-pager side by side. Useful for cross-business meetings, board reviews, and spotting alignment gaps.</p>
+    <p>Step through every business&rsquo; strategic one-pager. Useful for cross-business meetings, board reviews, and spotting alignment gaps.</p>
   </div>
 
   <div id="dataBanner" class="data-banner" style="display:none;">
@@ -551,7 +635,7 @@
         if (!d) return false;
         if (d.coreValues) return true;
         if (d.coreFocus && (d.coreFocus.purpose || d.coreFocus.niche)) return true;
-        if (d.targets && Object.values(d.targets).some(v => v && String(v).trim() && !['organisation_id', 'updated_at'].includes(v))) return true;
+        if (d.targets && (d.targets.ten_year || d.targets.three_year_revenue || d.targets.one_year_revenue || d.targets.one_year_goals)) return true;
         if (d.marketing && (d.marketing.target_market || d.marketing.uniques || d.marketing.proven_process || d.marketing.guarantee)) return true;
         if (d.team && d.team.length) return true;
         return false;
@@ -560,8 +644,76 @@
         document.getElementById('dataBanner').style.display = 'block';
       }
 
-      // Render
-      wrap.innerHTML = orgs.map(o => renderPlanCard(o, byOrg.get(o.id))).join('');
+      /* ============== carousel state + render ============== */
+      let currentIdx = 0;
+
+      function renderCurrent() {
+        const o = orgs[currentIdx];
+        const total = orgs.length;
+        const prevIdx = (currentIdx - 1 + total) % total;
+        const nextIdx = (currentIdx + 1) % total;
+        const prevName = orgs[prevIdx].name;
+        const nextName = orgs[nextIdx].name;
+
+        const dots = orgs.map((biz, i) =>
+          `<button class="carousel-dot ${i === currentIdx ? 'active' : ''}" data-idx="${i}" aria-label="View ${escHtml(biz.name)}" title="${escHtml(biz.name)}"></button>`
+        ).join('');
+
+        const navHtml = total <= 1
+          ? `
+            <div class="carousel-center">
+              <div class="carousel-business-name">${escHtml(o.name)}</div>
+              <div class="carousel-counter">Your only business</div>
+            </div>
+          `
+          : `
+            <button class="carousel-btn" id="prevBtn" ${total <= 1 ? 'disabled' : ''} title="${escHtml(prevName)}">
+              <span>&#x2190;</span>
+              <span class="biz-name-hint">${escHtml(prevName)}</span>
+            </button>
+            <div class="carousel-center">
+              <div class="carousel-business-name">${escHtml(o.name)}</div>
+              <div class="carousel-counter">Business ${currentIdx + 1} of ${total}</div>
+              <div class="carousel-dots">${dots}</div>
+            </div>
+            <button class="carousel-btn" id="nextBtn" title="${escHtml(nextName)}">
+              <span class="biz-name-hint">${escHtml(nextName)}</span>
+              <span>&#x2192;</span>
+            </button>
+          `;
+
+        wrap.innerHTML =
+          `<div class="carousel-nav">${navHtml}</div>` +
+          renderPlanCard(o, byOrg.get(o.id));
+
+        // Wire interactions
+        const prev = document.getElementById('prevBtn');
+        const next = document.getElementById('nextBtn');
+        if (prev) prev.addEventListener('click', () => { currentIdx = prevIdx; renderCurrent(); });
+        if (next) next.addEventListener('click', () => { currentIdx = nextIdx; renderCurrent(); });
+        document.querySelectorAll('.carousel-dot').forEach(btn => {
+          btn.addEventListener('click', e => {
+            const i = parseInt(e.currentTarget.dataset.idx, 10);
+            if (!Number.isNaN(i) && i !== currentIdx) { currentIdx = i; renderCurrent(); }
+          });
+        });
+      }
+
+      // Keyboard arrow nav (don't hijack when typing in inputs)
+      document.addEventListener('keydown', e => {
+        if (orgs.length <= 1) return;
+        const tag = (e.target && e.target.tagName) || '';
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+        if (e.key === 'ArrowLeft') {
+          currentIdx = (currentIdx - 1 + orgs.length) % orgs.length;
+          renderCurrent();
+        } else if (e.key === 'ArrowRight') {
+          currentIdx = (currentIdx + 1) % orgs.length;
+          renderCurrent();
+        }
+      });
+
+      renderCurrent();
     }
 
     init();

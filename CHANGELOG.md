@@ -4,6 +4,19 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.92
+- **`account-plans.html` switched from "stack all businesses" to a carousel** — one business' one-pager visible at a time, arrows to step through. The v0.5.91 stacked-vertically approach was wrong: scrolling through 3 full one-pagers stacked is overwhelming, and the mental model is "look at one, then look at the next", not "see them all at once".
+- **Carousel UI:**
+  - Top nav bar (white card, navy buttons): **← Prev (Business name)** | _Current Business Name_ + "Business X of Y" + dot indicators | **(Business name) Next →**
+  - The prev/next buttons preview the next/previous business name as a hint inside the button itself.
+  - Dot indicators below the counter — click a dot to jump straight to that business.
+  - Keyboard `ArrowLeft` / `ArrowRight` to step through (ignored when typing in inputs/textareas).
+  - Single business in account → no arrows, just the name + "Your only business" line.
+- **Print now prints just the current view** (not all businesses) — `@media print` hides the carousel nav + intro + banner + toolbar, so you get exactly the one one-pager you're looking at as a single landscape A4 page.
+- All other v0.5.91 behaviour preserved: Supabase queries scoped to caller's orgs, empty-field placeholders, yellow data-layer-pending banner when all businesses return empty, "← Account" back link.
+
+---
+
 ## v0.5.91
 - **New page: `account-plans.html` — cross-business One-Page Plans view.** The first real cross-business topic page; the proof-of-concept for the topic launcher (v0.5.89).
 - **Use case:** owner running a board / strategy meeting wants to see every business' one-pager side-by-side without drilling into each one individually. Topic-first navigation: "I want to compare plans" → not "I want to open Business A, then Business B".
