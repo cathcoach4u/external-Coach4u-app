@@ -91,6 +91,18 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .header-back { color: rgba(255,255,255,0.7); font-size: 13px; transition: color 0.2s; }
 .header-back:hover { color: white; text-decoration: none; }
 .header-version { font-size: 12px; color: rgba(255,255,255,0.55); }
+.biz-pill {
+  background: var(--accent); color: white;
+  font-size: 12px; font-weight: 700;
+  padding: 4px 11px; border-radius: 14px;
+  letter-spacing: 0.2px; line-height: 1.4;
+  white-space: nowrap; max-width: 220px;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.biz-pill:empty { display: none; }
+@media (max-width: 480px) {
+  .biz-pill { font-size: 11px; padding: 3px 8px; max-width: 140px; }
+}
 .sign-out-btn {
   background: rgba(255,255,255,0.15); color: white; padding: 5px 10px;
   border-radius: var(--radius-sm); font-size: 13px; font-weight: 500;

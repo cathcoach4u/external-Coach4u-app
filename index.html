@@ -760,7 +760,7 @@
           el.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (window.activeOrg) window.activeOrg.set(orgId);
+            if (window.activeOrg) window.activeOrg.set(orgId, orgName);
             window.location.href = 'business.html';
           });
         });
@@ -1107,7 +1107,9 @@
 
     await refresh();
     if (myMemberships.length && (!window.activeOrg || !window.activeOrg.get())) {
-      window.activeOrg.set(myMemberships[0].organisation_id);
+      const first = myMemberships[0];
+      const firstName = first.organisations && first.organisations.name;
+      window.activeOrg.set(first.organisation_id, firstName);
     }
     document.body.style.opacity = '1';
   </script>

@@ -156,6 +156,7 @@
       <div class="header-left">
         <a href="index.html" class="header-back">&#x2190; Account</a>
         <span class="header-title">Your Business Coach</span>
+        <span id="activeBizName" class="biz-pill"></span>
       </div>
       <button id="signOutBtn" class="sign-out-btn">Sign Out</button>
     </div>
@@ -248,7 +249,7 @@
       </div>
     </div>
 
-    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.97</p>
+    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.98</p>
 
   </div>
 
@@ -600,7 +601,11 @@
         }
         activeRow = memberships[0];
         activeId = activeRow.organisation_id;
-        if (window.activeOrg) window.activeOrg.set(activeId);
+        if (window.activeOrg) window.activeOrg.set(activeId, activeRow.organisations && activeRow.organisations.name);
+      }
+      // Cache the resolved business name so other business-level pages can render the header pill
+      if (window.activeOrg && activeRow.organisations) {
+        window.activeOrg.set(activeId, activeRow.organisations.name);
       }
 
       // Display the current business name + show the switcher when user has more than one

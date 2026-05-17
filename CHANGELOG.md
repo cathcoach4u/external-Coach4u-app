@@ -4,6 +4,19 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.98
+- **Every business-level page now shows a `🏢 [Business Name]` pill in its header.** Before this, all business-level pages (`strategy.html`, `core-values.html`, `scorecard.html`, etc.) looked structurally identical to their account-level counterparts (`account-strategy.html`, etc.) — same site-header, same navy bar, just a different page title. With multiple businesses under one account, the user couldn't tell at a glance which business they were currently editing. Now the business name is unmissable.
+- **Visual:** small teal pill (`.biz-pill`) with 🏢 prefix, placed right after the `header-title` span in the site-header. Stands out clearly against the navy background. Empty state collapses to `display: none` so account-level pages (which don't include the pill markup) are unaffected. Mobile shrinks the pill to fit narrow screens.
+- **State management:** `js/active-org.js` extended to track both the org ID and the org name in localStorage (`coach4u_active_org_id` + `coach4u_active_org_name`). The set/clear methods always update both in sync. New `renderHeader()` method finds `#activeBizName` and populates it; auto-runs on DOMContentLoaded.
+- **Wiring:**
+  - `index.html` (account dashboard): when a business card's "Open" button is clicked, calls `set(orgId, orgName)` instead of just `set(orgId)`. Also caches the first membership's name when no active org is set.
+  - `business.html`: when it resolves the active org from memberships, calls `set(activeId, name)` so the cache is always fresh before navigation to child pages.
+  - 19 other business-level pages: just need the `<span id="activeBizName" class="biz-pill"></span>` markup in their header + the `<script src="js/active-org.js" defer></script>` tag — both added via two sed passes. `one-page-plan.html` uses a sticky toolbar instead of `site-header`, so its pill goes after `.toolbar-title`.
+- **Not added to** account-level pages (`index.html`, `account-strategy.html`, etc.) — they're already distinct via their "Account" header and "Across All Businesses" page intros.
+- **Edge case:** if a user bookmarks a business-level page URL directly and lands without first going through the dashboard, the name might not be cached yet → pill is empty → `display: none` hides it gracefully. The normal flow (login → account dashboard → click Open → business pages) always primes the cache.
+
+---
+
 ## v0.5.97
 - **Cleanup pass before the data-layer migration.** Two changes shipped here.
 - **(1) File rename — account dashboard is now the root `index.html`.**
