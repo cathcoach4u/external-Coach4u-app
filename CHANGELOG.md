@@ -4,6 +4,10 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.85
+- **Account dashboard is the first landing page after sign-in.** `login.html` now redirects to `my-businesses.html` (was `index.html`) on a successful sign-in AND when an existing session is detected. Every user lands on their SARUBA parent dashboard first, seeing all businesses, can switch into one, manage users, etc. before drilling into a specific business's data.
+- **First-run guard added to `my-businesses.html`**: if a signed-in user has zero active `team_members` rows, the page auto-redirects to `setup.html` so the new-user wizard still fires. Avoids the awkward "empty businesses list" state for brand-new users.
+
 ## v0.5.84
 - **SARUBA account dashboard** — `my-businesses.html` rebuilt from a simple switcher into the comprehensive parent dashboard:
   - Account header (existing — shows the subscription name)

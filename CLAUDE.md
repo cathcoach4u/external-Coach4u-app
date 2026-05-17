@@ -128,9 +128,10 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.84
+v0.5.85
 
 ## Latest
+- **v0.5.85** — Account dashboard is now the first thing seen after sign-in. `login.html` now redirects to `my-businesses.html` (was `index.html`), so every user lands on the SARUBA parent dashboard first — sees all businesses, can switch between them, manage users, then tap into a specific business. Brand-new users (no team_members) get auto-redirected from `my-businesses.html` → `setup.html` so the first-business wizard still fires correctly.
 - **v0.5.84** — SARUBA account dashboard with user management. `my-businesses.html` is now a comprehensive parent dashboard: account header + stats row (businesses / users / seats) + businesses list with per-card rename/delete menu + Users section with invite/remove. Five new RPC functions land in Supabase (`invite_team_member`, `remove_team_member`, `rename_business`, `delete_business`, `link_pending_invites`) plus an `AFTER INSERT` trigger on `auth.users` that auto-links any pending invites matching the new user's email. Multi-business users now land on `my-businesses.html` after login (single-business users still go straight to `index.html`). **Requires SQL** — see CHANGELOG entry for the paste-and-run delta block.
 - **v0.5.83** — Parent account / business hierarchy. The subscription now has a name (e.g. "SARUBA") representing the license holder; the businesses under it (e.g. "Coach4U Coaching", "Coach4U Development") are the operational entities. **Requires SQL migration** — add `name` column to `subscriptions` + two new functions (`bootstrap_account_and_business`, `update_account_name`). `setup.html` now asks for **two** names: account + first business. `my-businesses.html` shows the account name at the top and exposes a "Rename account ›" link. Dashboard "Manage businesses ›" link renamed to "Account dashboard ›".
 - **v0.5.82** — Made the "Manage businesses ›" link on the dashboard always visible.

@@ -496,6 +496,12 @@
         myMemberships = mems || [];
       }
 
+      // First-run guard: brand-new user with no team_members → go through setup
+      if (!myMemberships.length) {
+        window.location.href = 'setup.html';
+        return;
+      }
+
       // 3) Team rows across orgs where the caller is admin
       const adminOrgIds = myMemberships
         .filter(m => m.role === 'admin')
