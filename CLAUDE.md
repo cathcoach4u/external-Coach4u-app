@@ -128,11 +128,11 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.77
+v0.5.78
 
 ## Latest
+- **v0.5.78** — Captured the launch pricing model in CLAUDE.md (new "Pricing Model" section): $150/mo base license (1 business + 3 users) + $75/mo per additional business + $60/mo per additional user. Users are global per account (1 person = 1 seat regardless of how many businesses they access). Schema implication: `subscriptions` table sits at account level, not per organisation — replaces the per-org `seat_count` idea from the v0.5.75 sketch.
 - **v0.5.77** — Removed the now-unused UMD Supabase CDN URL from `sw.js` `STATIC_ASSETS`. Every page is on ESM since v0.5.76, so the precache entry was dead bytes.
-- **v0.5.76** — Pre-migration cleanup. Fixed all 10 items from the v0.5.74 audit so the codebase is clean before Supabase data-layer wiring begins. See CHANGELOG.md for itemised list.
 - **v0.5.75** — Documented the planned **team-scoped, role-based** Supabase architecture (Admin + Member roles; team-shared data; 1 subscription = N seats allocated by Admin; check-in results visible to all team members). Captured the pre-migration cleanup list from the v0.5.74 audit. Project-memory-only change, no code touched.
 
 ## Current Status
@@ -192,6 +192,46 @@ team_members          (id, organisation_id, user_id, invited_email, role, status
 3. Members open the link → log in with their own credentials → submit the 17-question form.
 4. Submissions auto-aggregate; the session workspace shows averages + lowest-scoring areas + comments grouped by question (re-introduces the v0.5.72 results display that was stripped in v0.5.73 — it was right for the public-form model, wrong for the team model).
 5. Admin uses aggregated results to set planning priorities.
+
+## Pricing Model
+
+Locked-in for the launch:
+
+| Item | Price |
+|---|---|
+| **Base license** — 1 business + 3 users included | **$150/month** |
+| **Each additional business** | **$75/month** |
+| **Each additional user** beyond the included 3 | **$60/month** |
+
+### Key principles
+- **Users are global per account**, not per business. One person who's a member of 3 businesses counts as 1 seat. This keeps the model customer-friendly and matches the industry trend (Notion / Slack / Linear).
+- **Subscriptions are account-level** (one subscription per buyer), not per-organisation. The buyer's account can hold N businesses + M users.
+- **Each business is fully isolated** by data — own One-Page Plan, scorecard, sessions, issues — but shares the global user pool.
+
+### Worked examples
+
+| Client | Configuration | Monthly |
+|---|---|---|
+| Solo founder | 1 business, 1 user | **$150** (3 user seats included, only 1 used) |
+| Small team | 1 business, 5 users | $150 + (2 × $60) = **$270** |
+| **IAS-style holding** | 3 businesses, 3 users | $150 + $75 + $75 = **$300** |
+| Same with more leaders | 3 businesses, 5 users | $300 + (2 × $60) = **$420** |
+| Larger holding | 5 businesses, 12 users | $150 + (4 × $75) + (9 × $60) = **$990** |
+
+### Schema implications
+
+The pricing model dictates that subscriptions live at the **account** level, not per organisation:
+
+- `subscriptions` table: `id`, `owner_user_id`, `seat_count` (defaults to 3), `included_businesses` (defaults to 1), `created_at`, `status`
+- `organisations.subscription_id` → `subscriptions.id` (the buyer's subscription owns N orgs)
+- `organisations` does NOT have `seat_count` (deprecates that idea from the v0.5.75 sketch)
+- `team_members.user_id` is unique per account (across all orgs in that subscription) — i.e. the same user_id can appear in multiple `team_members` rows pointing to different `organisation_id`s in the same subscription, but counts as 1 seat for billing
+
+Billing logic on subscription change:
+- Add a business → `+$75/month`
+- Add a user beyond the included 3 → `+$60/month`
+- Remove a business → prorated refund / next cycle
+- The buyer's account = the entity Stripe (or chosen billing provider) bills
 
 ## Add a New Member (SQL)
 

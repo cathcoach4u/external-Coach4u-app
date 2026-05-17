@@ -4,6 +4,13 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.78
+- **Captured the launch pricing model in CLAUDE.md.** New "Pricing Model" section locks in: $150/mo base license (1 business + 3 users included), $75/mo per additional business, $60/mo per additional user.
+- **Global-user principle** explicitly documented: one person who's a member of 3 businesses still counts as 1 seat. Matches Notion / Slack / Linear conventions.
+- **Schema implication captured**: `subscriptions` table lives at the account level (one subscription per buyer, owns N organisations). Replaces the per-org `seat_count` from the v0.5.75 schema sketch.
+- Worked examples included for solo / small team / IAS-style holding / larger configurations.
+- Docs-only change — no code touched.
+
 ## v0.5.77
 - **`sw.js` precache trimmed.** Removed the UMD Supabase CDN URL (`https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js`) — every page consumes the ESM bundle since v0.5.76, so the UMD entry was dead bytes in the precache.
 
