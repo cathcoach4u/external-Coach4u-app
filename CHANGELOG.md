@@ -4,6 +4,13 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.95
+- **Removed the 4 hub cards from `my-businesses.html`.** They duplicated the bottom-nav added in v0.5.94 — same labels, same destinations, just bigger and higher up the page. With the bottom-nav doing the navigation, the dashboard is cleaner and the focus shifts back to what actually belongs on a dashboard: account info, stats, business snapshots, and team management.
+- Dashboard now renders: account header (SARUBA + Rename) → stats row (Businesses / Users / Open Issues / Goals On Track) → per-business snapshot grid → users / team section.
+- Dead CSS (`.hub-section`, `.hub-grid`, `.hub-card`, `.hub-icon`, `.hub-text`, `.hub-name`, `.hub-desc`, `.hub-arrow`) stripped from the style block. The 4 account hub pages (`account-strategy.html` etc.) are unchanged and still reachable from the bottom-nav.
+
+---
+
 ## v0.5.94
 - **Bottom-nav added to the account-level pages**, matching the business app's pattern. Same 5-item layout: Home / Planning / Strategy / Operations / Learn. The user request: "Build the 4 headings the same way you have in the others. Down the bottom." Confirmed the right destinations for each item.
 - **Added to:**

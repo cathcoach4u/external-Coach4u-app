@@ -339,63 +339,6 @@
     .available-pill {
       background: rgba(13,148,136,0.12); color: var(--accent);
     }
-
-    /* ===== Hub navigation: 4 big cards (mirrors business app's bottom-nav) ===== */
-    .hub-section { padding: 0 16px; margin-top: 26px; }
-    .hub-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    @media (max-width: 520px) {
-      .hub-grid { grid-template-columns: 1fr; }
-    }
-    .hub-card {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 18px 16px;
-      border-radius: 12px;
-      border: 2px solid var(--accent);
-      background: white;
-      text-decoration: none;
-      color: var(--text);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-      transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
-    }
-    .hub-card:hover {
-      background: #f0fdfa;
-      box-shadow: 0 4px 16px rgba(13,148,136,0.18);
-      transform: translateY(-1px);
-      text-decoration: none;
-      color: var(--text);
-    }
-    .hub-card .hub-icon {
-      width: 48px; height: 48px;
-      border-radius: 10px;
-      background: rgba(13,148,136,0.12);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; flex-shrink: 0;
-    }
-    .hub-card .hub-text { flex: 1; min-width: 0; }
-    .hub-card .hub-name {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--primary);
-      line-height: 1.25;
-      margin-bottom: 3px;
-    }
-    .hub-card .hub-desc {
-      font-size: 0.78rem;
-      color: #666;
-      line-height: 1.4;
-    }
-    .hub-card .hub-arrow {
-      font-size: 20px;
-      color: var(--accent);
-      flex-shrink: 0;
-      font-weight: 700;
-    }
   </style>
   <script src="js/active-org.js" defer></script>
   <script src="js/active-session.js" defer></script>
@@ -441,43 +384,7 @@
       </div>
     </div>
 
-    <!-- Section C: Hub navigation — mirrors the business app's bottom-nav -->
-    <div class="hub-section">
-      <div class="hub-grid">
-        <a class="hub-card" href="account-planning.html">
-          <div class="hub-icon">&#x1F5FA;&#xFE0F;</div>
-          <div class="hub-text">
-            <div class="hub-name">Planning</div>
-            <div class="hub-desc">Annual, quarterly &amp; check-ins across businesses</div>
-          </div>
-          <span class="hub-arrow">&#x203A;</span>
-        </a>
-        <a class="hub-card" href="account-strategy.html">
-          <div class="hub-icon">&#x1F9ED;</div>
-          <div class="hub-text">
-            <div class="hub-name">Strategy</div>
-            <div class="hub-desc">One-pagers, values, focus, targets, marketing, leadership</div>
-          </div>
-          <span class="hub-arrow">&#x203A;</span>
-        </a>
-        <a class="hub-card" href="account-operations.html">
-          <div class="hub-icon">&#x2699;&#xFE0F;</div>
-          <div class="hub-text">
-            <div class="hub-name">Operations</div>
-            <div class="hub-desc">Numbers, goals, meetings &amp; issues per business</div>
-          </div>
-          <span class="hub-arrow">&#x203A;</span>
-        </a>
-        <a class="hub-card" href="learning-vault.html">
-          <div class="hub-icon">&#x1F4DA;</div>
-          <div class="hub-text">
-            <div class="hub-name">Learn</div>
-            <div class="hub-desc">Learning vault &mdash; guides, exercises &amp; resources</div>
-          </div>
-          <span class="hub-arrow">&#x203A;</span>
-        </a>
-      </div>
-    </div>
+    <!-- Hub navigation moved to bottom-nav in v0.5.94+ -->
 
     <!-- Section D: Businesses snapshot (drill-in) -->
     <div class="section" id="businesses">
