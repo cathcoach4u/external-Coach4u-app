@@ -4,6 +4,23 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.93
+- **Account-level navigation now mirrors the business app's structure.** The owner's mental model is consistent: SARUBA (account) is structured like a single business — Planning, Strategy, Operations, Learn — just rolled up across every business.
+- **`my-businesses.html` restructure:** the 16-card topic launcher is replaced with a clean **4-card hub grid** (Planning / Strategy / Operations / Learn). Bigger cards, accent border, icon + name + description + arrow — same visual language as `strategy.html` / `operations.html` / `planning.html` but more prominent (these are top-level navigation). Card order matches the business app's bottom-nav: Planning, Strategy, Operations, Learn.
+- **3 new account-level hub pages** mirroring the business hubs:
+  - `account-strategy.html` — copies `strategy.html`. CTA: "View One-Page Plans — All Businesses" (live). Cards: Core Values / Core Focus / Targets / Marketing Strategy / Leadership Team (all coming-soon).
+  - `account-planning.html` — copies `planning.html`. Cards: Annual Planning / Quarterly Planning / Team Check-ins (all coming-soon).
+  - `account-operations.html` — copies `operations.html`. Cards: Weekly Numbers / Quarter Goals / Meetings / Issues (all coming-soon).
+- Each new hub uses the same `.activity-card` pattern as the business hubs, with a `.coming-soon` modifier (opacity 0.55, pointer-events: none, "Coming soon" pill, neutral border). Identical auth gate + Sign Out wiring.
+- **"Learn" on the dashboard** links directly to `learning-vault.html` (no account-level hub needed — learning content is shared across all businesses).
+- **Architecture is now 3 levels:**
+  1. **Account dashboard** (`my-businesses.html`) — header + stats + 4 hub cards + businesses snapshot + users
+  2. **Account hub pages** (`account-strategy.html` etc.) — list of cross-business views inside that theme
+  3. **Account leaf pages** (`account-plans.html` etc.) — carousel: one business at a time with arrows/dots/keyboard nav
+- All 4 hub-card destinations work. Only 1 of 12 leaf pages (`account-plans.html`) is built; the rest follow the same carousel template.
+
+---
+
 ## v0.5.92
 - **`account-plans.html` switched from "stack all businesses" to a carousel** — one business' one-pager visible at a time, arrows to step through. The v0.5.91 stacked-vertically approach was wrong: scrolling through 3 full one-pagers stacked is overwhelming, and the mental model is "look at one, then look at the next", not "see them all at once".
 - **Carousel UI:**
