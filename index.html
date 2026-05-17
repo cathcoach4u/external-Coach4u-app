@@ -239,7 +239,7 @@
       </div>
     </div>
 
-    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.79</p>
+    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.80</p>
 
   </div>
 
@@ -569,6 +569,17 @@
         .from('users').select('membership_status').eq('id', user.id).single();
       if (!profile || profile.membership_status !== 'active') {
         window.location.href = 'inactive.html'; return;
+      }
+      // First-run check: if the user has no active team_member yet, send them to setup
+      const { data: membership } = await supabase
+        .from('team_members')
+        .select('organisation_id')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .limit(1)
+        .maybeSingle();
+      if (!membership || !membership.organisation_id) {
+        window.location.href = 'setup.html'; return;
       }
       ensureSeeds();
       renderDashboard();

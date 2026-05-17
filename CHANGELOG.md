@@ -4,6 +4,13 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.80
+- **First-business setup flow.** New `setup.html` page asks a brand-new user for their business name. On submit it calls a single Supabase RPC (`bootstrap_organisation`) that creates the user's `subscriptions` row + first `organisations` row + admin `team_members` row in one transaction.
+- **`bootstrap_organisation(business_name text)` function** added to `supabase/schema.sql`. Marked SECURITY DEFINER so it can write the bootstrap rows that the user's own RLS policies would block (you can't INSERT a team_member admin row when you have no admin team_member row yet). Also handles the case where a user already has a subscription and just wants to add another business — same function, different code path. Granted to the `authenticated` role only.
+- **`index.html` auth flow extended.** After the membership-status check, it now looks up `team_members` for the user. If there's no active row, redirect to `setup.html`. Means existing accounts (no team_member yet) hit the wizard the next time they sign in.
+- **`supabase/README.md` updated** to document the new bootstrap function with a JS call example.
+- **App code still on localStorage for the data tools** — the wizard creates real Supabase rows but the worksheets / sessions / tools all keep using localStorage until v0.5.83.
+
 ## v0.5.79
 - **Supabase schema written.** `supabase/schema.sql` is a complete clean-slate migration:
   - **DROPs** the old EOS-style tables (`businesses`, `vto`, `rocks`, `scorecard_metrics`, `scorecard_entries`, `meetings`, `meeting_headlines`, `meeting_todos`, `issues`, `seats`, `members`, `values_ratings`, `gwc_ratings`, `user_modules`, `organisations`). Preserves `public.users` (the membership-status gate).

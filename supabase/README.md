@@ -52,6 +52,25 @@ SELECT * FROM public.team_members;           -- shows your membership
 SELECT * FROM public.v_active_team;          -- the convenience view
 ```
 
+## Bootstrap function — `bootstrap_organisation(business_name text)`
+
+A SECURITY DEFINER function the app calls when a user creates their first business (or any subsequent business). Avoids the RLS chicken-and-egg of "can't insert team_member because you're not yet a team_member admin".
+
+Behaviour:
+- If the user has no `subscriptions` row → creates one with `owner_user_id = auth.uid()`
+- Inserts a new `organisations` row under that subscription with the given name
+- Inserts a `team_members` row for the caller with `role='admin'`, `status='active'`
+- Returns the new `organisation_id`
+
+Call from JS:
+```js
+const { data: orgId, error } = await supabase.rpc('bootstrap_organisation', {
+  business_name: 'Acme Coaching'
+});
+```
+
+Granted to `authenticated` role only — anonymous users cannot call it.
+
 ## Tables created
 
 | Table | Rows per org | Notes |

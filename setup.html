@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Business Coach &mdash; Set Up Your Business</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#003366">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Your Business Coach">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-page">
+
+  <div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:420px;padding:20px;">
+
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="Assets/COACH4U (Final).jpg" alt="Coach4U" style="height:48px;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;">
+        <h1>Welcome</h1>
+      </div>
+      <p class="login-subtitle">Let's set up your first business. You can add more later.</p>
+
+      <form id="setupForm">
+        <div class="form-group">
+          <label for="businessName">Business name</label>
+          <input type="text" id="businessName" required autocomplete="organization" placeholder="e.g. Acme Coaching" maxlength="80">
+        </div>
+
+        <div id="message" class="login-message"></div>
+
+        <button type="submit" class="login-btn" id="submitBtn">Create my business</button>
+      </form>
+
+      <a href="#" id="signOutLink" class="login-forgot" style="display:block;margin-top:14px;">Sign out</a>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const SUPABASE_URL      = 'https://eekefsuaefgpqmjdyniy.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Must be signed in to reach this page
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { window.location.href = 'login.html'; }
+
+    // If user already has an active team_member, skip setup → dashboard
+    const { data: existingMember } = await supabase
+      .from('team_members')
+      .select('organisation_id')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .limit(1)
+      .maybeSingle();
+    if (existingMember && existingMember.organisation_id) {
+      window.location.href = 'index.html';
+    }
+
+    const form    = document.getElementById('setupForm');
+    const msgEl   = document.getElementById('message');
+    const btn     = document.getElementById('submitBtn');
+    const nameEl  = document.getElementById('businessName');
+    const signOut = document.getElementById('signOutLink');
+
+    signOut.addEventListener('click', async (e) => {
+      e.preventDefault();
+      await supabase.auth.signOut();
+      window.location.href = 'login.html';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = nameEl.value.trim();
+      if (!name) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Setting up…';
+      msgEl.style.display = 'none';
+      msgEl.className = 'login-message';
+
+      const { error } = await supabase.rpc('bootstrap_organisation', { business_name: name });
+
+      if (error) {
+        msgEl.textContent = error.message || 'Setup failed. Please try again.';
+        msgEl.classList.add('error');
+        msgEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Create my business';
+        return;
+      }
+
+      window.location.href = 'index.html';
+    });
+  </script>
+
+</body>
+</html>

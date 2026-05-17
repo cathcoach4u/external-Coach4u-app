@@ -581,6 +581,62 @@ WHERE tm.status = 'active';
 
 
 -- =============================================================
+-- 10. BOOTSTRAP FUNCTIONS
+-- =============================================================
+-- Called by the app to create a new organisation. Handles BOTH:
+--   • First-time setup (user has no subscription) — creates subscription + org + admin team_member
+--   • Additional business (user already has a subscription) — adds org + admin team_member
+-- SECURITY DEFINER lets it write tables the user's RLS would block during bootstrap.
+
+CREATE OR REPLACE FUNCTION public.bootstrap_organisation(business_name text)
+RETURNS uuid
+LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  uid                  uuid := auth.uid();
+  v_subscription_id    uuid;
+  v_organisation_id    uuid;
+BEGIN
+  IF uid IS NULL THEN
+    RAISE EXCEPTION 'Not authenticated';
+  END IF;
+  IF business_name IS NULL OR length(trim(business_name)) = 0 THEN
+    RAISE EXCEPTION 'Business name is required';
+  END IF;
+
+  -- Reuse existing subscription if the user already owns one, else create one
+  SELECT id INTO v_subscription_id
+  FROM public.subscriptions
+  WHERE owner_user_id = uid
+  LIMIT 1;
+
+  IF v_subscription_id IS NULL THEN
+    INSERT INTO public.subscriptions (owner_user_id)
+    VALUES (uid)
+    RETURNING id INTO v_subscription_id;
+  END IF;
+
+  -- Create the organisation under that subscription
+  INSERT INTO public.organisations (subscription_id, name)
+  VALUES (v_subscription_id, trim(business_name))
+  RETURNING id INTO v_organisation_id;
+
+  -- Add the caller as the admin team member
+  INSERT INTO public.team_members (
+    organisation_id, user_id, role, status, joined_at
+  ) VALUES (
+    v_organisation_id, uid, 'admin', 'active', now()
+  );
+
+  RETURN v_organisation_id;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.bootstrap_organisation(text) TO authenticated;
+
+
+-- =============================================================
 -- DONE
 -- =============================================================
 -- Next steps (in code, not SQL):
