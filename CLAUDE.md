@@ -128,9 +128,10 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.93
+v0.5.94
 
 ## Latest
+- **v0.5.94** — Account-level pages now get a **bottom-nav** matching the business app pattern: Home / Planning / Strategy / Operations / Learn (5 items). Destinations point to account-level pages (`my-businesses.html` / `account-planning.html` / `account-strategy.html` / `account-operations.html`) while Learn shares `learning-vault.html` with the business app. Added to `my-businesses.html`, `account-strategy.html`, `account-planning.html`, `account-operations.html`. Carousel leaf pages (`account-plans.html`) don't get the nav — they use the sticky screen-toolbar instead, same pattern as `one-page-plan.html` at the business level.
 - **v0.5.93** — **Account-level architecture mirrors the business app.** `my-businesses.html` no longer shows 16 individual topic cards; instead, 4 big hub cards (Planning / Strategy / Operations / Learn) replace the topic launcher — matching the business app's bottom-nav structure. Three new account-level hub pages: `account-strategy.html`, `account-planning.html`, `account-operations.html` — each follows the same template as `strategy.html` / `planning.html` / `operations.html` with "← Account" back link and cross-business cards inside. **Architecture:** `my-businesses.html` (dashboard) → 4 hub pages → carousel-style cross-business pages (only `account-plans.html` built so far). 12 leaf cross-business pages still coming-soon.
 - **v0.5.92** — `account-plans.html` switched from "all plans stacked" to a **carousel**: one business' one-pager at a time, with **prev/next arrows + dot indicators + keyboard arrow keys** to step through.
 - **v0.5.90** — Topic launcher fix: **Businesses** and **Team** cards in the "Learning & Account" section are now `available` (not "Coming soon"). Their `#businesses` and `#team` scroll anchors point to the existing sections lower down on the same page, so they're real navigation — not future work. Three available cards on the dashboard now: Learning Vault, Businesses, Team.

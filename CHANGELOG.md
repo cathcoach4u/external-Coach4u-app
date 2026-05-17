@@ -4,6 +4,24 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.94
+- **Bottom-nav added to the account-level pages**, matching the business app's pattern. Same 5-item layout: Home / Planning / Strategy / Operations / Learn. The user request: "Build the 4 headings the same way you have in the others. Down the bottom." Confirmed the right destinations for each item.
+- **Added to:**
+  - `my-businesses.html` — active = Home
+  - `account-strategy.html` — active = Strategy
+  - `account-planning.html` — active = Planning
+  - `account-operations.html` — active = Operations
+- **Destinations:**
+  - Home → `my-businesses.html` (account dashboard)
+  - Planning → `account-planning.html`
+  - Strategy → `account-strategy.html`
+  - Operations → `account-operations.html`
+  - Learn → `learning-vault.html` (shared with business app — learning content isn't business-scoped)
+- **Not added to leaf carousel pages** like `account-plans.html` — those follow the `one-page-plan.html` pattern (sticky toolbar with "← Account" back-link replaces the bottom-nav, since the carousel UI needs vertical space at the bottom).
+- `.container { padding-bottom: 90px; }` on the 4 nav-enabled pages so content doesn't hide behind the nav.
+
+---
+
 ## v0.5.93
 - **Account-level navigation now mirrors the business app's structure.** The owner's mental model is consistent: SARUBA (account) is structured like a single business — Planning, Strategy, Operations, Learn — just rolled up across every business.
 - **`my-businesses.html` restructure:** the 16-card topic launcher is replaced with a clean **4-card hub grid** (Planning / Strategy / Operations / Learn). Bigger cards, accent border, icon + name + description + arrow — same visual language as `strategy.html` / `operations.html` / `planning.html` but more prominent (these are top-level navigation). Card order matches the business app's bottom-nav: Planning, Strategy, Operations, Learn.
