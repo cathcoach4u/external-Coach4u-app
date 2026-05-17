@@ -128,11 +128,11 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.78
+v0.5.79
 
 ## Latest
+- **v0.5.79** — Supabase schema written. `supabase/schema.sql` is the complete migration: drops the old EOS-style tables, creates the new team-scoped schema (subscriptions / organisations / team_members + 5 strategy tables + 4 operations tables + 3 meeting tables + 2 session tables + team_checkins), enables RLS on everything, and defines `public.user_org_ids()` + `public.user_admin_org_ids()` helper functions used by every policy. `supabase/README.md` has the paste-and-run instructions. **App code still on localStorage** — wiring starts at v0.5.83.
 - **v0.5.78** — Captured the launch pricing model in CLAUDE.md (new "Pricing Model" section): $150/mo base license (1 business + 3 users) + $75/mo per additional business + $60/mo per additional user. Users are global per account (1 person = 1 seat regardless of how many businesses they access). Schema implication: `subscriptions` table sits at account level, not per organisation — replaces the per-org `seat_count` idea from the v0.5.75 sketch.
-- **v0.5.77** — Removed the now-unused UMD Supabase CDN URL from `sw.js` `STATIC_ASSETS`. Every page is on ESM since v0.5.76, so the precache entry was dead bytes.
 - **v0.5.75** — Documented the planned **team-scoped, role-based** Supabase architecture (Admin + Member roles; team-shared data; 1 subscription = N seats allocated by Admin; check-in results visible to all team members). Captured the pre-migration cleanup list from the v0.5.74 audit. Project-memory-only change, no code touched.
 
 ## Current Status

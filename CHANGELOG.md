@@ -4,6 +4,16 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.79
+- **Supabase schema written.** `supabase/schema.sql` is a complete clean-slate migration:
+  - **DROPs** the old EOS-style tables (`businesses`, `vto`, `rocks`, `scorecard_metrics`, `scorecard_entries`, `meetings`, `meeting_headlines`, `meeting_todos`, `issues`, `seats`, `members`, `values_ratings`, `gwc_ratings`, `user_modules`, `organisations`). Preserves `public.users` (the membership-status gate).
+  - **CREATEs** the new team-scoped schema: `subscriptions` (account-level), `organisations`, `team_members`; 5 strategy tables (`core_values`, `core_focus`, `targets`, `marketing_strategy`, `leadership_team_members`); operations (`scorecard_metrics`, `scorecard_entries`, `rocks`, `issues`); meetings (`meetings`, `meeting_headlines`, `meeting_todos`); planning sessions (`annual_sessions`, `quarterly_sessions`); `team_checkins`.
+  - **RLS enabled** on every domain table. Two helper functions (`public.user_org_ids(uid)` and `public.user_admin_org_ids(uid)`) make every policy compact. Pattern: members read everything in their orgs; admins write. `team_checkins` is the only domain table where members can INSERT (submit their own check-in); everything else is admin-write.
+  - **Indexes** on every FK + commonly-queried columns (subscription_id, organisation_id, quarter, session_date, week_date).
+  - **One convenience view** (`v_active_team`) joining team_members + auth.users.users + organisations.
+- **`supabase/README.md`** added with paste-and-run instructions + a quick RLS test you can run to verify policies work end-to-end.
+- **App code unchanged** — still on localStorage. Wiring tools to Supabase queries begins at v0.5.83.
+
 ## v0.5.78
 - **Captured the launch pricing model in CLAUDE.md.** New "Pricing Model" section locks in: $150/mo base license (1 business + 3 users included), $75/mo per additional business, $60/mo per additional user.
 - **Global-user principle** explicitly documented: one person who's a member of 3 businesses still counts as 1 seat. Matches Notion / Slack / Linear conventions.
