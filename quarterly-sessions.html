@@ -121,23 +121,15 @@
     <a class="bottom-nav-item" href="learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
   </nav>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script>
+  <script type="module">
   'use strict';
-  const _sb=window.supabase.createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  const _sb=createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
   document.getElementById('signOutBtn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
   function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
   const _LS_KEY='coach4u_quarterly_sessions';
   function _genId(){return Date.now()*1000+Math.floor(Math.random()*1000)}
-  function _quarterlyAgendaBlank(){
-    return [
-      { id:1, title:'Review Last Quarter',          notes:'' },
-      { id:2, title:'Lessons + Adjustments',        notes:'' },
-      { id:3, title:"Set Next Quarter's Goals",     notes:'' },
-      { id:4, title:'Conclude — Rate the Session',  notes:'' }
-    ];
-  }
   // Helpers for quarter math
   function quarterEndDate(qLabel){
     // qLabel like "Q2 2026" → the date of end of prior quarter (so this session sets next quarter)
@@ -166,24 +158,17 @@
   }
   function _quarterlySeed(){
     return [
-      { id:6001, session_date:'2026-03-31', target_quarter:'Q2 2026', status:'completed', rating:7,
-        agenda:[
-          { id:1, title:'Review Last Quarter',          notes:'Q1 results: 4 of 5 priorities hit. Missed associate-coach hire (still searching). Revenue $98k (target $90k) — strong.' },
-          { id:2, title:'Lessons + Adjustments',        notes:'Need a clearer rock owner for hiring. Sales pipeline review should be weekly not monthly.' },
-          { id:3, title:"Set Next Quarter's Goals",     notes:'Q2: 1) Hire associate coach (Lou), 2) Launch group coaching program, 3) 5 new clients, 4) Speak at 2 events.' },
-          { id:4, title:'Conclude — Rate the Session',  notes:'Solid session. Cath to update goals.html with Q2 priorities by EOW.' }
-        ]
+      { id:6001, session_date:'2026-03-31', target_quarter:'Q2 2026', status:'completed',
+        attendance:'Cath, Lou, Andrew',
+        areas_completed:{1:true,2:true,3:true}
       },
-      { id:6002, session_date:'2026-06-30', target_quarter:'Q3 2026', status:'completed', rating:8,
-        agenda:[
-          { id:1, title:'Review Last Quarter',          notes:'Q2: 3 of 4 priorities hit. Hired associate coach (Sarah, started May). Group program launched with 6 participants. Missed event speaking target (1 of 2).' },
-          { id:2, title:'Lessons + Adjustments',        notes:'Event scheduling needs more lead time. Group program proves out — repeat in Q3 with 10 participants.' },
-          { id:3, title:"Set Next Quarter's Goals",     notes:'Q3: 1) Group cohort #2 (10 ppl), 2) Sign 6 new 1:1 clients, 3) Publish signature workbook, 4) Hire admin support.' },
-          { id:4, title:'Conclude — Rate the Session',  notes:'Best session yet. Team in sync. Andrew to brief team Monday.' }
-        ]
+      { id:6002, session_date:'2026-06-30', target_quarter:'Q3 2026', status:'completed',
+        attendance:'Cath, Lou, Andrew, Sarah',
+        areas_completed:{1:true,2:true,3:true}
       },
-      { id:6003, session_date:quarterEndDate(nextUpcomingQuarter()), target_quarter:nextUpcomingQuarter(), status:'scheduled', rating:null,
-        agenda:_quarterlyAgendaBlank()
+      { id:6003, session_date:quarterEndDate(nextUpcomingQuarter()), target_quarter:nextUpcomingQuarter(), status:'scheduled',
+        attendance:'',
+        areas_completed:{}
       }
     ];
   }
@@ -206,7 +191,6 @@
           <div class="session-item-meta">
             <span class="status-pill ${STATUS_CLASS[s.status]||'sp-scheduled'}">${STATUS_LABEL[s.status]||s.status}</span>
             ${s.target_quarter?'Sets '+escHtml(s.target_quarter)+' goals':''}
-            ${s.rating?'&middot; '+s.rating+'/10':''}
           </div>
         </div>
         <span class="session-item-arrow">&#x203A;</span>
@@ -237,8 +221,8 @@
       session_date,
       target_quarter,
       status:'scheduled',
-      rating:null,
-      agenda:_quarterlyAgendaBlank()
+      attendance:'',
+      areas_completed:{}
     };
     const all=_quarterlyLoad();
     all.push(session);
@@ -248,6 +232,11 @@
   (async()=>{
     const{data:{user}}=await _sb.auth.getUser();
     if(!user){window.location.href='login.html';return}
+    const { data: profile } = await _sb
+      .from('users').select('membership_status').eq('id', user.id).single();
+    if (!profile || profile.membership_status !== 'active') {
+      window.location.href = 'inactive.html'; return;
+    }
     loadSessions();
     document.body.style.opacity='1';
   })();

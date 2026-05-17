@@ -239,7 +239,7 @@
       </div>
     </div>
 
-    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.75</p>
+    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.76</p>
 
   </div>
 
@@ -290,6 +290,10 @@
       seedIfEmpty('coach4u_core_values', {
         value_1:'Integrity', value_2:'Growth mindset', value_3:'Client first', value_4:'Accountability', value_5:'Better together'
       });
+      seedIfEmpty('coach4u_core_focus', {
+        purpose: 'To help business owners build thriving, self-managing businesses so they can achieve freedom and fulfilment.',
+        niche: 'Strengths-based business coaching for small and medium businesses across Australia.'
+      });
       seedIfEmpty('coach4u_targets', {
         ten_year:"Australia's most trusted business coaching practice — 500 thriving client businesses, a team of 10 coaches, delivering measurable results nationwide.",
         three_year_date:'June 2029', three_year_revenue:'$1.2M', three_year_profit:'$360K',
@@ -297,6 +301,29 @@
         one_year_date:'Dec 2026', one_year_revenue:'$420K', one_year_profit:'$105K',
         one_year_goals:'1. Sign 20 new clients through referral and speaking\n2. Launch group coaching program (min. 8 participants)\n3. Hire first associate coach by Q3\n4. Complete and publish Signature Program workbook'
       });
+      seedIfEmpty('coach4u_marketing_strategy', {
+        target_market: 'Business owners with 2–20 employees in professional services, trades, and health. Revenue $500K–$5M. Feel stuck or overwhelmed.',
+        uniques: "1. Strengths-based methodology — build on what's working\n2. Structured accountability — weekly check-ins, measurable outcomes\n3. Real-world experience — founded by a former business owner",
+        proven_process: 'Coach4U 4-Step System: Clarity → Strategy → Execution → Momentum. 12 months, monthly 1:1 sessions, weekly check-ins.',
+        guarantee: "No measurable progress in your first 90 days? We'll refund your last month's coaching fee — no questions asked."
+      });
+      seedIfEmpty('coach4u_leadership_team', [
+        { name: 'Cath Baker', role: 'Founder and Lead Coach',
+          responsibilities: 'Responsible for client delivery, coaching methodology, business development and overall strategic direction. Key focus: growing the client base and developing the Coach4U program.',
+          placeholder: false },
+        { name: 'Lou Henderson', role: 'Operations Manager',
+          responsibilities: 'Responsible for client administration, scheduling, invoicing, GoCardless payments and day-to-day business operations. Key focus: keeping everything running smoothly so Cath can focus on coaching.',
+          placeholder: false },
+        { name: 'Andrew Baker', role: 'Marketing and Technology Advisor',
+          responsibilities: 'Responsible for ABMS Marketing support, website oversight and technical input on digital projects. Key focus: brand visibility and digital infrastructure.',
+          placeholder: false },
+        { name: '[Add your name]', role: 'Head of Delivery',
+          responsibilities: 'Responsible for program facilitation, group coaching sessions and client onboarding. Key focus: delivering an exceptional client experience.',
+          placeholder: true },
+        { name: '[Add your name]', role: 'Client Success',
+          responsibilities: 'Responsible for client check-ins, progress tracking and retention. Key focus: ensuring clients get results and stay engaged.',
+          placeholder: true }
+      ]);
       // Operations tools
       const today = new Date();
       const mon = new Date(today);
@@ -307,7 +334,7 @@
       const q = 'Q' + (Math.floor(today.getMonth() / 3) + 1) + ' ' + today.getFullYear();
       seedIfEmpty('coach4u_demo_meetings', {
         meetings: [
-          { id: 4001, meeting_date: monIso, status: 'scheduled', quarter: q, rating: null, notes: '', business_id: 1,
+          { id: 4001, meeting_date: monIso, status: 'completed', quarter: q, rating: 8, notes: 'Strong week — Acme deal closed. Need to keep an eye on coach capacity.', business_id: 1,
             headlines: [
               { id: 4101, type: 'good_news', description: 'Closed largest deal of the year — £42k MRR with Acme Corp' },
               { id: 4102, type: 'good_news', description: 'Lou completed her ICF Master certification' },
@@ -329,6 +356,25 @@
         { id:2003, description:'Move CRM to HubSpot',                     owner:'Andrew', status:'on_track',  quarter:q, company_rock:0, business_id:1, sort_order:3, seat_id:null },
         { id:2004, description:'Run 3 prospect events in Manchester',     owner:'Cath',   status:'off_track', quarter:q, company_rock:0, business_id:1, sort_order:4, seat_id:null }
       ]);
+      // Weekly Numbers (scorecard) demo seed
+      (function _seedScorecard(){
+        const monIsoLocal = monIso;
+        function _isoAddWeeks(iso,wk){const dt=new Date(iso+'T00:00:00');dt.setDate(dt.getDate()+wk*7);return dt.toISOString().slice(0,10)}
+        const weeks=[-5,-4,-3,-2,-1,0].map(o=>_isoAddWeeks(monIsoLocal,o));
+        const metrics=[
+          {id:1001,name:'New Leads',owner:'Cath',goal:10,measurement_type:'number',sort_order:1},
+          {id:1002,name:'Discovery Calls Booked',owner:'Lou',goal:8,measurement_type:'number',sort_order:2},
+          {id:1003,name:'Proposals Sent',owner:'Andrew',goal:5,measurement_type:'number',sort_order:3},
+          {id:1004,name:'Revenue (£k)',owner:'Cath',goal:25,measurement_type:'currency',sort_order:4},
+          {id:1005,name:'Client NPS',owner:'Lou',goal:9,measurement_type:'number',sort_order:5},
+          {id:1006,name:'Marketing Posts',owner:'Andrew',goal:3,measurement_type:'number',sort_order:6}
+        ];
+        const series={1001:[8,9,11,7,10,12],1002:[6,7,8,9,7,8],1003:[4,6,5,5,6,7],1004:[18,22,24,26,23,28],1005:[8.5,9,9.2,8.8,9.4,9.1],1006:[2,3,4,3,3,5]};
+        let nextEntryId = 7000;
+        const entries=[];
+        metrics.forEach(m=>weeks.forEach((w,i)=>entries.push({id:++nextEntryId,metric_id:m.id,week_date:w,value:series[m.id][i],on_track:series[m.id][i]>=m.goal?1:0})));
+        seedIfEmpty('coach4u_demo_scorecard', { metrics, entries, weeks });
+      })();
       seedIfEmpty('coach4u_demo_issues', [
         { id:3001, description:'Onboarding flow takes new clients 3+ weeks — intake forms and scheduling drag on. We need to simplify or automate.', owner:'Cath',   status:'open',     solution:'', business_id:1, created_at:new Date(Date.now()-5*86400000).toISOString() },
         { id:3002, description:'Coach utilisation below 70% target — Q1 hit 64%. Either we have too many coaches or pipeline is weak.',             owner:'Lou',    status:'open',     solution:'', business_id:1, created_at:new Date(Date.now()-12*86400000).toISOString() },
@@ -339,23 +385,13 @@
       const thisYear = today.getFullYear();
       const nextYear = thisYear + 1;
       seedIfEmpty('coach4u_annual_sessions', [
-        { id:5001, session_date:thisYear+'-01-01', year:String(thisYear), status:'completed', rating:8,
-          agenda:[
-            { id:1, title:'Review Last Year',                  notes:'Revenue up 22% YoY. Missed coach-hire target (1 of 2). Acme + Globex deals carried Q4. NPS held at 64.' },
-            { id:2, title:'Refresh Core Values + Core Focus',  notes:'Values still resonate. Considering tightening niche to professional services > 20 staff.' },
-            { id:3, title:'Update 10-Year + 3-Year Picture',   notes:'3-year picture confirmed: 4 coaches, 80 active clients, $1.2M revenue. 10-year unchanged.' },
-            { id:4, title:'Set 1-Year Plan + Q1 Goals',        notes:'1-year revenue target $420k. Q1 priorities: sign 5 new clients, ship signature workbook, hire 1 associate coach.' },
-            { id:5, title:'Conclude — Rate the Session',       notes:'Great session. Action: Cath to update One-Page Plan by end of week. Andrew to brief team Monday.' }
-          ]
+        { id:5001, session_date:thisYear+'-01-01', year:String(thisYear), status:'completed',
+          attendance:'Cath, Lou, Andrew',
+          areas_completed:{1:true,2:true,3:true,4:true}
         },
-        { id:5002, session_date:nextYear+'-01-01', year:String(nextYear), status:'scheduled', rating:null,
-          agenda:[
-            { id:1, title:'Review Last Year',                  notes:'' },
-            { id:2, title:'Refresh Core Values + Core Focus',  notes:'' },
-            { id:3, title:'Update 10-Year + 3-Year Picture',   notes:'' },
-            { id:4, title:'Set 1-Year Plan + Q1 Goals',        notes:'' },
-            { id:5, title:'Conclude — Rate the Session',       notes:'' }
-          ]
+        { id:5002, session_date:nextYear+'-01-01', year:String(nextYear), status:'scheduled',
+          attendance:'',
+          areas_completed:{}
         }
       ]);
       // Pick next-upcoming quarter for the scheduled quarterly session
@@ -369,29 +405,17 @@
       const _endDay = [31, 30, 30, 31][_priorQ - 1];
       const _qSessionDate = _priorQYr + '-' + String(_endMonth).padStart(2, '0') + '-' + String(_endDay).padStart(2, '0');
       seedIfEmpty('coach4u_quarterly_sessions', [
-        { id:6001, session_date:'2026-03-31', target_quarter:'Q2 2026', status:'completed', rating:7,
-          agenda:[
-            { id:1, title:'Review Last Quarter',          notes:'Q1 results: 4 of 5 priorities hit. Missed associate-coach hire (still searching). Revenue $98k (target $90k) — strong.' },
-            { id:2, title:'Lessons + Adjustments',        notes:'Need a clearer rock owner for hiring. Sales pipeline review should be weekly not monthly.' },
-            { id:3, title:"Set Next Quarter's Goals",     notes:'Q2: 1) Hire associate coach (Lou), 2) Launch group coaching program, 3) 5 new clients, 4) Speak at 2 events.' },
-            { id:4, title:'Conclude — Rate the Session', notes:'Solid session. Cath to update goals.html with Q2 priorities by EOW.' }
-          ]
+        { id:6001, session_date:'2026-03-31', target_quarter:'Q2 2026', status:'completed',
+          attendance:'Cath, Lou, Andrew',
+          areas_completed:{1:true,2:true,3:true}
         },
-        { id:6002, session_date:'2026-06-30', target_quarter:'Q3 2026', status:'completed', rating:8,
-          agenda:[
-            { id:1, title:'Review Last Quarter',          notes:'Q2: 3 of 4 priorities hit. Hired associate coach (Sarah, started May). Group program launched with 6 participants. Missed event speaking target (1 of 2).' },
-            { id:2, title:'Lessons + Adjustments',        notes:'Event scheduling needs more lead time. Group program proves out — repeat in Q3 with 10 participants.' },
-            { id:3, title:"Set Next Quarter's Goals",     notes:'Q3: 1) Group cohort #2 (10 ppl), 2) Sign 6 new 1:1 clients, 3) Publish signature workbook, 4) Hire admin support.' },
-            { id:4, title:'Conclude — Rate the Session', notes:'Best session yet. Team in sync. Andrew to brief team Monday.' }
-          ]
+        { id:6002, session_date:'2026-06-30', target_quarter:'Q3 2026', status:'completed',
+          attendance:'Cath, Lou, Andrew, Sarah',
+          areas_completed:{1:true,2:true,3:true}
         },
-        { id:6003, session_date:_qSessionDate, target_quarter:_nextQuarterLabel, status:'scheduled', rating:null,
-          agenda:[
-            { id:1, title:'Review Last Quarter',          notes:'' },
-            { id:2, title:'Lessons + Adjustments',        notes:'' },
-            { id:3, title:"Set Next Quarter's Goals",     notes:'' },
-            { id:4, title:'Conclude — Rate the Session', notes:'' }
-          ]
+        { id:6003, session_date:_qSessionDate, target_quarter:_nextQuarterLabel, status:'scheduled',
+          attendance:'',
+          areas_completed:{}
         }
       ]);
     }

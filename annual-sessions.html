@@ -84,24 +84,15 @@
     <a class="bottom-nav-item" href="learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
   </nav>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script>
+  <script type="module">
   'use strict';
-  const _sb=window.supabase.createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  const _sb=createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
   document.getElementById('signOutBtn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
   function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
   const _LS_KEY='coach4u_annual_sessions';
   function _genId(){return Date.now()*1000+Math.floor(Math.random()*1000)}
-  function _annualAgendaBlank(){
-    return [
-      { id:1, title:'Review Last Year',                  notes:'' },
-      { id:2, title:'Refresh Core Values + Core Focus',  notes:'' },
-      { id:3, title:'Update 10-Year + 3-Year Picture',   notes:'' },
-      { id:4, title:'Set 1-Year Plan + Q1 Goals',        notes:'' },
-      { id:5, title:'Conclude — Rate the Session',  notes:'' }
-    ];
-  }
   function _annualSeed(){
     const today=new Date();
     const thisYear=today.getFullYear();
@@ -109,17 +100,13 @@
     const janThis=thisYear+'-01-01';
     const janNext=nextYear+'-01-01';
     return [
-      { id:5001, session_date:janThis, year:String(thisYear), status:'completed', rating:8,
-        agenda:[
-          { id:1, title:'Review Last Year',                  notes:'Revenue up 22% YoY. Missed coach-hire target (1 of 2). Acme + Globex deals carried Q4. NPS held at 64.' },
-          { id:2, title:'Refresh Core Values + Core Focus',  notes:'Values still resonate. Considering tightening niche to professional services > 20 staff.' },
-          { id:3, title:'Update 10-Year + 3-Year Picture',   notes:'3-year picture confirmed: 4 coaches, 80 active clients, $1.2M revenue. 10-year unchanged.' },
-          { id:4, title:'Set 1-Year Plan + Q1 Goals',        notes:'1-year revenue target $420k. Q1 priorities: sign 5 new clients, ship signature workbook, hire 1 associate coach.' },
-          { id:5, title:'Conclude — Rate the Session',  notes:'Great session. Action: Cath to update One-Page Plan by end of week. Andrew to brief team Monday.' }
-        ]
+      { id:5001, session_date:janThis, year:String(thisYear), status:'completed',
+        attendance:'Cath, Lou, Andrew',
+        areas_completed:{1:true,2:true,3:true,4:true}
       },
-      { id:5002, session_date:janNext, year:String(nextYear), status:'scheduled', rating:null,
-        agenda:_annualAgendaBlank()
+      { id:5002, session_date:janNext, year:String(nextYear), status:'scheduled',
+        attendance:'',
+        areas_completed:{}
       }
     ];
   }
@@ -146,7 +133,6 @@
           <div class="session-item-meta">
             <span class="status-pill ${STATUS_CLASS[s.status]||'sp-scheduled'}">${STATUS_LABEL[s.status]||s.status}</span>
             ${s.year?'Year '+escHtml(s.year):''}
-            ${s.rating?'&middot; '+s.rating+'/10':''}
           </div>
         </div>
         <span class="session-item-arrow">&#x203A;</span>
@@ -161,8 +147,8 @@
       session_date:iso,
       year:String(today.getFullYear()),
       status:'scheduled',
-      rating:null,
-      agenda:_annualAgendaBlank()
+      attendance:'',
+      areas_completed:{}
     };
     const all=_annualLoad();
     all.push(session);
@@ -172,6 +158,11 @@
   (async()=>{
     const{data:{user}}=await _sb.auth.getUser();
     if(!user){window.location.href='login.html';return}
+    const { data: profile } = await _sb
+      .from('users').select('membership_status').eq('id', user.id).single();
+    if (!profile || profile.membership_status !== 'active') {
+      window.location.href = 'inactive.html'; return;
+    }
     loadSessions();
     document.body.style.opacity='1';
   })();

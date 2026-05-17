@@ -156,7 +156,15 @@
     document.getElementById('signOutBtn').addEventListener('click', async () => { await sb.auth.signOut(); window.location.href = 'login.html'; });
     const { data: { user } } = await sb.auth.getUser();
     if (!user) { window.location.href = 'login.html'; }
-    document.body.style.opacity = '1';
+    else {
+      const { data: profile } = await sb
+        .from('users').select('membership_status').eq('id', user.id).single();
+      if (!profile || profile.membership_status !== 'active') {
+        window.location.href = 'inactive.html';
+      } else {
+        document.body.style.opacity = '1';
+      }
+    }
   </script>
 </body>
 </html>

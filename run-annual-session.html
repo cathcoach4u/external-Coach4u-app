@@ -52,6 +52,24 @@
     .area-links a { color:var(--accent); font-weight:600; text-decoration:none; }
     .area-links a:hover { text-decoration:underline; }
     .checkin-actions{display:flex;gap:8px;flex-wrap:wrap}
+    /* Aggregated check-in results */
+    .ci-summary{margin-top:14px;font-size:.85rem;color:#666;font-family:inherit;font-weight:600}
+    .ci-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.85rem;font-family:inherit}
+    .ci-table th,.ci-table td{padding:8px 10px;border-bottom:1px solid #f0f0f0;text-align:left;vertical-align:middle}
+    .ci-table th{font-weight:700;color:var(--primary);background:#f0fdfa;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+    .ci-table td.ci-avg{font-weight:700;text-align:center;white-space:nowrap}
+    .ci-table td.ci-dot-cell{width:24px;text-align:center}
+    .ci-dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+    .ci-dot-red{background:#dc2626}
+    .ci-dot-amber{background:#d97706}
+    .ci-dot-green{background:#059669}
+    .ci-comments-toggle{margin-top:12px;background:none;border:none;color:var(--accent);font-family:inherit;font-weight:600;cursor:pointer;padding:6px 0;font-size:.85rem}
+    .ci-comments-toggle:hover{text-decoration:underline}
+    .ci-comments{margin-top:10px}
+    .ci-comments-q{margin-bottom:14px}
+    .ci-comments-q-title{font-family:inherit;font-weight:700;color:var(--primary);font-size:.85rem;margin-bottom:5px}
+    .ci-comments-c{font-family:inherit;font-size:.83rem;color:var(--text);padding:6px 10px;background:#fafbfc;border-left:3px solid var(--accent);border-radius:4px;margin-bottom:5px}
+    .ci-comments-author{font-weight:700;color:var(--primary)}
   </style>
   <script src="js/active-session.js" defer></script>
 </head>
@@ -88,23 +106,15 @@
     <a class="bottom-nav-item" href="learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
   </nav>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script>
+  <script type="module">
   'use strict';
-  const _sb=window.supabase.createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  const _sb=createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
   document.getElementById('signOutBtn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
   let _currentSession=null,_timerInterval=null,_timerStart=null,_attendanceTimer=null;
   function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
   const _LS_KEY='coach4u_annual_sessions';
-  function _annualAgendaBlank(){
-    return [
-      { id:1, title:'Review Last Year',                  notes:'' },
-      { id:2, title:'Refresh Core Values + Core Focus',  notes:'' },
-      { id:3, title:'Update 10-Year + 3-Year Picture',   notes:'' },
-      { id:4, title:'Set 1-Year Plan + Q1 Goals',        notes:'' }
-    ];
-  }
   function _annualSeed(){
     const today=new Date();
     const thisYear=today.getFullYear();
@@ -152,6 +162,83 @@
 
   function buildCheckinLink(sessionId){
     return new URL('team-checkin.html?session='+sessionId+'&type=annual', window.location.href).href;
+  }
+
+  function loadCheckins(sessionId, sessionType){
+    let all=[];
+    try{const raw=localStorage.getItem('coach4u_team_checkins');if(raw)all=JSON.parse(raw)||[];}catch(_){}
+    if(!Array.isArray(all))return [];
+    return all.filter(c=>String(c.session_id)===String(sessionId)&&c.session_type===sessionType);
+  }
+
+  function aggregate(checkins, questionCount=17){
+    const rows=[];
+    for(let i=0;i<questionCount;i++){
+      const scores=checkins.map(c=>(c.scores||[])[i]).filter(v=>typeof v==='number'&&!isNaN(v));
+      const sum=scores.reduce((a,b)=>a+b,0);
+      const avg=scores.length?sum/scores.length:null;
+      rows.push({q:i, text:CHECKIN_QUESTIONS[i]||('Question '+(i+1)), avg, count:scores.length});
+    }
+    return rows;
+  }
+
+  function dotClass(avg){
+    if(avg==null) return 'ci-dot ci-dot-amber';
+    if(avg<3) return 'ci-dot ci-dot-red';
+    if(avg<4) return 'ci-dot ci-dot-amber';
+    return 'ci-dot ci-dot-green';
+  }
+
+  function truncate(s, max){ s=String(s||''); return s.length>max ? s.slice(0,max-1)+'…' : s; }
+
+  function renderCheckinResults(container, sessionId, sessionType){
+    if(!container) return;
+    const checkins=loadCheckins(sessionId, sessionType);
+    const n=checkins.length;
+    if(n===0){
+      container.innerHTML='<div class="ci-summary">No responses yet</div>';
+      return;
+    }
+    const rows=aggregate(checkins, CHECKIN_QUESTIONS.length).slice().sort((a,b)=>{
+      const av=(a.avg==null?Infinity:a.avg), bv=(b.avg==null?Infinity:b.avg);
+      return av-bv;
+    });
+    let html='<div class="ci-summary">'+n+' team response'+(n===1?'':'s')+' received</div>';
+    html+='<table class="ci-table"><thead><tr><th></th><th>Question</th><th style="text-align:center;">Avg</th></tr></thead><tbody>';
+    rows.forEach(r=>{
+      html+='<tr><td class="ci-dot-cell"><span class="'+dotClass(r.avg)+'"></span></td>'
+          +'<td>'+escHtml(truncate(r.text,80))+'</td>'
+          +'<td class="ci-avg">'+(r.avg==null?'—':r.avg.toFixed(1))+'</td></tr>';
+    });
+    html+='</tbody></table>';
+    html+='<button class="ci-comments-toggle" id="ci-comments-toggle">Show individual comments &#x25BC;</button>';
+    html+='<div class="ci-comments hidden" id="ci-comments"></div>';
+    container.innerHTML=html;
+
+    const toggle=container.querySelector('#ci-comments-toggle');
+    const wrap=container.querySelector('#ci-comments');
+    if(toggle && wrap){
+      let built=false;
+      toggle.addEventListener('click',()=>{
+        if(!built){
+          let inner='';
+          for(let i=0;i<CHECKIN_QUESTIONS.length;i++){
+            const qComments=checkins.map(c=>({author:c.name||'Anon', text:(c.comments||[])[i]||''})).filter(x=>x.text && x.text.trim());
+            if(!qComments.length) continue;
+            inner+='<div class="ci-comments-q"><div class="ci-comments-q-title">'+escHtml(CHECKIN_QUESTIONS[i])+'</div>';
+            qComments.forEach(c=>{
+              inner+='<div class="ci-comments-c"><span class="ci-comments-author">'+escHtml(c.author)+':</span> '+escHtml(c.text)+'</div>';
+            });
+            inner+='</div>';
+          }
+          if(!inner) inner='<div class="ci-summary" style="margin-top:0;">No written comments submitted yet.</div>';
+          wrap.innerHTML=inner;
+          built=true;
+        }
+        const isHidden=wrap.classList.toggle('hidden');
+        toggle.innerHTML=(isHidden?'Show':'Hide')+' individual comments '+(isHidden?'&#x25BC;':'&#x25B2;');
+      });
+    }
   }
 
   // Areas to cover during the annual session
@@ -235,8 +322,11 @@
           <button class="ws-btn" id="copy-checkin-link">Copy Check-in Link</button>
           <a class="ws-btn-secondary" href="${escHtml(checkinLink)}" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;">Open Form</a>
         </div>
+        <div id="ci-results"></div>
       </div>
     `;
+
+    renderCheckinResults(c.querySelector('#ci-results'), s.id, 'annual');
 
     // Attendance auto-save (debounced ~300ms)
     const attInput=c.querySelector('#attendance-input');
@@ -311,6 +401,11 @@
   (async()=>{
     const{data:{user}}=await _sb.auth.getUser();
     if(!user){window.location.href='login.html';return}
+    const { data: profile } = await _sb
+      .from('users').select('membership_status').eq('id', user.id).single();
+    if (!profile || profile.membership_status !== 'active') {
+      window.location.href = 'inactive.html'; return;
+    }
     const id=getSessionId();
     if(!id){
       document.getElementById('session-empty').classList.remove('hidden');

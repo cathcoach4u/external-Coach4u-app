@@ -4,6 +4,20 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.76
+- **Pre-Supabase migration cleanup** — fixed all 10 items from the v0.5.74 audit so the codebase is clean before the Supabase data layer is wired in:
+  1. **Session shape divergence resolved.** `coach4u_annual_sessions` and `coach4u_quarterly_sessions` now use ONE shape everywhere: `{ id, session_date, year/target_quarter, status, attendance, areas_completed }`. Dropped `agenda` + `rating` from index.html `ensureSeeds()`, the "+ New …" creators in `annual-sessions.html` / `quarterly-sessions.html`, the self-seeds in the run-session pages, and the `${s.rating ? '· …/10' : ''}` list-row fragments.
+  2. **Meeting seed status aligned.** Meeting id 4001 is now `status:'completed'` in all 3 places (`index.html` ensureSeeds + `meeting.html` self-seed + `run-meeting.html` self-seed) with matching rating + notes.
+  3. **Sign-out class fixed on 5 Ops pages.** `scorecard.html`, `goals.html`, `meeting.html`, `run-meeting.html`, `issues.html` were using `class="signOutBtn"` (rendered unstyled — only `.sign-out-btn` is in CSS). Now all use canonical `class="sign-out-btn" id="signOutBtn"`.
+  4. **Dead links fixed.** `learn/values-discovery.html` final CTA → `../core-values.html` (was `../strategy/core-values.html` from before v0.5.45). `404.html` secondary button → `/index.html` (was `/dashboard.html`).
+  5. **`ensureSeeds()` now seeds 4 previously-missing keys.** Dashboard pre-seeds `coach4u_core_focus`, `coach4u_marketing_strategy`, `coach4u_leadership_team`, `coach4u_demo_scorecard` (metrics + 6 weeks of sample entries) on first visit, using the same shapes the worksheet/tool pages expect.
+  6. **`membership_status` check added to 10 pages.** Was missing on `planning.html`, all 5 Operations tools (`scorecard / goals / meeting / run-meeting / issues`), and all 4 Planning session pages (`annual-sessions / run-annual-session / quarterly-sessions / run-quarterly-session`). Inactive users could deep-link in; now they bounce to `inactive.html`.
+  7. **`sw.js` precache cleaned.** Removed non-existent `dashboard.html`. Added `favicon.svg` + `js/active-session.js`. Removed dead `js/auth.js` + `js/supabase.js` entries.
+  8. **Supabase SDK consolidated to ESM.** Converted 9 files from UMD (`<script src="…/umd/supabase.min.js">` + `window.supabase.createClient`) to ESM (`<script type="module">` + `import { createClient } from '…/+esm'`). Pages affected: `scorecard / goals / meeting / run-meeting / issues / annual-sessions / quarterly-sessions / run-annual-session / run-quarterly-session`. No inline `onclick` handlers needed migration (all event wiring is `addEventListener` based). `team-checkin.html` does not use Supabase and was untouched.
+  9. **Dead JS files removed.** `js/auth.js` and `js/supabase.js` deleted (referenced by no HTML); now only `js/active-session.js` remains.
+  10. **Aggregated team check-in results re-introduced.** Both `run-annual-session.html` and `run-quarterly-session.html` now show, below the Copy Link / Open Form buttons: "{N} team responses received" (or "No responses yet"), and when N>0 a compact table — one row per question (truncated to ~80 chars) with average score + red/amber/green dot (red < 3, amber 3–3.9, green ≥ 4), sorted lowest-average first — plus a "Show individual comments" expander grouping comments by question with the submitter's name. The 17 EOS-style `CHECKIN_QUESTIONS` array is duplicated into both run-session files so the questions can be displayed (Supabase migration will make this a server-side constant).
+- Version bump: 0.5.75 → 0.5.76. `CACHE_VERSION` in `sw.js` bumped to `coach4u-v0.5.76`. `CLAUDE.md` "Pre-migration cleanup required" subsection removed from the Planned Architecture block (those items are done).
+
 ## v0.5.75
 - **Documented the planned Supabase team architecture in CLAUDE.md.** Locked-in decisions:
   - **2-tier roles**: Admin (manages seats, edits all data, sends invites) vs. Member (reads team data, fills check-ins only).

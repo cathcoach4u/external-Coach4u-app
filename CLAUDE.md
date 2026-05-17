@@ -128,11 +128,11 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.75
+v0.5.76
 
 ## Latest
+- **v0.5.76** — Pre-migration cleanup. Fixed all 10 items from the v0.5.74 audit so the codebase is clean before Supabase data-layer wiring begins. See CHANGELOG.md for itemised list.
 - **v0.5.75** — Documented the planned **team-scoped, role-based** Supabase architecture (Admin + Member roles; team-shared data; 1 subscription = N seats allocated by Admin; check-in results visible to all team members). Captured the pre-migration cleanup list from the v0.5.74 audit. Project-memory-only change, no code touched.
-- **v0.5.74** — Restructured docs. Moved full version history out of `CLAUDE.md` into `CHANGELOG.md`. Tightened CLAUDE.md to project memory + conventions only. Added explicit canonical sign-out ID, 300ms debounce convention, no-Google-Fonts rule, and Supabase key-exposure note to Key Rules. Listed all 4 version-sync targets explicitly. Clarified team-checkin question count (17 rated + 1 name + 1 optional role).
 
 ## Current Status
 - **Dashboard** (`index.html`) — live, reads all panels from localStorage (`coach4u_*` keys), pre-seeds on first visit via `ensureSeeds()`
@@ -191,19 +191,6 @@ team_members          (id, organisation_id, user_id, invited_email, role, status
 3. Members open the link → log in with their own credentials → submit the 17-question form.
 4. Submissions auto-aggregate; the session workspace shows averages + lowest-scoring areas + comments grouped by question (re-introduces the v0.5.72 results display that was stripped in v0.5.73 — it was right for the public-form model, wrong for the team model).
 5. Admin uses aggregated results to set planning priorities.
-
-### Pre-migration cleanup required (per v0.5.74 audit)
-Must fix BEFORE the migration so data lands clean:
-1. Session shape divergence — `coach4u_annual_sessions` / `_quarterly_sessions` are written with `agenda + rating` in some paths and `attendance + areas_completed` in others. Align to the v0.5.73 shape everywhere.
-2. Meeting seed status conflict — `index.html` seeds meeting 4001 as `scheduled`, but `meeting.html` / `run-meeting.html` seed the same id as `completed`. Pick one.
-3. Sign-out class regression on 5 Operations tool pages (`scorecard / goals / meeting / run-meeting / issues` use `class="signOutBtn"` — should be `class="sign-out-btn"`).
-4. Dead links — `learn/values-discovery.html:239` → `../strategy/core-values.html` (dir removed v0.5.45); `404.html:169` → `/dashboard.html` (doesn't exist).
-5. `index.html ensureSeeds()` is missing 4 keys: `coach4u_core_focus`, `coach4u_marketing_strategy`, `coach4u_leadership_team`, `coach4u_demo_scorecard`.
-6. 9 pages skip the `membership_status` check (all 5 Ops tools + 4 Planning session pages + planning hub). Add to all.
-7. `sw.js` precaches non-existent `dashboard.html`; missing `favicon.svg` + `js/active-session.js`.
-8. Two Supabase SDK styles in use (ESM + UMD) — consolidate to ESM per Key Rules.
-9. `js/auth.js` + `js/supabase.js` are dead files (referenced by no HTML); remove or wire up.
-10. Re-add aggregated check-in results to session workspaces (reverse the v0.5.73 simplification — wrong for the team model).
 
 ## Add a New Member (SQL)
 

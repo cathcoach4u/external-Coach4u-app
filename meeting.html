@@ -61,7 +61,7 @@
         <a href="operations.html" class="header-back">&#x2190; Operations</a>
         <span class="header-title">Past Meetings</span>
       </div>
-      <button class="signOutBtn" id="signOutBtn">Sign Out</button>
+      <button class="sign-out-btn" id="signOutBtn">Sign Out</button>
     </div>
   </header>
 
@@ -122,10 +122,10 @@
     <a class="bottom-nav-item" href="learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
   </nav>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script>
+  <script type="module">
   'use strict';
-  const _sb=window.supabase.createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  const _sb=createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
   document.getElementById('signOutBtn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
   function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
@@ -217,6 +217,11 @@
   (async()=>{
     const{data:{user}}=await _sb.auth.getUser();
     if(!user){window.location.href='login.html';return}
+    const { data: profile } = await _sb
+      .from('users').select('membership_status').eq('id', user.id).single();
+    if (!profile || profile.membership_status !== 'active') {
+      window.location.href = 'inactive.html'; return;
+    }
     await loadMeetings();
     document.body.style.opacity='1';
   })();
