@@ -128,9 +128,10 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.76
+v0.5.77
 
 ## Latest
+- **v0.5.77** — Removed the now-unused UMD Supabase CDN URL from `sw.js` `STATIC_ASSETS`. Every page is on ESM since v0.5.76, so the precache entry was dead bytes.
 - **v0.5.76** — Pre-migration cleanup. Fixed all 10 items from the v0.5.74 audit so the codebase is clean before Supabase data-layer wiring begins. See CHANGELOG.md for itemised list.
 - **v0.5.75** — Documented the planned **team-scoped, role-based** Supabase architecture (Admin + Member roles; team-shared data; 1 subscription = N seats allocated by Admin; check-in results visible to all team members). Captured the pre-migration cleanup list from the v0.5.74 audit. Project-memory-only change, no code touched.
 

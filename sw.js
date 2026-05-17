@@ -3,7 +3,7 @@
    Caching strategy: Static assets (cache-first), Pages (network-first), API (network-first)
    ═══════════════════════════════════════════════════════════════ */
 
-const CACHE_VERSION = 'coach4u-v0.5.76';
+const CACHE_VERSION = 'coach4u-v0.5.77';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 const PAGES_CACHE = CACHE_VERSION + '-pages';
 const API_CACHE = CACHE_VERSION + '-api';
@@ -16,7 +16,6 @@ const STATIC_ASSETS = [
   '/external-Coach4u-app/favicon.svg',
   '/external-Coach4u-app/css/style.css',
   '/external-Coach4u-app/js/active-session.js',
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js',
 ];
 
 // Install event: cache static assets

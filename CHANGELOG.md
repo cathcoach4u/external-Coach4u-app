@@ -4,6 +4,9 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.77
+- **`sw.js` precache trimmed.** Removed the UMD Supabase CDN URL (`https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js`) — every page consumes the ESM bundle since v0.5.76, so the UMD entry was dead bytes in the precache.
+
 ## v0.5.76
 - **Pre-Supabase migration cleanup** — fixed all 10 items from the v0.5.74 audit so the codebase is clean before the Supabase data layer is wired in:
   1. **Session shape divergence resolved.** `coach4u_annual_sessions` and `coach4u_quarterly_sessions` now use ONE shape everywhere: `{ id, session_date, year/target_quarter, status, attendance, areas_completed }`. Dropped `agenda` + `rating` from index.html `ensureSeeds()`, the "+ New …" creators in `annual-sessions.html` / `quarterly-sessions.html`, the self-seeds in the run-session pages, and the `${s.rating ? '· …/10' : ''}` list-row fragments.
