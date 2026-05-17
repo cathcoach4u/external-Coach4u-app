@@ -113,47 +113,33 @@
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
   const _sb=createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
   document.getElementById('signOutBtn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
-  let _currentSession=null,_timerInterval=null,_timerStart=null,_attendanceTimer=null;
+  let orgId=null,_currentSession=null,_timerInterval=null,_timerStart=null,_attendanceTimer=null;
   function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
-  const _LS_KEY='coach4u_quarterly_sessions';
-  function quarterEndDate(qLabel){
-    const m=/^Q(\d)\s+(\d{4})$/.exec(qLabel); if(!m) return new Date().toISOString().slice(0,10);
-    const q=parseInt(m[1]); const yr=parseInt(m[2]);
-    let priorQ=q-1, priorYr=yr; if(priorQ<1){priorQ=4;priorYr=yr-1;}
-    const endMonth=[3,6,9,12][priorQ-1];
-    const endDay=[31,30,30,31][priorQ-1];
-    return priorYr+'-'+String(endMonth).padStart(2,'0')+'-'+String(endDay).padStart(2,'0');
-  }
-  function nextUpcomingQuarter(){
-    const now=new Date();
-    const yr=now.getFullYear();
-    const currentQ=Math.floor(now.getMonth()/3)+1;
-    let nextQ=currentQ+1, nextYr=yr; if(nextQ>4){nextQ=1;nextYr=yr+1;}
-    return 'Q'+nextQ+' '+nextYr;
-  }
-  function _quarterlySeed(){
-    return [
-      { id:6001, session_date:'2026-03-31', target_quarter:'Q2 2026', status:'completed',
-        attendance:'Cath, Lou, Andrew',
-        areas_completed:{1:true,2:true,3:true}
-      },
-      { id:6002, session_date:'2026-06-30', target_quarter:'Q3 2026', status:'completed',
-        attendance:'Cath, Lou, Andrew, Sarah',
-        areas_completed:{1:true,2:true,3:true}
-      },
-      { id:6003, session_date:quarterEndDate(nextUpcomingQuarter()), target_quarter:nextUpcomingQuarter(), status:'scheduled',
-        attendance:'',
-        areas_completed:{}
-      }
-    ];
-  }
-  function _quarterlyLoad(){let d;try{d=JSON.parse(localStorage.getItem(_LS_KEY))}catch(_){d=null}if(!Array.isArray(d)||d.length===0){d=_quarterlySeed();_quarterlySave(d)}return d}
-  function _quarterlySave(d){localStorage.setItem(_LS_KEY,JSON.stringify(d))}
+
+  /* Previous localStorage SEED for coach4u_quarterly_sessions retained for reference only —
+     no longer applied. Sessions are read from Supabase `quarterly_sessions` keyed by
+     organisation_id + uuid id. */
+
   function fmtDate(d){if(!d)return '';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}
-  function getSessionId(){const u=new URLSearchParams(window.location.search);const id=parseInt(u.get('id'));return isNaN(id)?null:id}
-  function getSession(id){const all=_quarterlyLoad();return all.find(s=>s.id===id)||null}
-  function updateSession(id,patch){const all=_quarterlyLoad();const s=all.find(x=>x.id===id);if(s){Object.assign(s,patch);_quarterlySave(all)}return s}
+  function getSessionId(){const u=new URLSearchParams(window.location.search);const id=u.get('id');return id||null}
+
+  async function fetchSession(id){
+    const { data, error } = await _sb
+      .from('quarterly_sessions')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if(error){ console.warn('Load session failed:', error.message); return null; }
+    return data || null;
+  }
+  async function updateSession(id, patch){
+    const { error } = await _sb
+      .from('quarterly_sessions')
+      .update(patch)
+      .eq('id', id);
+    if(error){ console.warn('Update session failed:', error.message); throw error; }
+  }
 
   // 17 team check-in questions (must stay in sync with team-checkin.html)
   const CHECKIN_QUESTIONS = [
@@ -180,17 +166,20 @@
     return new URL('team-checkin.html?session='+sessionId+'&type=quarterly', window.location.href).href;
   }
 
-  function loadCheckins(sessionId, sessionType){
-    let all=[];
-    try{const raw=localStorage.getItem('coach4u_team_checkins');if(raw)all=JSON.parse(raw)||[];}catch(_){}
-    if(!Array.isArray(all))return [];
-    return all.filter(c=>String(c.session_id)===String(sessionId)&&c.session_type===sessionType);
+  async function loadCheckins(sessionId, sessionType){
+    const { data, error } = await _sb
+      .from('team_checkins')
+      .select('*')
+      .eq('session_id', sessionId)
+      .eq('session_type', sessionType);
+    if(error){ console.warn('Load team_checkins failed:', error.message); return []; }
+    return Array.isArray(data) ? data : [];
   }
 
   function aggregate(checkins, questionCount=17){
     const rows=[];
     for(let i=0;i<questionCount;i++){
-      const scores=checkins.map(c=>(c.scores||[])[i]).filter(v=>typeof v==='number'&&!isNaN(v));
+      const scores=checkins.map(c=>{const v=(c.scores||[])[i];const n=Number(v);return isNaN(n)?null:n;}).filter(v=>v!==null);
       const sum=scores.reduce((a,b)=>a+b,0);
       const avg=scores.length?sum/scores.length:null;
       rows.push({q:i, text:CHECKIN_QUESTIONS[i]||('Question '+(i+1)), avg, count:scores.length});
@@ -207,9 +196,9 @@
 
   function truncate(s, max){ s=String(s||''); return s.length>max ? s.slice(0,max-1)+'…' : s; }
 
-  function renderCheckinResults(container, sessionId, sessionType){
+  async function renderCheckinResults(container, sessionId, sessionType){
     if(!container) return;
-    const checkins=loadCheckins(sessionId, sessionType);
+    const checkins=await loadCheckins(sessionId, sessionType);
     const n=checkins.length;
     if(n===0){
       container.innerHTML='<div class="ci-summary">No responses yet</div>';
@@ -264,8 +253,8 @@
     {id:3, name:"Set Next Quarter's Goals",    links:[{href:'goals.html',text:'Open Quarterly Goals →'}]}
   ];
 
-  function loadDetail(id){
-    const s=getSession(id);
+  async function loadDetail(id){
+    const s=await fetchSession(id);
     if(!s){
       document.getElementById('session-empty').classList.remove('hidden');
       document.getElementById('session-empty').innerHTML='Session not found. <a href="quarterly-sessions.html" style="color:var(--accent);font-weight:600;">Back to Quarterly Sessions &#x2192;</a>';
@@ -275,7 +264,7 @@
     const qn=(/^Q(\d)/.exec(s.target_quarter||'')||[])[1]||'';
     document.getElementById('ws-title').innerHTML='&#x1F3AF; '+(qn?'Q'+qn:'Quarterly')+' Planning Session — '+fmtDate(s.session_date);
     document.getElementById('ws-sub').textContent='Sets goals for '+(s.target_quarter||'next quarter')+' — track attendance, tick off each area as you cover it, and share the team check-in link.';
-    renderDetail(s);
+    await renderDetail(s);
   }
 
   function progressText(areasCompleted){
@@ -284,7 +273,7 @@
     return done+' of '+total+' areas completed';
   }
 
-  function renderDetail(s){
+  async function renderDetail(s){
     const c=document.getElementById('session-content');
     if(_timerInterval){clearInterval(_timerInterval);_timerInterval=null;_timerStart=null;}
     const attendance=s.attendance||'';
@@ -342,32 +331,40 @@
       </div>
     `;
 
-    renderCheckinResults(c.querySelector('#ci-results'), s.id, 'quarterly');
+    await renderCheckinResults(c.querySelector('#ci-results'), s.id, 'quarterly');
 
     // Attendance auto-save (debounced ~300ms)
     const attInput=c.querySelector('#attendance-input');
     attInput.addEventListener('input',()=>{
       clearTimeout(_attendanceTimer);
-      _attendanceTimer=setTimeout(()=>{
-        try{updateSession(s.id,{attendance:attInput.value});_currentSession.attendance=attInput.value;}
-        catch(err){showToast('Save failed','error')}
+      _attendanceTimer=setTimeout(async()=>{
+        const val=attInput.value;
+        _currentSession.attendance=val;
+        try{ await updateSession(s.id,{attendance:val}); }
+        catch(err){ showToast('Save failed','error'); }
       },300);
     });
 
     // Area checkboxes — immediate save
     c.querySelectorAll('input[type=checkbox][data-area-id]').forEach(cb=>{
-      cb.addEventListener('change',()=>{
+      cb.addEventListener('change', async ()=>{
         const aid=parseInt(cb.dataset.areaId);
         const next=Object.assign({},_currentSession.areas_completed||{});
         next[aid]=cb.checked;
-        try{
-          updateSession(s.id,{areas_completed:next});
-          _currentSession.areas_completed=next;
-          const label=c.querySelector('label[data-area-id="'+aid+'"]');
+        const prev=_currentSession.areas_completed;
+        _currentSession.areas_completed=next;
+        const label=c.querySelector('label[data-area-id="'+aid+'"]');
+        if(label) label.classList.toggle('complete',cb.checked);
+        const prog=c.querySelector('#areas-progress');
+        if(prog) prog.textContent=progressText(next);
+        try{ await updateSession(s.id,{areas_completed:next}); }
+        catch(err){
+          showToast('Save failed','error');
+          _currentSession.areas_completed=prev||{};
+          cb.checked=!cb.checked;
           if(label) label.classList.toggle('complete',cb.checked);
-          const prog=c.querySelector('#areas-progress');
-          if(prog) prog.textContent=progressText(next);
-        } catch(err){ showToast('Save failed','error'); cb.checked=!cb.checked; }
+          if(prog) prog.textContent=progressText(_currentSession.areas_completed);
+        }
       });
     });
 
@@ -386,12 +383,15 @@
     }
 
     // Status dropdown
-    c.querySelector('#session-status').addEventListener('change',e=>{
+    c.querySelector('#session-status').addEventListener('change', async e=>{
+      const newStatus=e.target.value;
+      _currentSession.status=newStatus;
       try{
-        updateSession(s.id,{status:e.target.value});_currentSession.status=e.target.value;showToast('Status updated','success');
+        await updateSession(s.id,{status:newStatus});
+        showToast('Status updated','success');
         if(window.activeSession){
-          if(e.target.value==='in_progress') window.activeSession.set('quarterly',s.id,(s.target_quarter||'Quarterly')+' Session');
-          else if(e.target.value==='completed') window.activeSession.clear();
+          if(newStatus==='in_progress') window.activeSession.set('quarterly',s.id,(s.target_quarter||'Quarterly')+' Session');
+          else if(newStatus==='completed') window.activeSession.clear();
         }
       }
       catch(err){showToast('Update failed','error')}
@@ -399,16 +399,18 @@
 
     // Timer
     const timerBtn=c.querySelector('#timer-btn'),timerEl=c.querySelector('#timer-elapsed');
-    timerBtn.addEventListener('click',()=>{
+    timerBtn.addEventListener('click', async ()=>{
       if(!_timerStart){
         _timerStart=Date.now();timerEl.classList.remove('hidden');timerBtn.textContent='⏹ End Session';timerBtn.classList.add('running');
         _timerInterval=setInterval(()=>{const sec=Math.floor((Date.now()-_timerStart)/1000);const mm=Math.floor(sec/60),ss=sec%60;timerEl.textContent=mm+':'+(ss<10?'0':'')+ss;},1000);
-        try{updateSession(s.id,{status:'in_progress'});c.querySelector('#session-status').value='in_progress';_currentSession.status='in_progress';}catch(_){}
+        c.querySelector('#session-status').value='in_progress';_currentSession.status='in_progress';
+        try{ await updateSession(s.id,{status:'in_progress'}); }catch(_){}
         if(window.activeSession) window.activeSession.set('quarterly',s.id,(s.target_quarter||'Quarterly')+' Session');
       }else{
         clearInterval(_timerInterval);_timerInterval=null;_timerStart=null;
         timerEl.classList.add('hidden');timerBtn.textContent='▶ Start Session';timerBtn.classList.remove('running');
-        try{updateSession(s.id,{status:'completed'});c.querySelector('#session-status').value='completed';_currentSession.status='completed';}catch(_){}
+        c.querySelector('#session-status').value='completed';_currentSession.status='completed';
+        try{ await updateSession(s.id,{status:'completed'}); }catch(_){}
         if(window.activeSession) window.activeSession.clear();
       }
     });
@@ -422,12 +424,14 @@
     if (!profile || profile.membership_status !== 'active') {
       window.location.href = 'inactive.html'; return;
     }
+    orgId = window.activeOrg && window.activeOrg.get();
+    if(!orgId){ window.location.href='index.html'; return; }
     const id=getSessionId();
     if(!id){
-      document.getElementById('session-empty').classList.remove('hidden');
-    }else{
-      loadDetail(id);
+      window.location.href='quarterly-sessions.html';
+      return;
     }
+    try { await loadDetail(id); } catch(e){ console.warn('Load detail error:', e); }
     document.body.style.opacity='1';
   })();
   </script>

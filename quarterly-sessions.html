@@ -130,26 +130,29 @@
   document.getElementById('signOutBtn').addEventListener('click',async()=>{await _sb.auth.signOut();window.location.href='login.html';});
   function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
-  const _LS_KEY='coach4u_quarterly_sessions';
-  function _genId(){return Date.now()*1000+Math.floor(Math.random()*1000)}
+
+  /* Previous localStorage SEED (kept here for reference only — no longer applied.
+     New businesses start with no sessions; the +New Quarterly Session button creates one fresh.)
+     SEED = [
+       { id:6001, session_date:'YYYY-03-31', target_quarter:'Q2 YYYY', status:'completed',
+         attendance:'Cath, Lou, Andrew', areas_completed:{1:true,2:true,3:true} },
+       …
+     ]
+  */
+
+  let orgId=null;
+
   // Helpers for quarter math
   function quarterEndDate(qLabel){
     // qLabel like "Q2 2026" → the date of end of prior quarter (so this session sets next quarter)
     const m=/^Q(\d)\s+(\d{4})$/.exec(qLabel); if(!m) return new Date().toISOString().slice(0,10);
     const q=parseInt(m[1]); const yr=parseInt(m[2]);
-    // Session to set Qn happens at end of Q(n-1). e.g. Q2 session sits at end of Q1 (Mar 31).
     let priorQ=q-1, priorYr=yr; if(priorQ<1){priorQ=4;priorYr=yr-1;}
-    const endMonth=[3,6,9,12][priorQ-1]; // 1-indexed: Q1 ends Mar, Q2 ends Jun...
+    const endMonth=[3,6,9,12][priorQ-1];
     const endDay=[31,30,30,31][priorQ-1];
     const mm=String(endMonth).padStart(2,'0');
     const dd=String(endDay).padStart(2,'0');
     return priorYr+'-'+mm+'-'+dd;
-  }
-  function priorQuarter(qLabel){
-    const m=/^Q(\d)\s+(\d{4})$/.exec(qLabel); if(!m) return '';
-    const q=parseInt(m[1]); const yr=parseInt(m[2]);
-    let pq=q-1, py=yr; if(pq<1){pq=4;py=yr-1;}
-    return 'Q'+pq+' '+py;
   }
   function nextUpcomingQuarter(){
     const now=new Date();
@@ -158,36 +161,30 @@
     let nextQ=currentQ+1, nextYr=yr; if(nextQ>4){nextQ=1;nextYr=yr+1;}
     return 'Q'+nextQ+' '+nextYr;
   }
-  function _quarterlySeed(){
-    return [
-      { id:6001, session_date:'2026-03-31', target_quarter:'Q2 2026', status:'completed',
-        attendance:'Cath, Lou, Andrew',
-        areas_completed:{1:true,2:true,3:true}
-      },
-      { id:6002, session_date:'2026-06-30', target_quarter:'Q3 2026', status:'completed',
-        attendance:'Cath, Lou, Andrew, Sarah',
-        areas_completed:{1:true,2:true,3:true}
-      },
-      { id:6003, session_date:quarterEndDate(nextUpcomingQuarter()), target_quarter:nextUpcomingQuarter(), status:'scheduled',
-        attendance:'',
-        areas_completed:{}
-      }
-    ];
-  }
-  function _quarterlyLoad(){let d;try{d=JSON.parse(localStorage.getItem(_LS_KEY))}catch(_){d=null}if(!Array.isArray(d)||d.length===0){d=_quarterlySeed();_quarterlySave(d)}return d}
-  function _quarterlySave(d){localStorage.setItem(_LS_KEY,JSON.stringify(d))}
+
   function fmtDate(d){if(!d)return '';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}
   const STATUS_LABEL={scheduled:'Scheduled',in_progress:'In Progress',completed:'Completed'};
   const STATUS_CLASS={scheduled:'sp-scheduled',in_progress:'sp-in_progress',completed:'sp-completed'};
-  function loadSessions(){
-    const sessions=_quarterlyLoad().slice().sort((a,b)=>(b.session_date||'').localeCompare(a.session_date||''));
-    renderSessions(sessions);
+
+  async function loadSessions(){
+    const { data, error } = await _sb
+      .from('quarterly_sessions')
+      .select('*')
+      .eq('organisation_id', orgId)
+      .order('session_date', { ascending: false });
+    if(error){
+      console.warn('Load quarterly sessions failed:', error.message);
+      renderSessions([]);
+      return;
+    }
+    renderSessions(Array.isArray(data) ? data : []);
   }
+
   function renderSessions(sessions){
     const list=document.getElementById('sessions-list');
     if(!sessions.length){list.innerHTML='<div class="empty-state">No quarterly sessions yet. Create one with "+ New Quarterly Session".</div>';return;}
     list.innerHTML=sessions.map(s=>`
-      <a href="run-quarterly-session.html?id=${s.id}" class="session-item" style="text-decoration:none;color:inherit;">
+      <a href="run-quarterly-session.html?id=${encodeURIComponent(s.id)}" class="session-item" style="text-decoration:none;color:inherit;">
         <div>
           <div class="session-item-date">${fmtDate(s.session_date)}</div>
           <div class="session-item-meta">
@@ -199,6 +196,7 @@
       </a>
     `).join('');
   }
+
   document.getElementById('new-session-btn').addEventListener('click',()=>{
     const next=nextUpcomingQuarter();
     const sel=document.getElementById('ns-target-quarter');
@@ -213,24 +211,31 @@
   const closeNSModal=()=>document.getElementById('new-session-modal').classList.add('hidden');
   document.getElementById('ns-modal-close').addEventListener('click',closeNSModal);
   document.getElementById('ns-modal-cancel').addEventListener('click',closeNSModal);
-  document.getElementById('ns-modal-save').addEventListener('click',()=>{
+  document.getElementById('ns-modal-save').addEventListener('click', async ()=>{
     const target_quarter=document.getElementById('ns-target-quarter').value;
     const session_date=document.getElementById('ns-date').value;
     if(!session_date){showToast('Date is required','error');return}
     if(!target_quarter){showToast('Target quarter is required','error');return}
-    const session={
-      id:_genId(),
-      session_date,
-      target_quarter,
-      status:'scheduled',
-      attendance:'',
-      areas_completed:{}
-    };
-    const all=_quarterlyLoad();
-    all.push(session);
-    _quarterlySave(all);
-    window.location.href='run-quarterly-session.html?id='+session.id;
+    const { data, error } = await _sb
+      .from('quarterly_sessions')
+      .insert({
+        organisation_id: orgId,
+        session_date,
+        target_quarter,
+        status: 'scheduled',
+        attendance: '',
+        areas_completed: {}
+      })
+      .select()
+      .single();
+    if(error || !data){
+      console.warn('Create quarterly session failed:', error && error.message);
+      showToast('Could not create session','error');
+      return;
+    }
+    window.location.href='run-quarterly-session.html?id='+encodeURIComponent(data.id);
   });
+
   (async()=>{
     const{data:{user}}=await _sb.auth.getUser();
     if(!user){window.location.href='login.html';return}
@@ -239,7 +244,9 @@
     if (!profile || profile.membership_status !== 'active') {
       window.location.href = 'inactive.html'; return;
     }
-    loadSessions();
+    orgId = window.activeOrg && window.activeOrg.get();
+    if(!orgId){ window.location.href = 'index.html'; return; }
+    await loadSessions();
     document.body.style.opacity='1';
   })();
   </script>

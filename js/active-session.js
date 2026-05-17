@@ -19,16 +19,12 @@
     try { localStorage.removeItem(KEY); } catch (_) {}
   }
 
-  // Confirm the session referenced by the pill is still in progress (not completed/deleted)
+  // Confirm the session referenced by the pill is still in progress.
+  // Since v0.5.101 the source-of-truth for planning sessions is Supabase (not localStorage),
+  // we trust the pill data itself. The workspace pages call window.activeSession.clear()
+  // explicitly when a session is completed or its timer is stopped, which removes the key.
   function isStillActive(data) {
-    if (!data || !data.id || !data.type) return false;
-    const sessionsKey = data.type === 'annual' ? 'coach4u_annual_sessions' : 'coach4u_quarterly_sessions';
-    let sessions;
-    try { sessions = JSON.parse(localStorage.getItem(sessionsKey) || '[]'); } catch (_) { return false; }
-    if (!Array.isArray(sessions)) return false;
-    const session = sessions.find(s => s.id === data.id);
-    if (!session) return false;
-    return session.status !== 'completed';
+    return !!(data && data.id && data.type);
   }
 
   function injectStyle() {
