@@ -130,11 +130,11 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.108
+v0.5.109
 
 ## Latest
+- **v0.5.109** — Extended the team-member-dropdown owner pattern (v0.5.108 goals.html) to the other three free-text owner fields: `scorecard.html` (Weekly Numbers metric owner), `issues.html` (issue owner), and `run-meeting.html` (todo owner in the add-row). Same loader + render-helper pattern, same "(not on team)" fallback for legacy values. No schema changes — values stored as canonical text in their existing `owner` columns. Per-user reporting now works consistently across goals / numbers / issues / todos.
 - **v0.5.108** — Goal owner field in `goals.html` is now a dropdown populated from the active org's `team_members` (display_name, falling back to invited_email). Was a free-text input where typos like "cath" vs "Cath" prevented per-user reporting. Saved value is still `rocks.owner` text (no schema change), so future reports can `GROUP BY owner` against canonical names. Legacy free-text owners that don't match anyone on the team show as "Name (not on team)" so existing rocks aren't lost.
-- **v0.5.107** — Fixed `invite_team_member` RPC ambiguity. The function had a parameter named `role` AND `team_members.role` column; the admin-check used unqualified `role` which Postgres flagged as ambiguous, breaking every Send Invite click with `column reference "role" is ambiguous`. Qualified all column references in the function as `team_members.role` / `team_members.user_id` etc. **Requires SQL** — see `supabase/v0.5.107-delta.sql` (paste-and-run in Supabase SQL Editor).
 - **v0.5.105** — Standardized every navy site-header to show **"Your Business Coach"** instead of the page-specific name. Previously each page (planning, strategy, operations, core-values, scorecard, etc.) had its own header-title like "Planning" or "Core Values", duplicating the body subheading. Now the navy bar reads the same on every page, the `← Back` link + biz pill still give context, and the body's `<h1 class="ws-title">` (or page-intro h1) carries the page-specific name.
 - **v0.5.104** — Stripped hardcoded sample text from `one-page-plan.html`. Until now the doc rendered "Integrity / Growth mindset / Client first / Accountability" pills + Coach4U-flavoured purpose, niche, 10-year vision, revenue/profit, goals etc. as literal HTML.
 - **v0.5.103** — Removed the yellow "data-layer migration pending" banner from all 13 account-level carousel pages.

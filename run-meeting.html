@@ -233,7 +233,7 @@
   }
   function renderTodos(){
     const items=_todos;
-    return `<ul class="item-list" id="todos-list">${items.length?items.map(t=>`<li><input type="checkbox" ${t.done?'checked':''} data-tid="${t.id}" style="flex-shrink:0;"/><span class="item-text" style="${t.done?'text-decoration:line-through;color:#aaa':''}">${escHtml(t.description)}</span><span class="item-meta">${t.owner?escHtml(t.owner):''}</span><button class="item-del-btn" data-tid="${t.id}">&times;</button></li>`).join(''):'<li style="color:#aaa;font-style:italic;">No todos yet.</li>'}</ul><div class="item-add-row"><input type="text" class="item-add-input" id="todo-input" placeholder="Add a to-do..."/><input type="text" class="item-add-input" id="todo-owner" placeholder="Owner" style="max-width:120px;"/><button class="ws-btn" id="add-todo-btn" style="padding:8px 14px;">Add</button></div>`;
+    return `<ul class="item-list" id="todos-list">${items.length?items.map(t=>`<li><input type="checkbox" ${t.done?'checked':''} data-tid="${t.id}" style="flex-shrink:0;"/><span class="item-text" style="${t.done?'text-decoration:line-through;color:#aaa':''}">${escHtml(t.description)}</span><span class="item-meta">${t.owner?escHtml(t.owner):''}</span><button class="item-del-btn" data-tid="${t.id}">&times;</button></li>`).join(''):'<li style="color:#aaa;font-style:italic;">No todos yet.</li>'}</ul><div class="item-add-row"><input type="text" class="item-add-input" id="todo-input" placeholder="Add a to-do..."/>${ownerSelectHtml('todo-owner', '', { maxWidth: '140px' })}<button class="ws-btn" id="add-todo-btn" style="padding:8px 14px;">Add</button></div>`;
   }
   function renderConclude(){
     const m = _currentMeeting;
@@ -339,10 +339,43 @@
       await supabase.auth.signOut(); window.location.href='login.html';
     });
 
+    await loadOwnerOptions();
     try { await loadDetail(meetingId); }
     catch(e){ console.warn('Load error:', e); document.getElementById('meeting-empty').classList.remove('hidden'); }
     document.body.style.opacity='1';
   })();
+
+  // Owner <select> populated from team_members (canonical names → per-user reports).
+  // Used in the todo-add row inside renderTodos().
+  let OWNER_NAMES = [];
+  async function loadOwnerOptions(){
+    if (!orgId) return;
+    const { data, error } = await supabase
+      .from('team_members')
+      .select('display_name, invited_email, status')
+      .eq('organisation_id', orgId)
+      .neq('status', 'removed');
+    if (error) { console.warn('loadOwnerOptions:', error.message); return; }
+    const names = (data || [])
+      .map(m => (m.display_name && m.display_name.trim()) || (m.invited_email && m.invited_email.trim()) || '')
+      .filter(Boolean);
+    OWNER_NAMES = [...new Set(names)].sort((a,b)=>a.localeCompare(b));
+  }
+  function ownerSelectHtml(id, currentValue, opts){
+    opts = opts || {};
+    const style = opts.maxWidth ? `style="max-width:${opts.maxWidth};"` : '';
+    let html = `<select class="item-add-input" id="${id}" ${style}>`;
+    html += '<option value="">— Owner —</option>';
+    OWNER_NAMES.forEach(n => {
+      const sel = (n === currentValue) ? ' selected' : '';
+      html += `<option value="${escHtml(n)}"${sel}>${escHtml(n)}</option>`;
+    });
+    if (currentValue && !OWNER_NAMES.includes(currentValue)) {
+      html += `<option value="${escHtml(currentValue)}" selected>${escHtml(currentValue)} (not on team)</option>`;
+    }
+    html += '</select>';
+    return html;
+  }
   </script>
 </body>
 </html>

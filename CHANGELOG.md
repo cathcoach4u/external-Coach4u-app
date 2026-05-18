@@ -4,6 +4,18 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.109
+- **Extended the team-member dropdown to the other 3 free-text owner fields** — completes the v0.5.108 pattern. Now consistent across every owner field in the app: every "who's responsible?" picker is a select populated from the active org's `team_members`, so reports can `GROUP BY owner` reliably.
+- **Files migrated (3):**
+  - `scorecard.html` — `metric-owner` in the Add/Edit Metric modal (was `<input type="text" placeholder="Name">`)
+  - `issues.html` — `issue-owner` in the Add/Edit Issue modal (was `<input type="text" placeholder="Who raised this?">`)
+  - `run-meeting.html` — `todo-owner` in the inline "Add a to-do" row at the bottom of the To-Dos list (was `<input type="text" placeholder="Owner" style="max-width:120px;">`). This one's special because the input is rendered inside a template string per call to `renderTodos()`, so it uses an `ownerSelectHtml(id, currentValue)` builder helper rather than the imperative `renderOwnerSelect(currentValue)` pattern used by the modals.
+- **Same loader + fallback pattern** as v0.5.108: `loadOwnerOptions()` queries `team_members WHERE organisation_id = orgId AND status != 'removed'`, builds a deduped sorted list (preferring `display_name`, falling back to `invited_email`). When editing an existing row whose owner doesn't match a current team member, the option "Name (not on team)" is appended so legacy values aren't lost.
+- **No schema changes.** Values still stored as text in `scorecard_metrics.owner`, `issues.owner`, `meeting_todos.owner`. RLS untouched.
+- **Architectural detail:** for `run-meeting.html`, the IIFE needed careful re-closing (`})()`) and the helpers were added at module-scope after the IIFE. `OWNER_NAMES` and `loadOwnerOptions` / `ownerSelectHtml` are accessible from `renderTodos` because the IIFE pauses at its first `await`, letting the script's top-level continue executing past the IIFE call before `renderTodos` is ever invoked.
+
+---
+
 ## v0.5.108
 - **Quarterly Goals owner field is now a dropdown of the active org's team members** instead of a free-text input. User feedback: with the old text field, typos like "cath" vs "Cath" prevented reliable per-user reporting — "show me all of Cath's goals" wouldn't work because the values were inconsistent.
 - **How it works:**

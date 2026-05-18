@@ -116,7 +116,9 @@
       </div>
       <div class="modal-field">
         <label class="modal-label">Owner</label>
-        <input type="text" class="modal-input" id="issue-owner" placeholder="Who raised this?"/>
+        <select class="modal-select" id="issue-owner">
+          <option value="">— Unassigned —</option>
+        </select>
       </div>
       <div class="modal-field">
         <label class="modal-label">Status</label>
@@ -229,7 +231,7 @@
     document.getElementById('issue-modal-title').textContent=isNew?'Add Issue':'Edit Issue';
     document.getElementById('issue-id').value=isNew?'':issue.id;
     document.getElementById('issue-description').value=isNew?'':(issue.description||'');
-    document.getElementById('issue-owner').value=isNew?'':(issue.owner||'');
+    renderOwnerSelect(isNew?'':(issue.owner||''));
     statusSel.value=isNew?'open':(issue.status||'open');
     document.getElementById('issue-solution').value=isNew?'':(issue.solution||'');
     solutionField.style.display=statusSel.value==='resolved'?'':'none';
@@ -294,10 +296,37 @@
       await supabase.auth.signOut(); window.location.href='login.html';
     });
 
+    await loadOwnerOptions();
     try { await loadIssues(); }
     catch(e){ console.warn('Load error:', e); }
     document.body.style.opacity='1';
   })();
+
+  // Owner <select> populated from team_members (canonical names → per-user reports).
+  let OWNER_NAMES = [];
+  async function loadOwnerOptions(){
+    if (!orgId) return;
+    const { data, error } = await supabase
+      .from('team_members')
+      .select('display_name, invited_email, status')
+      .eq('organisation_id', orgId)
+      .neq('status', 'removed');
+    if (error) { console.warn('loadOwnerOptions:', error.message); return; }
+    const names = (data || [])
+      .map(m => (m.display_name && m.display_name.trim()) || (m.invited_email && m.invited_email.trim()) || '')
+      .filter(Boolean);
+    OWNER_NAMES = [...new Set(names)].sort((a,b)=>a.localeCompare(b));
+  }
+  function renderOwnerSelect(currentValue){
+    const sel = document.getElementById('issue-owner');
+    const opts = ['<option value="">— Unassigned —</option>'];
+    OWNER_NAMES.forEach(n => opts.push(`<option value="${escHtml(n)}">${escHtml(n)}</option>`));
+    if (currentValue && !OWNER_NAMES.includes(currentValue)) {
+      opts.push(`<option value="${escHtml(currentValue)}">${escHtml(currentValue)} (not on team)</option>`);
+    }
+    sel.innerHTML = opts.join('');
+    sel.value = currentValue || '';
+  }
   </script>
 </body>
 </html>

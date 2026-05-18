@@ -144,7 +144,9 @@
       <div class="modal-2col">
         <div class="modal-field">
           <label class="modal-label">Owner</label>
-          <input type="text" class="modal-input" id="metric-owner" placeholder="Name"/>
+          <select class="modal-select" id="metric-owner">
+            <option value="">— Unassigned —</option>
+          </select>
         </div>
         <div class="modal-field">
           <label class="modal-label">Weekly Goal</label>
@@ -369,7 +371,7 @@
     document.getElementById('metric-modal-title').textContent=isNew?'Add Metric':'Edit Metric';
     document.getElementById('metric-id').value=isNew?'':metric.id;
     document.getElementById('metric-name').value=isNew?'':(metric.name||'');
-    document.getElementById('metric-owner').value=isNew?'':(metric.owner||'');
+    renderOwnerSelect(isNew?'':(metric.owner||''));
     document.getElementById('metric-goal').value=isNew?'':(metric.goal==null?'':metric.goal);
     document.getElementById('metric-type').value=isNew?'count':(metric.measurement_type||'count');
     document.getElementById('metric-modal-delete').classList.toggle('hidden',isNew);
@@ -439,10 +441,37 @@
       await supabase.auth.signOut(); window.location.href='login.html';
     });
 
+    await loadOwnerOptions();
     try { await loadScorecard(); }
     catch(e){ console.warn('Load error:', e); }
     document.body.style.opacity='1';
   })();
+
+  // Owner <select> populated from team_members (canonical names → per-user reports).
+  let OWNER_NAMES = [];
+  async function loadOwnerOptions(){
+    if (!orgId) return;
+    const { data, error } = await supabase
+      .from('team_members')
+      .select('display_name, invited_email, status')
+      .eq('organisation_id', orgId)
+      .neq('status', 'removed');
+    if (error) { console.warn('loadOwnerOptions:', error.message); return; }
+    const names = (data || [])
+      .map(m => (m.display_name && m.display_name.trim()) || (m.invited_email && m.invited_email.trim()) || '')
+      .filter(Boolean);
+    OWNER_NAMES = [...new Set(names)].sort((a,b)=>a.localeCompare(b));
+  }
+  function renderOwnerSelect(currentValue){
+    const sel = document.getElementById('metric-owner');
+    const opts = ['<option value="">— Unassigned —</option>'];
+    OWNER_NAMES.forEach(n => opts.push(`<option value="${escHtml(n)}">${escHtml(n)}</option>`));
+    if (currentValue && !OWNER_NAMES.includes(currentValue)) {
+      opts.push(`<option value="${escHtml(currentValue)}">${escHtml(currentValue)} (not on team)</option>`);
+    }
+    sel.innerHTML = opts.join('');
+    sel.value = currentValue || '';
+  }
   </script>
 </body>
 </html>
