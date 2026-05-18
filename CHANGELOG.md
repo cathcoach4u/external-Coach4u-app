@@ -4,6 +4,17 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.108
+- **Quarterly Goals owner field is now a dropdown of the active org's team members** instead of a free-text input. User feedback: with the old text field, typos like "cath" vs "Cath" prevented reliable per-user reporting — "show me all of Cath's goals" wouldn't work because the values were inconsistent.
+- **How it works:**
+  - On page load, `loadOwnerOptions()` queries `team_members` for the active org (excluding `status='removed'`) and builds a deduped, sorted list of names — using `display_name` first, falling back to `invited_email` if no display name has been set.
+  - The Add / Edit Goal modal's Owner field renders as `<select>` with "— Unassigned —" + each team member name.
+  - When editing a rock whose `owner` is a legacy free-text value (e.g. a name that's no longer on the team), the select appends a one-off option labelled "Name (not on team)" so the original value isn't lost.
+- **No schema change** — the saved value is still text in `rocks.owner`. The change is purely UI-side. Reports against canonical owner names (`GROUP BY owner`) now produce correct counts because the strings are constrained to the team list.
+- **Same pattern can be applied later** to `scorecard_metrics.owner`, `meeting_todos.owner`, `issues.owner` — they're all free-text today. Doing them in a follow-up if requested.
+
+---
+
 ## v0.5.107
 - **Bug fix: every "Send invite" click failed with `column reference "role" is ambiguous`.** The `invite_team_member(business_id, email, role, display_name)` RPC has a parameter named `role`, and the `team_members` table has a `role` column. The admin-check inside the function used the unqualified `role` reference, which Postgres flagged as ambiguous and refused to run.
 - **Fix:** qualified every column reference inside the function as `team_members.role` / `team_members.organisation_id` / `team_members.user_id` / `team_members.status` / `team_members.invited_email`, plus `auth.users.email` in the user-lookup query. The function signature and behaviour are unchanged.

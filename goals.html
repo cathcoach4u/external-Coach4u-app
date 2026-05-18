@@ -125,7 +125,9 @@
       </div>
       <div class="modal-field">
         <label class="modal-label">Owner</label>
-        <input type="text" class="modal-input" id="goal-owner" placeholder="Person responsible"/>
+        <select class="modal-select" id="goal-owner">
+          <option value="">— Unassigned —</option>
+        </select>
       </div>
       <div class="modal-2col modal-field">
         <div>
@@ -271,12 +273,44 @@
   document.getElementById('quarter-select').addEventListener('change',loadGoals);
   document.getElementById('add-goal-btn').addEventListener('click',()=>openModal(null));
 
+  // Load team members for the active org into the Owner <select>.
+  // Saves the chosen display_name into rocks.owner so legacy text values keep working
+  // but new values match what's on the team list — enabling per-user reports.
+  let OWNER_NAMES = [];
+  async function loadOwnerOptions(){
+    if (!orgId) return;
+    const { data, error } = await supabase
+      .from('team_members')
+      .select('display_name, invited_email, status')
+      .eq('organisation_id', orgId)
+      .neq('status', 'removed');
+    if (error) { console.warn('loadOwnerOptions:', error.message); return; }
+    const names = (data || [])
+      .map(m => (m.display_name && m.display_name.trim()) || (m.invited_email && m.invited_email.trim()) || '')
+      .filter(Boolean);
+    OWNER_NAMES = [...new Set(names)].sort((a,b)=>a.localeCompare(b));
+    renderOwnerSelect('');
+  }
+  function renderOwnerSelect(currentValue){
+    const sel = document.getElementById('goal-owner');
+    const opts = ['<option value="">— Unassigned —</option>'];
+    OWNER_NAMES.forEach(n => {
+      opts.push(`<option value="${escHtml(n)}">${escHtml(n)}</option>`);
+    });
+    // If the saved owner is a legacy free-text value not in the team list, keep it as a one-off option
+    if (currentValue && !OWNER_NAMES.includes(currentValue)) {
+      opts.push(`<option value="${escHtml(currentValue)}">${escHtml(currentValue)} (not on team)</option>`);
+    }
+    sel.innerHTML = opts.join('');
+    sel.value = currentValue || '';
+  }
+
   function openModal(goal){
     const isNew=!goal;
     document.getElementById('goal-modal-title').textContent=isNew?'Add Goal':'Edit Goal';
     document.getElementById('goal-id').value=isNew?'':goal.id;
     document.getElementById('goal-description').value=isNew?'':(goal.description||'');
-    document.getElementById('goal-owner').value=isNew?'':(goal.owner||'');
+    renderOwnerSelect(isNew?'':(goal.owner||''));
     document.getElementById('goal-status').value=isNew?'on_track':(goal.status||'on_track');
     document.getElementById('goal-company').checked=isNew?false:!!goal.company_rock;
     const q=document.getElementById('quarter-select').value;
@@ -352,6 +386,7 @@
     });
 
     populateQuarterSelects();
+    await loadOwnerOptions();
     try { await loadGoals(); }
     catch(e){ console.warn('Load error:', e); }
     document.body.style.opacity='1';
