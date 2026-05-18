@@ -4,6 +4,21 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.116
+- **Full multi-tenant scoping sweep.** User asked: "Do a full audit to check all." The v0.5.111 multi-tenant work scoped the dashboard (`index.html`), v0.5.115 backported the fix to `account-plans.html` and shipped the new `account-ops-plans.html` already scoped. The remaining **12 account-level carousel pages** had the same pre-existing leak: their `team_members` query pulled every business the user was a member of, mixing client accounts together. Fixed in: `account-numbers`, `account-goals`, `account-meetings`, `account-issues`, `account-values`, `account-focus`, `account-targets`, `account-marketing`, `account-leadership`, `account-annual`, `account-quarterly`, `account-checkins`. Each now loads `js/active-org.js` and filters by `organisations.subscription_id = activeSub.id` when an active subscription is set. All 12 patched with one Python sweep so the wording is identical and the pattern is stable.
+- **EOS de-jargoning.** User asked: "check the wording for EOs and change anything that sounds like EOs". Audited every HTML/JS/CSS file. Removed verbatim EOS terminology from user-facing copy:
+  - `learning-vault.html`: "How to Run Level 10 Meetings" → "How to Run Weekly Team Meetings" (90-minute reference dropped); "3–7 quarterly Rocks" → "3–7 quarterly priorities".
+  - `run-meeting.html`: agenda item 4 "Customer & Employee Headlines" → "Customer & Team Highlights"; agenda item 6 "Issues — Identify, Discuss, Solve" → "Issues — Discuss & Resolve".
+  - `marketing-strategy.html`: "Our three uniques are…" → "What makes us different is…"; "Our Proven Process" → "Our Process".
+  - `targets.html`, `one-page-plan.html`, `account-targets.html`, `account-plans.html`: "3-Year Picture" → "3-Year Outlook" (4 files).
+  - `run-annual-session.html` area card: "Update 10-Year + 3-Year Picture" → "Update 10-Year + 3-Year Outlook".
+  - **The 17 team-checkin questions** (identical block in `team-checkin.html` / `run-annual-session.html` / `run-quarterly-session.html`) rewritten end-to-end. Position and meaning preserved so the 1-5 scores stored in `team_checkins.scores` still map to the same conceptual statement, but the wording dropped: "Accountability Chart", "right seat" / "right people" / "get it, want it, capacity" (GWC), "Quarterly Projects", "Annual Meetings", "10-Year Target", "3-Year Target", and the "(core business)" / "(big, long-range business goal)" / "(organisational chart...)" parenthetical EOS glosses.
+  - The DB table name `rocks` stays — renaming it would require an SQL migration touching every read/write path. The UI surfaces it as "Quarterly Goals" everywhere, which it already did.
+- **`CLAUDE.md` substantially refreshed** to match current state. The "Data layer (localStorage demo stub)" section was deeply stale — every strategy worksheet and operations tool moved to Supabase several versions ago. Rewrote the data-layer section, file structure (added `one-page-operations.html`, `account-ops-plans.html`, every account-* page), Current Status, and the Architecture section. Renamed "Planned Architecture (Supabase Migration)" to "Architecture (Supabase + Multi-Tenant)" since the migration is done. Added a Multi-Tenant section documenting the active-subscription scoping pattern that every account-level page must follow. Added a "Wording / Tone" section banning EOS terms going forward. The Pricing Model + role definitions updated to include Coach (v0.5.110).
+- **No SQL changes** in this version. All edits are front-end + docs.
+
+---
+
 ## v0.5.115
 - **New `account-ops-plans.html`** — the account-level companion to `one-page-operations.html` (v0.5.114). User asked: "is this added to the account level as well?" — it wasn't, now it is. Mirrors the existing strategy pattern: `one-page-plan.html` is the per-business strategy doc, `account-plans.html` is the carousel of all businesses' strategy docs; `one-page-operations.html` is the per-business ops doc, `account-ops-plans.html` is the carousel of all businesses' ops docs.
 - **Carousel mechanics** — copied directly from `account-plans.html`: prev/next buttons with hint of the next business name, dots, keyboard arrow nav (don't hijack while typing), wraps at the ends.

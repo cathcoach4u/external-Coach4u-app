@@ -84,6 +84,7 @@
       .biz-card { box-shadow: none !important; border-radius: 0 !important; }
     }
   </style>
+  <script src="js/active-org.js" defer></script>
 </head>
 <body>
 
@@ -198,10 +199,17 @@
       if (!profile || profile.membership_status !== 'active') { window.location.href = 'inactive.html'; return; }
       document.body.style.opacity = '1';
 
-      const { data: mems, error: memErr } = await sb
+      // Multi-tenant: scope to the active subscription so a user who owns
+      // several client accounts only sees the businesses in the active one.
+      const subId = (window.activeOrg && window.activeOrg.getSubscription)
+        ? window.activeOrg.getSubscription() : null;
+      const memQuery = sb
         .from('team_members')
-        .select('organisation_id, organisations!inner(id, name)')
-        .eq('user_id', user.id).eq('status', 'active');
+        .select('organisation_id, organisations!inner(id, name, subscription_id)')
+        .eq('user_id', user.id)
+        .eq('status', 'active');
+      if (subId) memQuery.eq('organisations.subscription_id', subId);
+      const { data: mems, error: memErr } = await memQuery;
 
       const wrap = document.getElementById('plansWrap');
       if (memErr) { wrap.innerHTML = `<div class="state-msg error">Could not load businesses: ${escHtml(memErr.message)}</div>`; return; }

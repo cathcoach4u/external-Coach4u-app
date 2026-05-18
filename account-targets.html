@@ -76,6 +76,7 @@
       .biz-card { box-shadow: none !important; border-radius: 0 !important; }
     }
   </style>
+  <script src="js/active-org.js" defer></script>
 </head>
 <body>
 
@@ -94,7 +95,7 @@
 
   <div class="page-intro">
     <h1>&#x1F3AF; Targets &mdash; Across All Businesses</h1>
-    <p>10-year vision, 3-year picture, and 1-year plan &mdash; compared across every business in your account.</p>
+    <p>10-year vision, 3-year outlook, and 1-year plan &mdash; compared across every business in your account.</p>
   </div>
 
   <div id="plansWrap" class="plans-wrap">
@@ -153,7 +154,7 @@
               ${fieldText(tg.ten_year)}
             </div>
             <div class="target-section">
-              <div class="target-heading">3-Year Picture</div>
+              <div class="target-heading">3-Year Outlook</div>
               <div class="fin-row">
                 ${finCell('Target Date', tg.three_year_date)}
                 ${finCell('Revenue', tg.three_year_revenue)}
@@ -182,10 +183,17 @@
       if (!profile || profile.membership_status !== 'active') { window.location.href = 'inactive.html'; return; }
       document.body.style.opacity = '1';
 
-      const { data: mems, error: memErr } = await sb
+      // Multi-tenant: scope to the active subscription so a user who owns
+      // several client accounts only sees the businesses in the active one.
+      const subId = (window.activeOrg && window.activeOrg.getSubscription)
+        ? window.activeOrg.getSubscription() : null;
+      const memQuery = sb
         .from('team_members')
-        .select('organisation_id, organisations!inner(id, name)')
-        .eq('user_id', user.id).eq('status', 'active');
+        .select('organisation_id, organisations!inner(id, name, subscription_id)')
+        .eq('user_id', user.id)
+        .eq('status', 'active');
+      if (subId) memQuery.eq('organisations.subscription_id', subId);
+      const { data: mems, error: memErr } = await memQuery;
 
       const wrap = document.getElementById('plansWrap');
       if (memErr) { wrap.innerHTML = `<div class="state-msg error">Could not load businesses: ${escHtml(memErr.message)}</div>`; return; }
