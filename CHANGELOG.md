@@ -4,6 +4,26 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.121
+- **Deep-linked the in-page Vault tip box** on every worksheet and operations tool to its specific guide. User feedback from inside `goals.html`: "There is a click button in there taking me to the learning area. This is a generic link and doesn't connect to the specific activity. Wouldn't it be better to go to the specific activity area." Yes — fixed.
+- **Mapping** applied to 10 pages:
+  - `core-values.html` → `learn/core-values.html`
+  - `core-focus.html` → `learn/core-focus.html`
+  - `targets.html` → `learn/targets.html`
+  - `financials.html` → `learn/financials.html` (had no Vault link before; added one)
+  - `marketing-strategy.html` → `learn/marketing-strategy.html`
+  - `leadership-team.html` → `learn/leadership-team.html`
+  - `goals.html` → `learn/quarterly-goals.html`
+  - `scorecard.html` → `learn/weekly-numbers.html`
+  - `meeting.html` → `learn/weekly-team-meeting.html`
+  - `issues.html` → `learn/issues.html`
+- **Link label tightened too.** Was "Explore [topic] exercises in the Learning Vault →" (vague, sounded like a placeholder). Now "Read the [Activity Name] guide →" (specific, action-oriented, matches the Vault index button label so the user knows it's the same thing).
+- **Bottom-nav "Learn" tab still goes to the Vault index** (`learning-vault.html`) — that remains the entry point for browsing all activities. Only the in-page contextual tip box deep-links.
+- **Workspaces** (`run-meeting.html`, `run-annual-session.html`, `run-quarterly-session.html`) don't have an in-page Vault tip box and weren't changed — the read-the-guide framing fits worksheets, not in-flight workspaces.
+- **No SQL.** Pure content/link tidy.
+
+---
+
 ## v0.5.120
 - **Wrote actual content for every Learning Vault guide.** User pushback on v0.5.119: "I don't see what value you have offered. The links don't go to the actual page — they still must go for [the] Learning Vault." Fair criticism — v0.5.119 indexed the activities but the "Read guide" buttons were grey "Coming soon" placeholders, so the Vault was just a launcher pointing back to pages already reachable via the bottom nav. No new value.
 - **13 new guide pages** under `learn/<slug>.html`, one per activity in the program:
