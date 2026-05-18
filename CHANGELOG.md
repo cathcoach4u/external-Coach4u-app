@@ -4,6 +4,15 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.133
+- **Hygiene fix to `supabase/schema.sql`.** User hit the error `cannot drop function user_org_ids(uuid) because other objects depend on it ... policy "members read financial_periods" on table financial_periods depends on function user_org_ids(uuid) ... use DROP ... CASCADE` while applying SQL.
+- **Root cause:** the error came from running `schema.sql` (the full source-of-truth file) on a populated DB, *not* from `v0.5.132-delta.sql`. The delta file is clean — it doesn't drop user_org_ids anywhere. But `schema.sql` line 59 had `DROP FUNCTION IF EXISTS public.user_org_ids(uuid)` without `CASCADE`. That was safe pre-v0.5.117 (no dependents); after the financial_periods table arrived with a policy that uses user_org_ids, the bare DROP fails.
+- **Fix:** changed those two DROP FUNCTION lines (user_org_ids and user_admin_org_ids) to use `CASCADE`. Fresh installs are unaffected (nothing to cascade). Accidental schema.sql re-runs on a populated DB now succeed because dependent policies get dropped along with the function, then recreated by the schema.sql CREATE POLICY statements further down.
+- **Better practice for the user:** for incremental DB updates, only run the `vX.Y.Z-delta.sql` file for the version being applied. `schema.sql` is the source-of-truth artefact for cold-starting a fresh project, not for migrating an existing one.
+- **No new SQL to run** for this hygiene fix unless they want to update their schema.sql copy; the v0.5.132 delta is the only thing that actually needs applying.
+
+---
+
 ## v0.5.132
 - **Dual-mode planning + new Team Check-ins module.** User asked: should planning live per-business or per-account? Answer: both. Sessions and check-in batches can now be created at either scope; admin picks when creating. Also asked: ability to delete an unintentional meeting; that's in too.
 - **SQL — `supabase/v0.5.132-delta.sql`:**

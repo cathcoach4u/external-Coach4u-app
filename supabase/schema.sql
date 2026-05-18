@@ -56,8 +56,8 @@ DROP TABLE IF EXISTS public.core_focus CASCADE;
 DROP TABLE IF EXISTS public.core_values CASCADE;
 DROP TABLE IF EXISTS public.team_members CASCADE;
 DROP TABLE IF EXISTS public.subscriptions CASCADE;
-DROP FUNCTION IF EXISTS public.user_org_ids(uuid);
-DROP FUNCTION IF EXISTS public.user_admin_org_ids(uuid);
+DROP FUNCTION IF EXISTS public.user_org_ids(uuid) CASCADE;
+DROP FUNCTION IF EXISTS public.user_admin_org_ids(uuid) CASCADE;
 -- KEEP public.users — it's the auth membership gate, used everywhere
 
 -- Ensure public.users still has the expected shape
