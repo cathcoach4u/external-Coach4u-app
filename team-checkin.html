@@ -50,6 +50,7 @@
       <div class="header-left">
         <span class="header-title">Team Check-in</span>
       </div>
+      <a href="#" id="signOutLink" class="sign-out-btn" style="text-decoration:none;display:inline-block;">Sign Out</a>
     </div>
   </header>
 
@@ -61,7 +62,30 @@
 
     <div class="legend"><strong>1</strong> = Strongly Disagree &nbsp;&middot;&nbsp; <strong>5</strong> = Strongly Agree</div>
 
-    <div id="form-wrap">
+    <div id="loading-wrap" class="checkin-card" style="text-align:center;color:#666;">
+      <p style="margin:0;font-size:0.95rem;">Loading your check-in&hellip;</p>
+    </div>
+
+    <div id="invalid-wrap" class="success-card" style="display:none;border-color:#dc2626;">
+      <div class="success-icon">&#x26A0;&#xFE0F;</div>
+      <h2 class="success-title" style="color:#7f1d1d;">Invalid check-in link</h2>
+      <p class="success-text">This link is missing a session id or type. Ask your team admin to send you a new check-in link.</p>
+    </div>
+
+    <div id="denied-wrap" class="success-card" style="display:none;border-color:#dc2626;">
+      <div class="success-icon">&#x1F512;</div>
+      <h2 class="success-title" style="color:#7f1d1d;">You don&rsquo;t have access to this check-in</h2>
+      <p class="success-text">This check-in belongs to a business you&rsquo;re not a member of. If you should have access, ask your team admin to invite you, then sign back in.</p>
+      <p style="margin-top:14px;font-size:.85rem;"><a href="#" id="signOutLink2" style="color:var(--accent);font-weight:700;text-decoration:none;">Sign in as a different user</a></p>
+    </div>
+
+    <div id="already-wrap" class="success-card" style="display:none;">
+      <div class="success-icon">&#x2705;</div>
+      <h2 class="success-title">Already submitted</h2>
+      <p class="success-text">You&rsquo;ve already submitted your check-in for this session<span id="already-when-wrap"> on <span id="already-when"></span></span>. Thanks for taking part &mdash; you can close this page.</p>
+    </div>
+
+    <div id="form-wrap" style="display:none;">
       <div class="checkin-card">
         <div style="margin-bottom:14px;">
           <label class="field-label" for="ci-name">Your name <span style="color:#991b1b;">*</span></label>
@@ -90,9 +114,24 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
   'use strict';
-  // PUBLIC PAGE - no Supabase auth gate. Anyone with the URL can submit.
+  // TEAM CHECK-IN — REQUIRES LOGIN.
+  // Each respondent signs in with their Supabase account; we validate that they
+  // are an active team_member of the org that owns this session, then INSERT into
+  // team_checkins with user_id = auth.uid().
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  const supabase = createClient(
+    'https://eekefsuaefgpqmjdyniy.supabase.co',
+    'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+  );
+
+  let SESSION_ROW = null;
+  let SESSION_ID = null;
+  let SESSION_TYPE = null;
+  let ORG_ID = null;
+  let CURRENT_USER = null;
+  let MEMBERSHIP = null;
 
   const QUESTIONS = [
     "We have a clear vision in writing that has been properly communicated and is shared by all.",
@@ -118,10 +157,10 @@
 
   function getParams(){
     const u = new URLSearchParams(window.location.search);
-    const id = parseInt(u.get('session'));
+    const id = (u.get('session') || '').trim();
     const type = u.get('type');
     return {
-      session_id: isNaN(id) ? null : id,
+      session_id: id || null,
       session_type: (type === 'annual' || type === 'quarterly') ? type : null
     };
   }
@@ -202,18 +241,11 @@
     document.getElementById('submit-error').style.display = 'none';
   }
 
-  function loadAll(){
-    try { return JSON.parse(localStorage.getItem('coach4u_team_checkins') || '[]') || []; }
-    catch (_) { return []; }
-  }
-  function saveAll(arr){ localStorage.setItem('coach4u_team_checkins', JSON.stringify(arr)); }
-
-  function submitForm(){
+  async function submitForm(){
     hideError();
     const v = validate();
     if (!v.ok) {
       showError(v.errors.join(' '));
-      // scroll to first missing
       if (v.missing && v.missing.length) {
         const card = document.querySelector('.q-card[data-qi="'+v.missing[0]+'"]');
         if (card) card.scrollIntoView({behavior:'smooth', block:'center'});
@@ -223,39 +255,133 @@
       return;
     }
 
-    const params = getParams();
+    if (!CURRENT_USER || !SESSION_ID || !ORG_ID || !SESSION_TYPE) {
+      showError('Session not ready. Please refresh the page.');
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
     const role = document.getElementById('ci-role').value.trim();
-    const submission = {
-      id: Date.now() * 1000 + Math.floor(Math.random() * 1000),
-      session_id: params.session_id,
-      session_type: params.session_type,
+    const payload = {
+      organisation_id: ORG_ID,
+      session_id: SESSION_ID,
+      session_type: SESSION_TYPE,
+      user_id: CURRENT_USER.id,
       name: v.name,
-      role: role,
-      submitted_at: new Date().toISOString(),
+      role: role || null,
       scores: state.scores.slice(),
       comments: state.comments.slice()
     };
 
-    try {
-      const all = loadAll();
-      all.push(submission);
-      saveAll(all);
-    } catch (err) {
-      showError('Could not save your check-in. Please try again.');
+    const { error } = await supabase.from('team_checkins').insert(payload);
+    if (error) {
+      btn.disabled = false;
+      btn.textContent = 'Submit Check-in';
+      showError('Could not save your check-in: ' + error.message);
       return;
     }
 
-    // success state
     document.getElementById('form-wrap').style.display = 'none';
     document.getElementById('success-wrap').style.display = 'block';
     window.scrollTo({top:0, behavior:'smooth'});
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function showState(id) {
+    ['loading-wrap', 'form-wrap', 'success-wrap', 'denied-wrap', 'already-wrap', 'invalid-wrap']
+      .forEach(s => {
+        const el = document.getElementById(s);
+        if (el) el.style.display = (s === id) ? 'block' : 'none';
+      });
+  }
+
+  async function init() {
+    // 1. Validate URL params
+    const params = getParams();
+    SESSION_ID = params.session_id;
+    SESSION_TYPE = params.session_type;
+    if (!SESSION_ID || !SESSION_TYPE) {
+      showState('invalid-wrap');
+      document.body.style.opacity = '1';
+      return;
+    }
+
+    // 2. Require login (redirect to login with returnTo)
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      const returnTo = encodeURIComponent(window.location.pathname + window.location.search);
+      window.location.href = 'login.html?returnTo=' + returnTo;
+      return;
+    }
+    CURRENT_USER = user;
+
+    // 3. Fetch the session (RLS will deny if user isn't a member of the owning org)
+    const table = SESSION_TYPE === 'annual' ? 'annual_sessions' : 'quarterly_sessions';
+    const { data: sess, error: sessErr } = await supabase
+      .from(table).select('id, organisation_id, session_date').eq('id', SESSION_ID).maybeSingle();
+    if (sessErr || !sess) {
+      showState('denied-wrap');
+      document.body.style.opacity = '1';
+      return;
+    }
+    SESSION_ROW = sess;
+    ORG_ID = sess.organisation_id;
+
+    // 4. Get user's display name for pre-fill (and confirm active membership)
+    const { data: mem } = await supabase
+      .from('team_members')
+      .select('display_name, role, status')
+      .eq('user_id', user.id)
+      .eq('organisation_id', ORG_ID)
+      .eq('status', 'active')
+      .maybeSingle();
+    MEMBERSHIP = mem;
+
+    // 5. Check for existing submission by this user — block resubmission
+    const { data: existing } = await supabase
+      .from('team_checkins')
+      .select('id, submitted_at')
+      .eq('session_id', SESSION_ID)
+      .eq('session_type', SESSION_TYPE)
+      .eq('user_id', user.id)
+      .limit(1)
+      .maybeSingle();
+    if (existing) {
+      const when = existing.submitted_at ? new Date(existing.submitted_at).toLocaleDateString() : '';
+      const wrap = document.getElementById('already-when-wrap');
+      const w = document.getElementById('already-when');
+      if (when && w) { w.textContent = when; }
+      else if (wrap) { wrap.style.display = 'none'; }
+      showState('already-wrap');
+      document.body.style.opacity = '1';
+      return;
+    }
+
+    // 6. Render form, pre-fill name
     renderQuestions();
+    const nameInput = document.getElementById('ci-name');
+    if (nameInput) {
+      const pre = (mem && mem.display_name) || (user.email ? user.email.split('@')[0] : '');
+      if (pre) nameInput.value = pre;
+    }
     document.getElementById('submitBtn').addEventListener('click', submitForm);
+    showState('form-wrap');
     document.body.style.opacity = '1';
+  }
+
+  async function handleSignOut(e) {
+    if (e) e.preventDefault();
+    await supabase.auth.signOut();
+    const returnTo = encodeURIComponent(window.location.pathname + window.location.search);
+    window.location.href = 'login.html?returnTo=' + returnTo;
+  }
+  document.querySelectorAll('#signOutLink, #signOutLink2').forEach(el => {
+    el.addEventListener('click', handleSignOut);
   });
+
+  init();
   </script>
 </body>
 </html>

@@ -52,8 +52,21 @@
     const SUPABASE_ANON_KEY = 'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y';
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // Honour ?returnTo=… on safe same-origin paths (e.g. team-checkin invitations)
+    function safeReturnTo() {
+      try {
+        const raw = new URLSearchParams(window.location.search).get('returnTo');
+        if (!raw) return null;
+        const u = new URL(raw, window.location.href);
+        if (u.origin !== window.location.origin) return null;
+        return u.pathname + u.search + u.hash;
+      } catch (_) { return null; }
+    }
+    const RETURN_TO = safeReturnTo();
+    const LANDING = RETURN_TO || 'index.html';
+
     const { data: { session } } = await supabase.auth.getSession();
-    if (session) window.location.href = 'index.html';
+    if (session) window.location.href = LANDING;
 
     const form    = document.getElementById('loginForm');
     const msgEl   = document.getElementById('message');
@@ -90,7 +103,7 @@
         btn.disabled = false;
         btn.textContent = 'Sign In';
       } else {
-        window.location.href = 'index.html';
+        window.location.href = LANDING;
       }
     });
   </script>
