@@ -4,6 +4,12 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.128
+- **Fixed a wording bug in the Annual Planning Session guide's Coach's tip.** User caught it: the tip read "If you wait, it'll slip into a busy quarter, then slip again" &mdash; recycled language from the Quarterly tip that doesn't fit the annual cadence (annuals slip across years, not quarters). Rewrote: "If you wait, the date gets eaten by busy quarters and the year quietly disappears."
+- One-line front-end fix. No SQL.
+
+---
+
 ## v0.5.127
 - **Removed the standalone Values Discovery exercise.** User feedback: "I don't think the run the values guide is needed. It's just not helpful compared to the comprehensive other document." Agreed — the 3-step interactive page (~430 lines) was always a slimmer take, and the deepened Core Values guide (v0.5.125) now contains the full facilitated exercise with timings and steps anyway. Two doors to the same room, where one is the better door.
 - **Changes:**
