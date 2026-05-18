@@ -4,6 +4,15 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.124
+- **Decluttered the navy site-header on phones.** User feedback: "The top blue header looks too busy now on phone." Four elements were competing inside a ~390px iPhone bar: back link, "Your Business Coach" title, 🏢 biz pill, Sign Out — plus their gaps. Reading as cluttered.
+- **Hid `.header-title` (the "Your Business Coach" wordmark) at ≤ 640px** — `display: none` in the mobile media query. The brand is preserved everywhere else: the PWA icon + name on the user's home screen, the body `<h1>` on every page that names the activity, and the back link that names the section. Removing the redundant third copy from the navy bar gives the back link + biz pill + sign-out room to breathe.
+- **Minor tighten while in there:** mobile header padding 12px → 10px vertical; biz pill `max-width` 110 → 160px at 480px and 90 → 120px at 400px (so long business names truncate less); back-link font 12 → 14px (less eye-strain).
+- **Tablet/desktop header unchanged** — the full `← Back · Your Business Coach · 🏢 Biz · Sign Out` row stays above 640px.
+- **No SQL.** Single CSS change in `css/style.css`.
+
+---
+
 ## v0.5.123
 - **Fixed the broken PWA install.** User screenshot of "Add to Home Screen" dialog showed the app name as "Coach4U" with a generic auto-generated "C" letter avatar, URL truncated to `cathcoach4u.github.io/exte…`. Three things were wrong:
   - **`manifest.json` had stale paths.** `start_url`, `scope` and the two icon `src` values all pointed at `/external-Coach4u-app/` (the old repo path). The site lives at `/yourbusinesscoach/`, so iOS launched the installed app at a 404 and couldn't load the icon — falling back to its auto-generated letter avatar. Rewrote with relative paths (`./`, `./icon-192.png`, `./icon-512.png`) so the manifest works on any hosting URL.

@@ -263,14 +263,14 @@ button { font-family: inherit; cursor: pointer; border: none; }
 @media (max-width: 640px) {
   .container { padding: 20px 16px; }
   .card-grid, .resources-grid { grid-template-columns: 1fr; }
-  .site-header { padding: 12px 14px; }
+  .site-header { padding: 10px 14px; }
   .header-inner { gap: 8px; }
-  .header-left { gap: 10px; min-width: 0; flex: 1 1 auto; }
-  .header-title {
-    font-size: 16px; min-width: 0;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .header-back { white-space: nowrap; flex-shrink: 0; }
+  .header-left { gap: 12px; min-width: 0; flex: 1 1 auto; }
+  /* Hide the "Your Business Coach" title on phones — too cramped alongside
+     the back link, biz pill, and sign-out. Brand is reinforced by the PWA name,
+     the page H1 below, and the back link. */
+  .header-title { display: none; }
+  .header-back { white-space: nowrap; flex-shrink: 0; font-size: 14px; }
   .header-version { display: none; }
   .sign-out-btn { flex-shrink: 0; padding: 5px 9px; font-size: 12px; }
   .btn { font-size: 13px; padding: 8px 14px; }
@@ -279,13 +279,11 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 @media (max-width: 480px) {
   .app-grid { grid-template-columns: 1fr; }
-  .header-title { font-size: 14px; }
-  .biz-pill { font-size: 10px; padding: 3px 7px; max-width: 110px; }
+  .biz-pill { font-size: 11px; padding: 3px 8px; max-width: 160px; }
 }
 @media (max-width: 400px) {
   .app-card { padding: 16px; }
-  .header-left { gap: 8px; }
-  .header-title { font-size: 13px; }
-  .biz-pill { max-width: 90px; }
-  .header-back { font-size: 12px; }
+  .header-left { gap: 10px; }
+  .biz-pill { max-width: 120px; }
+  .header-back { font-size: 13px; }
 }
