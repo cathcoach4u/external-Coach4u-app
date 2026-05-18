@@ -130,10 +130,11 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.106
+v0.5.107
 
 ## Latest
-- **v0.5.106** — Mobile responsive fixes for the standardized navy header (v0.5.105). With "Your Business Coach" + back-link + biz-pill + Sign Out all in the same bar, the header overflowed on phones (~390px). Added tighter gaps, ellipsis on the title if it doesn't fit, and a 400px breakpoint that shrinks the title to 13px + clamps the biz-pill to 90px. Bottom-nav already handled 5 items at phone widths via the existing flex layout — no changes needed there.
+- **v0.5.107** — Fixed `invite_team_member` RPC ambiguity. The function had a parameter named `role` AND `team_members.role` column; the admin-check used unqualified `role` which Postgres flagged as ambiguous, breaking every Send Invite click with `column reference "role" is ambiguous`. Qualified all column references in the function as `team_members.role` / `team_members.user_id` etc. **Requires SQL** — see `supabase/v0.5.107-delta.sql` (paste-and-run in Supabase SQL Editor).
+- **v0.5.106** — Mobile responsive fixes for the standardized navy header (v0.5.105). With "Your Business Coach" + back-link + biz-pill + Sign Out all in the same bar, the header overflowed on phones (~390px). Added tighter gaps, ellipsis on the title if it doesn't fit, and a 400px breakpoint that shrinks the title to 13px + clamps the biz-pill to 90px.
 - **v0.5.105** — Standardized every navy site-header to show **"Your Business Coach"** instead of the page-specific name. Previously each page (planning, strategy, operations, core-values, scorecard, etc.) had its own header-title like "Planning" or "Core Values", duplicating the body subheading. Now the navy bar reads the same on every page, the `← Back` link + biz pill still give context, and the body's `<h1 class="ws-title">` (or page-intro h1) carries the page-specific name.
 - **v0.5.104** — Stripped hardcoded sample text from `one-page-plan.html`. Until now the doc rendered "Integrity / Growth mindset / Client first / Accountability" pills + Coach4U-flavoured purpose, niche, 10-year vision, revenue/profit, goals etc. as literal HTML.
 - **v0.5.103** — Removed the yellow "data-layer migration pending" banner from all 13 account-level carousel pages.

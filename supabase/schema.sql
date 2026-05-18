@@ -761,10 +761,10 @@ BEGIN
   -- Caller must be an active admin of this org
   IF NOT EXISTS (
     SELECT 1 FROM public.team_members
-    WHERE organisation_id = business_id
-      AND user_id = uid
-      AND role = 'admin'
-      AND status = 'active'
+    WHERE team_members.organisation_id = business_id
+      AND team_members.user_id = uid
+      AND team_members.role = 'admin'
+      AND team_members.status = 'active'
   ) THEN
     RAISE EXCEPTION 'Only admins can invite team members';
   END IF;

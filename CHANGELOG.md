@@ -4,6 +4,14 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.107
+- **Bug fix: every "Send invite" click failed with `column reference "role" is ambiguous`.** The `invite_team_member(business_id, email, role, display_name)` RPC has a parameter named `role`, and the `team_members` table has a `role` column. The admin-check inside the function used the unqualified `role` reference, which Postgres flagged as ambiguous and refused to run.
+- **Fix:** qualified every column reference inside the function as `team_members.role` / `team_members.organisation_id` / `team_members.user_id` / `team_members.status` / `team_members.invited_email`, plus `auth.users.email` in the user-lookup query. The function signature and behaviour are unchanged.
+- **Requires SQL:** see `supabase/v0.5.107-delta.sql` — paste the entire file into the Supabase SQL Editor and run once. The `CREATE OR REPLACE FUNCTION` replaces the function in place. No data migration.
+- **Verified the fix matches `schema.sql`** — both are now in sync, so any future fresh deployment of the schema will already be correct.
+
+---
+
 ## v0.5.106
 - **Mobile responsive fixes for the standardized navy header (v0.5.105).** With "Your Business Coach" + back-link + biz-pill + Sign Out all in the same bar, the worst-case width at ~390px (iPhone) added up to ~415px — overflow / wrap territory. Audited the 22 navy-header pages: none of them have inline header CSS, so the fix is purely in `css/style.css`.
 - **Changes in `css/style.css`:**
