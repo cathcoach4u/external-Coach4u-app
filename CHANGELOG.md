@@ -4,6 +4,27 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.129
+- **VB2 source arrived &mdash; deepened the two guides that couldn't be fully audited against a source in v0.5.126.** User uploaded `EOS-VB2-Implementer-Guide.pdf` (2.5MB, the real PDF) which had previously been a 2-byte stub. Moved it to `/EOS/2022-07-14_EOS-VB2-Implementer-Guide.pdf` to match the rest.
+- **`learn/marketing-strategy.html` &mdash; rewritten from ~200 to ~700 words.** Was audited as "SOLID (within what's verifiable)" but the source was missing. Now matches VB2 depth:
+  - **DGP framework** &mdash; Target Market via Demographic + Geographic + Psychographic, leading to "The List" as a finite, named filter
+  - **Rule of 7** &mdash; customers need to hear the message 7+ times before they hear it for the first time
+  - **3 Differentiators competitor test** &mdash; "every competitor may do one or two; you're the only one that does all three" (Southwest Airlines 3LFs example)
+  - **Process and Guarantee as YES/NO decisions** &mdash; decide today, then either commit to building it as a future quarterly goal, or remove from the plan; no half-measures
+  - **Common pitfalls** specific to each of the four: target-too-wide, adjective differentiators, sales-funnel as Process, toothless guarantee
+- **`learn/targets.html` &mdash; tightened the 3-Year and 1-Year sections with VB2 facilitation details.** The agent flagged these as partial (no source) in v0.5.126:
+  - **"Shot over the bow then debate"** framing for every number (Revenue / Profit / Measurables)
+  - **3-Year specific bullet prompts**: # employees + right-people-right-seats, # clients, locations, new products, marketing efforts, your own role
+  - **5&ndash;15 surviving bullets** target with "err on the side of leaving something on the list"
+  - **The see-it / want-it / believe-it three-question test** at the end of 3-Year (previously had only "do you see it?")
+  - **Each person shares their role** at end of 3-Year &mdash; no discussion &mdash; to surface misalignment
+  - **1-Year quiet-time prompt** explicitly references the 3-Year Outlook + Issues List + Org Chart as the inputs
+  - **One-at-a-time onto the board** rule for 1-Year goals (don't batch &mdash; weak goals survive in noise)
+  - **Full closing read-back** &mdash; "If we're sitting here on [date] with this revenue, profit, measurables, and we have achieved goal #1 [name], goal #2 [name]&hellip; will that have been a great year?"
+- Built via one-shot Python (`_deepen_vb2.py`, deleted after run). No SQL. No EOS trademark terminology in user-facing copy &mdash; the v0.5.116 wording rules still apply (Niche stays as a worksheet field name but is generic enough).
+
+---
+
 ## v0.5.128
 - **Fixed a wording bug in the Annual Planning Session guide's Coach's tip.** User caught it: the tip read "If you wait, it'll slip into a busy quarter, then slip again" &mdash; recycled language from the Quarterly tip that doesn't fit the annual cadence (annuals slip across years, not quarters). Rewrote: "If you wait, the date gets eaten by busy quarters and the year quietly disappears."
 - One-line front-end fix. No SQL.
