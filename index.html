@@ -1238,7 +1238,7 @@
       if (!acctName) { errEl.textContent = 'Account name is required.'; return; }
       if (!bizName)  { errEl.textContent = 'First business name is required.'; return; }
       btn.disabled = true; btn.textContent = 'Creating…'; errEl.textContent = '';
-      const { data: newSubId, error } = await sb.rpc('create_client_account', {
+      const { data: rows, error } = await sb.rpc('create_client_account', {
         account_name: acctName, business_name: bizName
       });
       if (error) {
@@ -1246,11 +1246,16 @@
         btn.disabled = false; btn.textContent = 'Create account';
         return;
       }
+      // RPC now returns TABLE(subscription_id, organisation_id) → array of rows
+      const row = Array.isArray(rows) ? rows[0] : rows;
+      const newSubId = row && (row.subscription_id || row.subscriptionId);
+      const newOrgId = row && (row.organisation_id || row.organisationId);
       if (window.activeOrg) {
-        window.activeOrg.setSubscription(newSubId, acctName);
-        window.activeOrg.set(null);
+        if (newSubId) window.activeOrg.setSubscription(newSubId, acctName);
+        if (newOrgId) window.activeOrg.set(newOrgId, bizName);
       }
-      window.location.reload();
+      // Land in the new business, same as + New Business
+      window.location.href = 'business.html';
     });
 
     await refresh();

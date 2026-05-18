@@ -4,6 +4,14 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.112
+- **Fixed UX inconsistency in the multi-tenant flow.** Reported by user: "I put in the first business and it went back to accounts. I put in the second business and it went to the business IAS Life." The two creation paths (`+ New client account` vs. `+ New Business`) had different post-create destinations — confusing, and the dashboard isn't the right landing place after creating a business anyway. Now both flows navigate to `business.html` for the newly-created business, so the user can start filling in worksheets / scorecard / etc. immediately.
+- **`create_client_account` RPC — return type widened.** Was `RETURNS uuid` (the subscription_id only). Now `RETURNS TABLE(subscription_id uuid, organisation_id uuid)` so the front-end has both ids and can `activeOrg.set(newOrgId, bizName)` before navigating into the new business. The SQL delta gained a `DROP FUNCTION IF EXISTS public.create_client_account(text, text)` before the CREATE — Postgres won't let `CREATE OR REPLACE` change a function's return type, and the user already ran the previous version, so the DROP is required for the re-run to succeed. `supabase/v0.5.111-delta.sql` was edited in-place rather than spawning a v0.5.112-delta, since the v0.5.111 RPC and v0.5.112 RPC describe the same intent — anyone setting up fresh just runs the latest delta once.
+- **Front-end** (`index.html`): the modal save handler now reads `row.subscription_id` + `row.organisation_id` from the RPC result, calls `activeOrg.setSubscription(...)` and `activeOrg.set(...)` for both, and redirects to `business.html` instead of `window.location.reload()`.
+- **Re-run required:** `supabase/v0.5.111-delta.sql` in the Supabase SQL Editor. The DROP at the top makes it idempotent.
+
+---
+
 ## v0.5.111
 - **Multi-tenant — one user can own multiple client accounts.** User feedback: "I want to set up a test client from the top, replace SARUBA with the client's details". Built end-to-end so you (the business coach) can manage many clients from one login: each client is its own `subscriptions` row, you're the owner of each, you switch between them with a dropdown at the top of the dashboard.
 - **`supabase/v0.5.111-delta.sql` — two changes:**

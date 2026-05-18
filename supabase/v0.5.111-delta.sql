@@ -16,11 +16,16 @@
 -- non-unique so multiple subs per owner is already supported.
 -- ═══════════════════════════════════════════════════════════════
 
+-- DROP first — return type changed from `uuid` to `TABLE(...)` mid-version, and
+-- Postgres won't let `CREATE OR REPLACE` change return type. Safe to run even
+-- on a fresh install.
+DROP FUNCTION IF EXISTS public.create_client_account(text, text);
+
 CREATE OR REPLACE FUNCTION public.create_client_account(
   account_name  text,
   business_name text
 )
-RETURNS uuid                            -- returns the new subscription id
+RETURNS TABLE (subscription_id uuid, organisation_id uuid)
 LANGUAGE plpgsql SECURITY DEFINER
 SET search_path = public
 AS $$
@@ -59,7 +64,9 @@ BEGIN
     v_organisation_id, uid, 'admin', 'active', now()
   );
 
-  RETURN v_subscription_id;
+  subscription_id := v_subscription_id;
+  organisation_id := v_organisation_id;
+  RETURN NEXT;
 END;
 $$;
 
