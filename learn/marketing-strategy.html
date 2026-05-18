@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marketing Strategy · Guide | Your Business Coach</title>
+  <link rel="manifest" href="../manifest.json">
+  <meta name="theme-color" content="#003366">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Your Business Coach">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body { opacity: 0; transition: opacity 0.2s ease; }
+    .container { padding-bottom: 90px; max-width: 740px; margin: 0 auto; }
+
+    .guide-head { padding: 22px 16px 8px; }
+    .guide-eyebrow {
+      font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1.2px; color: var(--accent); margin-bottom: 8px;
+    }
+    .guide-title {
+      font-size: 1.3rem; font-weight: 800; color: var(--primary);
+      margin: 0 0 8px; line-height: 1.25;
+    }
+    .guide-sub { font-size: 0.92rem; color: #555; margin: 0; line-height: 1.55; }
+
+    .guide-body { padding: 0 16px; }
+    .guide-section h2 {
+      font-size: 0.74rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1.1px; color: var(--accent);
+      margin: 22px 0 8px; padding-left: 8px;
+      border-left: 3px solid var(--accent);
+    }
+    .guide-section p, .guide-section li {
+      font-size: 0.94rem; color: #2d2d2d; line-height: 1.6;
+    }
+    .guide-section p { margin: 0 0 10px; }
+    .guide-section ol, .guide-section ul { padding-left: 22px; margin: 0 0 10px; }
+    .guide-section li { margin-bottom: 6px; }
+    .guide-section strong { color: var(--primary); }
+    .guide-section em { color: #444; }
+    .guide-section code {
+      background: #f3f4f6; padding: 1px 6px; border-radius: 4px;
+      font-size: 0.85em; color: #003366;
+    }
+
+    .guide-tip {
+      background: #f0fdfa;
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 22px 0 18px;
+    }
+    .guide-tip-label {
+      font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--accent); margin-bottom: 5px;
+    }
+    .guide-tip-body { font-size: 0.92rem; color: var(--primary); line-height: 1.55; }
+
+    .guide-cta-row {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      margin: 22px 0 8px;
+    }
+    .guide-cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 16px; border-radius: 8px;
+      font-size: 0.86rem; font-weight: 700;
+      text-decoration: none; transition: background 0.15s, color 0.15s;
+    }
+    .guide-cta.primary { background: var(--accent); color: white; }
+    .guide-cta.primary:hover { background: var(--accent-dark); color: white; text-decoration: none; }
+    .guide-cta.ghost {
+      background: white; color: var(--accent); border: 1px solid var(--accent);
+    }
+    .guide-cta.ghost:hover { background: #f0fdfa; text-decoration: none; }
+    .guide-back-link {
+      display: inline-block; margin-top: 16px;
+      font-size: 0.82rem; font-weight: 700;
+      color: var(--accent); text-decoration: none;
+    }
+    .guide-back-link:hover { text-decoration: underline; }
+
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: white; border-top: 1px solid #e5e7eb;
+      display: flex; z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+    }
+    .bottom-nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 8px 0 6px; text-decoration: none;
+      color: #aaa; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      gap: 3px; transition: color 0.15s;
+    }
+    .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
+    .bottom-nav-icon { font-size: 20px; line-height: 1; }
+  </style>
+  <script src="../js/active-org.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="../learning-vault.html" class="header-back">&#x2190; Learning Vault</a>
+        <span class="header-title">Your Business Coach</span>
+        <span id="activeBizName" class="biz-pill"></span>
+      </div>
+      <button id="signOutBtn" class="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="guide-head">
+      <div class="guide-eyebrow">Strategy &middot; Guide</div>
+      <h1 class="guide-title">📣 Marketing Strategy</h1>
+      <p class="guide-sub">Who you serve, what makes you different, the process clients walk through, and the guarantee that backs it.</p>
+    </div>
+
+    <div class="guide-body">
+      <div class="guide-section">
+        <h2>What this is</h2>
+        <p>Four short statements that together define how you go to market: target market, differentiators, your process, and your guarantee.</p>
+      </div>
+      <div class="guide-section">
+        <h2>Why it matters</h2>
+        <p>Without a clear position, every customer takes a slightly different journey, every salesperson tells a slightly different story, and your conversion rate suffers.</p>
+      </div>
+      <div class="guide-section">
+        <h2>How to do it well</h2>
+        <ol><li><strong>Target market:</strong> be specific. Revenue range, team size, geography, the stage they're in.</li><li><strong>What makes us different:</strong> three things that are true <em>and</em> provable about you that aren't true of competitors. Avoid "we care more" — everyone says that.</li><li><strong>Our Process:</strong> name your delivery method. Make it a sequence the prospect can picture themselves walking through.</li><li><strong>Guarantee:</strong> what promise takes risk off the prospect? It doesn't have to be money-back — it can be a behavioural guarantee ("We'll respond within X").</li></ol>
+      </div>
+      <div class="guide-section">
+        <h2>Common pitfalls</h2>
+        <ul><li>Mistaking adjectives ("trusted, friendly") for differentiators. They're commodities.</li><li>A process that's just stages of <em>your</em> sale ("Discovery → Proposal → Close"). The client doesn't care about your funnel — name <em>their</em> journey.</li></ul>
+      </div>
+
+      <div class="guide-tip">
+        <div class="guide-tip-label">Coach&rsquo;s tip</div>
+        <div class="guide-tip-body">Once defined, audit your website. Every key page should reflect this position. If your homepage and your About page tell different stories, prospects don't trust either.</div>
+      </div>
+
+      <div class="guide-cta-row">
+        <a class="guide-cta primary" href="../marketing-strategy.html">Open the Marketing Strategy worksheet &rarr;</a>
+      </div>
+
+      <a class="guide-back-link" href="../learning-vault.html">&larr; Back to Learning Vault</a>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item" href="../business.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
+    <a class="bottom-nav-item" href="../planning.html"><span class="bottom-nav-icon">&#x1F5FA;&#xFE0F;</span><span>Planning</span></a>
+    <a class="bottom-nav-item" href="../strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
+    <a class="bottom-nav-item" href="../operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
+    <a class="bottom-nav-item active" href="../learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
+  </nav>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const supabase = createClient(
+      'https://eekefsuaefgpqmjdyniy.supabase.co',
+      'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+    );
+    async function init() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (!user || error) { window.location.href = '../login.html'; return; }
+      const { data: profile } = await supabase
+        .from('users').select('membership_status').eq('id', user.id).single();
+      if (!profile || profile.membership_status !== 'active') {
+        window.location.href = '../inactive.html'; return;
+      }
+      document.body.style.opacity = '1';
+      document.getElementById('signOutBtn').addEventListener('click', async () => {
+        await supabase.auth.signOut(); window.location.href = '../login.html';
+      });
+    }
+    init();
+  </script>
+</body>
+</html>

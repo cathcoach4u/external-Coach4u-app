@@ -4,6 +4,20 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.120
+- **Wrote actual content for every Learning Vault guide.** User pushback on v0.5.119: "I don't see what value you have offered. The links don't go to the actual page — they still must go for [the] Learning Vault." Fair criticism — v0.5.119 indexed the activities but the "Read guide" buttons were grey "Coming soon" placeholders, so the Vault was just a launcher pointing back to pages already reachable via the bottom nav. No new value.
+- **13 new guide pages** under `learn/<slug>.html`, one per activity in the program:
+  - **Strategy** — `core-values`, `core-focus`, `targets`, `financials`, `marketing-strategy`, `leadership-team`
+  - **Operations** — `quarterly-goals`, `weekly-numbers`, `weekly-team-meeting`, `issues`
+  - **Planning** — `quarterly-planning-session`, `annual-planning-session`, `team-checkin`
+- **Guide template** — uniform structure across all 13: eyebrow (section · GUIDE), title with icon, one-line tagline, then four sections (What this is / Why it matters / How to do it well / Common pitfalls), a teal `Coach's tip` callout, and a CTA row with `Open the worksheet →` primary + `← Back to Learning Vault` link. Auth-gated like the rest of the app. Loads `active-org.js` so the business pill still shows in the header.
+- **Content style** — direct, no fluff, no EOS jargon. Each guide ~250-400 words. The "How to do it well" sections are numbered steps the user can actually execute; "Common pitfalls" calls out the specific failure modes; "Coach's tip" is the one piece of advice that\'s most often missing.
+- **Vault index rewired** — every card's primary CTA changed from `Open worksheet` (live) → `Read the guide` (live, links to `learn/<slug>.html`). The worksheet link drops to a secondary ghost button. The Core Values card keeps `Run the Values Discovery exercise` as a third ghost button alongside.
+- **Built via Python script** (`_build_guides.py`, deleted after the build) — the content lives in a single Python dict so all 13 stay structurally consistent. Regenerating is easy if the template needs to change later.
+- **No SQL, no schema.** Pure content build.
+
+---
+
 ## v0.5.119
 - **Rebuilt the Learning Vault as a structured activity index** mapped to the full Coach4U program. User asked: "all the activities that align to the full program."
 - **13 activities, 3 sections:**
