@@ -4,6 +4,17 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.118
+- **Simplified the Financial Outlook strip** on `one-page-plan.html` and the `account-plans.html` carousel. User feedback: "change figures to just show the final numbers not each month."
+- **Before**: 12 month-rows + a totals row, with Month / Rev / Exp / Profit columns — quite dense.
+- **After**: just the 12-month totals as three lines per side — Revenue, Expenses, Profit. The date range still shows in the column heading (e.g. *Last 12 Months · May 25 → Apr 26*) so the reader knows what the totals cover.
+- **Replaced**: the `<table class="fin-mini">` mini-table + the `buildTable()` row-by-row builder is gone. Now a `<div class="fin-totals">` containing three `.fin-line` rows (Revenue / Expenses / Profit), with the profit line teal/red against zero and grey when both columns are empty.
+- **CSS replaced**: removed the `.fin-mini` table styles and added `.fin-totals` / `.fin-line` / `.fin-line-label` / `.fin-line-value` (plus `.fin-line-profit` colour variants). Print rules updated accordingly.
+- **Worksheet unchanged**: `financials.html` still lets the admin/coach enter month-by-month figures across the 24-month window — the simplification is display-only on the printed one-pager.
+- **No SQL changes.**
+
+---
+
 ## v0.5.117
 - **Monthly financials added to the one-page plan.** User asked: "Does the one-page plan have revenue/expenses for the next 12 months? If not, this needs to be added. And list the last 12 months if figures available."
 - **New `financial_periods` Supabase table** (`supabase/v0.5.117-delta.sql` + mirror in `schema.sql`):

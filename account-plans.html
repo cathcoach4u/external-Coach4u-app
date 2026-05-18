@@ -334,23 +334,25 @@
       color: #003366; margin-bottom: 4px;
     }
     .fin-strip-col-meta { color: #999; letter-spacing: 0.4px; font-weight: 700; }
-    .fin-mini { width: 100%; border-collapse: collapse; font-size: 0.62rem; table-layout: fixed; }
-    .fin-mini th, .fin-mini td {
-      padding: 2px 4px; border-bottom: 1px solid #f3f3f3;
-      text-align: right; white-space: nowrap;
+    .fin-totals {
+      background: #fafbfc; border: 1px solid #ececec;
+      border-radius: 6px; padding: 6px 10px;
     }
-    .fin-mini th {
-      font-size: 0.5rem; font-weight: 800; color: #003366;
-      text-transform: uppercase; letter-spacing: 0.6px; background: #fafbfc;
+    .fin-line {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 8px; padding: 3px 0; font-size: 0.72rem;
     }
-    .fin-mini th.fin-m, .fin-mini td.fin-m { text-align: left; width: 32%; color: #555; font-weight: 700; }
-    .fin-mini td.fin-empty { color: #c0c0c0; }
-    .fin-mini td.fin-pos { color: #0D9488; font-weight: 700; }
-    .fin-mini td.fin-neg { color: #c53030; font-weight: 700; }
-    .fin-mini tr.fin-total td {
-      background: #f8fafc; font-weight: 800; color: #003366;
-      border-top: 1px solid #d8dde3; border-bottom: none;
+    .fin-line + .fin-line { border-top: 1px solid #f0f0f0; }
+    .fin-line-label {
+      font-size: 0.58rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.8px; color: #003366;
     }
+    .fin-line-value { font-weight: 700; color: #2d2d2d; }
+    .fin-line.fin-line-profit { padding-top: 5px; margin-top: 2px; }
+    .fin-line.fin-line-profit .fin-line-label { color: #0D9488; }
+    .fin-line.fin-line-profit.fin-pos .fin-line-value { color: #0D9488; }
+    .fin-line.fin-line-profit.fin-neg .fin-line-value { color: #c53030; }
+    .fin-line.fin-line-profit.fin-empty .fin-line-value { color: #c0c0c0; font-weight: 500; }
 
     .doc-footer {
       background: #f8f9fa;
@@ -404,7 +406,7 @@
       .field-value { line-height: 1.4; }
       .num-list li { line-height: 1.35; }
       .doc-financials { padding: 8px 14px 10px; page-break-inside: avoid; break-inside: avoid; }
-      .fin-mini th, .fin-mini td { padding: 1.5px 3px; }
+      .fin-totals { padding: 5px 9px; }
       .doc-footer { padding: 5px 18px; }
     }
   </style>
@@ -523,36 +525,26 @@
     function isoOf(d) {
       return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-01';
     }
-    function buildFinTable(periods, finMap) {
+    function buildFinTotals(periods, finMap) {
       let totRev = 0, totExp = 0, anyRev = false, anyExp = false;
-      const bodyRows = periods.map(d => {
+      for (const d of periods) {
         const iso = isoOf(d);
         const row = finMap && finMap.get ? finMap.get(iso) : null;
         const r = row && row.revenue !== null && row.revenue !== undefined ? Number(row.revenue) : null;
         const e = row && row.expenses !== null && row.expenses !== undefined ? Number(row.expenses) : null;
         if (r !== null) { totRev += r; anyRev = true; }
         if (e !== null) { totExp += e; anyExp = true; }
-        let profit = null;
-        if (r !== null || e !== null) profit = (r || 0) - (e || 0);
-        return `
-          <tr>
-            <td class="fin-m">${escHtml(fmtMonthShort(d))}</td>
-            <td class="${r === null ? 'fin-empty' : ''}">${r === null ? '—' : fmtCurrency(r)}</td>
-            <td class="${e === null ? 'fin-empty' : ''}">${e === null ? '—' : fmtCurrency(e)}</td>
-            <td class="${profitClass(profit)}">${profit === null ? '—' : fmtCurrency(profit)}</td>
-          </tr>`;
-      }).join('');
-      const totalProfit = (anyRev || anyExp) ? totRev - totExp : null;
-      const totalRow = `
-        <tr class="fin-total">
-          <td class="fin-m">Total</td>
-          <td>${anyRev ? fmtCurrency(totRev) : '—'}</td>
-          <td>${anyExp ? fmtCurrency(totExp) : '—'}</td>
-          <td class="${profitClass(totalProfit)}">${totalProfit === null ? '—' : fmtCurrency(totalProfit)}</td>
-        </tr>`;
+      }
+      const anyCell = anyRev || anyExp;
+      const totalProfit = anyCell ? totRev - totExp : null;
       return `
-        <thead><tr><th class="fin-m">Month</th><th>Rev</th><th>Exp</th><th>Profit</th></tr></thead>
-        <tbody>${bodyRows}${totalRow}</tbody>`;
+        <div class="fin-line"><span class="fin-line-label">Revenue</span>
+          <span class="fin-line-value">${anyRev ? fmtCurrency(totRev) : '—'}</span></div>
+        <div class="fin-line"><span class="fin-line-label">Expenses</span>
+          <span class="fin-line-value">${anyExp ? fmtCurrency(totExp) : '—'}</span></div>
+        <div class="fin-line fin-line-profit ${profitClass(totalProfit)}">
+          <span class="fin-line-label">Profit</span>
+          <span class="fin-line-value">${totalProfit === null ? '—' : fmtCurrency(totalProfit)}</span></div>`;
     }
     function renderFinancialsBlock(data, past, future) {
       const fmtRange = arr => fmtMonthShort(arr[0]) + ' → ' + fmtMonthShort(arr[arr.length - 1]);
@@ -568,14 +560,14 @@
                 <span>Last 12 Months</span>
                 <span class="fin-strip-col-meta">${escHtml(fmtRange(past))}</span>
               </div>
-              <table class="fin-mini">${buildFinTable(past, data.finByPeriod)}</table>
+              <div class="fin-totals">${buildFinTotals(past, data.finByPeriod)}</div>
             </div>
             <div class="fin-strip-col">
               <div class="fin-strip-col-head">
                 <span>Next 12 Months</span>
                 <span class="fin-strip-col-meta">${escHtml(fmtRange(future))}</span>
               </div>
-              <table class="fin-mini">${buildFinTable(future, data.finByPeriod)}</table>
+              <div class="fin-totals">${buildFinTotals(future, data.finByPeriod)}</div>
             </div>
           </div>
         </div>`;
