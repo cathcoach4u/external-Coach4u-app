@@ -4,6 +4,25 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.110
+- **Added the Coach role** — admin-equivalent for data/team operations, intended to be exempt from per-seat billing when billing is wired. Use case: you (the business coach) live inside a client's account, edit alongside them, but shouldn't consume one of the client's 3 included paid seats. This was the locked-in plan from the conversation around v0.5.107 — now built end-to-end.
+- **What a Coach can do:** edit every data table (worksheets, scorecard, goals, meetings, issues, planning sessions), invite/remove other team members. **What a Coach CANNOT do:** rename or delete the business itself — those stay admin-only because they're business-lifecycle actions tied to the subscription owner.
+- **Schema delta — `supabase/v0.5.110-delta.sql` (paste-and-run in Supabase SQL Editor):**
+  - `ALTER team_members` CHECK constraint to allow `role IN ('admin', 'coach', 'member')` (was `'admin','member'`)
+  - `CREATE OR REPLACE FUNCTION user_admin_org_ids(uid)` to return orgs where role is `admin` OR `coach` — this single change cascades through every data-table RLS policy that uses the helper, granting coaches admin-write access without per-table edits
+  - `CREATE OR REPLACE FUNCTION invite_team_member()` — accepts `'coach'` in the role validation; the admin-check now allows admin OR coach to invite
+  - `CREATE OR REPLACE FUNCTION remove_team_member()` — same admin-or-coach allowance; the "don't remove the last admin" guard still only counts admins (coaches don't satisfy the admin requirement for that org)
+  - `rename_business()` and `delete_business()` are LEFT untouched — those check role='admin' directly (not via the helper), so they remain admin-only as designed
+- **`schema.sql`** updated in lockstep so future fresh deployments have the right shape from the start.
+- **UI in `index.html`:**
+  - Invite modal: third option "Coach — admin rights, not billed as a user" with help text below explaining when to use it ("for service providers who edit alongside the team but shouldn't consume a paid seat")
+  - New `.role-coach` pill style — purple (`#ede9fe` bg, `#6d28d9` text) for clear visual distinction from the blue Admin pill and grey Member pill
+  - Two `myMemberships.filter(m => m.role === 'admin')` call sites updated to include `'coach'` so coaches see the team list across all their orgs and the invite-business picker shows orgs they coach for
+  - The per-business `⋮` actions menu (Rename / Delete) is gated to `role === 'admin'` only — coaches don't see it, matching the SQL gating
+- **No client-side billing logic changes** because billing isn't wired up yet. When it lands (subscription seat count), the rule will be: count team_members where `status='active' AND role != 'coach'` for the seat tally.
+
+---
+
 ## v0.5.109
 - **Extended the team-member dropdown to the other 3 free-text owner fields** — completes the v0.5.108 pattern. Now consistent across every owner field in the app: every "who's responsible?" picker is a select populated from the active org's `team_members`, so reports can `GROUP BY owner` reliably.
 - **Files migrated (3):**

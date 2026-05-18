@@ -110,8 +110,9 @@
       display: inline-block; font-size: 0.66rem; font-weight: 700; text-transform: uppercase;
       letter-spacing: 0.4px; padding: 3px 9px; border-radius: 20px;
     }
-    .role-admin  { background: #dbeafe; color: #1e40af; }
-    .role-member { background: #f3f4f6; color: #6B7280; }
+    .role-admin   { background: #dbeafe; color: #1e40af; }
+    .role-coach   { background: #ede9fe; color: #6d28d9; }
+    .role-member  { background: #f3f4f6; color: #6B7280; }
     .role-pending { background: #fef3c7; color: #92400e; font-style: italic; }
 
     .biz-open {
@@ -442,7 +443,11 @@
         <select class="modal-select" id="inviteRole">
           <option value="member">Member &mdash; can read team data</option>
           <option value="admin">Admin &mdash; can edit everything</option>
+          <option value="coach">Coach &mdash; admin rights, not billed as a user</option>
         </select>
+        <p style="font-size:.72rem;color:#888;margin:6px 0 0;line-height:1.45;">
+          <strong>Coach</strong> is for service providers (e.g. your business coach) who edit alongside the team but shouldn&rsquo;t consume a paid seat.
+        </p>
       </div>
       <div class="modal-field">
         <label class="modal-label">Display name (optional)</label>
@@ -562,9 +567,9 @@
         return;
       }
 
-      // 3) Team rows across orgs where the caller is admin
+      // 3) Team rows across orgs where the caller can manage team (admin or coach)
       const adminOrgIds = myMemberships
-        .filter(m => m.role === 'admin')
+        .filter(m => m.role === 'admin' || m.role === 'coach')
         .map(m => m.organisation_id);
       const teamPromise = adminOrgIds.length
         ? sb.from('team_members')
@@ -1001,7 +1006,7 @@
     const inviteSend    = document.getElementById('inviteSend');
 
     function populateInviteBizList() {
-      const adminMems = myMemberships.filter(m => m.role === 'admin');
+      const adminMems = myMemberships.filter(m => m.role === 'admin' || m.role === 'coach');
       const activeId  = (window.activeOrg && window.activeOrg.get()) || null;
       if (!adminMems.length) {
         inviteBizList.innerHTML = '<div style="font-size:.85rem;color:#888;padding:6px;">You aren&rsquo;t an admin of any business yet.</div>';

@@ -107,7 +107,7 @@ CREATE TABLE public.team_members (
   user_id         uuid REFERENCES auth.users(id) ON DELETE CASCADE,
   invited_email   text,                              -- set on invite, before user signs up
   role            text NOT NULL DEFAULT 'member'
-                  CHECK (role IN ('admin','member')),
+                  CHECK (role IN ('admin','coach','member')),
   status          text NOT NULL DEFAULT 'pending'
                   CHECK (status IN ('pending','active','removed')),
   display_name    text,
@@ -146,7 +146,7 @@ LANGUAGE sql STABLE SECURITY DEFINER
 SET search_path = public
 AS $$
   SELECT organisation_id FROM public.team_members
-  WHERE user_id = uid AND role = 'admin' AND status = 'active'
+  WHERE user_id = uid AND role IN ('admin','coach') AND status = 'active'
 $$;
 
 
@@ -754,19 +754,19 @@ BEGIN
   IF v_email = '' OR position('@' in v_email) = 0 THEN
     RAISE EXCEPTION 'A valid email is required';
   END IF;
-  IF v_role NOT IN ('admin', 'member') THEN
-    RAISE EXCEPTION 'Role must be admin or member';
+  IF v_role NOT IN ('admin', 'coach', 'member') THEN
+    RAISE EXCEPTION 'Role must be admin, coach, or member';
   END IF;
 
-  -- Caller must be an active admin of this org
+  -- Caller must be an active admin OR coach of this org
   IF NOT EXISTS (
     SELECT 1 FROM public.team_members
     WHERE team_members.organisation_id = business_id
       AND team_members.user_id = uid
-      AND team_members.role = 'admin'
+      AND team_members.role IN ('admin', 'coach')
       AND team_members.status = 'active'
   ) THEN
-    RAISE EXCEPTION 'Only admins can invite team members';
+    RAISE EXCEPTION 'Only admins or coaches can invite team members';
   END IF;
 
   -- See if this email belongs to an existing auth.users row
@@ -854,22 +854,22 @@ BEGIN
   -- Caller must be an active admin of this org
   IF NOT EXISTS (
     SELECT 1 FROM public.team_members
-    WHERE organisation_id = v_org_id
-      AND user_id = uid
-      AND role = 'admin'
-      AND status = 'active'
+    WHERE team_members.organisation_id = v_org_id
+      AND team_members.user_id = uid
+      AND team_members.role IN ('admin', 'coach')
+      AND team_members.status = 'active'
   ) THEN
-    RAISE EXCEPTION 'Only admins can remove team members';
+    RAISE EXCEPTION 'Only admins or coaches can remove team members';
   END IF;
 
-  -- Guard: don't allow removing the only remaining admin
+  -- Guard: don't allow removing the only remaining admin (coaches don't count)
   IF v_role = 'admin' THEN
     SELECT count(*) INTO v_admin_cnt
     FROM public.team_members
-    WHERE organisation_id = v_org_id
-      AND role = 'admin'
-      AND status = 'active'
-      AND id <> member_id;
+    WHERE team_members.organisation_id = v_org_id
+      AND team_members.role = 'admin'
+      AND team_members.status = 'active'
+      AND team_members.id <> member_id;
     IF v_admin_cnt = 0 THEN
       RAISE EXCEPTION 'Cannot remove the only admin of this business. Promote another member first.';
     END IF;
