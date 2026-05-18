@@ -106,7 +106,7 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="header-left">
-        <a href="../learning-vault.html" class="header-back">&#x2190; Learning Vault</a>
+        <a href="../learning-vault.html" class="header-back" data-worksheet-href="../meeting.html" data-worksheet-label="Weekly Meetings">&#x2190; Learning Vault</a>
         <span class="header-title">Your Business Coach</span>
         <span id="activeBizName" class="biz-pill"></span>
       </div>
@@ -167,6 +167,23 @@
       'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
     );
     async function init() {
+      // Smart back link — if the visitor came from the parent worksheet/tool,
+      // make the header back link return there instead of to the Vault index.
+      try {
+        if (document.referrer) {
+          const back = document.querySelector('.header-back');
+          const wsHref  = back && back.getAttribute('data-worksheet-href');
+          const wsLabel = back && back.getAttribute('data-worksheet-label');
+          if (back && wsHref && wsLabel) {
+            const refFile = (new URL(document.referrer)).pathname.split('/').filter(Boolean).pop() || '';
+            const wsFile  = wsHref.split('/').pop();
+            if (refFile.toLowerCase() === wsFile.toLowerCase()) {
+              back.setAttribute('href', wsHref);
+              back.innerHTML = '\u2190 ' + wsLabel;
+            }
+          }
+        }
+      } catch (_) {}
       const { data: { user }, error } = await supabase.auth.getUser();
       if (!user || error) { window.location.href = '../login.html'; return; }
       const { data: profile } = await supabase

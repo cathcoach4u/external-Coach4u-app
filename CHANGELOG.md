@@ -4,6 +4,19 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.122
+- **Smart "back" link on every Learning Vault guide.** User feedback: "It says back to learning vault but if you have opened it from the sections you need to go back to the section you have opened it. But good to also go to learning vault." Two paths in, one path back wasn't right.
+- **The pattern**: on guide page load, check `document.referrer`. If the visitor came from the matching worksheet/tool (e.g. they clicked `Read the Quarterly Goals guide →` from `goals.html`), swap the header back link from `← Learning Vault` → `← Quarterly Goals` and point it at `../goals.html`. If they came from the Vault index (or from anywhere unrecognised), the link stays `← Learning Vault`. Brief flicker on the swap is acceptable — the JS runs at the top of `init()` before the auth check.
+- **Mapping per guide** (the parent worksheet/tool each guide checks for as its "came from" source):
+  - Strategy guides → their matching worksheet (`core-values.html`, `core-focus.html`, `targets.html`, `financials.html`, `marketing-strategy.html`, `leadership-team.html`).
+  - Operations guides → their matching tool (`goals.html`, `scorecard.html`, `meeting.html`, `issues.html`).
+  - Planning guides → their session list page (`quarterly-sessions.html`, `annual-sessions.html`, `planning.html` for team check-in).
+- **Wiring**: each guide's `<a class="header-back">` gained two data attributes (`data-worksheet-href`, `data-worksheet-label`) and a small synchronous swap snippet at the top of `init()` that reads them, compares the filename of `document.referrer` against the worksheet href, and rewrites the link if they match.
+- **Bottom `← Back to Learning Vault` link unchanged** — that's the always-on Vault path the user explicitly wanted to keep. The primary teal `Open the worksheet →` CTA also stays, so the user can move forward into the activity even if they came from somewhere else.
+- **Built via a one-shot Python patch** across all 13 guide files so the wiring stays uniform. No SQL.
+
+---
+
 ## v0.5.121
 - **Deep-linked the in-page Vault tip box** on every worksheet and operations tool to its specific guide. User feedback from inside `goals.html`: "There is a click button in there taking me to the learning area. This is a generic link and doesn't connect to the specific activity. Wouldn't it be better to go to the specific activity area." Yes — fixed.
 - **Mapping** applied to 10 pages:
