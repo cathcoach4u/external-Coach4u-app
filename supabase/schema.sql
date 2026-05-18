@@ -204,6 +204,20 @@ CREATE TABLE public.leadership_team_members (
 CREATE INDEX leadership_team_org_idx
   ON public.leadership_team_members(organisation_id, sort_order);
 
+-- v0.5.117: monthly financials feeding the one-page-plan
+CREATE TABLE public.financial_periods (
+  id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  organisation_id  uuid NOT NULL REFERENCES public.organisations(id) ON DELETE CASCADE,
+  period           date NOT NULL,            -- first day of the month
+  revenue          numeric,
+  expenses         numeric,
+  created_at       timestamptz NOT NULL DEFAULT now(),
+  updated_at       timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (organisation_id, period)
+);
+CREATE INDEX financial_periods_org_period_idx
+  ON public.financial_periods(organisation_id, period);
+
 
 -- =============================================================
 -- 4. OPERATIONS domain
@@ -366,6 +380,7 @@ ALTER TABLE public.core_focus               ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.targets                  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.marketing_strategy       ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.leadership_team_members  ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.financial_periods        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.scorecard_metrics        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.scorecard_entries        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.rocks                    ENABLE ROW LEVEL SECURITY;
@@ -448,6 +463,13 @@ CREATE POLICY "admins write marketing_strategy"  ON public.marketing_strategy
 CREATE POLICY "members read leadership"  ON public.leadership_team_members
   FOR SELECT USING (organisation_id IN (SELECT public.user_org_ids(auth.uid())));
 CREATE POLICY "admins write leadership"  ON public.leadership_team_members
+  FOR ALL
+  USING (organisation_id IN (SELECT public.user_admin_org_ids(auth.uid())))
+  WITH CHECK (organisation_id IN (SELECT public.user_admin_org_ids(auth.uid())));
+
+CREATE POLICY "members read financial_periods"  ON public.financial_periods
+  FOR SELECT USING (organisation_id IN (SELECT public.user_org_ids(auth.uid())));
+CREATE POLICY "admins write financial_periods"  ON public.financial_periods
   FOR ALL
   USING (organisation_id IN (SELECT public.user_admin_org_ids(auth.uid())))
   WITH CHECK (organisation_id IN (SELECT public.user_admin_org_ids(auth.uid())));

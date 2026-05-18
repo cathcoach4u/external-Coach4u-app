@@ -187,6 +187,55 @@
       color: #b0b0b0; font-style: italic; font-size: 0.72rem;
     }
 
+    /* ── Financial Outlook (Last 12 / Next 12 months) ── */
+    .doc-financials {
+      border-top: 1px solid #e5e7eb;
+      background: #fdfdfd;
+      padding: 10px 16px 12px;
+    }
+    .fin-strip-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 8px; margin-bottom: 8px;
+    }
+    .fin-strip-title {
+      font-size: 0.6rem; font-weight: 800;
+      letter-spacing: 1.8px; text-transform: uppercase;
+      color: #0D9488; border-left: 3px solid #0D9488;
+      padding-left: 7px;
+    }
+    .fin-strip-meta { font-size: 0.58rem; color: #888; letter-spacing: 0.8px; font-weight: 700; }
+    .fin-strip-body {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    }
+    .fin-strip-col-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      font-size: 0.56rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.9px;
+      color: #003366; margin-bottom: 4px;
+    }
+    .fin-strip-col-meta { color: #999; letter-spacing: 0.4px; font-weight: 700; }
+    .fin-mini { width: 100%; border-collapse: collapse; font-size: 0.62rem; table-layout: fixed; }
+    .fin-mini th, .fin-mini td {
+      padding: 2px 4px; border-bottom: 1px solid #f3f3f3;
+      text-align: right; white-space: nowrap;
+    }
+    .fin-mini th {
+      font-size: 0.5rem; font-weight: 800; color: #003366;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      background: #fafbfc;
+    }
+    .fin-mini th.fin-m, .fin-mini td.fin-m {
+      text-align: left; width: 32%; color: #555; font-weight: 700;
+    }
+    .fin-mini td.fin-empty { color: #c0c0c0; }
+    .fin-mini td.fin-pos { color: #0D9488; font-weight: 700; }
+    .fin-mini td.fin-neg { color: #c53030; font-weight: 700; }
+    .fin-mini tr.fin-total td {
+      background: #f8fafc; font-weight: 800; color: #003366;
+      border-top: 1px solid #d8dde3; border-bottom: none;
+    }
+    .fin-mini-empty { font-size: 0.66rem; color: #b0b0b0; font-style: italic; padding: 8px 0; }
+
     .doc-footer {
       background: #f8f9fa;
       border-top: 1px solid #e5e7eb;
@@ -213,6 +262,8 @@
         break-inside: avoid;
       }
       .doc-body { page-break-inside: avoid; break-inside: avoid; }
+      .doc-financials { page-break-inside: avoid; break-inside: avoid; padding: 8px 14px 10px; }
+      .fin-mini th, .fin-mini td { padding: 1.5px 3px; }
       .team-line { font-size: 0.66rem; line-height: 1.3; }
       .doc-header { padding: 9px 18px; }
       .doc-col { padding: 11px 14px; }
@@ -334,6 +385,29 @@
           </div>
         </div>
 
+      </div>
+
+      <div class="doc-financials">
+        <div class="fin-strip-head">
+          <span class="fin-strip-title">Financial Outlook</span>
+          <span class="fin-strip-meta" id="opp-fin-range"></span>
+        </div>
+        <div class="fin-strip-body">
+          <div class="fin-strip-col">
+            <div class="fin-strip-col-head">
+              <span>Last 12 Months</span>
+              <span class="fin-strip-col-meta" id="opp-fin-past-range"></span>
+            </div>
+            <table class="fin-mini" id="opp-fin-past"></table>
+          </div>
+          <div class="fin-strip-col">
+            <div class="fin-strip-col-head">
+              <span>Next 12 Months</span>
+              <span class="fin-strip-col-meta" id="opp-fin-future-range"></span>
+            </div>
+            <table class="fin-mini" id="opp-fin-future"></table>
+          </div>
+        </div>
       </div>
 
       <div class="doc-footer">
@@ -488,13 +562,34 @@
         yearEl.textContent = y + ' – ' + (y + 10);
       }
 
+      // Build the 24-month window: 12 past + 12 future (current included in future)
+      const today = new Date();
+      const thisMonthStart = new Date(Date.UTC(today.getFullYear(), today.getMonth(), 1));
+      function addMonths(d, n) {
+        const x = new Date(d); x.setUTCMonth(x.getUTCMonth() + n); return x;
+      }
+      function isoMonth(d) {
+        return d.getUTCFullYear() + '-' +
+          String(d.getUTCMonth() + 1).padStart(2, '0') + '-01';
+      }
+      function fmtMonthShort(d) {
+        return d.toLocaleDateString('en-AU', { month: 'short', year: '2-digit', timeZone: 'UTC' });
+      }
+      const PAST   = []; for (let i = 12; i >= 1; i--) PAST.push(addMonths(thisMonthStart, -i));
+      const FUTURE = []; for (let i = 0; i < 12; i++)  FUTURE.push(addMonths(thisMonthStart, i));
+
       try {
-        const [cv, cf, tg, ms, lt, org] = await Promise.all([
+        const [cv, cf, tg, ms, lt, fin, org] = await Promise.all([
           supabase.from('core_values').select('*').eq('organisation_id', orgId).maybeSingle(),
           supabase.from('core_focus').select('*').eq('organisation_id', orgId).maybeSingle(),
           supabase.from('targets').select('*').eq('organisation_id', orgId).maybeSingle(),
           supabase.from('marketing_strategy').select('*').eq('organisation_id', orgId).maybeSingle(),
           supabase.from('leadership_team_members').select('*').eq('organisation_id', orgId).order('sort_order', { ascending: true }),
+          supabase.from('financial_periods')
+            .select('period, revenue, expenses')
+            .eq('organisation_id', orgId)
+            .gte('period', isoMonth(PAST[0]))
+            .lte('period', isoMonth(FUTURE[FUTURE.length - 1])),
           cachedName ? Promise.resolve(null) : supabase.from('organisations').select('name').eq('id', orgId).maybeSingle()
         ]);
 
@@ -503,6 +598,7 @@
         const tgRow = (tg && !tg.error && tg.data) ? tg.data : null;
         const msRow = (ms && !ms.error && ms.data) ? ms.data : null;
         const ltRows = (lt && !lt.error && Array.isArray(lt.data)) ? lt.data : [];
+        const finRows = (fin && !fin.error && Array.isArray(fin.data)) ? fin.data : [];
 
         if (!cachedName && org && org.data && org.data.name && companyEl) {
           companyEl.textContent = org.data.name;
@@ -510,13 +606,99 @@
 
         applyWorksheetData(cvRow, cfRow, tgRow, msRow);
         renderTeamTable(ltRows);
+        renderFinancials(finRows, PAST, FUTURE);
       } catch (e) {
         console.warn('Plan load error:', e);
         renderTeamTable([]);
+        renderFinancials([], PAST, FUTURE);
       }
 
       document.body.style.opacity = '1';
     }
+
+    function fmtCurrency(n) {
+      if (n === null || n === undefined || n === '' || isNaN(Number(n))) return '—';
+      const v = Number(n);
+      const abs = Math.abs(v);
+      const sign = v < 0 ? '-' : '';
+      if (abs >= 1_000_000) return sign + '$' + (abs / 1_000_000).toFixed(1) + 'M';
+      if (abs >= 1_000)     return sign + '$' + Math.round(abs / 1_000) + 'K';
+      return sign + '$' + Math.round(abs);
+    }
+    function profitClass(p) {
+      if (p === null || p === undefined) return 'fin-empty';
+      if (p > 0) return 'fin-pos';
+      if (p < 0) return 'fin-neg';
+      return '';
+    }
+
+    function renderFinancials(rows, past, future) {
+      const map = new Map();
+      for (const r of rows) {
+        const k = String(r.period).slice(0, 10);
+        map.set(k, {
+          revenue: r.revenue === null ? null : Number(r.revenue),
+          expenses: r.expenses === null ? null : Number(r.expenses)
+        });
+      }
+      function fmtMonth(d) {
+        return d.toLocaleDateString('en-AU', { month: 'short', year: '2-digit', timeZone: 'UTC' });
+      }
+      function isoOf(d) {
+        return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-01';
+      }
+      function buildTable(periods) {
+        let totRev = 0, totExp = 0, anyRev = false, anyExp = false, anyCell = false;
+        const bodyRows = periods.map(d => {
+          const iso = isoOf(d);
+          const row = map.get(iso);
+          const r = row && row.revenue !== null && row.revenue !== undefined ? Number(row.revenue) : null;
+          const e = row && row.expenses !== null && row.expenses !== undefined ? Number(row.expenses) : null;
+          if (r !== null) { totRev += r; anyRev = true; anyCell = true; }
+          if (e !== null) { totExp += e; anyExp = true; anyCell = true; }
+          let profit = null;
+          if (r !== null || e !== null) profit = (r || 0) - (e || 0);
+          return `
+            <tr>
+              <td class="fin-m">${fmtMonth(d)}</td>
+              <td class="${r === null ? 'fin-empty' : ''}">${r === null ? '—' : fmtCurrency(r)}</td>
+              <td class="${e === null ? 'fin-empty' : ''}">${e === null ? '—' : fmtCurrency(e)}</td>
+              <td class="${profitClass(profit)}">${profit === null ? '—' : fmtCurrency(profit)}</td>
+            </tr>`;
+        }).join('');
+        const totalProfit = (anyRev || anyExp) ? totRev - totExp : null;
+        const totalRow = `
+          <tr class="fin-total">
+            <td class="fin-m">Total</td>
+            <td>${anyRev ? fmtCurrency(totRev) : '—'}</td>
+            <td>${anyExp ? fmtCurrency(totExp) : '—'}</td>
+            <td class="${profitClass(totalProfit)}">${totalProfit === null ? '—' : fmtCurrency(totalProfit)}</td>
+          </tr>`;
+        return {
+          html: `
+            <thead><tr><th class="fin-m">Month</th><th>Rev</th><th>Exp</th><th>Profit</th></tr></thead>
+            <tbody>${bodyRows}${totalRow}</tbody>`,
+          anyCell
+        };
+      }
+      const past_t   = buildTable(past);
+      const future_t = buildTable(future);
+      const pastEl   = document.getElementById('opp-fin-past');
+      const futureEl = document.getElementById('opp-fin-future');
+      pastEl.innerHTML   = past_t.html;
+      futureEl.innerHTML = future_t.html;
+      // Range labels in column heads
+      const fmtRange = arr => fmtMonth(arr[0]) + ' → ' + fmtMonth(arr[arr.length - 1]);
+      document.getElementById('opp-fin-past-range').textContent   = fmtRange(past);
+      document.getElementById('opp-fin-future-range').textContent = fmtRange(future);
+      // Overall meta
+      if (!past_t.anyCell && !future_t.anyCell) {
+        document.getElementById('opp-fin-range').textContent = 'No figures recorded yet — fill in Strategy → Financials.';
+      } else {
+        document.getElementById('opp-fin-range').textContent = '';
+      }
+    }
+
     init();
   </script>
 </body>

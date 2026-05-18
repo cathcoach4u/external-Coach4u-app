@@ -53,7 +53,7 @@ learning-vault.html     — reference / how-to area
 
 # Strategy worksheets (Supabase-backed, scoped by organisation_id)
 core-values.html, core-focus.html, targets.html,
-marketing-strategy.html, leadership-team.html
+marketing-strategy.html, leadership-team.html, financials.html
 
 # Operations tools (Supabase-backed, scoped by organisation_id)
 scorecard.html          — Weekly Numbers
@@ -133,7 +133,7 @@ supabase/
 ### Data layer (Supabase, organisation-scoped)
 The localStorage-only stub is gone. Strategy worksheets, operations tools, planning sessions, and team check-ins all read/write Supabase, scoped by `organisation_id`. Tables (all in the `public` schema, all gated by RLS):
 
-- **Strategy** — `core_values`, `core_focus`, `targets`, `marketing_strategy`, `leadership_team_members`
+- **Strategy** — `core_values`, `core_focus`, `targets`, `marketing_strategy`, `leadership_team_members`, `financial_periods` (monthly revenue + expenses; 24-month window on the one-page plan)
 - **Operations** — `scorecard_metrics`, `scorecard_entries`, `rocks`, `issues`, `meetings`, `meeting_headlines`, `meeting_todos`
 - **Planning** — `annual_sessions`, `quarterly_sessions`, `team_checkins`
 - **Multi-tenant** — `subscriptions`, `organisations`, `team_members`, `users`
@@ -188,9 +188,10 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.116
+v0.5.117
 
 ## Latest
+- **v0.5.117** — **Monthly financials on the one-page plan.** New `financials.html` worksheet (linked from Strategy) lets the admin/coach enter monthly revenue + expenses for the **last 12 months (actuals)** and **next 12 months (forecast)** — 24 month rows total, profit auto-calculates per row + totals. Auto-saves to a new `financial_periods` Supabase table (`(organisation_id, period)` unique, nullable revenue + expenses). RLS: members read, admins+coaches write — same pattern as the rest of the strategy tables. The **bottom strip of `one-page-plan.html`** now renders a two-column financial outlook (Last 12 / Next 12 side by side, month × Rev × Exp × Profit, with totals row). **`account-plans.html`** carousel renders the same block per business so cross-business reviews include the financials. Multi-tenant aware — every read is `eq('organisation_id', orgId)`; the carousel scopes to the active subscription as of v0.5.115. **Requires SQL** — see `supabase/v0.5.117-delta.sql`.
 - **v0.5.116** — Two big sweeps. **(1) Multi-tenant scoping** applied to the 12 remaining account-level carousel pages (`account-numbers`, `account-goals`, `account-meetings`, `account-issues`, `account-values`, `account-focus`, `account-targets`, `account-marketing`, `account-leadership`, `account-annual`, `account-quarterly`, `account-checkins`). Each now loads `js/active-org.js` and filters the `team_members` query by `organisations.subscription_id = activeSub.id`, matching the fix already applied to `account-plans.html` and `account-ops-plans.html`. **(2) EOS de-jargoning** — removed every verbatim EOS term from user-facing copy: "Level 10 Meetings" → "Weekly Team Meetings"; meeting agenda "Customer & Employee Headlines" → "Customer & Team Highlights"; "Issues — Identify, Discuss, Solve" → "Issues — Discuss & Resolve"; "Our three uniques" → "What makes us different"; "Our Proven Process" → "Our Process"; "3-Year Picture" → "3-Year Outlook" across worksheets and one-pagers; "quarterly Rocks" → "quarterly priorities". Rewrote all 17 team-checkin questions (replicated in `team-checkin.html` / `run-annual-session.html` / `run-quarterly-session.html`) to drop "Accountability Chart", "right seat / right people", "Quarterly Projects", "Annual Meetings", "10-Year Target", "3-Year Target" — order and meaning preserved so historical 1-5 scores still map to the same conceptual statements.
 - **v0.5.115** — Account-level companion to v0.5.114. New **`account-ops-plans.html`** — carousel of every business's one-page operations doc, linked from `account-operations.html`. Same scoping fix backported to `account-plans.html` (strategy carousel).
 - **v0.5.114** — New **`one-page-operations.html`**, parallel to `one-page-plan.html`. Landscape A4, three columns: Quarterly Goals · Weekly Numbers · Open Issues. Linked from `operations.html`.

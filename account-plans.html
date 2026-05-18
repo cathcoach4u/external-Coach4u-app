@@ -309,6 +309,49 @@
     .team-line .tsep { color: #bbb; margin: 0 4px; }
     .team-empty { font-size: 0.7rem; color: #b0b0b0; font-style: italic; }
 
+    /* ── Financial Outlook strip (mirrors one-page-plan.html) ── */
+    .doc-financials {
+      border-top: 1px solid #e5e7eb;
+      background: #fdfdfd;
+      padding: 10px 16px 12px;
+    }
+    .fin-strip-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 8px; margin-bottom: 8px;
+    }
+    .fin-strip-title {
+      font-size: 0.6rem; font-weight: 800;
+      letter-spacing: 1.8px; text-transform: uppercase;
+      color: #0D9488; border-left: 3px solid #0D9488;
+      padding-left: 7px;
+    }
+    .fin-strip-meta { font-size: 0.58rem; color: #888; letter-spacing: 0.8px; font-weight: 700; }
+    .fin-strip-body { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .fin-strip-col-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      font-size: 0.56rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.9px;
+      color: #003366; margin-bottom: 4px;
+    }
+    .fin-strip-col-meta { color: #999; letter-spacing: 0.4px; font-weight: 700; }
+    .fin-mini { width: 100%; border-collapse: collapse; font-size: 0.62rem; table-layout: fixed; }
+    .fin-mini th, .fin-mini td {
+      padding: 2px 4px; border-bottom: 1px solid #f3f3f3;
+      text-align: right; white-space: nowrap;
+    }
+    .fin-mini th {
+      font-size: 0.5rem; font-weight: 800; color: #003366;
+      text-transform: uppercase; letter-spacing: 0.6px; background: #fafbfc;
+    }
+    .fin-mini th.fin-m, .fin-mini td.fin-m { text-align: left; width: 32%; color: #555; font-weight: 700; }
+    .fin-mini td.fin-empty { color: #c0c0c0; }
+    .fin-mini td.fin-pos { color: #0D9488; font-weight: 700; }
+    .fin-mini td.fin-neg { color: #c53030; font-weight: 700; }
+    .fin-mini tr.fin-total td {
+      background: #f8fafc; font-weight: 800; color: #003366;
+      border-top: 1px solid #d8dde3; border-bottom: none;
+    }
+
     .doc-footer {
       background: #f8f9fa;
       border-top: 1px solid #e5e7eb;
@@ -360,6 +403,8 @@
       .field-divider { margin: 8px 0; }
       .field-value { line-height: 1.4; }
       .num-list li { line-height: 1.35; }
+      .doc-financials { padding: 8px 14px 10px; page-break-inside: avoid; break-inside: avoid; }
+      .fin-mini th, .fin-mini td { padding: 1.5px 3px; }
       .doc-footer { padding: 5px 18px; }
     }
   </style>
@@ -459,7 +504,84 @@
     }
 
     /* ============== render one business card ============== */
-    function renderPlanCard(org, data) {
+    function fmtCurrency(n) {
+      if (n === null || n === undefined || n === '' || isNaN(Number(n))) return '—';
+      const v = Number(n); const abs = Math.abs(v); const sign = v < 0 ? '-' : '';
+      if (abs >= 1_000_000) return sign + '$' + (abs / 1_000_000).toFixed(1) + 'M';
+      if (abs >= 1_000)     return sign + '$' + Math.round(abs / 1_000) + 'K';
+      return sign + '$' + Math.round(abs);
+    }
+    function profitClass(p) {
+      if (p === null || p === undefined) return 'fin-empty';
+      if (p > 0) return 'fin-pos';
+      if (p < 0) return 'fin-neg';
+      return '';
+    }
+    function fmtMonthShort(d) {
+      return d.toLocaleDateString('en-AU', { month: 'short', year: '2-digit', timeZone: 'UTC' });
+    }
+    function isoOf(d) {
+      return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-01';
+    }
+    function buildFinTable(periods, finMap) {
+      let totRev = 0, totExp = 0, anyRev = false, anyExp = false;
+      const bodyRows = periods.map(d => {
+        const iso = isoOf(d);
+        const row = finMap && finMap.get ? finMap.get(iso) : null;
+        const r = row && row.revenue !== null && row.revenue !== undefined ? Number(row.revenue) : null;
+        const e = row && row.expenses !== null && row.expenses !== undefined ? Number(row.expenses) : null;
+        if (r !== null) { totRev += r; anyRev = true; }
+        if (e !== null) { totExp += e; anyExp = true; }
+        let profit = null;
+        if (r !== null || e !== null) profit = (r || 0) - (e || 0);
+        return `
+          <tr>
+            <td class="fin-m">${escHtml(fmtMonthShort(d))}</td>
+            <td class="${r === null ? 'fin-empty' : ''}">${r === null ? '—' : fmtCurrency(r)}</td>
+            <td class="${e === null ? 'fin-empty' : ''}">${e === null ? '—' : fmtCurrency(e)}</td>
+            <td class="${profitClass(profit)}">${profit === null ? '—' : fmtCurrency(profit)}</td>
+          </tr>`;
+      }).join('');
+      const totalProfit = (anyRev || anyExp) ? totRev - totExp : null;
+      const totalRow = `
+        <tr class="fin-total">
+          <td class="fin-m">Total</td>
+          <td>${anyRev ? fmtCurrency(totRev) : '—'}</td>
+          <td>${anyExp ? fmtCurrency(totExp) : '—'}</td>
+          <td class="${profitClass(totalProfit)}">${totalProfit === null ? '—' : fmtCurrency(totalProfit)}</td>
+        </tr>`;
+      return `
+        <thead><tr><th class="fin-m">Month</th><th>Rev</th><th>Exp</th><th>Profit</th></tr></thead>
+        <tbody>${bodyRows}${totalRow}</tbody>`;
+    }
+    function renderFinancialsBlock(data, past, future) {
+      const fmtRange = arr => fmtMonthShort(arr[0]) + ' → ' + fmtMonthShort(arr[arr.length - 1]);
+      return `
+        <div class="doc-financials">
+          <div class="fin-strip-head">
+            <span class="fin-strip-title">Financial Outlook</span>
+            <span class="fin-strip-meta"></span>
+          </div>
+          <div class="fin-strip-body">
+            <div class="fin-strip-col">
+              <div class="fin-strip-col-head">
+                <span>Last 12 Months</span>
+                <span class="fin-strip-col-meta">${escHtml(fmtRange(past))}</span>
+              </div>
+              <table class="fin-mini">${buildFinTable(past, data.finByPeriod)}</table>
+            </div>
+            <div class="fin-strip-col">
+              <div class="fin-strip-col-head">
+                <span>Next 12 Months</span>
+                <span class="fin-strip-col-meta">${escHtml(fmtRange(future))}</span>
+              </div>
+              <table class="fin-mini">${buildFinTable(future, data.finByPeriod)}</table>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function renderPlanCard(org, data, past, future) {
       const cv = data.coreValues || null;
       const cf = data.coreFocus || {};
       const tg = data.targets || {};
@@ -560,6 +682,8 @@
 
             </div>
 
+            ${renderFinancialsBlock(data, past, future)}
+
             <div class="doc-footer">
               <span class="doc-footer-text">Confidential &mdash; ${escHtml(org.name)}</span>
               <span class="doc-footer-tagline">Your Business Coach &mdash; coach4u.com.au</span>
@@ -611,24 +735,47 @@
 
       const orgIds = orgs.map(o => o.id);
 
-      // Fire all 5 strategy queries in parallel, scoped to orgIds
-      const [cvRes, cfRes, tgRes, msRes, ltRes] = await Promise.all([
+      // Build the 24-month window (12 past + 12 future, current included in future)
+      const today = new Date();
+      const thisMonthStart = new Date(Date.UTC(today.getFullYear(), today.getMonth(), 1));
+      const addMonthsUTC = (d, n) => { const x = new Date(d); x.setUTCMonth(x.getUTCMonth() + n); return x; };
+      const isoMonth = d => d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-01';
+      const PAST   = []; for (let i = 12; i >= 1; i--) PAST.push(addMonthsUTC(thisMonthStart, -i));
+      const FUTURE = []; for (let i = 0; i < 12; i++)  FUTURE.push(addMonthsUTC(thisMonthStart, i));
+
+      // 6 parallel queries scoped to orgIds
+      const [cvRes, cfRes, tgRes, msRes, ltRes, finRes] = await Promise.all([
         sb.from('core_values').select('*').in('organisation_id', orgIds),
         sb.from('core_focus').select('*').in('organisation_id', orgIds),
         sb.from('targets').select('*').in('organisation_id', orgIds),
         sb.from('marketing_strategy').select('*').in('organisation_id', orgIds),
-        sb.from('leadership_team_members').select('*').in('organisation_id', orgIds).order('sort_order', { ascending: true })
+        sb.from('leadership_team_members').select('*').in('organisation_id', orgIds).order('sort_order', { ascending: true }),
+        sb.from('financial_periods')
+          .select('organisation_id, period, revenue, expenses')
+          .in('organisation_id', orgIds)
+          .gte('period', isoMonth(PAST[0]))
+          .lte('period', isoMonth(FUTURE[FUTURE.length - 1]))
       ]);
 
       // Build per-org data map
       const byOrg = new Map();
-      orgs.forEach(o => byOrg.set(o.id, { coreValues: null, coreFocus: {}, targets: {}, marketing: {}, team: [] }));
+      orgs.forEach(o => byOrg.set(o.id, {
+        coreValues: null, coreFocus: {}, targets: {}, marketing: {}, team: [],
+        finByPeriod: new Map()
+      }));
 
       (cvRes.data || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.coreValues = r; });
       (cfRes.data || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.coreFocus = r; });
       (tgRes.data || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.targets = r; });
       (msRes.data || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.marketing = r; });
       (ltRes.data || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.team.push(r); });
+      (finRes.data || []).forEach(r => {
+        const e = byOrg.get(r.organisation_id); if (!e) return;
+        e.finByPeriod.set(String(r.period).slice(0, 10), {
+          revenue:  r.revenue  === null ? null : Number(r.revenue),
+          expenses: r.expenses === null ? null : Number(r.expenses)
+        });
+      });
 
       // Show the data-layer-pending banner if every business returned empty plan data
       const anyData = orgs.some(o => {
@@ -684,7 +831,7 @@
 
         wrap.innerHTML =
           `<div class="carousel-nav">${navHtml}</div>` +
-          renderPlanCard(o, byOrg.get(o.id));
+          renderPlanCard(o, byOrg.get(o.id), PAST, FUTURE);
 
         // Wire interactions
         const prev = document.getElementById('prevBtn');

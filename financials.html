@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monthly Financials | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#003366">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body { opacity: 0; transition: opacity 0.2s ease; }
+    .container { padding-bottom: 140px; }
+    .ws-header { padding: 20px 16px 0; }
+    .ws-title { font-size: 1.15rem; font-weight: 800; color: var(--primary); margin: 0 0 4px; }
+    .ws-sub { font-size: 0.83rem; color: #666; margin: 0 0 20px; line-height: 1.45; }
+    .ws-hint { font-size: 0.78rem; color: #888; line-height: 1.5; margin: 0 16px 16px; padding: 10px 14px; background: #f8fafc; border-radius: 8px; border-left: 3px solid var(--accent); }
+
+    .fin-section-head {
+      margin: 18px 16px 8px;
+      display: flex; align-items: baseline; gap: 10px;
+    }
+    .fin-section-title {
+      font-size: 0.78rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: var(--accent);
+    }
+    .fin-section-meta { font-size: 0.72rem; color: #888; }
+
+    .fin-table {
+      background: white;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin: 0 16px 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .fin-row {
+      display: grid;
+      grid-template-columns: 92px 1fr 1fr 84px;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .fin-row:last-child { border-bottom: none; }
+    .fin-row.fin-header {
+      background: #fafbfc;
+      padding: 6px 12px;
+    }
+    .fin-row.fin-totals {
+      background: #f8fafc;
+      font-weight: 700;
+    }
+    .fin-month {
+      font-size: 0.8rem; font-weight: 700; color: var(--primary);
+    }
+    .fin-col-label {
+      font-size: 0.6rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      color: #888;
+    }
+    .fin-input {
+      width: 100%; box-sizing: border-box;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-size: 0.85rem; font-family: inherit;
+      color: var(--text);
+      text-align: right;
+      transition: border-color 0.15s;
+    }
+    .fin-input:focus { outline: none; border-color: var(--accent); }
+    .fin-input::placeholder { color: #c4c8cf; font-weight: 500; }
+    .fin-profit {
+      text-align: right;
+      font-size: 0.82rem; font-weight: 700;
+      color: var(--primary);
+    }
+    .fin-profit.pos { color: #0D9488; }
+    .fin-profit.neg { color: #c53030; }
+    .fin-profit.empty { color: #c4c8cf; }
+
+    @media (max-width: 540px) {
+      .fin-row { grid-template-columns: 70px 1fr 1fr 60px; gap: 5px; padding: 8px 10px; }
+      .fin-input { padding: 6px 8px; font-size: 0.78rem; }
+      .fin-month { font-size: 0.72rem; }
+      .fin-profit { font-size: 0.74rem; }
+    }
+
+    .ws-save-bar { position: fixed; bottom: 56px; left: 0; right: 0; background: white; border-top: 1px solid #e5e7eb; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); z-index: 90; }
+    .save-status { font-size: 0.78rem; color: #888; }
+    .ws-btn { padding: 9px 20px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+    .ws-btn:hover { background: var(--accent-dark); }
+
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e5e7eb; display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -2px 8px rgba(0,0,0,0.06); }
+    .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 0 6px; text-decoration: none; color: #aaa; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; gap: 3px; transition: color 0.15s; }
+    .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
+    .bottom-nav-icon { font-size: 20px; line-height: 1; }
+  </style>
+  <script src="js/active-session.js" defer></script>
+  <script src="js/active-org.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="strategy.html" class="header-back">&#x2190; Strategy</a>
+        <span class="header-title">Your Business Coach</span>
+        <span id="activeBizName" class="biz-pill"></span>
+      </div>
+      <button id="signOutBtn" class="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
+  <div class="container">
+    <div class="ws-header">
+      <h1 class="ws-title">&#x1F4B0; Monthly Financials</h1>
+      <p class="ws-sub">Track your revenue and expenses month by month. Past months are your actuals; future months are your forecast. These figures appear at the bottom of your One-Page Plan.</p>
+    </div>
+    <div class="ws-hint">
+      Enter raw dollar amounts (e.g. <strong>35000</strong>, not <em>$35K</em>). Profit auto-calculates as Revenue &minus; Expenses.
+    </div>
+
+    <div class="fin-section-head">
+      <div class="fin-section-title">Last 12 Months</div>
+      <div class="fin-section-meta" id="pastMeta">Actuals</div>
+    </div>
+    <div class="fin-table" id="pastTable"></div>
+
+    <div class="fin-section-head">
+      <div class="fin-section-title">Next 12 Months</div>
+      <div class="fin-section-meta" id="futureMeta">Forecast</div>
+    </div>
+    <div class="fin-table" id="futureTable"></div>
+
+  </div>
+
+  <div class="ws-save-bar">
+    <span class="save-status" id="saveStatus">Changes save automatically</span>
+    <button class="ws-btn" onclick="window.location.href='strategy.html'">Done &#x2713;</button>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item" href="business.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
+    <a class="bottom-nav-item" href="planning.html"><span class="bottom-nav-icon">&#x1F5FA;&#xFE0F;</span><span>Planning</span></a>
+    <a class="bottom-nav-item active" href="strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
+    <a class="bottom-nav-item" href="operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
+    <a class="bottom-nav-item" href="learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
+  </nav>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const supabase = createClient(
+      'https://eekefsuaefgpqmjdyniy.supabase.co',
+      'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+    );
+
+    const DEBOUNCE_MS = 500;
+    let orgId = null;
+    const rowsByPeriod = new Map();   // 'YYYY-MM-01' -> { revenue, expenses }
+    const saveTimers   = new Map();   // period -> timeout id
+
+    function monthStart(d) {
+      const x = new Date(d.getFullYear(), d.getMonth(), 1);
+      return new Date(Date.UTC(x.getFullYear(), x.getMonth(), 1));
+    }
+    function addMonths(d, n) {
+      const x = new Date(d);
+      x.setUTCMonth(x.getUTCMonth() + n);
+      return x;
+    }
+    function isoMonth(d) {
+      const y = d.getUTCFullYear();
+      const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+      return `${y}-${m}-01`;
+    }
+    function fmtMonthLabel(d) {
+      return d.toLocaleDateString('en-AU', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+    }
+    function fmtCurrency(n) {
+      if (n === null || n === undefined || n === '' || isNaN(Number(n))) return '—';
+      const v = Number(n);
+      const abs = Math.abs(v);
+      const sign = v < 0 ? '-' : '';
+      if (abs >= 1_000_000) return sign + '$' + (abs / 1_000_000).toFixed(1) + 'M';
+      if (abs >= 1_000)     return sign + '$' + Math.round(abs / 1_000) + 'K';
+      return sign + '$' + Math.round(abs);
+    }
+    function parseInput(s) {
+      if (s === null || s === undefined) return null;
+      const cleaned = String(s).replace(/[^0-9.\-]/g, '');
+      if (cleaned === '' || cleaned === '-' || cleaned === '.') return null;
+      const n = Number(cleaned);
+      return isNaN(n) ? null : n;
+    }
+    function profitClass(p) {
+      if (p === null || p === undefined) return 'empty';
+      if (p > 0)  return 'pos';
+      if (p < 0)  return 'neg';
+      return '';
+    }
+
+    // Build the 24-month window: 12 past months, then 12 future months including the current.
+    function buildPeriods() {
+      const now = monthStart(new Date());
+      const past = [];
+      for (let i = 12; i >= 1; i--) past.push(addMonths(now, -i));
+      const future = [];
+      for (let i = 0; i < 12; i++) future.push(addMonths(now, i));
+      return { past, future };
+    }
+
+    function rowHtml(periodIso, label) {
+      return `
+        <div class="fin-row" data-period="${periodIso}">
+          <div class="fin-month">${label}</div>
+          <input class="fin-input" type="text" inputmode="decimal"
+            data-field="revenue" data-period="${periodIso}" placeholder="Revenue $" />
+          <input class="fin-input" type="text" inputmode="decimal"
+            data-field="expenses" data-period="${periodIso}" placeholder="Expenses $" />
+          <div class="fin-profit empty" data-profit="${periodIso}">—</div>
+        </div>`;
+    }
+
+    function totalsRowHtml(id) {
+      return `
+        <div class="fin-row fin-totals">
+          <div class="fin-month">Total</div>
+          <div class="fin-profit" id="${id}-rev">—</div>
+          <div class="fin-profit" id="${id}-exp">—</div>
+          <div class="fin-profit" id="${id}-prof">—</div>
+        </div>`;
+    }
+
+    function recomputeProfit(periodIso) {
+      const row = rowsByPeriod.get(periodIso) || {};
+      const r = row.revenue;
+      const e = row.expenses;
+      const el = document.querySelector(`[data-profit="${periodIso}"]`);
+      if (!el) return;
+      if ((r === null || r === undefined) && (e === null || e === undefined)) {
+        el.textContent = '—';
+        el.className = 'fin-profit empty';
+        return;
+      }
+      const p = (Number(r) || 0) - (Number(e) || 0);
+      el.textContent = fmtCurrency(p);
+      el.className = 'fin-profit ' + profitClass(p);
+    }
+
+    function recomputeTotals(periods, prefix) {
+      let totRev = 0, totExp = 0, anyRev = false, anyExp = false;
+      for (const d of periods) {
+        const iso = isoMonth(d);
+        const row = rowsByPeriod.get(iso) || {};
+        if (row.revenue !== null && row.revenue !== undefined && !isNaN(Number(row.revenue))) {
+          totRev += Number(row.revenue); anyRev = true;
+        }
+        if (row.expenses !== null && row.expenses !== undefined && !isNaN(Number(row.expenses))) {
+          totExp += Number(row.expenses); anyExp = true;
+        }
+      }
+      const revEl = document.getElementById(prefix + '-rev');
+      const expEl = document.getElementById(prefix + '-exp');
+      const proEl = document.getElementById(prefix + '-prof');
+      if (revEl) { revEl.textContent = anyRev ? fmtCurrency(totRev) : '—'; revEl.className = 'fin-profit'; }
+      if (expEl) { expEl.textContent = anyExp ? fmtCurrency(totExp) : '—'; expEl.className = 'fin-profit'; }
+      if (proEl) {
+        if (!anyRev && !anyExp) { proEl.textContent = '—'; proEl.className = 'fin-profit empty'; }
+        else {
+          const profit = totRev - totExp;
+          proEl.textContent = fmtCurrency(profit);
+          proEl.className = 'fin-profit ' + profitClass(profit);
+        }
+      }
+    }
+
+    function setSaveStatus(text, hold = false) {
+      const el = document.getElementById('saveStatus');
+      if (!el) return;
+      el.textContent = text;
+      if (!hold) {
+        clearTimeout(setSaveStatus._t);
+        setSaveStatus._t = setTimeout(() => { el.textContent = 'Changes save automatically'; }, 1500);
+      }
+    }
+
+    async function upsertRow(periodIso) {
+      const row = rowsByPeriod.get(periodIso) || {};
+      const payload = {
+        organisation_id: orgId,
+        period: periodIso,
+        revenue: row.revenue ?? null,
+        expenses: row.expenses ?? null,
+        updated_at: new Date().toISOString()
+      };
+      setSaveStatus('Saving…', true);
+      const { error } = await supabase
+        .from('financial_periods')
+        .upsert(payload, { onConflict: 'organisation_id,period' });
+      if (error) {
+        console.warn('Save failed for', periodIso, error.message);
+        setSaveStatus('Save failed — ' + error.message, true);
+      } else {
+        setSaveStatus('Saved ✓');
+      }
+    }
+
+    function scheduleSave(periodIso) {
+      clearTimeout(saveTimers.get(periodIso));
+      saveTimers.set(periodIso, setTimeout(() => upsertRow(periodIso), DEBOUNCE_MS));
+    }
+
+    function onInput(e) {
+      const t = e.target;
+      const period = t.dataset.period;
+      const field  = t.dataset.field;
+      if (!period || !field) return;
+      const row = rowsByPeriod.get(period) || {};
+      row[field] = parseInput(t.value);
+      rowsByPeriod.set(period, row);
+      recomputeProfit(period);
+      recomputeTotals(PAST,   'past');
+      recomputeTotals(FUTURE, 'future');
+      scheduleSave(period);
+    }
+
+    function onBlur(e) {
+      const t = e.target;
+      const period = t.dataset.period;
+      if (!period) return;
+      // Force flush of any pending save
+      if (saveTimers.has(period)) {
+        clearTimeout(saveTimers.get(period));
+        saveTimers.delete(period);
+        upsertRow(period);
+      }
+      // Reformat the input value (strip non-numerics)
+      const row = rowsByPeriod.get(period) || {};
+      const v = row[t.dataset.field];
+      t.value = (v === null || v === undefined) ? '' : String(v);
+    }
+
+    let PAST = [], FUTURE = [];
+
+    async function init() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (!user || error) { window.location.href = 'login.html'; return; }
+      const { data: profile } = await supabase
+        .from('users').select('membership_status').eq('id', user.id).single();
+      if (!profile || profile.membership_status !== 'active') {
+        window.location.href = 'inactive.html'; return;
+      }
+      document.body.style.opacity = '1';
+      document.getElementById('signOutBtn').addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = 'login.html';
+      });
+
+      orgId = window.activeOrg && window.activeOrg.get();
+      if (!orgId) { window.location.href = 'index.html'; return; }
+
+      const { past, future } = buildPeriods();
+      PAST = past; FUTURE = future;
+
+      // Render the two tables
+      const pastWrap = document.getElementById('pastTable');
+      pastWrap.innerHTML = past.map(d => rowHtml(isoMonth(d), fmtMonthLabel(d))).join('')
+        + totalsRowHtml('past');
+      const futureWrap = document.getElementById('futureTable');
+      futureWrap.innerHTML = future.map(d => rowHtml(isoMonth(d), fmtMonthLabel(d))).join('')
+        + totalsRowHtml('future');
+
+      // Update the section meta to show the date range
+      const fmtRange = (arr) => fmtMonthLabel(arr[0]) + ' → ' + fmtMonthLabel(arr[arr.length - 1]);
+      document.getElementById('pastMeta').textContent   = 'Actuals · ' + fmtRange(past);
+      document.getElementById('futureMeta').textContent = 'Forecast · ' + fmtRange(future);
+
+      // Wire input events
+      document.querySelectorAll('.fin-input').forEach(el => {
+        el.addEventListener('input', onInput);
+        el.addEventListener('blur',  onBlur);
+      });
+
+      // Load existing rows for the 24-month window
+      const startIso = isoMonth(past[0]);
+      const endIso   = isoMonth(future[future.length - 1]);
+      const { data: rows, error: loadErr } = await supabase
+        .from('financial_periods')
+        .select('period, revenue, expenses')
+        .eq('organisation_id', orgId)
+        .gte('period', startIso)
+        .lte('period', endIso);
+
+      if (loadErr) {
+        console.warn('Load financials failed:', loadErr.message);
+        setSaveStatus('Could not load: ' + loadErr.message, true);
+        return;
+      }
+
+      // Populate inputs + compute profit + totals
+      for (const r of (rows || [])) {
+        // Normalize the period date — Supabase returns 'YYYY-MM-DD'
+        const periodIso = String(r.period).slice(0, 10);
+        rowsByPeriod.set(periodIso, {
+          revenue: r.revenue === null ? null : Number(r.revenue),
+          expenses: r.expenses === null ? null : Number(r.expenses)
+        });
+        const revInput = document.querySelector(`input[data-field="revenue"][data-period="${periodIso}"]`);
+        const expInput = document.querySelector(`input[data-field="expenses"][data-period="${periodIso}"]`);
+        if (revInput && r.revenue !== null) revInput.value = String(Number(r.revenue));
+        if (expInput && r.expenses !== null) expInput.value = String(Number(r.expenses));
+        recomputeProfit(periodIso);
+      }
+      recomputeTotals(PAST,   'past');
+      recomputeTotals(FUTURE, 'future');
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -4,6 +4,24 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.117
+- **Monthly financials added to the one-page plan.** User asked: "Does the one-page plan have revenue/expenses for the next 12 months? If not, this needs to be added. And list the last 12 months if figures available."
+- **New `financial_periods` Supabase table** (`supabase/v0.5.117-delta.sql` + mirror in `schema.sql`):
+  ```
+  financial_periods (id, organisation_id, period [date, first-of-month],
+                     revenue numeric, expenses numeric, created_at, updated_at,
+                     UNIQUE (organisation_id, period))
+  ```
+  RLS mirrors the rest of the strategy tables: SELECT by active org members (via `user_org_ids`), INSERT/UPDATE/DELETE by admins + coaches (via `user_admin_org_ids`). Multi-tenant safe — every query is `eq('organisation_id', orgId)` and the account-level carousel scopes to the active subscription.
+- **New worksheet `financials.html`** — linked from Strategy as a new `Financials` card. Renders 24 month-rows in two grouped tables: **Last 12 Months** (actuals) above **Next 12 Months** (forecast; current month sits at the top of the future block). Each row: month label + revenue input + expenses input + auto-computed profit. Inputs auto-save on each keystroke (500ms debounce) and immediately on blur via `upsert` against the `(organisation_id, period)` unique constraint. Totals row at the bottom of each table sums Rev/Exp/Profit with teal/red colouring. Inputs accept raw numbers — the helper strips `$` / commas / `K` etc. Profit auto-calculates per row and live-updates the section totals as you type.
+- **`one-page-plan.html` extended** with a new **Financial Outlook** strip between the existing 3-column body and the footer. Two compact mini-tables side by side — Last 12 / Next 12 — month × Rev × Exp × Profit with totals. Months print at 0.62rem (smaller in print mode). Empty cells render as grey "—". Loads `financial_periods` via a 6th parallel query in the existing Promise.all. Empty state at the top of the strip: "No figures recorded yet — fill in Strategy → Financials."
+- **`account-plans.html` carousel extended** to render the same financial strip inside every business card. The carousel fans out one extra `financial_periods` `.in('organisation_id', orgIds)` query, bucketed per-org client-side, so all businesses' financials load in a single round-trip. Each carousel card shows that business's own last 12 + next 12. Print rules updated so the financial strip stays on the same A4 page as the rest of the doc.
+- **`strategy.html`** card grid gained a teal `💰 Financials` card linking to `financials.html`. Also tidied the Targets card description: "10-year vision, 3-year picture and 1-year plan" → "10-year vision, 3-year outlook and 1-year plan" (catching a leftover from the v0.5.116 EOS sweep).
+- **`CLAUDE.md`** updated: `financials.html` added to the file structure, `financial_periods` added to the Strategy tables list.
+- **Re-run required:** `supabase/v0.5.117-delta.sql` in the Supabase SQL Editor before testing. The CREATE is idempotent (`IF NOT EXISTS`) and the policies are `DROP POLICY IF EXISTS` + `CREATE POLICY` so re-runs are safe.
+
+---
+
 ## v0.5.116
 - **Full multi-tenant scoping sweep.** User asked: "Do a full audit to check all." The v0.5.111 multi-tenant work scoped the dashboard (`index.html`), v0.5.115 backported the fix to `account-plans.html` and shipped the new `account-ops-plans.html` already scoped. The remaining **12 account-level carousel pages** had the same pre-existing leak: their `team_members` query pulled every business the user was a member of, mixing client accounts together. Fixed in: `account-numbers`, `account-goals`, `account-meetings`, `account-issues`, `account-values`, `account-focus`, `account-targets`, `account-marketing`, `account-leadership`, `account-annual`, `account-quarterly`, `account-checkins`. Each now loads `js/active-org.js` and filters by `organisations.subscription_id = activeSub.id` when an active subscription is set. All 12 patched with one Python sweep so the wording is identical and the pattern is stable.
 - **EOS de-jargoning.** User asked: "check the wording for EOs and change anything that sounds like EOs". Audited every HTML/JS/CSS file. Removed verbatim EOS terminology from user-facing copy:
