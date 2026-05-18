@@ -19,43 +19,77 @@
     .vault-title { font-size: 1.15rem; font-weight: 800; color: var(--primary); margin: 0 0 4px; }
     .vault-sub { font-size: 0.85rem; color: #666; margin: 0 0 0; line-height: 1.45; }
 
-    .vault-section { padding: 20px 16px 0; }
+    .vault-section { padding: 22px 16px 0; }
+    .vault-section-head {
+      display: flex; align-items: baseline; gap: 10px;
+      margin-bottom: 4px;
+    }
     .vault-section-label {
       font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 1px; color: #aaa; margin-bottom: 10px;
+      letter-spacing: 1.2px; color: var(--accent);
+    }
+    .vault-section-count {
+      font-size: 0.66rem; font-weight: 700;
+      color: #aaa; letter-spacing: 0.4px;
+    }
+    .vault-section-blurb {
+      font-size: 0.78rem; color: #888; margin: 0 0 12px;
+      line-height: 1.45;
     }
 
     .vault-card {
-      display: flex; align-items: flex-start; gap: 14px;
-      padding: 16px 14px; border-radius: 10px;
-      border: 1.5px solid var(--border); background: white;
-      text-decoration: none; margin-bottom: 10px;
-      transition: box-shadow 0.15s, background 0.15s;
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      column-gap: 14px;
+      align-items: start;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: white;
+      margin-bottom: 10px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.05);
     }
-    .vault-card:hover { background: #f0fdfa; box-shadow: 0 2px 8px rgba(13,148,136,0.1); text-decoration: none; }
-    .vault-card.coming-soon { opacity: 0.5; pointer-events: none; }
-
     .vault-icon {
-      width: 42px; height: 42px; border-radius: 10px;
+      width: 44px; height: 44px; border-radius: 10px;
       background: rgba(13,148,136,0.1);
       display: flex; align-items: center; justify-content: center;
-      font-size: 20px; flex-shrink: 0;
+      font-size: 22px; flex-shrink: 0;
     }
-    .vault-card-body { flex: 1; min-width: 0; }
+    .vault-card-body { min-width: 0; }
     .vault-card-name {
-      font-size: 0.92rem; font-weight: 700; color: var(--primary); margin-bottom: 3px;
+      font-size: 0.93rem; font-weight: 700;
+      color: var(--primary); margin-bottom: 3px;
     }
-    .vault-card-desc { font-size: 0.78rem; color: #666; line-height: 1.4; margin-bottom: 6px; }
-    .vault-card-meta { display: flex; align-items: center; gap: 8px; }
-    .vault-tag {
-      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.5px; padding: 2px 8px; border-radius: 20px;
+    .vault-card-desc {
+      font-size: 0.78rem; color: #666; line-height: 1.45;
+      margin-bottom: 10px;
     }
-    .vault-tag-steps { background: rgba(13,148,136,0.1); color: #0D9488; }
-    .vault-tag-soon { background: #f3f4f6; color: #aaa; }
-    .vault-tag-time { background: #f0f9ff; color: #0369a1; }
-    .vault-arrow { font-size: 18px; color: var(--accent); flex-shrink: 0; align-self: center; }
+    .vault-actions {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .vault-action {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 6px 11px; border-radius: 6px;
+      font-size: 0.75rem; font-weight: 700;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .vault-action.primary {
+      background: var(--accent); color: white;
+    }
+    .vault-action.primary:hover { background: var(--accent-dark); color: white; text-decoration: none; }
+    .vault-action.ghost {
+      background: white; color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    .vault-action.ghost:hover { background: #f0fdfa; color: var(--accent-dark); text-decoration: none; }
+    .vault-action.disabled {
+      background: #f4f4f5; color: #aaa;
+      border: 1px solid #e5e7eb;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .vault-action .vault-arrow { font-size: 0.9rem; line-height: 1; }
 
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0;
@@ -93,73 +127,192 @@
   <div class="container">
     <div class="vault-header">
       <h1 class="vault-title">&#x1F4DA; Learning Vault</h1>
-      <p class="vault-sub">Reference guides and discovery exercises to help you get the most out of your Strategy worksheets and Operations tools.</p>
+      <p class="vault-sub">Every activity in your Coach4U program, with a direct link to the worksheet or tool and a guide explaining how to use it well.</p>
     </div>
 
+    <!-- ═══ STRATEGY ═══ -->
     <div class="vault-section">
-      <div class="vault-section-label">Guided Exercises</div>
+      <div class="vault-section-head">
+        <span class="vault-section-label">Strategy &mdash; the foundations</span>
+        <span class="vault-section-count">6 activities</span>
+      </div>
+      <p class="vault-section-blurb">Set once, review every quarter. Together these worksheets make up your One-Page Plan.</p>
 
-      <a class="vault-card" href="learn/values-discovery.html">
+      <div class="vault-card">
         <div class="vault-icon">&#x2B50;</div>
         <div class="vault-card-body">
-          <div class="vault-card-name">Discover Your Core Values</div>
-          <div class="vault-card-desc">A 3-step exercise to identify, define, and bring your values to life — so they guide every hire, decision, and client interaction.</div>
-          <div class="vault-card-meta">
-            <span class="vault-tag vault-tag-steps">3 Steps</span>
-            <span class="vault-tag vault-tag-time">&#x23F1; 20–30 min</span>
-          </div>
-        </div>
-        <span class="vault-arrow">&#x203A;</span>
-      </a>
-    </div>
-
-    <div class="vault-section">
-      <div class="vault-section-label">How-To Guides</div>
-
-      <div class="vault-card coming-soon">
-        <div class="vault-icon">&#x1F4CA;</div>
-        <div class="vault-card-body">
-          <div class="vault-card-name">How to Build a Scorecard</div>
-          <div class="vault-card-desc">Choose the 5–10 weekly numbers that tell you whether your business is really on track.</div>
-          <div class="vault-card-meta">
-            <span class="vault-tag vault-tag-soon">Coming Soon</span>
+          <div class="vault-card-name">Core Values</div>
+          <div class="vault-card-desc">Identify the 5&ndash;8 non-negotiables that guide every hire, decision and client interaction.</div>
+          <div class="vault-actions">
+            <a class="vault-action primary" href="core-values.html">Open worksheet <span class="vault-arrow">&#x2192;</span></a>
+            <a class="vault-action ghost"   href="learn/values-discovery.html">Run the Values Discovery exercise <span class="vault-arrow">&#x2192;</span></a>
           </div>
         </div>
       </div>
 
-      <div class="vault-card coming-soon">
-        <div class="vault-icon">&#x1F5D3;&#xFE0F;</div>
-        <div class="vault-card-body">
-          <div class="vault-card-name">How to Run Weekly Team Meetings</div>
-          <div class="vault-card-desc">A walk-through of the weekly meeting cadence — agenda, timing, and how to make decisions stick.</div>
-          <div class="vault-card-meta">
-            <span class="vault-tag vault-tag-soon">Coming Soon</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="vault-card coming-soon">
-        <div class="vault-icon">&#x1F3C6;</div>
-        <div class="vault-card-body">
-          <div class="vault-card-name">Setting Quarterly Priorities</div>
-          <div class="vault-card-desc">How to pick 3–7 quarterly priorities that actually move the business forward — and how to keep them on track.</div>
-          <div class="vault-card-meta">
-            <span class="vault-tag vault-tag-soon">Coming Soon</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="vault-card coming-soon">
+      <div class="vault-card">
         <div class="vault-icon">&#x1F9ED;</div>
         <div class="vault-card-body">
-          <div class="vault-card-name">Defining Your Core Focus</div>
-          <div class="vault-card-desc">Uncover the intersection of what you're passionate about, what you can be best at, and what drives your business — your unique sweet spot.</div>
-          <div class="vault-card-meta">
-            <span class="vault-tag vault-tag-soon">Coming Soon</span>
+          <div class="vault-card-name">Core Focus</div>
+          <div class="vault-card-desc">Why your business exists (purpose) and what you do better than anyone (niche). The anchor for every strategic call.</div>
+          <div class="vault-actions">
+            <a class="vault-action primary" href="core-focus.html">Open worksheet <span class="vault-arrow">&#x2192;</span></a>
+            <span class="vault-action disabled">Read guide &middot; Coming soon</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="vault-card">
+        <div class="vault-icon">&#x1F3AF;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Targets</div>
+          <div class="vault-card-desc">Your 10-year vision, 3-year outlook, and 1-year plan &mdash; with revenue, profit, and the 3&ndash;7 priorities for the year.</div>
+          <div class="vault-actions">
+            <a class="vault-action primary" href="targets.html">Open worksheet <span class="vault-arrow">&#x2192;</span></a>
+            <span class="vault-action disabled">Read guide &middot; Coming soon</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="vault-card">
+        <div class="vault-icon">&#x1F4B0;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Financials</div>
+          <div class="vault-card-desc">Monthly revenue and expenses for the last 12 months (actuals) and next 12 months (forecast). Drives the Financial Outlook on your One-Page Plan.</div>
+          <div class="vault-actions">
+            <a class="vault-action primary" href="financials.html">Open worksheet <span class="vault-arrow">&#x2192;</span></a>
+            <span class="vault-action disabled">Read guide &middot; Coming soon</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="vault-card">
+        <div class="vault-icon">&#x1F4E3;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Marketing Strategy</div>
+          <div class="vault-card-desc">Who you serve, what makes you different, the process clients go through, and the guarantee that backs it.</div>
+          <div class="vault-actions">
+            <a class="vault-action primary" href="marketing-strategy.html">Open worksheet <span class="vault-arrow">&#x2192;</span></a>
+            <span class="vault-action disabled">Read guide &middot; Coming soon</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="vault-card">
+        <div class="vault-icon">&#x1F465;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Leadership Team</div>
+          <div class="vault-card-desc">Name the people who lead the business and what each is accountable for.</div>
+          <div class="vault-actions">
+            <a class="vault-action primary" href="leadership-team.html">Open worksheet <span class="vault-arrow">&#x2192;</span></a>
+            <span class="vault-action disabled">Read guide &middot; Coming soon</span>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- ═══ OPERATIONS ═══ -->
+    <div class="vault-section">
+      <div class="vault-section-head">
+        <span class="vault-section-label">Operations &mdash; the weekly cadence</span>
+        <span class="vault-section-count">4 activities</span>
+      </div>
+      <p class="vault-section-blurb">Track, decide, resolve &mdash; every week, in the same rhythm. These are the tools that turn strategy into traction.</p>
+
+      <div class="vault-card">
+        <div class="vault-icon">&#x1F3C6;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Quarterly Goals</div>
+          <div class="vault-card-desc">Pick 3&ndash;7 priorities for the quarter, assign an owner, and track on-track / at-risk / off-track each week.</div>
+          <div class="vault-actions">
+            <a class="vault-action primary" href="goals.html">Open Quarterly Goals <span class="vault-arrow">&#x2192;</span></a>
+            <span class="vault-action disabled">Read guide &middot; Coming soon</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="vault-card">
+        <div class="vault-icon">&#x1F4CA;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Weekly Numbers</div>
+          <div class="vault-card-desc">Choose the 5&ndash;10 metrics that tell you whether the business is on track this week. Goal + weekly value, red/green at a glance.</div>
+          <div class="vault-actions">
+            <a class="vault-action primary" href="scorecard.html">Open Weekly Numbers <span class="vault-arrow">&#x2192;</span></a>
+            <span class="vault-action disabled">Read guide &middot; Coming soon</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="vault-card">
+        <div class="vault-icon">&#x1F5D3;&#xFE0F;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Weekly Team Meeting</div>
+          <div class="vault-card-desc">Same day, same time, same agenda every week. Numbers review, goals review, highlights, todos, and resolving issues.</div>
+          <div class="vault-actions">
+            <a class="vault-action primary" href="meeting.html">Open weekly meetings <span class="vault-arrow">&#x2192;</span></a>
+            <span class="vault-action disabled">Read guide &middot; Coming soon</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="vault-card">
+        <div class="vault-icon">&#x26A1;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Issues</div>
+          <div class="vault-card-desc">Capture problems the moment they surface. Discuss and resolve in the weekly meeting instead of letting them fester.</div>
+          <div class="vault-actions">
+            <a class="vault-action primary" href="issues.html">Open Issues <span class="vault-arrow">&#x2192;</span></a>
+            <span class="vault-action disabled">Read guide &middot; Coming soon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PLANNING ═══ -->
+    <div class="vault-section">
+      <div class="vault-section-head">
+        <span class="vault-section-label">Planning &mdash; the longer rhythm</span>
+        <span class="vault-section-count">3 activities</span>
+      </div>
+      <p class="vault-section-blurb">Step back from the weekly grind. Every quarter, recalibrate. Once a year, refresh the whole strategy.</p>
+
+      <div class="vault-card">
+        <div class="vault-icon">&#x1F4C5;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Quarterly Planning Session</div>
+          <div class="vault-card-desc">Half-day session: review the quarter, refresh next quarter's priorities, agree what's on / off the list.</div>
+          <div class="vault-actions">
+            <a class="vault-action primary" href="quarterly-sessions.html">Open Quarterly Sessions <span class="vault-arrow">&#x2192;</span></a>
+            <span class="vault-action disabled">Read guide &middot; Coming soon</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="vault-card">
+        <div class="vault-icon">&#x1F5FA;&#xFE0F;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Annual Planning Session</div>
+          <div class="vault-card-desc">Two-day session: refresh the One-Page Plan (values, focus, targets, marketing, financials, team), set the year ahead.</div>
+          <div class="vault-actions">
+            <a class="vault-action primary" href="annual-sessions.html">Open Annual Sessions <span class="vault-arrow">&#x2192;</span></a>
+            <span class="vault-action disabled">Read guide &middot; Coming soon</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="vault-card">
+        <div class="vault-icon">&#x1F4DD;</div>
+        <div class="vault-card-body">
+          <div class="vault-card-name">Team Check-in</div>
+          <div class="vault-card-desc">17 statements scored 1&ndash;5. Run before each Quarterly or Annual session to surface what's working and where the gaps are.</div>
+          <div class="vault-actions">
+            <a class="vault-action primary" href="planning.html">Open Planning <span class="vault-arrow">&#x2192;</span></a>
+            <span class="vault-action disabled">Read guide &middot; Coming soon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <nav class="bottom-nav">

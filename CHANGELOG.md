@@ -4,6 +4,23 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.119
+- **Rebuilt the Learning Vault as a structured activity index** mapped to the full Coach4U program. User asked: "all the activities that align to the full program."
+- **13 activities, 3 sections:**
+  - **Strategy — the foundations** (6): Core Values, Core Focus, Targets, Financials, Marketing Strategy, Leadership Team.
+  - **Operations — the weekly cadence** (4): Quarterly Goals, Weekly Numbers, Weekly Team Meeting, Issues.
+  - **Planning — the longer rhythm** (3): Quarterly Planning Session, Annual Planning Session, Team Check-in.
+- **Each card has two CTAs side by side:**
+  - A solid teal `Open worksheet / Open Quarterly Sessions / Run the Values Discovery exercise` — links straight into the live page in the app. The user can jump from the index directly into doing the activity.
+  - A grey disabled `Read guide · Coming soon` — reserves the slot for written guides (no clutter, but the user can see what's coming).
+- **The one existing guide** — `learn/values-discovery.html` (the 3-step Core Values exercise) — is surfaced as the secondary CTA on the Core Values card, instead of as a separate "Guided Exercises" section. Keeps the cards uniform.
+- **Section blurbs** give a one-line framing for each group ("Set once, review every quarter — together these make up your One-Page Plan", etc.) so the index doubles as a quick orientation to the program structure.
+- **Card design** is one column on mobile, one card per activity (icon + name + 2-line description + 2 buttons). No more "Coming Soon" cards that look broken — every card has at least one live action.
+- **No SQL, no schema.** Pure front-end rewrite of `learning-vault.html`.
+- **Open question for the next pass:** when the written guides ship, each will live as a new `learn/<activity>.html` page. The grey `Read guide` ghost button on the matching card becomes a live teal link. No structural changes needed to the Vault index when each guide arrives — just swap the ghost button for an anchor.
+
+---
+
 ## v0.5.118
 - **Simplified the Financial Outlook strip** on `one-page-plan.html` and the `account-plans.html` carousel. User feedback: "change figures to just show the final numbers not each month."
 - **Before**: 12 month-rows + a totals row, with Month / Rev / Exp / Profit columns — quite dense.
