@@ -181,18 +181,40 @@
     const list=document.getElementById('meetings-list');
     if(!meetings.length){list.innerHTML='<div class="empty-state">No meetings yet. Create one with "+ New Meeting".</div>';return;}
     list.innerHTML=meetings.map(m=>`
-      <a href="run-meeting.html?id=${encodeURIComponent(m.id)}" class="meeting-item" style="text-decoration:none;color:inherit;">
-        <div>
-          <div class="meeting-item-date">${fmtDate(m.meeting_date)}</div>
-          <div class="meeting-item-meta">
-            <span class="status-pill ${STATUS_CLASS[m.status]||'sp-scheduled'}">${STATUS_LABEL[m.status]||m.status}</span>
-            ${m.quarter?escHtml(m.quarter):''}
-            ${m.rating?'&middot; '+m.rating+'/10':''}
+      <div class="meeting-item" style="display:flex;align-items:center;gap:8px;">
+        <a href="run-meeting.html?id=${encodeURIComponent(m.id)}" style="flex:1;text-decoration:none;color:inherit;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div>
+            <div class="meeting-item-date">${fmtDate(m.meeting_date)}</div>
+            <div class="meeting-item-meta">
+              <span class="status-pill ${STATUS_CLASS[m.status]||'sp-scheduled'}">${STATUS_LABEL[m.status]||m.status}</span>
+              ${m.quarter?escHtml(m.quarter):''}
+              ${m.rating?'&middot; '+m.rating+'/10':''}
+            </div>
           </div>
-        </div>
-        <span class="meeting-item-arrow">&#x203A;</span>
-      </a>
+          <span class="meeting-item-arrow">&#x203A;</span>
+        </a>
+        <button class="meeting-del-btn" data-meeting-id="${encodeURIComponent(m.id)}" data-meeting-date="${escHtml(fmtDate(m.meeting_date))}" title="Delete meeting" style="background:transparent;border:1px solid #e5e7eb;color:#aaa;font-size:1rem;width:32px;height:32px;border-radius:6px;cursor:pointer;flex-shrink:0;line-height:1;">&times;</button>
+      </div>
     `).join('');
+
+    // Wire delete buttons
+    list.querySelectorAll('.meeting-del-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const id = decodeURIComponent(btn.dataset.meetingId);
+        const date = btn.dataset.meetingDate;
+        if (!confirm(`Delete the meeting on ${date}? This removes the meeting and any highlights / todos captured in it.`)) return;
+        btn.disabled = true;
+        const { error } = await supabase.from('meetings').delete().eq('id', id);
+        if (error) {
+          showToast('Delete failed — ' + error.message, 'error');
+          btn.disabled = false;
+        } else {
+          showToast('Meeting deleted', 'success');
+          loadMeetings();
+        }
+      });
+    });
   }
 
   function populateQuarterSelect(){

@@ -263,8 +263,12 @@
       return;
     }
     _currentSession=s;
+    if (s.subscription_id && !s.organisation_id) {
+      const back = document.querySelector('.header-back');
+      if (back) { back.setAttribute('href','quarterly-sessions.html?scope=account'); back.textContent = '← Account Quarterly Sessions'; }
+    }
     const qn=(/^Q(\d)/.exec(s.target_quarter||'')||[])[1]||'';
-    document.getElementById('ws-title').innerHTML='&#x1F3AF; '+(qn?'Q'+qn:'Quarterly')+' Planning Session — '+fmtDate(s.session_date);
+    document.getElementById('ws-title').innerHTML='&#x1F3AF; '+(qn?'Q'+qn:'Quarterly')+' Planning Session '+(s.subscription_id?'(Account)':'')+' — '+fmtDate(s.session_date);
     document.getElementById('ws-sub').textContent='Sets goals for '+(s.target_quarter||'next quarter')+' — track attendance, tick off each area as you cover it, and share the team check-in link.';
     await renderDetail(s);
   }

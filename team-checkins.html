@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Check-ins | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#003366">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Your Business Coach">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body { opacity: 0; transition: opacity 0.2s ease; }
+    .container { padding-bottom: 90px; }
+    .ws-header { padding: 20px 16px 0; }
+    .ws-title { font-size: 1.15rem; font-weight: 800; color: var(--primary); margin: 0 0 4px; }
+    .ws-sub { font-size: 0.83rem; color: #666; margin: 0 0 14px; line-height: 1.45; }
+
+    .new-row { padding: 0 16px 6px; display: flex; justify-content: flex-end; }
+    .ws-btn { padding: 9px 18px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+    .ws-btn:hover { background: var(--accent-dark); }
+
+    .batches-list { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+    .batch-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      background: white; border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; text-decoration: none; color: inherit;
+      transition: box-shadow .15s, border-color .15s;
+    }
+    .batch-item:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(13,148,136,0.1); text-decoration: none; }
+    .batch-name { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
+    .batch-meta { font-size: 0.78rem; color: #666; margin-top: 3px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .batch-meta .status-pill { padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+    .status-open   { background: #ccfbf1; color: #0F766E; }
+    .status-closed { background: #f3f4f6; color: #6B7280; }
+    .batch-arrow { font-size: 1.1rem; color: var(--accent); flex-shrink: 0; }
+    .empty-state { background: #f8fafc; border: 1px dashed var(--border); border-radius: 10px; padding: 20px; text-align: center; color: #888; font-size: 0.88rem; margin: 0 16px; }
+
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px; }
+    .modal-overlay.hidden { display: none; }
+    .modal { background: white; border-radius: 12px; width: 100%; max-width: 420px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .modal-title { font-size: 1.05rem; font-weight: 800; color: var(--primary); margin: 0 0 14px; }
+    .modal-field { margin-bottom: 12px; }
+    .modal-label { display: block; font-size: 0.78rem; font-weight: 700; color: var(--primary); margin-bottom: 5px; }
+    .modal-input { width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.9rem; font-family: inherit; }
+    .modal-input:focus { outline: none; border-color: var(--accent); }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+    .ws-btn-secondary { padding: 9px 16px; background: white; color: var(--primary); border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+    .ws-btn-secondary:hover { background: #f4f4f5; }
+
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e5e7eb; display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -2px 8px rgba(0,0,0,0.06); }
+    .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 0 6px; text-decoration: none; color: #aaa; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; gap: 3px; transition: color 0.15s; }
+    .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
+    .bottom-nav-icon { font-size: 20px; line-height: 1; }
+
+    .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); padding: 10px 18px; border-radius: 8px; font-size: 0.86rem; font-weight: 600; box-shadow: 0 4px 14px rgba(0,0,0,0.15); z-index: 300; opacity: 1; transition: opacity 0.3s; }
+    .toast.toast-hidden { opacity: 0; pointer-events: none; }
+    .toast-success { background: #ccfbf1; color: #0F766E; }
+    .toast-error   { background: #fee2e2; color: #991b1b; }
+  </style>
+  <script src="js/active-session.js" defer></script>
+  <script src="js/mobile-keyboard.js" defer></script>
+  <script src="js/active-org.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="planning.html" class="header-back">&#x2190; Planning</a>
+        <span class="header-title">Your Business Coach</span>
+        <span id="activeBizName" class="biz-pill"></span>
+      </div>
+      <button id="signOutBtn" class="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="ws-header">
+      <h1 class="ws-title" id="ws-title">&#x1F4DD; Team Check-ins</h1>
+      <p class="ws-sub" id="ws-sub">Run pulse surveys with your team. Track responses, see what&rsquo;s moving over time.</p>
+    </div>
+
+    <div class="new-row">
+      <button class="ws-btn" id="new-batch-btn">+ New Check-in</button>
+    </div>
+
+    <div class="batches-list" id="batches-list">
+      <div class="empty-state">Loading&hellip;</div>
+    </div>
+  </div>
+
+  <!-- New batch modal -->
+  <div class="modal-overlay hidden" id="new-batch-modal">
+    <div class="modal">
+      <div class="modal-title">New Team Check-in</div>
+      <div class="modal-field">
+        <label class="modal-label" for="nb-name">Name</label>
+        <input type="text" class="modal-input" id="nb-name" placeholder="e.g. Q1 2026 Pulse" maxlength="80" />
+      </div>
+      <div class="modal-field">
+        <label class="modal-label" for="nb-date">Run date</label>
+        <input type="date" class="modal-input" id="nb-date" />
+      </div>
+      <div class="modal-actions">
+        <button class="ws-btn-secondary" id="nb-cancel">Cancel</button>
+        <button class="ws-btn" id="nb-save">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast toast-hidden" id="toast"></div>
+
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item" href="business.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
+    <a class="bottom-nav-item active" href="planning.html"><span class="bottom-nav-icon">&#x1F5FA;&#xFE0F;</span><span>Planning</span></a>
+    <a class="bottom-nav-item" href="strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
+    <a class="bottom-nav-item" href="operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
+    <a class="bottom-nav-item" href="learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
+  </nav>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const _sb = createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
+
+    function escHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+    function fmtDate(d){if(!d)return '';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})}
+    function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
+
+    const SCOPE = (new URLSearchParams(location.search).get('scope') || 'business').toLowerCase();
+    const IS_ACCOUNT = SCOPE === 'account';
+    let orgId = null, subId = null;
+
+    async function loadBatches(){
+      let q = _sb.from('checkin_batches').select('id, name, run_date, status, invitees').order('run_date', { ascending: false });
+      if (IS_ACCOUNT) q = q.eq('subscription_id', subId);
+      else           q = q.eq('organisation_id', orgId);
+      const { data, error } = await q;
+      const list = document.getElementById('batches-list');
+      if (error) { list.innerHTML = '<div class="empty-state">Could not load: '+escHtml(error.message)+'</div>'; return; }
+
+      // Fetch response counts in parallel for each batch
+      const rows = Array.isArray(data) ? data : [];
+      if (!rows.length) {
+        list.innerHTML = '<div class="empty-state">No check-ins yet. Create one with "+ New Check-in".</div>';
+        return;
+      }
+      const ids = rows.map(r => r.id);
+      const { data: counts } = await _sb
+        .from('team_checkins')
+        .select('session_id')
+        .eq('session_type', 'batch')
+        .in('session_id', ids);
+      const countByBatch = {};
+      (counts || []).forEach(r => { countByBatch[r.session_id] = (countByBatch[r.session_id] || 0) + 1; });
+
+      list.innerHTML = rows.map(b => {
+        const invited = Array.isArray(b.invitees) ? b.invitees.length : 0;
+        const responded = countByBatch[b.id] || 0;
+        return `
+          <a class="batch-item" href="run-team-checkin.html?id=${encodeURIComponent(b.id)}">
+            <div>
+              <div class="batch-name">${escHtml(b.name)}</div>
+              <div class="batch-meta">
+                <span class="status-pill ${b.status==='open'?'status-open':'status-closed'}">${b.status}</span>
+                <span>${fmtDate(b.run_date)}</span>
+                <span>${responded} of ${invited||'?'} responded</span>
+              </div>
+            </div>
+            <span class="batch-arrow">&#x203A;</span>
+          </a>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('new-batch-btn').addEventListener('click', () => {
+      const cur = new Date();
+      const q = 'Q' + (Math.floor(cur.getMonth()/3) + 1) + ' ' + cur.getFullYear();
+      document.getElementById('nb-name').value = q + ' Pulse';
+      document.getElementById('nb-date').value = cur.toISOString().slice(0,10);
+      document.getElementById('new-batch-modal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('nb-name').focus(), 50);
+    });
+    document.getElementById('nb-cancel').addEventListener('click', () => {
+      document.getElementById('new-batch-modal').classList.add('hidden');
+    });
+    document.getElementById('nb-save').addEventListener('click', async () => {
+      const name = document.getElementById('nb-name').value.trim();
+      const run_date = document.getElementById('nb-date').value;
+      if (!name) { showToast('Name is required','error'); return; }
+      if (!run_date) { showToast('Date is required','error'); return; }
+      const payload = { name, run_date, status: 'open', invitees: [] };
+      if (IS_ACCOUNT) payload.subscription_id = subId;
+      else            payload.organisation_id = orgId;
+      const { data, error } = await _sb.from('checkin_batches').insert(payload).select().single();
+      if (error || !data) {
+        showToast('Could not create: ' + (error && error.message || 'unknown'), 'error');
+        return;
+      }
+      window.location.href = 'run-team-checkin.html?id=' + encodeURIComponent(data.id);
+    });
+
+    (async () => {
+      const { data: { user } } = await _sb.auth.getUser();
+      if (!user) { window.location.href = 'login.html'; return; }
+      const { data: profile } = await _sb.from('users').select('membership_status').eq('id', user.id).single();
+      if (!profile || profile.membership_status !== 'active') { window.location.href = 'inactive.html'; return; }
+
+      if (IS_ACCOUNT) {
+        subId = window.activeOrg && window.activeOrg.getSubscription && window.activeOrg.getSubscription();
+        if (!subId) { window.location.href = 'index.html'; return; }
+        const back = document.querySelector('.header-back');
+        if (back) { back.setAttribute('href','account-planning.html'); back.textContent = '← Account Planning'; }
+        document.getElementById('ws-title').innerHTML = '&#x1F4DD; Team Check-ins (Account)';
+        document.getElementById('ws-sub').textContent = 'Account-level pulse surveys. Data analysed in one place, admin-only.';
+      } else {
+        orgId = window.activeOrg && window.activeOrg.get();
+        if (!orgId) { window.location.href = 'index.html'; return; }
+      }
+
+      document.getElementById('signOutBtn').addEventListener('click', async () => {
+        await _sb.auth.signOut(); window.location.href = 'login.html';
+      });
+
+      await loadBatches();
+      document.body.style.opacity = '1';
+    })();
+  </script>
+</body>
+</html>

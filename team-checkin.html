@@ -159,6 +159,13 @@
 
   function getParams(){
     const u = new URLSearchParams(window.location.search);
+    // Batch links use ?batch_id=X&kind=batch
+    const batchId = (u.get('batch_id') || '').trim();
+    const kind = u.get('kind');
+    if (batchId && kind === 'batch') {
+      return { session_id: batchId, session_type: 'batch' };
+    }
+    // Annual / quarterly session links use ?session=X&type=annual|quarterly
     const id = (u.get('session') || '').trim();
     const type = u.get('type');
     return {
@@ -319,17 +326,50 @@
     }
     CURRENT_USER = user;
 
-    // 3. Fetch the session (RLS will deny if user isn't a member of the owning org)
-    const table = SESSION_TYPE === 'annual' ? 'annual_sessions' : 'quarterly_sessions';
+    // 3. Fetch the session / batch (RLS will deny if user isn't a member of the owning org/account)
+    let table, dateField;
+    if (SESSION_TYPE === 'annual')      { table = 'annual_sessions';    dateField = 'session_date'; }
+    else if (SESSION_TYPE === 'quarterly') { table = 'quarterly_sessions'; dateField = 'session_date'; }
+    else if (SESSION_TYPE === 'batch')  { table = 'checkin_batches';    dateField = 'run_date'; }
+    const selectCols = 'id, organisation_id, subscription_id, ' + dateField;
     const { data: sess, error: sessErr } = await supabase
-      .from(table).select('id, organisation_id, session_date').eq('id', SESSION_ID).maybeSingle();
+      .from(table).select(selectCols).eq('id', SESSION_ID).maybeSingle();
     if (sessErr || !sess) {
       showState('denied-wrap');
       document.body.style.opacity = '1';
       return;
     }
+    // Normalize the date field so downstream code can read sess.session_date uniformly.
+    if (dateField !== 'session_date') sess.session_date = sess[dateField];
     SESSION_ROW = sess;
-    ORG_ID = sess.organisation_id;
+
+    // Resolve ORG_ID:
+    //   • Business-scoped session/batch → use its organisation_id directly.
+    //   • Account-scoped (subscription_id set) → look up the user's first active
+    //     team_membership in any org under that subscription. That org_id becomes
+    //     the submitter's "home" for this check-in (stored on team_checkins row).
+    if (sess.organisation_id) {
+      ORG_ID = sess.organisation_id;
+    } else if (sess.subscription_id) {
+      const { data: myOrg } = await supabase
+        .from('team_members')
+        .select('organisation_id, organisations!inner(id, subscription_id)')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .eq('organisations.subscription_id', sess.subscription_id)
+        .limit(1)
+        .maybeSingle();
+      ORG_ID = myOrg && myOrg.organisation_id;
+      if (!ORG_ID) {
+        showState('denied-wrap');
+        document.body.style.opacity = '1';
+        return;
+      }
+    } else {
+      showState('denied-wrap');
+      document.body.style.opacity = '1';
+      return;
+    }
 
     // 4. Get user's display name for pre-fill (and confirm active membership)
     const { data: mem } = await supabase

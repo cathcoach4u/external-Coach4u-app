@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run Team Check-in | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#003366">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Your Business Coach">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body { opacity: 0; transition: opacity 0.2s ease; }
+    .container { padding-bottom: 90px; }
+    .ws-header { padding: 18px 16px 0; }
+    .ws-title { font-size: 1.1rem; font-weight: 800; color: var(--primary); margin: 0 0 4px; }
+    .ws-sub { font-size: 0.82rem; color: #666; margin: 0 0 14px; line-height: 1.45; }
+
+    .meta-block, .invitees-block, .share-block, .results-block, .notes-block {
+      background: white; border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; margin: 0 16px 14px;
+    }
+    .block-title { font-family: inherit; font-weight: 700; color: var(--primary); font-size: 1rem; margin: 0 0 10px; }
+    .block-desc { font-size: 0.78rem; color: #888; margin: 0 0 12px; line-height: 1.45; }
+
+    .meta-row { display: grid; grid-template-columns: 90px 1fr; gap: 12px; align-items: center; margin-bottom: 10px; }
+    .meta-row:last-child { margin-bottom: 0; }
+    .meta-label { font-size: 0.74rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.4px; }
+    .meta-input { width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.88rem; font-family: inherit; }
+    .meta-input:focus { outline: none; border-color: var(--accent); }
+    .meta-select { padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--border); font-size: 0.85rem; font-family: inherit; background: white; }
+
+    .row-list { display: flex; flex-direction: column; gap: 8px; }
+    .invitee-row { display: grid; grid-template-columns: 1fr 1fr 30px; gap: 8px; align-items: center; }
+    .row-input { border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 10px; font-family: inherit; font-size: 0.85rem; color: var(--text); box-sizing: border-box; width: 100%; }
+    .row-input:focus { outline: none; border-color: var(--accent); }
+    .row-del { background: transparent; border: none; color: #aaa; font-size: 1.1rem; cursor: pointer; padding: 4px; line-height: 1; }
+    .row-del:hover { color: #c53030; }
+    .row-add { background: #f0fdfa; color: var(--accent); border: 1px dashed var(--accent); border-radius: 8px; padding: 8px 14px; font-family: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer; margin-top: 10px; }
+    .row-add:hover { background: #ccfbf1; }
+    .row-empty { font-size: 0.8rem; color: #aaa; font-style: italic; padding: 6px 0; }
+    @media (max-width: 540px) { .invitee-row { grid-template-columns: 1fr 30px; } .invitee-row .row-input.email { grid-column: 1 / 3; } .invitee-row .row-del { grid-row: 1; } }
+
+    .share-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .ws-btn { padding: 9px 16px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background .15s; }
+    .ws-btn:hover { background: var(--accent-dark); }
+    .ws-btn-secondary { padding: 9px 16px; background: white; color: var(--accent); border: 1.5px solid var(--accent); border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+    .ws-btn-secondary:hover { background: #f0fdfa; }
+    .ws-btn-danger { padding: 7px 12px; background: white; color: #c53030; border: 1px solid #fca5a5; border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+    .ws-btn-danger:hover { background: #fef2f2; }
+
+    .notes-input { width: 100%; min-height: 100px; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: inherit; font-size: 0.88rem; color: var(--text); line-height: 1.5; resize: vertical; box-sizing: border-box; }
+    .notes-input:focus { outline: none; border-color: var(--accent); }
+
+    /* Aggregated check-in results (mirrors run-annual-session) */
+    .ci-summary { margin-top: 14px; font-size: 0.85rem; color: #666; font-family: inherit; font-weight: 600; }
+    .ci-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; font-family: inherit; }
+    .ci-table th, .ci-table td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; text-align: left; vertical-align: middle; }
+    .ci-table th { font-weight: 700; color: var(--primary); background: #f0fdfa; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .ci-table td.ci-avg { font-weight: 700; text-align: center; white-space: nowrap; }
+    .ci-table td.ci-dot-cell { width: 24px; text-align: center; }
+    .ci-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #e5e7eb; display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -2px 8px rgba(0,0,0,0.06); }
+    .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 0 6px; text-decoration: none; color: #aaa; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; gap: 3px; transition: color 0.15s; }
+    .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
+    .bottom-nav-icon { font-size: 20px; line-height: 1; }
+
+    .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); padding: 10px 18px; border-radius: 8px; font-size: 0.86rem; font-weight: 600; box-shadow: 0 4px 14px rgba(0,0,0,0.15); z-index: 300; opacity: 1; transition: opacity 0.3s; }
+    .toast.toast-hidden { opacity: 0; pointer-events: none; }
+    .toast-success { background: #ccfbf1; color: #0F766E; }
+    .toast-error   { background: #fee2e2; color: #991b1b; }
+  </style>
+  <script src="js/active-session.js" defer></script>
+  <script src="js/mobile-keyboard.js" defer></script>
+  <script src="js/active-org.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="team-checkins.html" class="header-back">&#x2190; Team Check-ins</a>
+        <span class="header-title">Your Business Coach</span>
+        <span id="activeBizName" class="biz-pill"></span>
+      </div>
+      <button id="signOutBtn" class="sign-out-btn">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="ws-header">
+      <h1 class="ws-title" id="ws-title">&#x1F4DD; Team Check-in</h1>
+      <p class="ws-sub" id="ws-sub">Track who's been invited, share the link, and review responses.</p>
+    </div>
+
+    <div id="content"></div>
+  </div>
+
+  <div class="toast toast-hidden" id="toast"></div>
+
+  <nav class="bottom-nav">
+    <a class="bottom-nav-item" href="business.html"><span class="bottom-nav-icon">&#x1F3E0;</span><span>Home</span></a>
+    <a class="bottom-nav-item active" href="planning.html"><span class="bottom-nav-icon">&#x1F5FA;&#xFE0F;</span><span>Planning</span></a>
+    <a class="bottom-nav-item" href="strategy.html"><span class="bottom-nav-icon">&#x1F9ED;</span><span>Strategy</span></a>
+    <a class="bottom-nav-item" href="operations.html"><span class="bottom-nav-icon">&#x2699;&#xFE0F;</span><span>Operations</span></a>
+    <a class="bottom-nav-item" href="learning-vault.html"><span class="bottom-nav-icon">&#x1F4DA;</span><span>Learn</span></a>
+  </nav>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const _sb = createClient('https://eekefsuaefgpqmjdyniy.supabase.co','sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y');
+
+    function escHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+    function fmtDate(d){if(!d)return '';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})}
+    function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type;t.classList.remove('toast-hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('toast-hidden'),3000)}
+
+    // 17 questions — must match team-checkin.html
+    const QUESTIONS = [
+      "We have a clear vision in writing that has been properly communicated and is shared by all.",
+      "Our core focus is clear, and our people, systems, and processes are aligned with it.",
+      "Our 10-year vision is clear, communicated regularly, and shared by all.",
+      "Our 3-year outlook is clear, communicated regularly, and shared by all.",
+      "Our org chart (showing every role and its responsibilities) is clear, complete, and kept up to date.",
+      "Everyone is in a role that fits them — they understand it, want to do it, and have the capacity to do it well.",
+      "Our leadership team is open and honest, and demonstrates a high level of trust.",
+      "Across the team we openly raise, discuss, and resolve issues with the long-term good of the business in mind.",
+      "Everyone is engaged in regular weekly meetings.",
+      "Everyone has quarterly goals (1 to 7 priorities per quarter) and is focused on them.",
+      "All meetings are on the same day and at the same time each week, have the same agenda, and start and end on time.",
+      "We run an annual planning session to set the focus for the year ahead.",
+      "Our core values are clear, and we are hiring, reviewing, rewarding, and firing around them.",
+      "Everyone on the team fits our culture and shares our values.",
+      "We have a focus on mentoring and coaching our team members.",
+      "We have a focus on a Strengths-Based Culture.",
+      "We are committed to creating a workplace culture where everyone can thrive in all aspects."
+    ];
+
+    let _batch = null;
+    const batchId = new URLSearchParams(location.search).get('id');
+    if (!batchId) { window.location.href = 'team-checkins.html'; }
+
+    async function fetchBatch(){
+      const { data, error } = await _sb.from('checkin_batches').select('*').eq('id', batchId).maybeSingle();
+      if (error || !data) return null;
+      return data;
+    }
+    async function updateBatch(patch){
+      const { error } = await _sb.from('checkin_batches').update(patch).eq('id', batchId);
+      if (error) showToast('Save failed','error');
+    }
+
+    function aggregate(checkins){
+      const totals = QUESTIONS.map(() => ({ sum: 0, count: 0 }));
+      checkins.forEach(c => {
+        const scores = Array.isArray(c.scores) ? c.scores : [];
+        scores.forEach((v, i) => {
+          if (i < totals.length && typeof v === 'number') {
+            totals[i].sum += v; totals[i].count += 1;
+          }
+        });
+      });
+      return totals.map((t, i) => ({
+        q: i, text: QUESTIONS[i] || ('Question ' + (i+1)),
+        avg: t.count ? +(t.sum / t.count).toFixed(2) : null,
+        count: t.count
+      }));
+    }
+    function dotColor(avg){
+      if (avg === null) return '#e5e7eb';
+      if (avg >= 4) return '#10b981';
+      if (avg >= 3) return '#f59e0b';
+      return '#ef4444';
+    }
+
+    async function renderResults(){
+      const wrap = document.getElementById('results-body');
+      if (!wrap) return;
+      const { data, error } = await _sb
+        .from('team_checkins')
+        .select('scores')
+        .eq('session_type','batch')
+        .eq('session_id', batchId);
+      if (error) { wrap.innerHTML = '<div class="row-empty">Could not load results: ' + escHtml(error.message) + '</div>'; return; }
+      const responses = data || [];
+      if (!responses.length) {
+        wrap.innerHTML = '<div class="row-empty">No responses yet. Share the link with your team to start collecting answers.</div>';
+        return;
+      }
+      const rows = aggregate(responses).slice().sort((a,b) => (a.avg ?? 99) - (b.avg ?? 99));
+      const summary = `<div class="ci-summary">${responses.length} response${responses.length===1?'':'s'} so far. Lowest-scoring at the top.</div>`;
+      const table = `
+        <table class="ci-table">
+          <thead><tr><th></th><th>Statement</th><th class="ci-avg">Avg</th></tr></thead>
+          <tbody>${rows.map(r => `
+            <tr>
+              <td class="ci-dot-cell"><span class="ci-dot" style="background:${dotColor(r.avg)};"></span></td>
+              <td>${escHtml(r.text)}</td>
+              <td class="ci-avg">${r.avg === null ? '—' : r.avg.toFixed(1)}</td>
+            </tr>
+          `).join('')}</tbody>
+        </table>`;
+      wrap.innerHTML = summary + table;
+    }
+
+    function buildCheckinLink(){
+      const u = new URL(location.origin + location.pathname.replace(/run-team-checkin\.html$/,'team-checkin.html'));
+      u.searchParams.set('batch_id', batchId);
+      u.searchParams.set('kind', 'batch');
+      return u.toString();
+    }
+
+    function render(s){
+      const c = document.getElementById('content');
+      const scopeLabel = s.subscription_id ? ' (Account)' : '';
+      document.getElementById('ws-title').innerHTML = '&#x1F4DD; ' + escHtml(s.name) + scopeLabel;
+      document.getElementById('ws-sub').textContent = 'Run date ' + fmtDate(s.run_date) + '. Add invitees, share the link, watch the data come in.';
+
+      if (s.subscription_id && !s.organisation_id) {
+        const back = document.querySelector('.header-back');
+        if (back) { back.setAttribute('href','team-checkins.html?scope=account'); }
+      }
+
+      c.innerHTML = `
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Name</span>
+            <input type="text" class="meta-input" id="m-name" value="${escHtml(s.name||'')}">
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Run date</span>
+            <input type="date" class="meta-input" id="m-date" value="${escHtml(s.run_date||'')}">
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Status</span>
+            <select class="meta-select" id="m-status">
+              <option value="open"   ${s.status==='open'?'selected':''}>Open</option>
+              <option value="closed" ${s.status==='closed'?'selected':''}>Closed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="invitees-block">
+          <h3 class="block-title">&#x1F465; Invitees</h3>
+          <p class="block-desc">Who's expected to complete this. The list is informational &mdash; anyone you share the link with can submit.</p>
+          <div class="row-list" id="invitees-list"></div>
+          <button class="row-add" id="add-invitee">+ Add invitee</button>
+        </div>
+
+        <div class="share-block">
+          <h3 class="block-title">&#x1F517; Share the Check-in</h3>
+          <p class="block-desc">Paste this link into your email / Slack / wherever. Recipients sign in to the app and complete the 17-question form.</p>
+          <div class="share-actions">
+            <button class="ws-btn" id="copy-link">Copy link</button>
+            <a class="ws-btn-secondary" href="${escHtml(buildCheckinLink())}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block;">Open form</a>
+          </div>
+        </div>
+
+        <div class="notes-block">
+          <h3 class="block-title">&#x1F4D3; Admin Notes</h3>
+          <p class="block-desc">Why we're running this batch, what we want to learn, what to watch for.</p>
+          <textarea class="notes-input" id="notes-input" placeholder="Why this check-in, what we're hoping to surface…">${escHtml(s.notes||'')}</textarea>
+        </div>
+
+        <div class="results-block">
+          <h3 class="block-title">&#x1F4CA; Results</h3>
+          <p class="block-desc">Aggregated scores across all responses. Lowest-scoring statements at the top &mdash; those are your starting conversations.</p>
+          <div id="results-body"><div class="row-empty">Loading&hellip;</div></div>
+        </div>
+
+        <div style="padding: 0 16px 8px;">
+          <button class="ws-btn-danger" id="delete-batch">Delete this check-in</button>
+        </div>
+      `;
+
+      // Wire meta fields
+      let metaTimer = null;
+      const mName = document.getElementById('m-name');
+      const mDate = document.getElementById('m-date');
+      const mStat = document.getElementById('m-status');
+      function scheduleMetaSave(patch){
+        clearTimeout(metaTimer);
+        metaTimer = setTimeout(() => updateBatch(patch), 400);
+      }
+      mName.addEventListener('input', () => { _batch.name = mName.value; scheduleMetaSave({ name: mName.value }); });
+      mDate.addEventListener('change', () => { _batch.run_date = mDate.value; updateBatch({ run_date: mDate.value }); });
+      mStat.addEventListener('change', () => { _batch.status = mStat.value; updateBatch({ status: mStat.value }); });
+
+      // Invitees list
+      const list = document.getElementById('invitees-list');
+      function renderInvitees(){
+        const items = Array.isArray(_batch.invitees) ? _batch.invitees : [];
+        if (!items.length) {
+          list.innerHTML = '<div class="row-empty">No invitees yet. Add the people you want to complete this check-in.</div>';
+          return;
+        }
+        list.innerHTML = items.map((it, i) => `
+          <div class="invitee-row" data-idx="${i}">
+            <input type="text"  class="row-input" data-field="name"  data-idx="${i}" placeholder="Name"  value="${escHtml(it.name||'')}">
+            <input type="email" class="row-input email" data-field="email" data-idx="${i}" placeholder="email@example.com" value="${escHtml(it.email||'')}">
+            <button class="row-del" data-action="del-invitee" data-idx="${i}">&times;</button>
+          </div>
+        `).join('');
+      }
+      let inviteesTimer = null;
+      async function persistInvitees(){
+        clearTimeout(inviteesTimer);
+        inviteesTimer = setTimeout(() => updateBatch({ invitees: _batch.invitees }), 500);
+      }
+      list.addEventListener('input', e => {
+        const t = e.target; if (!t.dataset.field) return;
+        const idx = parseInt(t.dataset.idx, 10);
+        const arr = Array.isArray(_batch.invitees) ? _batch.invitees : [];
+        if (!arr[idx]) arr[idx] = { name:'', email:'' };
+        arr[idx][t.dataset.field] = t.value;
+        _batch.invitees = arr;
+        persistInvitees();
+      });
+      list.addEventListener('click', e => {
+        const btn = e.target.closest('[data-action="del-invitee"]');
+        if (!btn) return;
+        const idx = parseInt(btn.dataset.idx, 10);
+        const arr = Array.isArray(_batch.invitees) ? _batch.invitees : [];
+        arr.splice(idx, 1);
+        _batch.invitees = arr;
+        renderInvitees();
+        updateBatch({ invitees: arr });
+      });
+      document.getElementById('add-invitee').addEventListener('click', () => {
+        const arr = Array.isArray(_batch.invitees) ? _batch.invitees : [];
+        arr.push({ name:'', email:'' });
+        _batch.invitees = arr;
+        renderInvitees();
+        const inputs = list.querySelectorAll('input[data-field="name"]');
+        const last = inputs[inputs.length-1]; if (last) last.focus();
+      });
+      renderInvitees();
+
+      // Notes
+      let notesTimer = null;
+      const notesInput = document.getElementById('notes-input');
+      notesInput.addEventListener('input', () => {
+        clearTimeout(notesTimer);
+        notesTimer = setTimeout(() => updateBatch({ notes: notesInput.value }), 500);
+      });
+
+      // Copy link
+      document.getElementById('copy-link').addEventListener('click', () => {
+        const link = buildCheckinLink();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(link).then(() => showToast('Link copied — share with your team','success'), () => showToast('Copy failed','error'));
+        } else {
+          try { const ta = document.createElement('textarea'); ta.value = link; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('Link copied','success'); }
+          catch (_) { showToast('Copy failed','error'); }
+        }
+      });
+
+      // Delete batch
+      document.getElementById('delete-batch').addEventListener('click', async () => {
+        if (!confirm('Delete this check-in batch? This also removes all submitted responses. Cannot be undone.')) return;
+        const { error } = await _sb.from('checkin_batches').delete().eq('id', batchId);
+        if (error) { showToast('Delete failed: ' + error.message, 'error'); return; }
+        // Also delete submitted check-ins for this batch
+        await _sb.from('team_checkins').delete().eq('session_type','batch').eq('session_id', batchId);
+        window.location.href = _batch.subscription_id ? 'team-checkins.html?scope=account' : 'team-checkins.html';
+      });
+
+      renderResults();
+    }
+
+    (async () => {
+      const { data: { user } } = await _sb.auth.getUser();
+      if (!user) { window.location.href = 'login.html'; return; }
+      const { data: profile } = await _sb.from('users').select('membership_status').eq('id', user.id).single();
+      if (!profile || profile.membership_status !== 'active') { window.location.href = 'inactive.html'; return; }
+
+      const s = await fetchBatch();
+      if (!s) {
+        document.getElementById('content').innerHTML = '<div style="padding:20px 16px;color:#888;">Check-in not found, or you don\\'t have admin access. <a href="team-checkins.html" style="color:var(--accent);font-weight:600;">Back to list →</a></div>';
+        document.body.style.opacity = '1';
+        return;
+      }
+      _batch = s;
+      render(s);
+
+      document.getElementById('signOutBtn').addEventListener('click', async () => {
+        await _sb.auth.signOut(); window.location.href = 'login.html';
+      });
+      document.body.style.opacity = '1';
+    })();
+  </script>
+</body>
+</html>

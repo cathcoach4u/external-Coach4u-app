@@ -359,7 +359,7 @@ CREATE TABLE public.team_checkins (
   id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   organisation_id uuid NOT NULL REFERENCES public.organisations(id) ON DELETE CASCADE,
   session_id      uuid NOT NULL,
-  session_type    text NOT NULL CHECK (session_type IN ('annual','quarterly')),
+  session_type    text NOT NULL CHECK (session_type IN ('annual','quarterly','batch')),
   user_id         uuid REFERENCES auth.users(id) ON DELETE SET NULL,
   name            text NOT NULL,
   role            text,
@@ -370,6 +370,22 @@ CREATE TABLE public.team_checkins (
 CREATE INDEX team_checkins_session_idx
   ON public.team_checkins(session_id, session_type);
 CREATE INDEX team_checkins_org_idx ON public.team_checkins(organisation_id);
+
+
+-- v0.5.132: standalone check-in batches (not tied to a planning session)
+CREATE TABLE public.checkin_batches (
+  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  organisation_id uuid NOT NULL REFERENCES public.organisations(id) ON DELETE CASCADE,
+  name            text NOT NULL,
+  run_date        date NOT NULL DEFAULT CURRENT_DATE,
+  invitees        jsonb NOT NULL DEFAULT '[]'::jsonb,
+  notes           text,
+  status          text NOT NULL DEFAULT 'open' CHECK (status IN ('open','closed')),
+  created_at      timestamptz NOT NULL DEFAULT now(),
+  updated_at      timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX checkin_batches_org_date_idx
+  ON public.checkin_batches(organisation_id, run_date DESC);
 
 
 -- =============================================================
@@ -395,6 +411,7 @@ ALTER TABLE public.meeting_todos            ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.annual_sessions          ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.quarterly_sessions       ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.team_checkins            ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.checkin_batches          ENABLE ROW LEVEL SECURITY;
 
 
 -- =============================================================
@@ -572,8 +589,16 @@ CREATE POLICY "admins write quarterly_sessions"  ON public.quarterly_sessions
   WITH CHECK (organisation_id IN (SELECT public.user_admin_org_ids(auth.uid())));
 
 -- team_checkins: SPECIAL — any active org member reads + inserts; only admins delete/update.
-CREATE POLICY "members read team_checkins" ON public.team_checkins
-  FOR SELECT USING (organisation_id IN (SELECT public.user_org_ids(auth.uid())));
+-- v0.5.132: batch-type team_checkins are admin/coach-only; annual/quarterly stay member-readable.
+CREATE POLICY "scoped read team_checkins" ON public.team_checkins
+  FOR SELECT USING (
+    CASE
+      WHEN session_type = 'batch'
+        THEN organisation_id IN (SELECT public.user_admin_org_ids(auth.uid()))
+      ELSE
+        organisation_id IN (SELECT public.user_org_ids(auth.uid()))
+    END
+  );
 CREATE POLICY "members insert own team_checkin" ON public.team_checkins
   FOR INSERT WITH CHECK (
     organisation_id IN (SELECT public.user_org_ids(auth.uid()))
@@ -586,6 +611,15 @@ CREATE POLICY "admins update team_checkins" ON public.team_checkins
 CREATE POLICY "admins delete team_checkins" ON public.team_checkins
   FOR DELETE
   USING (organisation_id IN (SELECT public.user_admin_org_ids(auth.uid())));
+
+-- v0.5.132: checkin_batches — members can read (so they see what they're invited to);
+-- admins + coaches manage.
+CREATE POLICY "members read checkin_batches" ON public.checkin_batches
+  FOR SELECT USING (organisation_id IN (SELECT public.user_org_ids(auth.uid())));
+CREATE POLICY "admins write checkin_batches" ON public.checkin_batches
+  FOR ALL
+  USING (organisation_id IN (SELECT public.user_admin_org_ids(auth.uid())))
+  WITH CHECK (organisation_id IN (SELECT public.user_admin_org_ids(auth.uid())));
 
 
 -- =============================================================

@@ -106,18 +106,21 @@
      ]
   */
 
-  let orgId=null;
+  let orgId=null, subId=null;
+  // Dual-mode scope: ?scope=account → account-level (sessions scoped by subscription_id);
+  // default → business-level (existing behaviour, scoped by organisation_id)
+  const SCOPE = (new URLSearchParams(location.search).get('scope') || 'business').toLowerCase();
+  const IS_ACCOUNT = SCOPE === 'account';
 
   function fmtDate(d){if(!d)return '';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}
   const STATUS_LABEL={scheduled:'Scheduled',in_progress:'In Progress',completed:'Completed'};
   const STATUS_CLASS={scheduled:'sp-scheduled',in_progress:'sp-in_progress',completed:'sp-completed'};
 
   async function loadSessions(){
-    const { data, error } = await _sb
-      .from('annual_sessions')
-      .select('*')
-      .eq('organisation_id', orgId)
-      .order('session_date', { ascending: false });
+    let q = _sb.from('annual_sessions').select('*').order('session_date', { ascending: false });
+    if (IS_ACCOUNT) q = q.eq('subscription_id', subId);
+    else           q = q.eq('organisation_id', orgId);
+    const { data, error } = await q;
     if(error){
       console.warn('Load annual sessions failed:', error.message);
       renderSessions([]);
@@ -146,16 +149,18 @@
   document.getElementById('new-session-btn').addEventListener('click', async ()=>{
     const today=new Date();
     const iso=today.toISOString().slice(0,10);
+    const payload = {
+      session_date: iso,
+      year: String(today.getFullYear()),
+      status: 'scheduled',
+      attendance: '',
+      areas_completed: {}
+    };
+    if (IS_ACCOUNT) payload.subscription_id = subId;
+    else            payload.organisation_id = orgId;
     const { data, error } = await _sb
       .from('annual_sessions')
-      .insert({
-        organisation_id: orgId,
-        session_date: iso,
-        year: String(today.getFullYear()),
-        status: 'scheduled',
-        attendance: '',
-        areas_completed: {}
-      })
+      .insert(payload)
       .select()
       .single();
     if(error || !data){
@@ -174,8 +179,20 @@
     if (!profile || profile.membership_status !== 'active') {
       window.location.href = 'inactive.html'; return;
     }
-    orgId = window.activeOrg && window.activeOrg.get();
-    if(!orgId){ window.location.href = 'index.html'; return; }
+    if (IS_ACCOUNT) {
+      subId = window.activeOrg && window.activeOrg.getSubscription && window.activeOrg.getSubscription();
+      if (!subId) { window.location.href = 'index.html'; return; }
+      // Update header for account scope
+      const back = document.querySelector('.header-back');
+      if (back) { back.setAttribute('href','account-planning.html'); back.textContent = '← Account Planning'; }
+      const ttl = document.querySelector('.ws-title');
+      if (ttl) ttl.innerHTML = '&#x1F5FA;&#xFE0F; Account Annual Planning';
+      const sub = document.querySelector('.ws-sub');
+      if (sub) sub.textContent = 'Annual sessions for the whole account (across every business).';
+    } else {
+      orgId = window.activeOrg && window.activeOrg.get();
+      if(!orgId){ window.location.href = 'index.html'; return; }
+    }
     await loadSessions();
     document.body.style.opacity='1';
   })();

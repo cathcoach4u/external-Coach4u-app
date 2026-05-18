@@ -142,7 +142,9 @@
      ]
   */
 
-  let orgId=null;
+  let orgId=null, subId=null;
+  const SCOPE = (new URLSearchParams(location.search).get('scope') || 'business').toLowerCase();
+  const IS_ACCOUNT = SCOPE === 'account';
 
   // Helpers for quarter math
   function quarterEndDate(qLabel){
@@ -169,11 +171,10 @@
   const STATUS_CLASS={scheduled:'sp-scheduled',in_progress:'sp-in_progress',completed:'sp-completed'};
 
   async function loadSessions(){
-    const { data, error } = await _sb
-      .from('quarterly_sessions')
-      .select('*')
-      .eq('organisation_id', orgId)
-      .order('session_date', { ascending: false });
+    let q = _sb.from('quarterly_sessions').select('*').order('session_date', { ascending: false });
+    if (IS_ACCOUNT) q = q.eq('subscription_id', subId);
+    else           q = q.eq('organisation_id', orgId);
+    const { data, error } = await q;
     if(error){
       console.warn('Load quarterly sessions failed:', error.message);
       renderSessions([]);
@@ -218,16 +219,15 @@
     const session_date=document.getElementById('ns-date').value;
     if(!session_date){showToast('Date is required','error');return}
     if(!target_quarter){showToast('Target quarter is required','error');return}
+    const payload = {
+      session_date, target_quarter,
+      status: 'scheduled', attendance: '', areas_completed: {}
+    };
+    if (IS_ACCOUNT) payload.subscription_id = subId;
+    else            payload.organisation_id = orgId;
     const { data, error } = await _sb
       .from('quarterly_sessions')
-      .insert({
-        organisation_id: orgId,
-        session_date,
-        target_quarter,
-        status: 'scheduled',
-        attendance: '',
-        areas_completed: {}
-      })
+      .insert(payload)
       .select()
       .single();
     if(error || !data){
@@ -246,8 +246,19 @@
     if (!profile || profile.membership_status !== 'active') {
       window.location.href = 'inactive.html'; return;
     }
-    orgId = window.activeOrg && window.activeOrg.get();
-    if(!orgId){ window.location.href = 'index.html'; return; }
+    if (IS_ACCOUNT) {
+      subId = window.activeOrg && window.activeOrg.getSubscription && window.activeOrg.getSubscription();
+      if (!subId) { window.location.href = 'index.html'; return; }
+      const back = document.querySelector('.header-back');
+      if (back) { back.setAttribute('href','account-planning.html'); back.textContent = '← Account Planning'; }
+      const ttl = document.querySelector('.ws-title');
+      if (ttl) ttl.innerHTML = '&#x1F3AF; Account Quarterly Planning';
+      const sub = document.querySelector('.ws-sub');
+      if (sub) sub.textContent = 'Quarterly sessions for the whole account (across every business).';
+    } else {
+      orgId = window.activeOrg && window.activeOrg.get();
+      if(!orgId){ window.location.href = 'index.html'; return; }
+    }
     await loadSessions();
     document.body.style.opacity='1';
   })();

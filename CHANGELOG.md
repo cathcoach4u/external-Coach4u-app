@@ -4,6 +4,29 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.132
+- **Dual-mode planning + new Team Check-ins module.** User asked: should planning live per-business or per-account? Answer: both. Sessions and check-in batches can now be created at either scope; admin picks when creating. Also asked: ability to delete an unintentional meeting; that's in too.
+- **SQL — `supabase/v0.5.132-delta.sql`:**
+  - **`annual_sessions` / `quarterly_sessions`** — `organisation_id` made nullable; new `subscription_id uuid` (nullable, FK → subscriptions). New CHECK constraint: exactly one of (`organisation_id`, `subscription_id`) is set per row. Existing per-business sessions keep working (organisation_id NOT NULL); new account-level sessions set subscription_id only.
+  - **`checkin_batches`** — new table for standalone check-in runs not tied to a planning session. Same dual-scope shape (organisation_id OR subscription_id). Columns: `name`, `run_date`, `invitees jsonb`, `notes`, `status` ('open'/'closed').
+  - **`team_checkins.session_type`** — CHECK widened to include `'batch'`. A submitter's row carries their own `organisation_id` (which sub-org they belong to) even when the batch / session is account-scoped.
+  - **Two new helper functions:** `public.user_account_ids(uid)` returns all subscription_ids the user has access to (owner OR active member of any org in the sub); `public.user_admin_account_ids(uid)` returns subs where the user is owner OR admin/coach of any org in the sub.
+  - **RLS rewritten on annual_sessions, quarterly_sessions, checkin_batches** to handle both scopes — biz rows checked via `user_org_ids` / `user_admin_org_ids`, account rows via the new `user_account_ids` / `user_admin_account_ids` helpers.
+  - **`team_checkins` SELECT** policy tightened: rows with `session_type='batch'` are admin/coach-only readable (per user direction "data analysed in one place, admin only"). Annual/quarterly rows stay member-readable as before.
+- **Front-end pages:**
+  - **New `team-checkins.html`** — list of batches at biz or account scope (via `?scope=account`). "+ New Check-in" modal creates a batch (name + date) and navigates to the workspace.
+  - **New `run-team-checkin.html`** — admin workspace for one batch. Editable name / date / status. Invitees list (name + email, no enforcement — informational). "Copy link" share button. Admin notes textarea. Aggregated results table with the 17 questions ranked by lowest-scoring at the top. Delete batch (with confirm — also deletes submitted check-in rows).
+  - **`team-checkin.html` (member form)** — now accepts `?batch_id=X&kind=batch` in addition to the existing `?session=X&type=annual|quarterly`. When the session/batch is account-scoped (subscription_id set, no organisation_id), the form looks up the user's first active org in that subscription and uses that as their submitting org_id. Membership verification + duplicate-check logic preserved.
+  - **`planning.html` (biz-level hub)** — gained a third card "Team Check-ins" alongside Annual + Quarterly.
+  - **`account-planning.html` (account-level hub)** — restructured with two sections: **"Run for the whole account"** (three account-scope cards: Annual / Quarterly / Team Check-ins) and **"Across all your businesses"** (the existing carousel links: annual / quarterly / check-in views per biz, read-only).
+  - **`annual-sessions.html`, `quarterly-sessions.html`** — accept `?scope=account` URL param. When set: queries scoped to `subscription_id` instead of `organisation_id`; "+ New Session" inserts with `subscription_id`; header rewires to point back to `account-planning.html`; page title gains "(Account)" indicator.
+  - **`run-annual-session.html`, `run-quarterly-session.html`** — detect scope from the loaded row (which scope column is set). Header-back link rewires to the matching scoped list; title shows "(Account)" when appropriate. All workspace functionality (notes, links, commitments from v0.5.131; check-in results; status flip) works identically across both scopes.
+- **Meeting delete** — `meeting.html` list view gains a small `×` button beside each meeting row. Click → confirm → `DELETE FROM meetings WHERE id = ?`. RLS lets admins+coaches delete; members can't.
+- **Build size:** 3 new pages (team-checkins.html, run-team-checkin.html, v0.5.132-delta.sql) + meaningful edits across ~8 existing pages + schema mirror updates.
+- **schema.sql** mirror: partial. The delta is the source of truth for applied changes; schema.sql will be brought fully into sync in a follow-up version.
+
+---
+
 ## v0.5.131
 - **Improved Annual Planning Session workspace** &mdash; richer capture, less rigid structure. User feedback: "the EOS way is too structured" and "maybe a link to their recording if this is helpful for clients. I don't want to store data &mdash; they can set up external folders and link it to docs for the session."
 - **`supabase/v0.5.131-delta.sql`** &mdash; three new columns on `annual_sessions` (all `ADD COLUMN IF NOT EXISTS`, no RLS changes):

@@ -289,7 +289,12 @@
       return;
     }
     _currentSession=s;
-    document.getElementById('ws-title').innerHTML='&#x1F4C5; Annual Planning — '+fmtDate(s.session_date);
+    // If this session is account-scoped, point the header-back at the account list.
+    if (s.subscription_id && !s.organisation_id) {
+      const back = document.querySelector('.header-back');
+      if (back) { back.setAttribute('href','annual-sessions.html?scope=account'); back.textContent = '← Account Annual Sessions'; }
+    }
+    document.getElementById('ws-title').innerHTML='&#x1F4C5; Annual Planning '+(s.subscription_id?'(Account)':'')+' — '+fmtDate(s.session_date);
     document.getElementById('ws-sub').textContent='Year '+(s.year||'')+' — track attendance, tick off each area as you cover it, and share the team check-in link.';
     await renderDetail(s);
   }
