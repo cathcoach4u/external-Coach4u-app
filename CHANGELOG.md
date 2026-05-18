@@ -4,6 +4,17 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.106
+- **Mobile responsive fixes for the standardized navy header (v0.5.105).** With "Your Business Coach" + back-link + biz-pill + Sign Out all in the same bar, the worst-case width at ~390px (iPhone) added up to ~415px — overflow / wrap territory. Audited the 22 navy-header pages: none of them have inline header CSS, so the fix is purely in `css/style.css`.
+- **Changes in `css/style.css`:**
+  - `@media (max-width: 640px)` — tightened `.header-inner` gap from 16px → 8px, `.header-left` gap from 16px → 10px with `min-width: 0; flex: 1 1 auto` so it can shrink. `.header-title` dropped from 17px → 16px with `white-space: nowrap; overflow: hidden; text-overflow: ellipsis` so it truncates instead of overflowing. `.header-back` and `.sign-out-btn` get `flex-shrink: 0; white-space: nowrap` so they stay intact. Sign Out padding shrunk 5px 10px → 5px 9px and font 13px → 12px.
+  - `@media (max-width: 480px)` — `.header-title` to 14px. `.biz-pill` font 11px → 10px, padding 3px 8px → 3px 7px, max-width 140px → 110px.
+  - `@media (max-width: 400px)` — new breakpoint just for tight phones. `.header-left` gap → 8px, `.header-title` → 13px, `.biz-pill` max-width → 90px, `.header-back` → 12px.
+- **Bottom-nav** (5 items: Home / Planning / Strategy / Operations / Learn) was already handled — each `.bottom-nav-item` uses `flex: 1`, so 5 even slots fit on any phone width down to ~320px.
+- **No per-page HTML changes** — all 22 navy-header pages share `css/style.css`, so the single CSS update fixes them all.
+
+---
+
 ## v0.5.105
 - **Every navy site-header now says "Your Business Coach"** instead of the page-specific name. User feedback: with the same navy bar showing different titles per page (Planning, Strategy, Core Values, etc.), there was no consistent brand anchor. The page-specific name was also redundant with the body subheading (`<h1 class="ws-title">🗺️ Planning</h1>` etc.) right below it.
 - **The header now reads identically on every business-level and account-level hub/worksheet page:** `← Back · Your Business Coach · [🏢 Active Business pill]`. Context comes from the back-link target (Home / Account / Strategy / etc.) and the body's page-intro `<h1>` (which already exists on every page — `core-values.html`'s "⭐ Core Values", `planning.html`'s "🗺️ Planning", `scorecard.html`'s "📊 Weekly Numbers", etc.).
