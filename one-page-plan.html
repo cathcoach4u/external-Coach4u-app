@@ -177,6 +177,15 @@
       color: #888;
       font-style: italic;
     }
+    .field-value.empty, .fin-cell .field-value.empty {
+      color: #b0b0b0; font-style: italic; font-weight: 500;
+    }
+    .num-list.empty-list {
+      color: #b0b0b0; font-style: italic; font-size: 0.72rem; list-style: none; padding: 0; margin: 0;
+    }
+    .values-pills.empty-pills {
+      color: #b0b0b0; font-style: italic; font-size: 0.72rem;
+    }
 
     .doc-footer {
       background: #f8f9fa;
@@ -241,12 +250,12 @@
 
       <div class="doc-header">
         <div>
-          <div class="doc-company">Your Business Name</div>
-          <div class="doc-company-sub">coach4u.com.au</div>
+          <div class="doc-company" id="opp-company">&mdash;</div>
+          <div class="doc-company-sub">One-Page Business Plan</div>
         </div>
         <div style="text-align:right;">
           <div class="doc-plan-title">One-Page Business Plan</div>
-          <div class="doc-year">2025 &ndash; 2035</div>
+          <div class="doc-year" id="opp-doc-year"></div>
         </div>
       </div>
 
@@ -256,21 +265,16 @@
           <div class="col-heading">Who We Are</div>
           <div class="field">
             <span class="field-label">Core Values</span>
-            <div class="values-pills" id="opp-values">
-              <span class="value-pill">Integrity</span>
-              <span class="value-pill">Growth mindset</span>
-              <span class="value-pill">Client first</span>
-              <span class="value-pill">Accountability</span>
-            </div>
+            <div class="values-pills" id="opp-values"></div>
           </div>
           <hr class="field-divider">
           <div class="field">
             <span class="field-label">Purpose</span>
-            <div class="field-value" id="opp-purpose">To help business owners build thriving, self-managing businesses so they can achieve freedom and fulfilment.</div>
+            <div class="field-value" id="opp-purpose"></div>
           </div>
           <div class="field">
             <span class="field-label">Niche</span>
-            <div class="field-value" id="opp-niche">Strengths-based business coaching for small and medium businesses across Australia.</div>
+            <div class="field-value" id="opp-niche"></div>
           </div>
           <hr class="field-divider">
           <div class="field">
@@ -283,32 +287,27 @@
           <div class="col-heading">Where We Are Going</div>
           <div class="field">
             <span class="field-label">10-Year Vision</span>
-            <div class="field-value" id="opp-ten-year">Australia&#x2019;s most trusted business coaching practice &mdash; 500 thriving client businesses, a team of 10 coaches, delivering measurable results nationwide.</div>
+            <div class="field-value" id="opp-ten-year"></div>
           </div>
           <hr class="field-divider">
           <div class="field">
             <span class="field-label">3-Year Picture</span>
             <div class="fin-row">
-              <div class="fin-cell"><span class="field-label">Target Date</span><div class="field-value" id="opp-3yr-date">June 2028</div></div>
-              <div class="fin-cell"><span class="field-label">Revenue</span><div class="field-value" id="opp-3yr-revenue">$1.2M</div></div>
-              <div class="fin-cell"><span class="field-label">Profit</span><div class="field-value" id="opp-3yr-profit">$360K</div></div>
+              <div class="fin-cell"><span class="field-label">Target Date</span><div class="field-value" id="opp-3yr-date"></div></div>
+              <div class="fin-cell"><span class="field-label">Revenue</span><div class="field-value" id="opp-3yr-revenue"></div></div>
+              <div class="fin-cell"><span class="field-label">Profit</span><div class="field-value" id="opp-3yr-profit"></div></div>
             </div>
-            <div class="field-value" id="opp-3yr-desc">4 coaches, 80 active clients, systemised 12-month program, recurring revenue model established.</div>
+            <div class="field-value" id="opp-3yr-desc"></div>
           </div>
           <hr class="field-divider">
           <div class="field">
             <span class="field-label">1-Year Plan</span>
             <div class="fin-row">
-              <div class="fin-cell"><span class="field-label">Target Date</span><div class="field-value" id="opp-1yr-date">Dec 2025</div></div>
-              <div class="fin-cell"><span class="field-label">Revenue</span><div class="field-value" id="opp-1yr-revenue">$420K</div></div>
-              <div class="fin-cell"><span class="field-label">Profit</span><div class="field-value" id="opp-1yr-profit">$105K</div></div>
+              <div class="fin-cell"><span class="field-label">Target Date</span><div class="field-value" id="opp-1yr-date"></div></div>
+              <div class="fin-cell"><span class="field-label">Revenue</span><div class="field-value" id="opp-1yr-revenue"></div></div>
+              <div class="fin-cell"><span class="field-label">Profit</span><div class="field-value" id="opp-1yr-profit"></div></div>
             </div>
-            <ul class="num-list" id="opp-1yr-goals">
-              <li><span class="n">1.</span> Sign 20 new clients through referral and speaking</li>
-              <li><span class="n">2.</span> Launch group coaching program (min. 8 participants)</li>
-              <li><span class="n">3.</span> Hire first associate coach by Q3</li>
-              <li><span class="n">4.</span> Complete and publish Signature Program workbook</li>
-            </ul>
+            <ul class="num-list" id="opp-1yr-goals"></ul>
           </div>
         </div>
 
@@ -316,26 +315,22 @@
           <div class="col-heading">How We Go to Market</div>
           <div class="field">
             <span class="field-label">Target Market</span>
-            <div class="field-value" id="opp-target-market">Business owners with 2&ndash;20 employees in professional services, trades, and health. Revenue $500K&ndash;$5M. Feel stuck or overwhelmed.</div>
+            <div class="field-value" id="opp-target-market"></div>
           </div>
           <hr class="field-divider">
           <div class="field">
             <span class="field-label">What Makes Us Different</span>
-            <ul class="num-list" id="opp-uniques">
-              <li><span class="n">1.</span> Strengths-based methodology &mdash; build on what&#x2019;s working</li>
-              <li><span class="n">2.</span> Structured accountability &mdash; weekly check-ins, measurable outcomes</li>
-              <li><span class="n">3.</span> Real-world experience &mdash; founded by a former business owner</li>
-            </ul>
+            <ul class="num-list" id="opp-uniques"></ul>
           </div>
           <hr class="field-divider">
           <div class="field">
             <span class="field-label">Our Process</span>
-            <div class="field-value" id="opp-process">Coach4U 4-Step System: Clarity &#x2192; Strategy &#x2192; Execution &#x2192; Momentum. 12 months, monthly 1:1 sessions, weekly check-ins.</div>
+            <div class="field-value" id="opp-process"></div>
           </div>
           <hr class="field-divider">
           <div class="field">
             <span class="field-label">Our Guarantee</span>
-            <div class="field-value" id="opp-guarantee">No measurable progress in your first 90 days? We&#x2019;ll refund your last month&#x2019;s coaching fee &mdash; no questions asked.</div>
+            <div class="field-value" id="opp-guarantee"></div>
           </div>
         </div>
 
@@ -369,73 +364,83 @@
       return (match ? match[1] : s).trim();
     }
 
-    function setText(id, value) {
-      if (value == null || value === '') return;
-      const el = document.getElementById(id);
-      if (el) el.textContent = value;
-    }
-
-    function renderNumList(id, raw) {
-      const text = String(raw || '').trim();
-      if (!text) return;
+    function setText(id, value, placeholder) {
       const el = document.getElementById(id);
       if (!el) return;
-      const items = text.split(/\r?\n/)
-        .map(line => line.trim())
-        // strip leading "1." / "1)" / "- " / "* " markers so we can renumber cleanly
-        .map(line => line.replace(/^\s*(?:\d+[.)]|[-*•])\s+/, '').trim())
-        .filter(Boolean);
-      if (!items.length) return;
+      const v = (value == null ? '' : String(value)).trim();
+      if (v) {
+        el.textContent = v;
+        el.classList.remove('empty');
+      } else {
+        el.textContent = placeholder || '—';
+        el.classList.add('empty');
+      }
+    }
+
+    function renderNumList(id, raw, emptyLabel) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const text = String(raw || '').trim();
+      const items = text
+        ? text.split(/\r?\n/)
+            .map(line => line.trim())
+            .map(line => line.replace(/^\s*(?:\d+[.)]|[-*•])\s+/, '').trim())
+            .filter(Boolean)
+        : [];
+      if (!items.length) {
+        el.innerHTML = '<li style="list-style:none;padding:0;margin:0;color:#b0b0b0;font-style:italic;font-size:0.72rem;">' + escapeHtml(emptyLabel || '— not recorded —') + '</li>';
+        return;
+      }
       el.innerHTML = items.map((t, i) =>
         `<li><span class="n">${i + 1}.</span> ${escapeHtml(t)}</li>`
       ).join('');
     }
 
     function renderValuesPills(data) {
-      if (!data) return;
       const el = document.getElementById('opp-values');
       if (!el) return;
       const pills = [];
-      for (let i = 1; i <= 8; i++) {
-        const v = (data['value_' + i] || '').toString().trim();
-        if (v) pills.push(v);
+      if (data) {
+        for (let i = 1; i <= 8; i++) {
+          const v = (data['value_' + i] || '').toString().trim();
+          if (v) pills.push(v);
+        }
       }
-      if (!pills.length) return;
+      if (!pills.length) {
+        el.classList.add('empty-pills');
+        el.innerHTML = 'No core values recorded yet.';
+        return;
+      }
+      el.classList.remove('empty-pills');
       el.innerHTML = pills.map(v =>
         `<span class="value-pill">${escapeHtml(v)}</span>`
       ).join('');
     }
 
     function applyWorksheetData(cv, cf, tg, ms) {
-      // Core values pills
-      if (cv) renderValuesPills(cv);
+      cf = cf || {};
+      tg = tg || {};
+      ms = ms || {};
 
-      // Core focus
-      if (cf) {
-        setText('opp-purpose', cf.purpose);
-        setText('opp-niche', cf.niche);
-      }
+      renderValuesPills(cv);
 
-      // Targets
-      if (tg) {
-        setText('opp-ten-year', tg.ten_year);
-        setText('opp-3yr-date', tg.three_year_date);
-        setText('opp-3yr-revenue', tg.three_year_revenue);
-        setText('opp-3yr-profit', tg.three_year_profit);
-        setText('opp-3yr-desc', tg.three_year_desc);
-        setText('opp-1yr-date', tg.one_year_date);
-        setText('opp-1yr-revenue', tg.one_year_revenue);
-        setText('opp-1yr-profit', tg.one_year_profit);
-        renderNumList('opp-1yr-goals', tg.one_year_goals);
-      }
+      setText('opp-purpose', cf.purpose, '— not recorded —');
+      setText('opp-niche',   cf.niche,   '— not recorded —');
 
-      // Marketing strategy
-      if (ms) {
-        setText('opp-target-market', ms.target_market);
-        renderNumList('opp-uniques', ms.uniques);
-        setText('opp-process', ms.proven_process);
-        setText('opp-guarantee', ms.guarantee);
-      }
+      setText('opp-ten-year',     tg.ten_year,           '— not recorded —');
+      setText('opp-3yr-date',     tg.three_year_date,    '—');
+      setText('opp-3yr-revenue',  tg.three_year_revenue, '—');
+      setText('opp-3yr-profit',   tg.three_year_profit,  '—');
+      setText('opp-3yr-desc',     tg.three_year_desc,    '— not recorded —');
+      setText('opp-1yr-date',     tg.one_year_date,      '—');
+      setText('opp-1yr-revenue',  tg.one_year_revenue,   '—');
+      setText('opp-1yr-profit',   tg.one_year_profit,    '—');
+      renderNumList('opp-1yr-goals', tg.one_year_goals, '— no 1-year goals recorded —');
+
+      setText('opp-target-market', ms.target_market,  '— not recorded —');
+      renderNumList('opp-uniques', ms.uniques,        '— no differentiators recorded —');
+      setText('opp-process',       ms.proven_process, '— not recorded —');
+      setText('opp-guarantee',     ms.guarantee,      '— not recorded —');
     }
 
     function renderTeamTable(team) {
@@ -473,13 +478,24 @@
       const orgId = window.activeOrg && window.activeOrg.get();
       if (!orgId) { window.location.href = 'index.html'; return; }
 
+      // Populate the printed-doc header — business name + year span
+      const companyEl = document.getElementById('opp-company');
+      const cachedName = window.activeOrg.getName && window.activeOrg.getName();
+      if (companyEl) companyEl.textContent = cachedName || '—';
+      const yearEl = document.getElementById('opp-doc-year');
+      if (yearEl) {
+        const y = new Date().getFullYear();
+        yearEl.textContent = y + ' – ' + (y + 10);
+      }
+
       try {
-        const [cv, cf, tg, ms, lt] = await Promise.all([
+        const [cv, cf, tg, ms, lt, org] = await Promise.all([
           supabase.from('core_values').select('*').eq('organisation_id', orgId).maybeSingle(),
           supabase.from('core_focus').select('*').eq('organisation_id', orgId).maybeSingle(),
           supabase.from('targets').select('*').eq('organisation_id', orgId).maybeSingle(),
           supabase.from('marketing_strategy').select('*').eq('organisation_id', orgId).maybeSingle(),
-          supabase.from('leadership_team_members').select('*').eq('organisation_id', orgId).order('sort_order', { ascending: true })
+          supabase.from('leadership_team_members').select('*').eq('organisation_id', orgId).order('sort_order', { ascending: true }),
+          cachedName ? Promise.resolve(null) : supabase.from('organisations').select('name').eq('id', orgId).maybeSingle()
         ]);
 
         const cvRow = (cv && !cv.error && cv.data) ? cv.data : null;
@@ -487,6 +503,10 @@
         const tgRow = (tg && !tg.error && tg.data) ? tg.data : null;
         const msRow = (ms && !ms.error && ms.data) ? ms.data : null;
         const ltRows = (lt && !lt.error && Array.isArray(lt.data)) ? lt.data : [];
+
+        if (!cachedName && org && org.data && org.data.name && companyEl) {
+          companyEl.textContent = org.data.name;
+        }
 
         applyWorksheetData(cvRow, cfRow, tgRow, msRow);
         renderTeamTable(ltRows);

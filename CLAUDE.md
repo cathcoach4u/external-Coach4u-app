@@ -130,10 +130,11 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.103
+v0.5.104
 
 ## Latest
-- **v0.5.103** — Removed the yellow "data-layer migration pending" banner from all 13 account-level carousel pages. After v0.5.99-v0.5.102 the migration is done — those pages now read live Supabase data, and the banner was stale and misleading (it kept appearing whenever a business had no data yet, which the per-card empty-state placeholders already communicate). Stripped the `<div id="dataBanner">…</div>` markup + the `if (!anyData) … display = 'block'` JS toggle from all 13 leaf pages. The `.data-banner` CSS rules are left behind as harmless dead code.
+- **v0.5.104** — Stripped hardcoded sample text from `one-page-plan.html`. Until now the doc rendered "Integrity / Growth mindset / Client first / Accountability" pills + Coach4U-flavoured purpose, niche, 10-year vision, revenue/profit, goals etc. as literal HTML — the v0.5.99 migration switched the data source to Supabase but the render helpers only OVERWROTE the fallback HTML when a field had a value, so empty Supabase rows left the placeholder text showing. Cleared every hardcoded `opp-*` value; updated `setText` / `renderNumList` / `renderValuesPills` to always render, with muted-italic "— not recorded —" placeholders on empty. Doc-header company name now reads from `window.activeOrg.getName()` (with a Supabase fallback if the cache is empty), and the year span uses `today + 10 years` instead of hardcoded `2025 – 2035`.
+- **v0.5.103** — Removed the yellow "data-layer migration pending" banner from all 13 account-level carousel pages.
 - **v0.5.102** — `team-checkin.html` wired to Supabase (login required). The public form is no longer anonymous — team members must sign in with their own Supabase account to submit, matching the team-scoped architecture documented below. Flow: link → auth gate (redirects to `login.html?returnTo=…` if not signed in) → fetch the session via RLS (denies if the user isn't a member of the owning org) → check for existing submission (block resubmission, show "Already submitted") → render the 17-question form with name pre-filled from `team_members.display_name` → INSERT into `team_checkins` with `user_id = auth.uid()`. `login.html` now honours a same-origin `?returnTo=` param so users land back on the check-in after sign-in.
 - **v0.5.101** — Planning batch wired to Supabase. The 4 planning admin pages (annual-sessions, run-annual-session, quarterly-sessions, run-quarterly-session) now read/write to annual_sessions / quarterly_sessions tables scoped by active org, and read team_checkins for aggregated results.
 

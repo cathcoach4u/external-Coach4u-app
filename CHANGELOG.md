@@ -4,6 +4,19 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.104
+- **Stripped hardcoded sample text from `one-page-plan.html`.** This was the root cause of the user-reported "the previous dummy data is still appearing". The page's body had Coach4U-flavoured sample text baked into the HTML (Integrity / Growth mindset / Client first / Accountability pills; "To help business owners build thriving…" purpose; "$1.2M" 3-year revenue; etc.). The v0.5.99 migration swapped the data source from localStorage to Supabase but kept the render helpers as overlays — `setText` / `renderValuesPills` / `renderNumList` only OVERWROTE the DOM when the field had a value, so when the Supabase row was empty (e.g. a fresh business), the hardcoded fallback stayed visible. Looked like the data had migrated; was actually static markup.
+- **Cleared every `opp-*` element to empty / `&mdash;`** so the doc starts with no fake content baked in. Including the doc-header `Your Business Name` → bound to active-org name; doc-year `2025 – 2035` → `currentYear – currentYear+10`.
+- **Helpers updated to always render with placeholders:**
+  - `setText(id, value, placeholder)` now always touches the DOM. Empty value → renders the placeholder (default `—`) with a `.empty` class for muted-italic styling.
+  - `renderNumList(id, raw, emptyLabel)` renders a single muted `<li>` with the empty label when no items.
+  - `renderValuesPills(data)` adds an `.empty-pills` class and "No core values recorded yet." text when no values.
+- **CSS additions:** `.field-value.empty` / `.fin-cell .field-value.empty` / `.num-list.empty-list` / `.values-pills.empty-pills` — all muted grey italic.
+- **Org name fetch:** init reads `window.activeOrg.getName()` first. If the cache is empty (e.g. user bookmarked the URL), it adds a 6th parallel query to `organisations` for the name as a fallback so the doc-header always populates.
+- **No behaviour change** when the Supabase row IS filled — those values still render the same way.
+
+---
+
 ## v0.5.103
 - **Removed the stale "data-layer migration pending" banner from all 13 account-level carousel pages.** The yellow `data-banner` was introduced in v0.5.91 / v0.5.96 when the cross-business carousel pages shipped before the worksheet pages were wired to Supabase. After the v0.5.99–v0.5.102 migration the banner became wrong: it kept firing whenever every business returned empty data, but that's no longer "data layer pending" — it's just "no one's filled in this worksheet yet", which the per-card empty-state placeholders (e.g. "No core values recorded yet") already communicate clearly.
 - **Mechanics:** stripped the `<div id="dataBanner">…</div>` markup AND the `if (!anyData) document.getElementById('dataBanner').style.display = 'block'` JS toggle from each of the 13 carousel pages: `account-plans`, `account-values`, `account-focus`, `account-targets`, `account-marketing`, `account-leadership`, `account-annual`, `account-quarterly`, `account-checkins`, `account-numbers`, `account-goals`, `account-meetings`, `account-issues`. The `.data-banner` CSS class definitions are left in place as harmless dead code.
