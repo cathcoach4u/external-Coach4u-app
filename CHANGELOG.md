@@ -4,6 +4,34 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.126
+- **Deepened the 9 remaining light Learning Vault guides** to match the depth of v0.5.125's Core Values rewrite. The parity audit (run in v0.5.125) found 6 TOO LIGHT and 3 LIGHT guides versus the EOS implementer source docs in `/EOS/`. Each is now a real how-to playbook with the actual exercise the facilitator runs, not a concept summary.
+- **What's now in each guide** (the patterns the audit flagged as universally missing):
+  - **Silent-write-then-share-around-the-table** facilitation pattern at the start of every exercise
+  - **Keep / Kill / Combine** voting mechanic (colour-coded where relevant)
+  - **Closing read-back or visualisation checks** ("when this is done, will it have been a good X?", "close your eyes — do you all see it?")
+  - Explicit **timings per step** so the session can be run to the clock
+  - The **specific prompts** that elicit good answers (e.g. the "desert-island" prompt for the scorecard, the "100 of them" prompt for values)
+- **What each guide gained:**
+  - **Core Focus** — silent-write / stir-the-pot / 80% consensus sequence; 4 Purpose archetypes (Solving / Helping / Building / Winning); "client × problem × outcome" Niche test
+  - **Targets** — three sub-exercises (10-Year / 3-Year / 1-Year) each with their own steps; the close-eyes test on 3-Year; the budget-support check on 1-Year; cascade to departmental plans
+  - **Leadership Team** — two ground rules (forward 6–12 months; no people yet); three major functions + Integrator; LMA rule (Lead / Manage / Accountability); fit test (understands / wants / capacity); the 3 yes questions
+  - **Quarterly Goals** — Big Rocks (Covey) + laser focus framing; full 7-step exercise (silent → board → K/K/C colour-coded → star round → SMART → first step → read-back); don't-erase-the-killed-list rule
+  - **Weekly Numbers** — the 8 reasons every leader needs a number; desert-island prompt; two-job test (pulse + predict); lead vs lag filter (≥ 50% leading)
+  - **Weekly Meeting** — the 5-point cadence rule; explicit "drop it down" principle for the front of the agenda; 90%-of-todos-dropping-off rule; cascading messages in conclude
+  - **Issues** — full 3-step Identify/Discuss/Resolve protocol with examples; the 80% rule + "disagree and commit"; 30-second prioritisation ritual
+  - **Quarterly Planning Session** — 9-step agenda with timings; 80% completion target; operating-system health check across 6 components
+  - **Annual Planning Session** — 2-day structured agenda (Day 1: where are we / Lencioni 5-Dysfunctions / One Thing / SWOT; Day 2: 3-Year / 1-Year / Q1 / cascade); the One Thing exercise (60 min) called out as highest-leverage of the two days
+- **No EOS trademark terminology** in user-facing copy — the wording rules from v0.5.116 still apply. The methodology comes from the EOS implementer guides; the Lencioni 5-Dysfunctions framework and Covey's Big Rocks metaphor are non-EOS public sources cited directly. The DB table name `rocks` keeps its name; UI text reads "Quarterly Goals".
+- **3 guides left unchanged** per the audit:
+  - `marketing-strategy.html` — verdict SOLID; VB2 source (where Marketing Strategy is taught in EOS) is a 2-byte stub in the repo, no docx fallback, so couldn't deepen against a source.
+  - `financials.html` — no EOS counterpart (financials aren't a separate EOS tool).
+  - `team-checkin.html` — Organizational Checkup source not in the repo.
+- **Built via a one-shot Python rewrite script** (`_deepen_guides.py`, deleted after the build) — each guide's body sections + tip body replaced in place, preserving the smart-back-link header (v0.5.122) and the bottom CTA row.
+- **No SQL.** Pure content build.
+
+---
+
 ## v0.5.125
 - **Rewrote `learn/core-values.html` to match the depth of the original EOS implementation experience.** User feedback: "Check again at the activities especially the values one as I think the one written is a little light on." Confirmed by re-reading the EOS VB1 (Vision Building Day 1) Implementer Guide — the Core Values exercise in that document is a 2-hour structured group exercise; my guide had compressed it to 4 bullet points.
 - **What's now in the guide** (~800 words, up from ~200):
