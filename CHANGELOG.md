@@ -4,6 +4,24 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.131
+- **Improved Annual Planning Session workspace** &mdash; richer capture, less rigid structure. User feedback: "the EOS way is too structured" and "maybe a link to their recording if this is helpful for clients. I don't want to store data &mdash; they can set up external folders and link it to docs for the session."
+- **`supabase/v0.5.131-delta.sql`** &mdash; three new columns on `annual_sessions` (all `ADD COLUMN IF NOT EXISTS`, no RLS changes):
+  - `notes text` &mdash; free-form session notes
+  - `external_links jsonb` &mdash; array of `{label, url}`; defaults to `[]`
+  - `commitments jsonb` &mdash; array of `{name, commitment}`; defaults to `[]`
+- **`run-annual-session.html`** &mdash; three new blocks inserted between Areas-to-Cover and Team Check-in:
+  - **Session Resources** &mdash; "Link to your recording, slides, shared folder, or photos. Nothing is uploaded &mdash; just URLs to your own storage (Google Drive, Zoom, Notion, etc.)" Add/remove rows with label + URL inputs. URL field rendered in teal monospace for visual scanning.
+  - **Session Notes** &mdash; "What got decided? What surprised you? What worked, what didn't?" Big resizable textarea, autosaves on input (500ms debounce).
+  - **Personal Commitments** &mdash; "What's the one thing each leader will work on this year? These carry into your quarterly sessions." Add/remove rows with name + multi-line commitment. The "One Thing" exercise from the deepened annual guide gets a place to land.
+- **CSS additions** for `.row-list`, `.link-row`, `.commit-row`, `.row-input`, `.row-del`, `.row-add`, `.row-empty` &mdash; consistent grid-based row pattern shared between links and commitments. Mobile breakpoint at 540px stacks the URL/textarea below the label/name to one column.
+- **Autosave behaviour** &mdash; all three new sections auto-save with a 500ms debounce. Adding or deleting a row saves immediately. Failed saves show a toast.
+- **Existing structure preserved** &mdash; the 4-area checklist (Review Last Year, Refresh Core Values + Core Focus, Update 10-Year + 3-Year Outlook, Set 1-Year Plan + Q1 Goals) stays as a lightweight preflight. The new sections are where the actual session substance lives.
+- **Scoped to annual sessions only** &mdash; quarterly sessions unchanged for now. Same treatment can be applied later if useful.
+- **No file storage.** Per the user: "I don't want to store data." Only URL strings + text are stored; no uploads, no file references, no third-party API integrations.
+
+---
+
 ## v0.5.130
 - **Dropped all dead Coach4U sample-data seeds from `business.html`'s `ensureSeeds()`.** The strategy seeds went in v0.5.113; this version removes the operations + planning seeds — `coach4u_demo_meetings`, `coach4u_demo_rocks`, `coach4u_demo_scorecard`, `coach4u_demo_issues`, `coach4u_annual_sessions`, `coach4u_quarterly_sessions`. 130 lines of dead code gone. Every page now reads from Supabase; `ensureSeeds()` stays as a no-op stub so the call-site in `init()` doesn't need editing.
 - **Rewrote `operations.html`'s "Run Weekly Meeting" button to use Supabase.** It was the last reader of `coach4u_demo_meetings`. Now finds-or-creates a `meetings` row for this Monday (this org + `meeting_date = thisMondayIso`) and navigates to `run-meeting.html?id=…`. Falls back to `business.html` if there's no active org.

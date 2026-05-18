@@ -324,6 +324,10 @@ CREATE TABLE public.annual_sessions (
                   CHECK (status IN ('scheduled','in_progress','completed')),
   attendance      text NOT NULL DEFAULT '',
   areas_completed jsonb NOT NULL DEFAULT '{}'::jsonb,
+  -- v0.5.131: richer session capture
+  notes           text,
+  external_links  jsonb NOT NULL DEFAULT '[]'::jsonb,  -- [{label, url}, ...]
+  commitments     jsonb NOT NULL DEFAULT '[]'::jsonb,  -- [{name, commitment}, ...]
   created_at      timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX annual_sessions_org_date_idx
