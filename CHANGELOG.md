@@ -4,6 +4,17 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.127
+- **Removed the standalone Values Discovery exercise.** User feedback: "I don't think the run the values guide is needed. It's just not helpful compared to the comprehensive other document." Agreed — the 3-step interactive page (~430 lines) was always a slimmer take, and the deepened Core Values guide (v0.5.125) now contains the full facilitated exercise with timings and steps anyway. Two doors to the same room, where one is the better door.
+- **Changes:**
+  - Deleted `learn/values-discovery.html` (the 3-step interactive page).
+  - Removed the "Run the Values Discovery exercise" ghost button from `learning-vault.html`'s Core Values card. The card now shows two actions: `Read the guide →` (primary) and `Open worksheet` (ghost).
+  - Removed the "Run the Values Discovery exercise" primary CTA from the bottom of `learn/core-values.html`. The CTA row now shows just `Open the Core Values worksheet →` (primary, teal). Reading the guide and running the exercise are now the same thing — the guide is the script.
+- **Verified zero orphan references** to `values-discovery.html` across `*.html` and `learn/*.html`.
+- **No SQL.**
+
+---
+
 ## v0.5.126
 - **Deepened the 9 remaining light Learning Vault guides** to match the depth of v0.5.125's Core Values rewrite. The parity audit (run in v0.5.125) found 6 TOO LIGHT and 3 LIGHT guides versus the EOS implementer source docs in `/EOS/`. Each is now a real how-to playbook with the actual exercise the facilitator runs, not a concept summary.
 - **What's now in each guide** (the patterns the audit flagged as universally missing):
