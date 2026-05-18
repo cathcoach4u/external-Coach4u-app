@@ -94,10 +94,6 @@
     <p>Most-recent team check-in results per business &mdash; submissions, average score, and latest contributors.</p>
   </div>
 
-  <div id="dataBanner" class="data-banner" style="display:none;">
-    <strong>Heads up:</strong> Team check-ins currently save locally on each business. Once the data layer migration lands (v0.5.97+), submissions sync to Supabase and this page populates automatically.
-  </div>
-
   <div id="plansWrap" class="plans-wrap">
     <div class="state-msg">Loading your businesses&hellip;</div>
   </div>
@@ -230,7 +226,6 @@
       (checkinData || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.submissions.push(r); });
 
       const anyData = orgs.some(o => ((byOrg.get(o.id) || {}).submissions || []).length > 0);
-      if (!anyData) document.getElementById('dataBanner').style.display = 'block';
 
       let currentIdx = 0;
       function renderCurrent() {

@@ -4,6 +4,13 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.103
+- **Removed the stale "data-layer migration pending" banner from all 13 account-level carousel pages.** The yellow `data-banner` was introduced in v0.5.91 / v0.5.96 when the cross-business carousel pages shipped before the worksheet pages were wired to Supabase. After the v0.5.99–v0.5.102 migration the banner became wrong: it kept firing whenever every business returned empty data, but that's no longer "data layer pending" — it's just "no one's filled in this worksheet yet", which the per-card empty-state placeholders (e.g. "No core values recorded yet") already communicate clearly.
+- **Mechanics:** stripped the `<div id="dataBanner">…</div>` markup AND the `if (!anyData) document.getElementById('dataBanner').style.display = 'block'` JS toggle from each of the 13 carousel pages: `account-plans`, `account-values`, `account-focus`, `account-targets`, `account-marketing`, `account-leadership`, `account-annual`, `account-quarterly`, `account-checkins`, `account-numbers`, `account-goals`, `account-meetings`, `account-issues`. The `.data-banner` CSS class definitions are left in place as harmless dead code.
+- **No other functional changes.** Carousels still work end-to-end; empty cards still show "— not recorded —" / "No X recorded yet" inline; the share-link experience is unchanged.
+
+---
+
 ## v0.5.102
 - **`team-checkin.html` wired to Supabase — login required.** The deferred item from v0.5.101 is now done. The form is no longer anonymous; respondents sign in with their Supabase account, which lets the page validate them via RLS and stamp `team_checkins.user_id` properly. Matches the "team-scoped, role-based" architecture documented in `CLAUDE.md`.
 - **New flow:**

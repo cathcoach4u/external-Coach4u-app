@@ -386,10 +386,6 @@
     <p>Step through every business&rsquo; strategic one-pager. Useful for cross-business meetings, board reviews, and spotting alignment gaps.</p>
   </div>
 
-  <div id="dataBanner" class="data-banner" style="display:none;">
-    <strong>Heads up:</strong> Strategy worksheets currently save locally on each business. Once the data layer migration lands (v0.5.94), edits sync to Supabase and this page populates automatically. For now the layout shows the structure with empty placeholders where data hasn&rsquo;t synced yet.
-  </div>
-
   <div id="plansWrap" class="plans-wrap">
     <div class="state-msg">Loading your businesses&hellip;</div>
   </div>
@@ -641,7 +637,6 @@
         return false;
       });
       if (!anyData) {
-        document.getElementById('dataBanner').style.display = 'block';
       }
 
       /* ============== carousel state + render ============== */

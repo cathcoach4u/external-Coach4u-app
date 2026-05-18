@@ -105,10 +105,6 @@
     <p>This quarter&rsquo;s rocks for each business &mdash; with on-track status and owners.</p>
   </div>
 
-  <div id="dataBanner" class="data-banner" style="display:none;">
-    <strong>Heads up:</strong> Quarter goals (rocks) currently save locally on each business. Once the data layer migration lands (v0.5.97+), edits sync to Supabase and this page populates automatically.
-  </div>
-
   <div id="plansWrap" class="plans-wrap">
     <div class="state-msg">Loading your businesses&hellip;</div>
   </div>
@@ -223,7 +219,6 @@
       (rocksData || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.goals.push(r); });
 
       const anyData = orgs.some(o => ((byOrg.get(o.id) || {}).goals || []).some(g => g.quarter === qStr));
-      if (!anyData) document.getElementById('dataBanner').style.display = 'block';
 
       let currentIdx = 0;
       function renderCurrent() {

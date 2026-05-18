@@ -97,10 +97,6 @@
     <p>10-year vision, 3-year picture, and 1-year plan &mdash; compared across every business in your account.</p>
   </div>
 
-  <div id="dataBanner" class="data-banner" style="display:none;">
-    <strong>Heads up:</strong> Targets currently save locally on each business. Once the data layer migration lands (v0.5.97+), edits sync to Supabase and this page populates automatically.
-  </div>
-
   <div id="plansWrap" class="plans-wrap">
     <div class="state-msg">Loading your businesses&hellip;</div>
   </div>
@@ -210,7 +206,6 @@
         return ['ten_year','three_year_date','three_year_revenue','three_year_profit','three_year_desc','one_year_date','one_year_revenue','one_year_profit','one_year_goals']
           .some(k => (t[k] || '').toString().trim());
       });
-      if (!anyData) document.getElementById('dataBanner').style.display = 'block';
 
       let currentIdx = 0;
       function renderCurrent() {

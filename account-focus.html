@@ -96,10 +96,6 @@
     <p>See each business&rsquo; purpose and niche side-by-side &mdash; compare what makes them tick.</p>
   </div>
 
-  <div id="dataBanner" class="data-banner" style="display:none;">
-    <strong>Heads up:</strong> Core focus currently saves locally on each business. Once the data layer migration lands (v0.5.97+), edits sync to Supabase and this page populates automatically.
-  </div>
-
   <div id="plansWrap" class="plans-wrap">
     <div class="state-msg">Loading your businesses&hellip;</div>
   </div>
@@ -182,7 +178,6 @@
         const d = byOrg.get(o.id);
         return d && d.coreFocus && ((d.coreFocus.purpose || '').toString().trim() || (d.coreFocus.niche || '').toString().trim());
       });
-      if (!anyData) document.getElementById('dataBanner').style.display = 'block';
 
       let currentIdx = 0;
       function renderCurrent() {

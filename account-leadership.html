@@ -94,10 +94,6 @@
     <p>See who leads each business in your account &mdash; names, roles and responsibilities side-by-side.</p>
   </div>
 
-  <div id="dataBanner" class="data-banner" style="display:none;">
-    <strong>Heads up:</strong> Leadership team data currently saves locally on each business. Once the data layer migration lands (v0.5.97+), edits sync to Supabase and this page populates automatically.
-  </div>
-
   <div id="plansWrap" class="plans-wrap">
     <div class="state-msg">Loading your businesses&hellip;</div>
   </div>
@@ -178,7 +174,6 @@
         const t = (byOrg.get(o.id) || {}).team || [];
         return t.some(m => !m.placeholder && ((m.name || '').trim() || (m.role || '').trim()));
       });
-      if (!anyData) document.getElementById('dataBanner').style.display = 'block';
 
       let currentIdx = 0;
       function renderCurrent() {

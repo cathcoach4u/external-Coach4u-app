@@ -91,10 +91,6 @@
     <p>Compare target market, differentiators, process and guarantee across every business in your account.</p>
   </div>
 
-  <div id="dataBanner" class="data-banner" style="display:none;">
-    <strong>Heads up:</strong> Marketing strategy currently saves locally on each business. Once the data layer migration lands (v0.5.97+), edits sync to Supabase and this page populates automatically.
-  </div>
-
   <div id="plansWrap" class="plans-wrap">
     <div class="state-msg">Loading your businesses&hellip;</div>
   </div>
@@ -192,7 +188,6 @@
         return ['target_market','uniques','proven_process','guarantee']
           .some(k => (m[k] || '').toString().trim());
       });
-      if (!anyData) document.getElementById('dataBanner').style.display = 'block';
 
       let currentIdx = 0;
       function renderCurrent() {

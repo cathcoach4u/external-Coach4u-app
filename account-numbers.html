@@ -91,10 +91,6 @@
     <p>Scorecard metrics, owners, goals and the last 4 weeks of data &mdash; per business.</p>
   </div>
 
-  <div id="dataBanner" class="data-banner" style="display:none;">
-    <strong>Heads up:</strong> Scorecard metrics currently save locally on each business. Once the data layer migration lands (v0.5.97+), entries sync to Supabase and this page populates automatically.
-  </div>
-
   <div id="plansWrap" class="plans-wrap">
     <div class="state-msg">Loading your businesses&hellip;</div>
   </div>
@@ -223,7 +219,6 @@
       });
 
       const anyData = orgs.some(o => ((byOrg.get(o.id) || {}).metrics || []).length > 0);
-      if (!anyData) document.getElementById('dataBanner').style.display = 'block';
 
       let currentIdx = 0;
       function renderCurrent() {

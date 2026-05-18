@@ -98,10 +98,6 @@
     <p>Live list of unresolved issues per business &mdash; with owner and date raised.</p>
   </div>
 
-  <div id="dataBanner" class="data-banner" style="display:none;">
-    <strong>Heads up:</strong> Issues currently save locally on each business. Once the data layer migration lands (v0.5.97+), edits sync to Supabase and this page populates automatically.
-  </div>
-
   <div id="plansWrap" class="plans-wrap">
     <div class="state-msg">Loading your businesses&hellip;</div>
   </div>
@@ -199,7 +195,6 @@
       (issuesData || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.issues.push(r); });
 
       const anyData = orgs.some(o => ((byOrg.get(o.id) || {}).issues || []).length > 0);
-      if (!anyData) document.getElementById('dataBanner').style.display = 'block';
 
       let currentIdx = 0;
       function renderCurrent() {
