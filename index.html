@@ -37,8 +37,36 @@
     .bottom-nav-item.active, .bottom-nav-item:hover { color: #0D9488; text-decoration: none; }
     .bottom-nav-icon { font-size: 20px; line-height: 1; }
 
+    /* ── Section 0: Account switcher (multi-tenant) ── */
+    .acct-switcher {
+      display: flex; align-items: center; gap: 10px;
+      padding: 16px 16px 0; flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px; margin-bottom: 6px;
+    }
+    .switcher-label {
+      font-size: 0.7rem; color: #888; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .switcher-select {
+      padding: 7px 10px; border-radius: 8px;
+      border: 1px solid var(--border);
+      font-family: inherit; font-size: 0.88rem; font-weight: 700;
+      color: var(--primary); background: white;
+      min-width: 180px; cursor: pointer;
+    }
+    .switcher-btn {
+      padding: 7px 12px; border-radius: 8px;
+      background: var(--accent); color: white;
+      border: none; cursor: pointer;
+      font-family: inherit; font-size: 0.78rem; font-weight: 700;
+      margin-left: auto;
+      transition: background 0.15s;
+    }
+    .switcher-btn:hover { background: var(--accent-dark); }
+
     /* ── Section A: Account header ── */
-    .acct-header { padding: 20px 16px 4px; }
+    .acct-header { padding: 14px 16px 4px; }
     .acct-title { font-size: 1.25rem; font-weight: 900; color: var(--primary); margin: 0 0 4px; letter-spacing: -0.2px; }
     .acct-sub { font-size: 0.82rem; color: #666; margin: 0 0 8px; line-height: 1.5; }
     .acct-actions { display: flex; gap: 14px; flex-wrap: wrap; }
@@ -294,6 +322,13 @@
 
   <div class="container">
 
+    <!-- Section 0: Account switcher (multi-tenant) -->
+    <div class="acct-switcher" id="acctSwitcher" style="display:none;">
+      <span class="switcher-label">Account:</span>
+      <select id="accountSwitcher" class="switcher-select"></select>
+      <button id="newClientAccountBtn" class="switcher-btn">+ New client account</button>
+    </div>
+
     <!-- Section A: Account header -->
     <div class="acct-header">
       <h1 class="acct-title" id="accountName">&#x1F3E2; Your account</h1>
@@ -362,6 +397,31 @@
       <div class="modal-footer">
         <button class="btn-secondary" id="renameCancel">Cancel</button>
         <button class="btn-primary" id="renameSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Client Account modal -->
+  <div class="modal-overlay hidden" id="newAcctModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Set up a new client account</span>
+        <button class="modal-close" id="newAcctClose">&times;</button>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Client / account name *</label>
+        <input type="text" class="modal-input" id="newAcctName" placeholder="e.g. Acme Group" maxlength="80"/>
+        <div class="modal-help">The client's parent account (what would show on their invoice once billing's wired up).</div>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">First business name *</label>
+        <input type="text" class="modal-input" id="newAcctBiz" placeholder="e.g. Acme Coffee" maxlength="80"/>
+        <div class="modal-help">A new account always starts with one business. You can add more later.</div>
+        <div class="modal-err" id="newAcctErr"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="newAcctCancel">Cancel</button>
+        <button class="btn-primary" id="newAcctSave">Create account</button>
       </div>
     </div>
   </div>
@@ -530,29 +590,42 @@
     }
 
     /* ============== state ============== */
-    let myMemberships = [];   // caller's active team_members
+    let myMemberships = [];   // caller's active team_members (scoped to active subscription's orgs)
     let teamRows = [];        // all team_members in orgs where caller is admin (not removed)
-    let sub = null;           // subscription row
+    let sub = null;           // ACTIVE subscription row
+    let allSubs = [];         // every subscription the user owns (for the switcher)
     let openMenuEl = null;    // currently open ⋮ menu
     // Per-org rollup data:
     let snapshotByOrg = new Map();   // orgId → { revenue, rocksOnTrack, rocksTotal, openIssues, nextMeeting }
 
     /* ============== loaders ============== */
     async function loadAll() {
-      // 1) Subscription
-      const { data: subRow } = await sb
+      // 1) ALL subscriptions owned by this user
+      const { data: subs } = await sb
         .from('subscriptions')
-        .select('id, name, seat_count, included_businesses')
+        .select('id, name, seat_count, included_businesses, created_at')
         .eq('owner_user_id', user.id)
-        .maybeSingle();
-      sub = subRow || null;
+        .order('created_at', { ascending: true });
+      allSubs = subs || [];
 
-      // 2) Caller's memberships
-      const { data: mems, error: memErr } = await sb
+      // Pick the active subscription. Use the cached id if it's still valid;
+      // otherwise default to the first one.
+      const cachedSubId = (window.activeOrg && window.activeOrg.getSubscription && window.activeOrg.getSubscription()) || null;
+      let activeSub = allSubs.find(s => s.id === cachedSubId) || allSubs[0] || null;
+      sub = activeSub;
+      if (activeSub && window.activeOrg) {
+        window.activeOrg.setSubscription(activeSub.id, activeSub.name);
+      }
+
+      // 2) Caller's memberships — scoped to the ACTIVE subscription's businesses.
+      // The !inner join lets us filter on organisations.subscription_id.
+      const memQuery = sb
         .from('team_members')
-        .select('id, organisation_id, role, status, organisations!inner(id, name)')
+        .select('id, organisation_id, role, status, organisations!inner(id, name, subscription_id)')
         .eq('user_id', user.id)
         .eq('status', 'active');
+      if (activeSub) memQuery.eq('organisations.subscription_id', activeSub.id);
+      const { data: mems, error: memErr } = await memQuery;
       if (memErr) {
         document.getElementById('bizList').innerHTML =
           '<div class="empty-state">Could not load businesses: ' + escHtml(memErr.message) + '</div>';
@@ -561,8 +634,10 @@
         myMemberships = mems || [];
       }
 
-      // First-run guard: brand-new user with no team_members → go through setup
-      if (!myMemberships.length) {
+      // First-run guard: brand-new user with NO subscriptions at all → setup wizard.
+      // (If they have a subscription but it has no businesses, that's a degenerate
+      // state we surface in the empty list rather than redirect.)
+      if (!allSubs.length) {
         window.location.href = 'setup.html';
         return;
       }
@@ -661,6 +736,18 @@
       link.style.display = 'inline-block';
     }
 
+    function renderSwitcher() {
+      const wrap = document.getElementById('acctSwitcher');
+      const select = document.getElementById('accountSwitcher');
+      if (!allSubs.length) { wrap.style.display = 'none'; return; }
+      wrap.style.display = 'flex';
+      select.innerHTML = allSubs.map(s => {
+        const label = (s.name && s.name.trim()) ? s.name : '(Unnamed account)';
+        const selected = (sub && s.id === sub.id) ? ' selected' : '';
+        return `<option value="${escHtml(s.id)}"${selected}>${escHtml(label)}</option>`;
+      }).join('');
+    }
+
     /* ============== render: stats ============== */
     function renderStats() {
       // Businesses
@@ -698,7 +785,8 @@
       const wrap = document.getElementById('bizList');
 
       if (!myMemberships.length) {
-        wrap.innerHTML = '<div class="empty-state">You haven&rsquo;t created a business yet.</div>';
+        const subLabel = (sub && sub.name) ? '“' + escHtml(sub.name) + '”' : 'this account';
+        wrap.innerHTML = '<div class="empty-state">No businesses in ' + subLabel + ' yet. Click <strong>+ New Business</strong> to create one.</div>';
         return;
       }
       wrap.innerHTML = myMemberships.map(m => {
@@ -897,8 +985,14 @@
     renameSave.addEventListener('click', async () => {
       const newName = renameInput.value.trim();
       if (!newName) { renameErr.textContent = 'Please enter a name.'; return; }
+      if (!sub || !sub.id) { renameErr.textContent = 'No active account to rename.'; return; }
       renameSave.disabled = true; renameSave.textContent = 'Saving…';
-      const { error } = await sb.rpc('update_account_name', { new_name: newName });
+      // Direct UPDATE via RLS (owner_user_id check) — scopes to the ACTIVE subscription
+      // rather than the legacy update_account_name RPC which hit every sub owned by the user.
+      const { error } = await sb
+        .from('subscriptions')
+        .update({ name: newName, updated_at: new Date().toISOString() })
+        .eq('id', sub.id);
       if (error) {
         renameErr.textContent = error.message || 'Save failed.';
         renameSave.disabled = false; renameSave.textContent = 'Save';
@@ -924,7 +1018,10 @@
       const name = addName.value.trim();
       if (!name) { addErr.textContent = 'Please enter a business name.'; return; }
       addSave.disabled = true; addSave.textContent = 'Creating…'; addErr.textContent = '';
-      const { data: newOrgId, error } = await sb.rpc('bootstrap_organisation', { business_name: name });
+      const { data: newOrgId, error } = await sb.rpc('bootstrap_organisation', {
+        business_name: name,
+        subscription_id: (sub && sub.id) ? sub.id : null
+      });
       if (error) {
         addErr.textContent = error.message || 'Could not create business.';
         addSave.disabled = false; addSave.textContent = 'Create';
@@ -1104,11 +1201,57 @@
     /* ============== boot ============== */
     async function refresh() {
       await loadAll();
+      renderSwitcher();
       renderAccountHeader();
       renderStats();
       renderBusinesses();
       renderUsers();
     }
+
+    /* ============== switcher + new client account ============== */
+    document.getElementById('accountSwitcher').addEventListener('change', async (e) => {
+      const newSubId = e.target.value;
+      const picked = allSubs.find(s => s.id === newSubId);
+      if (!picked) return;
+      if (window.activeOrg) {
+        window.activeOrg.setSubscription(picked.id, picked.name);
+        // Clear the active-org cache so a stale business name doesn't bleed across accounts
+        window.activeOrg.set(null);
+      }
+      window.location.reload();
+    });
+
+    document.getElementById('newClientAccountBtn').addEventListener('click', () => {
+      document.getElementById('newAcctName').value = '';
+      document.getElementById('newAcctBiz').value  = '';
+      document.getElementById('newAcctErr').textContent = '';
+      openModal('newAcctModal');
+      setTimeout(() => document.getElementById('newAcctName').focus(), 50);
+    });
+    document.getElementById('newAcctClose').addEventListener('click',  () => closeModal('newAcctModal'));
+    document.getElementById('newAcctCancel').addEventListener('click', () => closeModal('newAcctModal'));
+    document.getElementById('newAcctSave').addEventListener('click', async () => {
+      const acctName = document.getElementById('newAcctName').value.trim();
+      const bizName  = document.getElementById('newAcctBiz').value.trim();
+      const errEl    = document.getElementById('newAcctErr');
+      const btn      = document.getElementById('newAcctSave');
+      if (!acctName) { errEl.textContent = 'Account name is required.'; return; }
+      if (!bizName)  { errEl.textContent = 'First business name is required.'; return; }
+      btn.disabled = true; btn.textContent = 'Creating…'; errEl.textContent = '';
+      const { data: newSubId, error } = await sb.rpc('create_client_account', {
+        account_name: acctName, business_name: bizName
+      });
+      if (error) {
+        errEl.textContent = error.message || 'Could not create account.';
+        btn.disabled = false; btn.textContent = 'Create account';
+        return;
+      }
+      if (window.activeOrg) {
+        window.activeOrg.setSubscription(newSubId, acctName);
+        window.activeOrg.set(null);
+      }
+      window.location.reload();
+    });
 
     await refresh();
     if (myMemberships.length && (!window.activeOrg || !window.activeOrg.get())) {

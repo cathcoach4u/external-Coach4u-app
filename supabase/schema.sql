@@ -589,14 +589,20 @@ WHERE tm.status = 'active';
 --   • Additional business (user already has a subscription) — adds org + admin team_member
 -- SECURITY DEFINER lets it write tables the user's RLS would block during bootstrap.
 
-CREATE OR REPLACE FUNCTION public.bootstrap_organisation(business_name text)
+-- Optional subscription_id (v0.5.111): if provided, targets that subscription;
+-- if NULL, falls back to the caller's first subscription (or creates one).
+-- Necessary for multi-tenant users who own more than one client account.
+CREATE OR REPLACE FUNCTION public.bootstrap_organisation(
+  business_name text,
+  subscription_id uuid DEFAULT NULL
+)
 RETURNS uuid
 LANGUAGE plpgsql SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
   uid                  uuid := auth.uid();
-  v_subscription_id    uuid;
+  v_subscription_id    uuid := subscription_id;
   v_organisation_id    uuid;
 BEGIN
   IF uid IS NULL THEN
@@ -606,24 +612,30 @@ BEGIN
     RAISE EXCEPTION 'Business name is required';
   END IF;
 
-  -- Reuse existing subscription if the user already owns one, else create one
-  SELECT id INTO v_subscription_id
-  FROM public.subscriptions
-  WHERE owner_user_id = uid
-  LIMIT 1;
-
-  IF v_subscription_id IS NULL THEN
-    INSERT INTO public.subscriptions (owner_user_id)
-    VALUES (uid)
-    RETURNING id INTO v_subscription_id;
+  IF v_subscription_id IS NOT NULL THEN
+    IF NOT EXISTS (
+      SELECT 1 FROM public.subscriptions
+      WHERE id = v_subscription_id AND owner_user_id = uid
+    ) THEN
+      RAISE EXCEPTION 'Subscription not found or not owned by you';
+    END IF;
+  ELSE
+    SELECT id INTO v_subscription_id
+    FROM public.subscriptions
+    WHERE owner_user_id = uid
+    ORDER BY created_at ASC
+    LIMIT 1;
+    IF v_subscription_id IS NULL THEN
+      INSERT INTO public.subscriptions (owner_user_id)
+      VALUES (uid)
+      RETURNING id INTO v_subscription_id;
+    END IF;
   END IF;
 
-  -- Create the organisation under that subscription
   INSERT INTO public.organisations (subscription_id, name)
   VALUES (v_subscription_id, trim(business_name))
   RETURNING id INTO v_organisation_id;
 
-  -- Add the caller as the admin team member
   INSERT INTO public.team_members (
     organisation_id, user_id, role, status, joined_at
   ) VALUES (
@@ -634,7 +646,7 @@ BEGIN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.bootstrap_organisation(text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.bootstrap_organisation(text, uuid) TO authenticated;
 
 
 -- =============================================================
@@ -714,6 +726,60 @@ END;
 $$;
 
 GRANT EXECUTE ON FUNCTION public.update_account_name(text) TO authenticated;
+
+
+-- =============================================================
+-- 11b. CREATE CLIENT ACCOUNT (v0.5.111)
+-- =============================================================
+-- Multi-tenant: lets one user own MULTIPLE subscriptions, one per
+-- client account. ALWAYS creates a new subscription (vs.
+-- bootstrap_account_and_business which reuses).
+
+CREATE OR REPLACE FUNCTION public.create_client_account(
+  account_name  text,
+  business_name text
+)
+RETURNS uuid
+LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  uid                  uuid := auth.uid();
+  v_subscription_id    uuid;
+  v_organisation_id    uuid;
+  v_account_name       text := NULLIF(trim(coalesce(account_name, '')), '');
+  v_business_name      text := NULLIF(trim(coalesce(business_name, '')), '');
+BEGIN
+  IF uid IS NULL THEN
+    RAISE EXCEPTION 'Not authenticated';
+  END IF;
+  IF v_account_name IS NULL THEN
+    RAISE EXCEPTION 'Account name is required';
+  END IF;
+  IF v_business_name IS NULL THEN
+    RAISE EXCEPTION 'Business name is required';
+  END IF;
+
+  INSERT INTO public.subscriptions (owner_user_id, name)
+  VALUES (uid, v_account_name)
+  RETURNING id INTO v_subscription_id;
+
+  INSERT INTO public.organisations (subscription_id, name)
+  VALUES (v_subscription_id, v_business_name)
+  RETURNING id INTO v_organisation_id;
+
+  INSERT INTO public.team_members (
+    organisation_id, user_id, role, status, joined_at
+  )
+  VALUES (
+    v_organisation_id, uid, 'admin', 'active', now()
+  );
+
+  RETURN v_subscription_id;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.create_client_account(text, text) TO authenticated;
 
 
 -- =============================================================

@@ -4,6 +4,25 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.111
+- **Multi-tenant — one user can own multiple client accounts.** User feedback: "I want to set up a test client from the top, replace SARUBA with the client's details". Built end-to-end so you (the business coach) can manage many clients from one login: each client is its own `subscriptions` row, you're the owner of each, you switch between them with a dropdown at the top of the dashboard.
+- **`supabase/v0.5.111-delta.sql` — two changes:**
+  - New RPC **`create_client_account(account_name, business_name)`** — always creates a new subscription (vs. `bootstrap_account_and_business` which reuses one if you have it). Also creates the first business + admin team_member row, all in one transaction.
+  - **`bootstrap_organisation`** signature changed from `(business_name)` to `(business_name, subscription_id uuid DEFAULT NULL)`. If `subscription_id` is provided, validates ownership and targets that sub. If NULL, falls back to LIMIT 1 (backward compat for `setup.html`). The old single-arg function is dropped — `CREATE OR REPLACE` with the new signature would have created a separate function rather than replacing.
+- **UI changes in `index.html`:**
+  - New top-of-page **account switcher** — a `<select>` listing every subscription you own, plus a teal `+ New client account` button on the right. Hidden when you have only one account (still visible via the "Set up another client" UX once it's wired). Lives above the account header in its own `.acct-switcher` bar.
+  - New **"Set up a new client account"** modal — two fields: client/account name + first business name. On submit calls `create_client_account` RPC, sets the new subscription as active in localStorage, reloads the dashboard.
+  - **Active-subscription tracking** in `js/active-org.js`: extended to store/retrieve `coach4u_active_subscription_id` and `coach4u_active_subscription_name`. Switching account calls `setSubscription(...)` and clears the active-org cache (so a stale business name from another client doesn't bleed across).
+  - **Data scoping**: the memberships query now uses Supabase's `!inner` join to filter by `organisations.subscription_id = activeSub.id`, so the dashboard only shows businesses inside the currently-selected account.
+  - **Rename account** now uses a direct `UPDATE subscriptions SET name = ? WHERE id = ?` (RLS enforces ownership), scoped to the active subscription. The legacy `update_account_name` RPC updated every sub the user owned — wrong for multi-tenant.
+  - **+ New Business** passes `subscription_id: sub.id` so the new business lands in the active client account, not an arbitrary one.
+  - Empty-state for an account with no businesses now says "No businesses in *Acme Group* yet. Click + New Business to create one." (instead of redirecting to setup.html, which would have created a fresh subscription on top of everything else).
+- **First-run guard** moved up: only redirects to `setup.html` if the user has zero subscriptions. An empty subscription (zero businesses) shows the friendly empty state instead.
+- **No schema changes** — `subscriptions.owner_user_id` already supported multiple per user (the index is non-unique). RLS policies on subscriptions already allowed owner reads/inserts/updates of their own rows.
+- **Next test client flow:** sign in → top switcher → **+ New client account** → enter client's account name + first business name → start populating. Repeat per client. Switch between them via the dropdown.
+
+---
+
 ## v0.5.110
 - **Added the Coach role** — admin-equivalent for data/team operations, intended to be exempt from per-seat billing when billing is wired. Use case: you (the business coach) live inside a client's account, edit alongside them, but shouldn't consume one of the client's 3 included paid seats. This was the locked-in plan from the conversation around v0.5.107 — now built end-to-end.
 - **What a Coach can do:** edit every data table (worksheets, scorecard, goals, meetings, issues, planning sessions), invite/remove other team members. **What a Coach CANNOT do:** rename or delete the business itself — those stay admin-only because they're business-lifecycle actions tied to the subscription owner.
