@@ -137,6 +137,7 @@
     .bottom-nav-icon { font-size: 20px; line-height: 1; }
   </style>
   <script src="js/active-session.js" defer></script>
+  <script src="js/mobile-keyboard.js" defer></script>
   <script src="js/active-org.js" defer></script>
 </head>
 <body>
@@ -245,27 +246,37 @@
     // Run Weekly Meeting: open this-week's existing meeting, otherwise create one and open it.
     function wireRunMeetingButton() {
       const btn = document.getElementById('runWeeklyMeetingBtn');
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.preventDefault();
-        const KEY = 'coach4u_demo_meetings';
-        let data;
-        try { data = JSON.parse(localStorage.getItem(KEY)); } catch (_) {}
-        if (!data || !data.meetings) data = { meetings: [] };
+        const orgId = window.activeOrg && window.activeOrg.get();
+        if (!orgId) { window.location.href = 'business.html'; return; }
         // This-week Monday in ISO
         const d = new Date();
         const day = d.getDay();
         d.setDate(d.getDate() + ((day === 0 ? -6 : 1) - day));
         const mondayIso = d.toISOString().slice(0, 10);
-        let m = data.meetings.find(x => x.meeting_date === mondayIso);
-        if (!m) {
-          const q = 'Q' + Math.floor(new Date().getMonth() / 3 + 1) + ' ' + new Date().getFullYear();
-          m = { id: Date.now() * 1000 + Math.floor(Math.random() * 1000),
-                meeting_date: mondayIso, status: 'scheduled', quarter: q,
-                rating: null, notes: '', business_id: 1, headlines: [], todos: [] };
-          data.meetings.push(m);
-          localStorage.setItem(KEY, JSON.stringify(data));
+        // Try existing meeting for this week
+        const { data: existing } = await supabase
+          .from('meetings')
+          .select('id')
+          .eq('organisation_id', orgId)
+          .eq('meeting_date', mondayIso)
+          .maybeSingle();
+        let meetingId = existing && existing.id;
+        if (!meetingId) {
+          const q = 'Q' + (Math.floor(new Date().getMonth() / 3) + 1) + ' ' + new Date().getFullYear();
+          const { data: created, error } = await supabase
+            .from('meetings')
+            .insert({ organisation_id: orgId, meeting_date: mondayIso, status: 'scheduled', quarter: q })
+            .select('id')
+            .single();
+          if (error) {
+            alert('Could not start meeting: ' + error.message);
+            return;
+          }
+          meetingId = created.id;
         }
-        window.location.href = 'run-meeting.html?id=' + m.id;
+        window.location.href = 'run-meeting.html?id=' + meetingId;
       });
     }
     init();

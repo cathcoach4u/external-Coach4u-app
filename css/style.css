@@ -266,10 +266,14 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .site-header { padding: 10px 14px; }
   .header-inner { gap: 8px; }
   .header-left { gap: 12px; min-width: 0; flex: 1 1 auto; }
-  /* Hide the "Your Business Coach" title on phones — too cramped alongside
-     the back link, biz pill, and sign-out. Brand is reinforced by the PWA name,
-     the page H1 below, and the back link. */
-  .header-title { display: none; }
+  /* On phones, the "Your Business Coach" title competes with the back link,
+     biz pill and Sign Out. Hide it only when there's a populated biz pill
+     taking that slot (business-level pages). On account-level pages where
+     the biz pill is empty, keep the title — otherwise the navy bar looks
+     empty on first launch. */
+  .site-header:has(.biz-pill:not(:empty)) .header-title { display: none; }
+  /* Slightly smaller title on phones when we do show it */
+  .header-title { font-size: 1rem; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .header-back { white-space: nowrap; flex-shrink: 0; font-size: 14px; }
   .header-version { display: none; }
   .sign-out-btn { flex-shrink: 0; padding: 5px 9px; font-size: 12px; }
@@ -286,4 +290,21 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .header-left { gap: 10px; }
   .biz-pill { max-width: 120px; }
   .header-back { font-size: 13px; }
+}
+
+/* ───────────────────────────────────────────────────────────────────
+   Mobile keyboard handling — v0.5.130
+   Pair with js/mobile-keyboard.js. When a form field is focused, the
+   browser scrolls the field into view; scroll-margin-bottom keeps room
+   below it so the iOS keyboard doesn't hide the input.
+   ─────────────────────────────────────────────────────────────────── */
+input, textarea, select, [contenteditable] {
+  scroll-margin-top: 80px;
+  scroll-margin-bottom: 260px;
+}
+/* When the keyboard is open, slide the sticky save-bar out of the way so
+   it doesn't sit on top of the focused input. */
+body.keyboard-open .ws-save-bar {
+  transform: translateY(120%);
+  transition: transform 0.2s ease;
 }

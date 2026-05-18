@@ -4,6 +4,16 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.130
+- **Dropped all dead Coach4U sample-data seeds from `business.html`'s `ensureSeeds()`.** The strategy seeds went in v0.5.113; this version removes the operations + planning seeds — `coach4u_demo_meetings`, `coach4u_demo_rocks`, `coach4u_demo_scorecard`, `coach4u_demo_issues`, `coach4u_annual_sessions`, `coach4u_quarterly_sessions`. 130 lines of dead code gone. Every page now reads from Supabase; `ensureSeeds()` stays as a no-op stub so the call-site in `init()` doesn't need editing.
+- **Rewrote `operations.html`'s "Run Weekly Meeting" button to use Supabase.** It was the last reader of `coach4u_demo_meetings`. Now finds-or-creates a `meetings` row for this Monday (this org + `meeting_date = thisMondayIso`) and navigates to `run-meeting.html?id=…`. Falls back to `business.html` if there's no active org.
+- **Mobile keyboard handling.** New `js/mobile-keyboard.js` (~50 lines) wired into all 61 root + learn pages. On touch devices, listens for `focusin` on inputs/textareas/contenteditables, waits ~350ms for the keyboard to animate in, and calls `scrollIntoView({ behavior: 'smooth', block: 'center' })` on the focused field. Adds `body.keyboard-open` while typing so other CSS can react. Skips non-text inputs (checkbox, radio, button etc.).
+- **CSS for the keyboard fix** in `css/style.css`: `input, textarea, select, [contenteditable] { scroll-margin-bottom: 260px; }` so the browser leaves room below the input when scrolling it into view; `body.keyboard-open .ws-save-bar { transform: translateY(120%) }` so the sticky save-bar slides out of the way while typing, preventing it from sitting on top of the field.
+- **Restored "Your Business Coach" title in the navy header on phones for account-level pages.** User reported the navy bar on `index.html` was empty on first launch — just "Sign Out" on the right with nothing on the left. The v0.5.124 hide-on-phones rule was too broad. New rule uses CSS `:has()`: `.site-header:has(.biz-pill:not(:empty)) .header-title { display: none; }` — title only hides when a populated biz pill (business-level page) is competing for space. Account-level pages (no biz pill) now show the title. Title font tightened to 1rem on phones.
+- **No SQL.**
+
+---
+
 ## v0.5.129
 - **VB2 source arrived &mdash; deepened the two guides that couldn't be fully audited against a source in v0.5.126.** User uploaded `EOS-VB2-Implementer-Guide.pdf` (2.5MB, the real PDF) which had previously been a 2-byte stub. Moved it to `/EOS/2022-07-14_EOS-VB2-Implementer-Guide.pdf` to match the rest.
 - **`learn/marketing-strategy.html` &mdash; rewritten from ~200 to ~700 words.** Was audited as "SOLID (within what's verifiable)" but the source was missing. Now matches VB2 depth:

@@ -148,6 +148,7 @@
     .bottom-nav-icon { font-size: 20px; line-height: 1; }
   </style>
   <script src="js/active-org.js" defer></script>
+  <script src="js/mobile-keyboard.js" defer></script>
   <script src="js/active-session.js" defer></script>
 </head>
 <body>
@@ -246,7 +247,7 @@
       </div>
     </div>
 
-    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.129</p>
+    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.130</p>
 
   </div>
 
@@ -271,130 +272,11 @@
     document.getElementById('todayDate').textContent =
       `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
 
-    function seedIfEmpty(key, value) {
-      try {
-        const raw = localStorage.getItem(key);
-        if (raw == null) { localStorage.setItem(key, JSON.stringify(value)); return; }
-        // Defensive merge: if stored value is empty/broken, fill missing keys/items from seed
-        let existing;
-        try { existing = JSON.parse(raw); } catch (_) { existing = null; }
-        if (Array.isArray(value)) {
-          if (!Array.isArray(existing) || existing.length === 0) {
-            localStorage.setItem(key, JSON.stringify(value));
-          }
-        } else if (value && typeof value === 'object') {
-          const merged = (existing && typeof existing === 'object' && !Array.isArray(existing)) ? existing : {};
-          let dirty = Object.keys(merged).length === 0;
-          for (const k of Object.keys(value)) {
-            if (merged[k] === undefined) { merged[k] = value[k]; dirty = true; }
-          }
-          if (dirty) localStorage.setItem(key, JSON.stringify(merged));
-        }
-      } catch (_) {}
-    }
-    function ensureSeeds() {
-      // Strategy worksheets moved to Supabase; the old localStorage seeds for
-      // coach4u_core_values / coach4u_core_focus / coach4u_targets /
-      // coach4u_marketing_strategy / coach4u_leadership_team were dead code
-      // and leaked Coach4U sample text across client accounts — removed in
-      // v0.5.113.
-      //
-      // Operations tools (below) still use localStorage demo stubs.
-      // Operations tools
-      const today = new Date();
-      const mon = new Date(today);
-      mon.setDate(today.getDate() + ((today.getDay() === 0 ? -6 : 1) - today.getDay()));
-      const monIso = mon.toISOString().slice(0, 10);
-      const nextMon = new Date(mon); nextMon.setDate(mon.getDate() + 7);
-      const nextMonIso = nextMon.toISOString().slice(0, 10);
-      const q = 'Q' + (Math.floor(today.getMonth() / 3) + 1) + ' ' + today.getFullYear();
-      seedIfEmpty('coach4u_demo_meetings', {
-        meetings: [
-          { id: 4001, meeting_date: monIso, status: 'completed', quarter: q, rating: 8, notes: 'Strong week — Acme deal closed. Need to keep an eye on coach capacity.', business_id: 1,
-            headlines: [
-              { id: 4101, type: 'good_news', description: 'Closed largest deal of the year — £42k MRR with Acme Corp' },
-              { id: 4102, type: 'good_news', description: 'Lou completed her ICF Master certification' },
-              { id: 4103, type: 'headline', description: 'Two coaches off sick same week, capacity pressure' }
-            ],
-            todos: [
-              { id: 4201, description: 'Send Q3 proposal to Globex by Friday', owner: 'Cath', done: false },
-              { id: 4202, description: 'Draft new coach JD', owner: 'Lou', done: false },
-              { id: 4203, description: 'Migrate Pipedrive contacts → HubSpot', owner: 'Andrew', done: false },
-              { id: 4204, description: 'Book Manchester event venue', owner: 'Cath', done: true }
-            ]
-          },
-          { id: 4002, meeting_date: nextMonIso, status: 'scheduled', quarter: q, rating: null, notes: '', business_id: 1, headlines: [], todos: [] }
-        ]
-      });
-      seedIfEmpty('coach4u_demo_rocks', [
-        { id:2001, description:'Launch new "Strategy in a Day" workshop', owner:'Cath',   status:'on_track',  quarter:q, company_rock:1, business_id:1, sort_order:1, seat_id:null },
-        { id:2002, description:'Hire 1 senior coach',                     owner:'Lou',    status:'at_risk',   quarter:q, company_rock:1, business_id:1, sort_order:2, seat_id:null },
-        { id:2003, description:'Move CRM to HubSpot',                     owner:'Andrew', status:'on_track',  quarter:q, company_rock:0, business_id:1, sort_order:3, seat_id:null },
-        { id:2004, description:'Run 3 prospect events in Manchester',     owner:'Cath',   status:'off_track', quarter:q, company_rock:0, business_id:1, sort_order:4, seat_id:null }
-      ]);
-      // Weekly Numbers (scorecard) demo seed
-      (function _seedScorecard(){
-        const monIsoLocal = monIso;
-        function _isoAddWeeks(iso,wk){const dt=new Date(iso+'T00:00:00');dt.setDate(dt.getDate()+wk*7);return dt.toISOString().slice(0,10)}
-        const weeks=[-5,-4,-3,-2,-1,0].map(o=>_isoAddWeeks(monIsoLocal,o));
-        const metrics=[
-          {id:1001,name:'New Leads',owner:'Cath',goal:10,measurement_type:'number',sort_order:1},
-          {id:1002,name:'Discovery Calls Booked',owner:'Lou',goal:8,measurement_type:'number',sort_order:2},
-          {id:1003,name:'Proposals Sent',owner:'Andrew',goal:5,measurement_type:'number',sort_order:3},
-          {id:1004,name:'Revenue (£k)',owner:'Cath',goal:25,measurement_type:'currency',sort_order:4},
-          {id:1005,name:'Client NPS',owner:'Lou',goal:9,measurement_type:'number',sort_order:5},
-          {id:1006,name:'Marketing Posts',owner:'Andrew',goal:3,measurement_type:'number',sort_order:6}
-        ];
-        const series={1001:[8,9,11,7,10,12],1002:[6,7,8,9,7,8],1003:[4,6,5,5,6,7],1004:[18,22,24,26,23,28],1005:[8.5,9,9.2,8.8,9.4,9.1],1006:[2,3,4,3,3,5]};
-        let nextEntryId = 7000;
-        const entries=[];
-        metrics.forEach(m=>weeks.forEach((w,i)=>entries.push({id:++nextEntryId,metric_id:m.id,week_date:w,value:series[m.id][i],on_track:series[m.id][i]>=m.goal?1:0})));
-        seedIfEmpty('coach4u_demo_scorecard', { metrics, entries, weeks });
-      })();
-      seedIfEmpty('coach4u_demo_issues', [
-        { id:3001, description:'Onboarding flow takes new clients 3+ weeks — intake forms and scheduling drag on. We need to simplify or automate.', owner:'Cath',   status:'open',     solution:'', business_id:1, created_at:new Date(Date.now()-5*86400000).toISOString() },
-        { id:3002, description:'Coach utilisation below 70% target — Q1 hit 64%. Either we have too many coaches or pipeline is weak.',             owner:'Lou',    status:'open',     solution:'', business_id:1, created_at:new Date(Date.now()-12*86400000).toISOString() },
-        { id:3003, description:'No standard scorecard for coach performance — each coach is measured differently, we need a unified scorecard.',     owner:'Andrew', status:'open',     solution:'', business_id:1, created_at:new Date(Date.now()-21*86400000).toISOString() },
-        { id:3004, description:"Website conversion rate dropped 30% after last redesign — visitors aren't getting to the booking form.",            owner:'Andrew', status:'resolved', solution:'Reverted hero CTA, moved booking widget above the fold, conversion back to baseline within a week.', business_id:1, created_at:new Date(Date.now()-30*86400000).toISOString() }
-      ]);
-      // Planning sessions
-      const thisYear = today.getFullYear();
-      const nextYear = thisYear + 1;
-      seedIfEmpty('coach4u_annual_sessions', [
-        { id:5001, session_date:thisYear+'-01-01', year:String(thisYear), status:'completed',
-          attendance:'Cath, Lou, Andrew',
-          areas_completed:{1:true,2:true,3:true,4:true}
-        },
-        { id:5002, session_date:nextYear+'-01-01', year:String(nextYear), status:'scheduled',
-          attendance:'',
-          areas_completed:{}
-        }
-      ]);
-      // Pick next-upcoming quarter for the scheduled quarterly session
-      const _curQ = Math.floor(today.getMonth() / 3) + 1;
-      let _nextQ = _curQ + 1, _nextQYr = thisYear;
-      if (_nextQ > 4) { _nextQ = 1; _nextQYr = thisYear + 1; }
-      const _nextQuarterLabel = 'Q' + _nextQ + ' ' + _nextQYr;
-      // Quarter-end date for setting _nextQ goals (i.e. end of prior quarter)
-      let _priorQ = _nextQ - 1, _priorQYr = _nextQYr; if (_priorQ < 1) { _priorQ = 4; _priorQYr = _nextQYr - 1; }
-      const _endMonth = [3, 6, 9, 12][_priorQ - 1];
-      const _endDay = [31, 30, 30, 31][_priorQ - 1];
-      const _qSessionDate = _priorQYr + '-' + String(_endMonth).padStart(2, '0') + '-' + String(_endDay).padStart(2, '0');
-      seedIfEmpty('coach4u_quarterly_sessions', [
-        { id:6001, session_date:'2026-03-31', target_quarter:'Q2 2026', status:'completed',
-          attendance:'Cath, Lou, Andrew',
-          areas_completed:{1:true,2:true,3:true}
-        },
-        { id:6002, session_date:'2026-06-30', target_quarter:'Q3 2026', status:'completed',
-          attendance:'Cath, Lou, Andrew, Sarah',
-          areas_completed:{1:true,2:true,3:true}
-        },
-        { id:6003, session_date:_qSessionDate, target_quarter:_nextQuarterLabel, status:'scheduled',
-          attendance:'',
-          areas_completed:{}
-        }
-      ]);
-    }
+    // All Coach4U sample-data seeds (strategy + operations + planning) were
+    // removed in v0.5.130. Every page now reads from Supabase. ensureSeeds()
+    // stays as a no-op so the existing callsite in init() doesn't have to be edited.
+    function ensureSeeds() { /* no-op as of v0.5.130 */ }
+
 
     function escapeHtml(s) {
       return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
