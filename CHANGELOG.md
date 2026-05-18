@@ -4,6 +4,23 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.125
+- **Rewrote `learn/core-values.html` to match the depth of the original EOS implementation experience.** User feedback: "Check again at the activities especially the values one as I think the one written is a little light on." Confirmed by re-reading the EOS VB1 (Vision Building Day 1) Implementer Guide — the Core Values exercise in that document is a 2-hour structured group exercise; my guide had compressed it to 4 bullet points.
+- **What's now in the guide** (~800 words, up from ~200):
+  - **The "100 of them" prompt** as the starting point — name 3 people you'd want 100 of, not 3 best people. The framing is what makes it work.
+  - **The 5-step exercise flow** with timings: silent listing → characteristics on the board → first Keep/Kill/Combine pass (down to 10–15) → break → apply traps → second pass (down to 3–7) → test.
+  - **Lencioni's three value traps** with a test for each: Accidental (emerged from a past or partial subset), Aspirational (you wish, you don't), Permission-to-play (generic table-stakes any competitor could claim).
+  - **The People Test** — score 3–5 real team members 1–5 against each draft value; real values differentiate (stars high, bottom-end low).
+  - **The Five-Use Test** — would you actually use this to hire / fire / review / reward / recognise? If not five out of five, it's not a value.
+  - **Updated Common Pitfalls** — skipping the people-listing, doing it solo, trying to land it in one pass, wordsmithing too early, too many.
+  - **Coach's tip** rewritten to emphasise the hiring use of values + the cost of letting in a single low-scoring hire.
+- **Source**: the EOS VB1 Implementer Guide (`EOS/2023-04-27_EOS-VB1-Implementer-Guide(1).docx`), Core Values section pages 17–20. The methodology is faithfully translated; **no EOS trademark terminology is used in user-facing copy** (the v0.5.116 rules still apply). The Lencioni value-trap framework is from Patrick Lencioni's 2002 HBR article *Make Your Values Mean Something* — not EOS-specific, so the framework name and trap names are kept as-is.
+- **CTA order swapped on the guide** — "Run the Values Discovery exercise" is now the primary action (teal), worksheet is secondary (ghost). The exercise is the way to discover values; the worksheet is where you commit them once known.
+- **Parity audit running in background** for the other 12 guides against their EOS source docs. Results inform v0.5.126.
+- **No SQL.**
+
+---
+
 ## v0.5.124
 - **Decluttered the navy site-header on phones.** User feedback: "The top blue header looks too busy now on phone." Four elements were competing inside a ~390px iPhone bar: back link, "Your Business Coach" title, 🏢 biz pill, Sign Out — plus their gaps. Reading as cluttered.
 - **Hid `.header-title` (the "Your Business Coach" wordmark) at ≤ 640px** — `display: none` in the mobile media query. The brand is preserved everywhere else: the PWA icon + name on the user's home screen, the body `<h1>` on every page that names the activity, and the back link that names the section. Removing the redundant third copy from the navy bar gives the back link + biz pill + sign-out room to breathe.
