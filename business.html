@@ -194,8 +194,8 @@
         <a class="panel-link" href="targets.html">Edit &#x203A;</a>
       </div>
       <div class="panel-body">
-        <div class="goal-text" id="oneYearGoal">Sign 20 new clients, launch group coaching program, hire first associate coach by Q3, and publish Signature Program workbook.</div>
-        <div class="goal-meta" id="oneYearMeta">Target: Dec 2025 &nbsp;&middot;&nbsp; Revenue: $420K</div>
+        <div class="goal-text" id="oneYearGoal" style="color:#aaa;">No 1-year goal set yet.</div>
+        <div class="goal-meta" id="oneYearMeta"></div>
       </div>
     </div>
 
@@ -207,10 +207,7 @@
       </div>
       <div class="panel-body">
         <div class="values-pills" id="valuesPills">
-          <span class="value-pill">Integrity</span>
-          <span class="value-pill">Growth Mindset</span>
-          <span class="value-pill">Client First</span>
-          <span class="value-pill">Accountability</span>
+          <span style="font-size:0.78rem;color:#aaa;">No core values set yet.</span>
         </div>
       </div>
     </div>
@@ -249,7 +246,7 @@
       </div>
     </div>
 
-    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.112</p>
+    <p style="text-align:center;font-size:0.7rem;color:#bbb;margin:24px 0 8px;letter-spacing:0.5px;">v0.5.113</p>
 
   </div>
 
@@ -296,44 +293,13 @@
       } catch (_) {}
     }
     function ensureSeeds() {
-      // Strategy worksheets
-      seedIfEmpty('coach4u_core_values', {
-        value_1:'Integrity', value_2:'Growth mindset', value_3:'Client first', value_4:'Accountability', value_5:'Better together'
-      });
-      seedIfEmpty('coach4u_core_focus', {
-        purpose: 'To help business owners build thriving, self-managing businesses so they can achieve freedom and fulfilment.',
-        niche: 'Strengths-based business coaching for small and medium businesses across Australia.'
-      });
-      seedIfEmpty('coach4u_targets', {
-        ten_year:"Australia's most trusted business coaching practice — 500 thriving client businesses, a team of 10 coaches, delivering measurable results nationwide.",
-        three_year_date:'June 2029', three_year_revenue:'$1.2M', three_year_profit:'$360K',
-        three_year_desc:'4 coaches, 80 active clients, systemised 12-month program, recurring revenue model established.',
-        one_year_date:'Dec 2026', one_year_revenue:'$420K', one_year_profit:'$105K',
-        one_year_goals:'1. Sign 20 new clients through referral and speaking\n2. Launch group coaching program (min. 8 participants)\n3. Hire first associate coach by Q3\n4. Complete and publish Signature Program workbook'
-      });
-      seedIfEmpty('coach4u_marketing_strategy', {
-        target_market: 'Business owners with 2–20 employees in professional services, trades, and health. Revenue $500K–$5M. Feel stuck or overwhelmed.',
-        uniques: "1. Strengths-based methodology — build on what's working\n2. Structured accountability — weekly check-ins, measurable outcomes\n3. Real-world experience — founded by a former business owner",
-        proven_process: 'Coach4U 4-Step System: Clarity → Strategy → Execution → Momentum. 12 months, monthly 1:1 sessions, weekly check-ins.',
-        guarantee: "No measurable progress in your first 90 days? We'll refund your last month's coaching fee — no questions asked."
-      });
-      seedIfEmpty('coach4u_leadership_team', [
-        { name: 'Cath Baker', role: 'Founder and Lead Coach',
-          responsibilities: 'Responsible for client delivery, coaching methodology, business development and overall strategic direction. Key focus: growing the client base and developing the Coach4U program.',
-          placeholder: false },
-        { name: 'Lou Henderson', role: 'Operations Manager',
-          responsibilities: 'Responsible for client administration, scheduling, invoicing, GoCardless payments and day-to-day business operations. Key focus: keeping everything running smoothly so Cath can focus on coaching.',
-          placeholder: false },
-        { name: 'Andrew Baker', role: 'Marketing and Technology Advisor',
-          responsibilities: 'Responsible for ABMS Marketing support, website oversight and technical input on digital projects. Key focus: brand visibility and digital infrastructure.',
-          placeholder: false },
-        { name: '[Add your name]', role: 'Head of Delivery',
-          responsibilities: 'Responsible for program facilitation, group coaching sessions and client onboarding. Key focus: delivering an exceptional client experience.',
-          placeholder: true },
-        { name: '[Add your name]', role: 'Client Success',
-          responsibilities: 'Responsible for client check-ins, progress tracking and retention. Key focus: ensuring clients get results and stay engaged.',
-          placeholder: true }
-      ]);
+      // Strategy worksheets moved to Supabase; the old localStorage seeds for
+      // coach4u_core_values / coach4u_core_focus / coach4u_targets /
+      // coach4u_marketing_strategy / coach4u_leadership_team were dead code
+      // and leaked Coach4U sample text across client accounts — removed in
+      // v0.5.113.
+      //
+      // Operations tools (below) still use localStorage demo stubs.
       // Operations tools
       const today = new Date();
       const mon = new Date(today);
@@ -583,36 +549,43 @@
 
       // ── 1-Year Goal panel (Supabase targets) ──
       const targets = targetsRes.data;
-      if (targets) {
-        const goals = (targets.one_year_goals || '')
-          .split('\n')
-          .map(s => s.replace(/^\s*(?:\d+[.)]|[-*•])\s+/, '').trim())
-          .filter(Boolean);
-        if (goals.length) {
-          const joined = goals.length > 1
-            ? goals.slice(0, -1).join(', ') + ', and ' + goals[goals.length - 1]
-            : goals[0];
-          document.getElementById('oneYearGoal').textContent = joined;
-        }
-        const metaBits = [];
-        if (targets.one_year_date) metaBits.push('Target: ' + targets.one_year_date);
-        if (targets.one_year_revenue) metaBits.push('Revenue: ' + targets.one_year_revenue);
-        if (metaBits.length) document.getElementById('oneYearMeta').innerHTML = metaBits.join(' &nbsp;&middot;&nbsp; ');
+      const goalEl  = document.getElementById('oneYearGoal');
+      const metaEl  = document.getElementById('oneYearMeta');
+      const goals = targets ? (targets.one_year_goals || '')
+        .split('\n')
+        .map(s => s.replace(/^\s*(?:\d+[.)]|[-*•])\s+/, '').trim())
+        .filter(Boolean) : [];
+      if (goals.length) {
+        const joined = goals.length > 1
+          ? goals.slice(0, -1).join(', ') + ', and ' + goals[goals.length - 1]
+          : goals[0];
+        goalEl.style.color = '';
+        goalEl.textContent = joined;
+      } else {
+        goalEl.style.color = '#aaa';
+        goalEl.textContent = 'No 1-year goal set yet.';
       }
+      const metaBits = [];
+      if (targets && targets.one_year_date)    metaBits.push('Target: ' + targets.one_year_date);
+      if (targets && targets.one_year_revenue) metaBits.push('Revenue: ' + targets.one_year_revenue);
+      metaEl.innerHTML = metaBits.length ? metaBits.join(' &nbsp;&middot;&nbsp; ') : '';
 
       // ── Core Values panel (Supabase core_values) ──
       const cv = valuesRes.data;
+      const pills = [];
       if (cv) {
-        const pills = [];
         for (let i = 1; i <= 8; i++) {
           const v = (cv['value_' + i] || '').toString().trim();
           if (v) pills.push(v);
         }
-        if (pills.length) {
-          document.getElementById('valuesPills').innerHTML = pills.map(v =>
-            `<span class="value-pill">${escapeHtml(v)}</span>`
-          ).join('');
-        }
+      }
+      const pillsEl = document.getElementById('valuesPills');
+      if (pills.length) {
+        pillsEl.innerHTML = pills.map(v =>
+          `<span class="value-pill">${escapeHtml(v)}</span>`
+        ).join('');
+      } else {
+        pillsEl.innerHTML = '<span style="font-size:0.78rem;color:#aaa;">No core values set yet.</span>';
       }
     }
 
