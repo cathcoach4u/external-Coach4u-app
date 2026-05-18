@@ -363,6 +363,7 @@
       .doc-footer { padding: 5px 18px; }
     }
   </style>
+  <script src="js/active-org.js" defer></script>
 </head>
 <body>
 
@@ -582,12 +583,16 @@
 
       document.body.style.opacity = '1';
 
-      // Load caller's active orgs
-      const { data: mems, error: memErr } = await sb
+      // Load caller's active orgs — scoped to the ACTIVE subscription for multi-tenant users.
+      const subId = (window.activeOrg && window.activeOrg.getSubscription)
+        ? window.activeOrg.getSubscription() : null;
+      const memQuery = sb
         .from('team_members')
-        .select('organisation_id, organisations!inner(id, name)')
+        .select('organisation_id, organisations!inner(id, name, subscription_id)')
         .eq('user_id', user.id)
         .eq('status', 'active');
+      if (subId) memQuery.eq('organisations.subscription_id', subId);
+      const { data: mems, error: memErr } = await memQuery;
 
       const wrap = document.getElementById('plansWrap');
 

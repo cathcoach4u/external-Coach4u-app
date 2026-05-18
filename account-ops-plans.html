@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One-Page Operations &mdash; All Businesses | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#003366">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Your Business Coach">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      background: #e8edf2;
+      min-height: 100vh;
+      padding-bottom: 32px;
+    }
+
+    .screen-toolbar {
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .toolbar-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .toolbar-back {
+      font-size: 0.82rem; font-weight: 700; color: #0D9488;
+      text-decoration: none; white-space: nowrap;
+    }
+    .toolbar-back:hover { text-decoration: underline; }
+    .toolbar-title {
+      font-size: 0.85rem; font-weight: 700; color: #003366;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .toolbar-hint { font-size: 0.72rem; color: #999; }
+    @media (max-width: 600px) { .toolbar-hint { display: none; } }
+
+    .print-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 8px 14px;
+      background: #0D9488; color: white;
+      border: none; border-radius: 8px;
+      font-size: 0.82rem; font-weight: 700;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .print-btn:hover { background: #0F766E; }
+
+    .page-intro { max-width: 1100px; margin: 20px auto 12px; padding: 0 20px; }
+    .page-intro h1 { font-size: 1.3rem; font-weight: 800; color: #003366; margin: 0 0 4px; }
+    .page-intro p { font-size: 0.85rem; color: #555; margin: 0; line-height: 1.45; }
+
+    .mobile-hint {
+      display: none;
+      max-width: 1100px; margin: 12px auto 0;
+      background: #f0fdfa; border: 1px solid #d1fae5;
+      border-radius: 8px; padding: 8px 14px;
+      font-size: 0.75rem; color: #065f46;
+    }
+    @media (max-width: 900px) { .mobile-hint { display: block; } }
+
+    /* ===== Carousel ===== */
+    .plans-wrap { max-width: 1100px; margin: 16px auto 0; padding: 0 20px; }
+
+    .carousel-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; background: white; border: 1px solid #e5e7eb;
+      border-radius: 10px; padding: 10px 14px; margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .carousel-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; background: #003366; color: white;
+      border: none; border-radius: 8px;
+      font-size: 0.82rem; font-weight: 700;
+      cursor: pointer; transition: background 0.15s;
+      min-width: 110px; justify-content: center;
+    }
+    .carousel-btn:hover:not(:disabled) { background: #002244; }
+    .carousel-btn:disabled { background: #e5e7eb; color: #b0b0b0; cursor: not-allowed; }
+    .carousel-btn .biz-name-hint {
+      font-weight: 500; opacity: 0.85; font-size: 0.72rem;
+      max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    @media (max-width: 700px) {
+      .carousel-btn { min-width: 0; padding: 8px 10px; }
+      .carousel-btn .biz-name-hint { display: none; }
+    }
+    .carousel-center { text-align: center; flex: 1; min-width: 0; }
+    .carousel-business-name {
+      font-size: 1rem; font-weight: 800; color: #003366;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .carousel-counter { font-size: 0.72rem; color: #888; letter-spacing: 0.5px; margin-top: 2px; }
+    .carousel-dots {
+      display: flex; gap: 6px; justify-content: center; margin-top: 6px; flex-wrap: wrap;
+    }
+    .carousel-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #d1d5db; cursor: pointer; border: none; padding: 0;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .carousel-dot:hover { background: #9ca3af; }
+    .carousel-dot.active { background: #0D9488; transform: scale(1.3); }
+
+    .doc-preview { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    .plan-page {
+      min-width: 940px;
+      background: white;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.14);
+      border-radius: 4px;
+      overflow: hidden;
+      font-family: 'Aptos', 'Segoe UI', system-ui, sans-serif;
+    }
+
+    .doc-header {
+      background: #003366; color: white;
+      padding: 11px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .doc-company { font-size: 0.95rem; font-weight: 800; letter-spacing: 0.3px; }
+    .doc-company-sub { font-size: 0.68rem; opacity: 0.7; margin-top: 1px; }
+    .doc-plan-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; }
+    .doc-year { font-size: 0.68rem; opacity: 0.6; margin-top: 2px; text-align: right; }
+
+    .doc-body { display: grid; grid-template-columns: 1fr 1.55fr 1fr; }
+    .doc-col { padding: 14px 16px; border-right: 1px solid #e5e7eb; }
+    .doc-col:last-child { border-right: none; }
+
+    .col-heading {
+      font-size: 0.6rem; font-weight: 800;
+      letter-spacing: 1.8px; text-transform: uppercase;
+      color: #0D9488; border-left: 3px solid #0D9488;
+      padding-left: 7px; margin-bottom: 12px;
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+    }
+    .col-heading-meta { font-size: 0.58rem; color: #888; letter-spacing: 1px; font-weight: 700; }
+
+    .empty-line { font-size: 0.72rem; color: #b0b0b0; font-style: italic; }
+
+    /* Goals */
+    .goal-row {
+      display: grid; grid-template-columns: 16px 1fr;
+      column-gap: 6px; align-items: start;
+      padding: 5px 0; border-bottom: 1px dashed #f0f0f0;
+    }
+    .goal-row:last-child { border-bottom: none; }
+    .goal-status { font-size: 0.95rem; line-height: 1.1; padding-top: 1px; }
+    .goal-text { font-size: 0.74rem; line-height: 1.4; color: #2d2d2d; font-weight: 600; }
+    .goal-meta {
+      font-size: 0.6rem; color: #888; margin-top: 2px;
+      display: flex; flex-wrap: wrap; gap: 4px 8px; letter-spacing: 0.2px;
+    }
+    .goal-meta .owner { font-weight: 700; color: #0D9488; }
+    .goal-meta .company-flag {
+      background: rgba(0,51,102,0.08); color: #003366; font-weight: 700;
+      padding: 0 5px; border-radius: 8px; font-size: 0.56rem;
+      text-transform: uppercase; letter-spacing: 0.6px;
+    }
+
+    /* Scorecard */
+    .sc-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.7rem; table-layout: fixed;
+    }
+    .sc-table th, .sc-table td {
+      padding: 4px 5px; border-bottom: 1px solid #f0f0f0;
+      text-align: right; white-space: nowrap;
+    }
+    .sc-table th {
+      font-size: 0.55rem; font-weight: 800; color: #003366;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      background: #fafbfc;
+    }
+    .sc-table th.sc-name, .sc-table td.sc-name {
+      text-align: left; width: 38%;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .sc-table th.sc-goal, .sc-table td.sc-goal {
+      width: 13%; color: #888; font-weight: 700;
+    }
+    .sc-table td.sc-name { color: #2d2d2d; font-weight: 700; }
+    .sc-table .sc-owner {
+      display: block; font-size: 0.6rem;
+      color: #0D9488; font-weight: 700; margin-top: 1px;
+    }
+    .sc-cell.hit  { color: #0D9488; font-weight: 700; }
+    .sc-cell.miss { color: #c53030; font-weight: 700; }
+    .sc-cell.empty { color: #c0c0c0; }
+    .sc-empty { font-size: 0.72rem; color: #b0b0b0; font-style: italic; padding: 6px 0; }
+
+    /* Issues */
+    .issue-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .issue-row {
+      display: grid; grid-template-columns: 14px 1fr;
+      column-gap: 6px; align-items: start;
+      padding: 4px 0; border-bottom: 1px dashed #f0f0f0;
+    }
+    .issue-row:last-child { border-bottom: none; }
+    .issue-num { color: #0D9488; font-weight: 800; font-size: 0.68rem; padding-top: 1px; }
+    .issue-text { font-size: 0.73rem; line-height: 1.4; color: #2d2d2d; }
+    .issue-owner { font-size: 0.6rem; color: #0D9488; font-weight: 700; margin-top: 2px; }
+
+    .doc-footer {
+      background: #f8f9fa; border-top: 1px solid #e5e7eb;
+      padding: 6px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .doc-footer-text { font-size: 0.6rem; color: #aaa; }
+    .doc-footer-tagline { font-size: 0.6rem; color: #0D9488; font-weight: 700; }
+
+    .state-msg {
+      max-width: 1100px; margin: 24px auto;
+      padding: 24px; text-align: center;
+      background: white; border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      color: #666; font-size: 0.9rem;
+    }
+    .state-msg.error {
+      border-left: 4px solid #dc2626;
+      color: #7f1d1d; background: #fef2f2;
+    }
+
+    @page { size: A4 landscape; margin: 7mm 9mm; }
+
+    @media print {
+      body { opacity: 1 !important; background: white !important; padding: 0 !important; }
+      .screen-toolbar, .mobile-hint, .carousel-nav, .page-intro { display: none !important; }
+      .plans-wrap { padding: 0; margin: 0; max-width: none; }
+      .doc-preview { padding: 0 !important; overflow: visible !important; }
+      .plan-page {
+        min-width: 0 !important; width: 100% !important;
+        box-shadow: none !important; border-radius: 0 !important;
+      }
+      .doc-body { page-break-inside: avoid; break-inside: avoid; }
+      .doc-header { padding: 9px 18px; }
+      .doc-col { padding: 11px 14px; }
+      .col-heading { margin-bottom: 9px; }
+      .sc-table th, .sc-table td { padding: 3px 4px; }
+      .doc-footer { padding: 5px 18px; }
+    }
+  </style>
+  <script src="js/active-org.js" defer></script>
+</head>
+<body>
+
+  <div class="screen-toolbar">
+    <div class="toolbar-left">
+      <a href="index.html" class="toolbar-back">&#x2190; Account</a>
+      <span class="toolbar-title">One-Page Operations &mdash; All Businesses</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+      <span class="toolbar-hint">Arrow through your businesses &middot; Print current view</span>
+      <button class="print-btn" onclick="window.print()">&#x1F5A8;&nbsp; Print / PDF</button>
+    </div>
+  </div>
+
+  <div class="mobile-hint">
+    &#x21C4; Use the arrows to switch between your businesses &middot; Scroll right inside the plan for the full 3-column view
+  </div>
+
+  <div class="page-intro">
+    <h1>&#x1F4CB; One-Page Operations &mdash; All Businesses</h1>
+    <p>Step through every business&rsquo; operations one-pager: quarterly goals, weekly numbers, open issues. Useful for cross-business reviews.</p>
+  </div>
+
+  <div id="plansWrap" class="plans-wrap">
+    <div class="state-msg">Loading your businesses&hellip;</div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const sb = createClient(
+      'https://eekefsuaefgpqmjdyniy.supabase.co',
+      'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+    );
+
+    const STATUS_ICON = {
+      on_track:'\u{1F7E2}', at_risk:'\u{1F7E1}', off_track:'\u{1F534}',
+      done:'\u{2705}',      not_started:'\u{26AA}'
+    };
+    const STATUS_LABEL = {
+      on_track:'On Track', at_risk:'At Risk', off_track:'Off Track',
+      done:'Done',         not_started:'Not Started'
+    };
+
+    function escHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+    function mondayISO(d) {
+      const dt = new Date(d); const day = dt.getDay();
+      dt.setDate(dt.getDate() + ((day === 0 ? -6 : 1) - day));
+      return dt.toISOString().slice(0, 10);
+    }
+    function isoAddWeeks(iso, wk) {
+      const dt = new Date(iso + 'T00:00:00');
+      dt.setDate(dt.getDate() + wk * 7);
+      return dt.toISOString().slice(0, 10);
+    }
+    function fmtWeek(iso) {
+      const dt = new Date(iso + 'T00:00:00');
+      return dt.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+    }
+    function fmtVal(v, type) {
+      if (v === null || v === undefined || v === '') return '—';
+      if (type === 'currency')   return '$' + Number(v).toLocaleString();
+      if (type === 'percentage') return v + '%';
+      return String(v);
+    }
+    function currentQuarter() {
+      const d = new Date();
+      return 'Q' + (Math.floor(d.getMonth() / 3) + 1) + ' ' + d.getFullYear();
+    }
+
+    function renderGoalsBlock(rocks) {
+      if (!rocks || !rocks.length) {
+        return '<div class="empty-line">No quarterly goals recorded.</div>';
+      }
+      return rocks.map(r => {
+        const icon = STATUS_ICON[r.status] || '⚪';
+        const label = STATUS_LABEL[r.status] || 'Not Started';
+        const owner = (r.owner || '').trim();
+        const meta = [];
+        if (owner) meta.push(`<span class="owner">${escHtml(owner)}</span>`);
+        meta.push(`<span>${escHtml(label)}</span>`);
+        if (r.company_rock) meta.push('<span class="company-flag">Company</span>');
+        return `
+          <div class="goal-row">
+            <div class="goal-status">${icon}</div>
+            <div>
+              <div class="goal-text">${escHtml(r.description || '—')}</div>
+              <div class="goal-meta">${meta.join('')}</div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function renderScorecardBlock(metrics, entriesByMetric, weeks) {
+      if (!metrics || !metrics.length) {
+        return '<div class="sc-empty">No weekly numbers recorded yet.</div>';
+      }
+      const header = `
+        <tr>
+          <th class="sc-name">Metric</th>
+          <th class="sc-goal">Goal</th>
+          ${weeks.map(w => `<th>${escHtml(fmtWeek(w))}</th>`).join('')}
+        </tr>`;
+      const body = metrics.map(m => {
+        const entries = entriesByMetric[m.id] || {};
+        const goal = (m.goal === null || m.goal === undefined) ? null : Number(m.goal);
+        const cells = weeks.map(w => {
+          const v = entries[w];
+          if (v === undefined || v === null || v === '') {
+            return `<td class="sc-cell empty">&mdash;</td>`;
+          }
+          let cls = '';
+          if (goal !== null && !isNaN(goal)) {
+            cls = Number(v) >= goal ? ' hit' : ' miss';
+          }
+          return `<td class="sc-cell${cls}">${fmtVal(v, m.measurement_type)}</td>`;
+        }).join('');
+        const owner = (m.owner || '').trim();
+        return `
+          <tr>
+            <td class="sc-name">
+              ${escHtml(m.name || '')}
+              ${owner ? `<span class="sc-owner">${escHtml(owner)}</span>` : ''}
+            </td>
+            <td class="sc-goal">${goal !== null && !isNaN(goal) ? fmtVal(goal, m.measurement_type) : '—'}</td>
+            ${cells}
+          </tr>`;
+      }).join('');
+      return `<table class="sc-table"><thead>${header}</thead><tbody>${body}</tbody></table>`;
+    }
+
+    function renderIssuesBlock(issues) {
+      if (!issues || !issues.length) {
+        return '<li class="empty-line">No open issues. Nice work.</li>';
+      }
+      return issues.map((iss, i) => {
+        const owner = (iss.owner || '').trim();
+        return `
+          <li class="issue-row">
+            <span class="issue-num">${i + 1}.</span>
+            <div>
+              <div class="issue-text">${escHtml(iss.description || '—')}</div>
+              ${owner ? `<div class="issue-owner">${escHtml(owner)}</div>` : ''}
+            </div>
+          </li>`;
+      }).join('');
+    }
+
+    function renderPlanCard(org, data, quarter, weeks) {
+      const today = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+      return `
+        <div class="doc-preview">
+          <div class="plan-page">
+
+            <div class="doc-header">
+              <div>
+                <div class="doc-company">${escHtml(org.name)}</div>
+                <div class="doc-company-sub">Operations Snapshot</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="doc-plan-title">One-Page Operations</div>
+                <div class="doc-year">${escHtml(today)}</div>
+              </div>
+            </div>
+
+            <div class="doc-body">
+
+              <div class="doc-col">
+                <div class="col-heading">
+                  <span>Quarterly Goals</span>
+                  <span class="col-heading-meta">${escHtml(quarter)}</span>
+                </div>
+                <div>${renderGoalsBlock(data.rocks)}</div>
+              </div>
+
+              <div class="doc-col">
+                <div class="col-heading">
+                  <span>Weekly Numbers</span>
+                  <span class="col-heading-meta">Last ${weeks.length} weeks</span>
+                </div>
+                <div>${renderScorecardBlock(data.metrics, data.entriesByMetric, weeks)}</div>
+              </div>
+
+              <div class="doc-col">
+                <div class="col-heading">
+                  <span>Open Issues</span>
+                  <span class="col-heading-meta">${data.issues.length ? data.issues.length + ' open' : ''}</span>
+                </div>
+                <ul class="issue-list">${renderIssuesBlock(data.issues)}</ul>
+              </div>
+
+            </div>
+
+            <div class="doc-footer">
+              <span class="doc-footer-text">Confidential &mdash; ${escHtml(org.name)}</span>
+              <span class="doc-footer-tagline">Your Business Coach &mdash; coach4u.com.au</span>
+            </div>
+
+          </div>
+        </div>
+      `;
+    }
+
+    async function init() {
+      const { data: { user }, error: authErr } = await sb.auth.getUser();
+      if (!user || authErr) { window.location.href = 'login.html'; return; }
+
+      const { data: profile } = await sb
+        .from('users').select('membership_status').eq('id', user.id).single();
+      if (!profile || profile.membership_status !== 'active') {
+        window.location.href = 'inactive.html'; return;
+      }
+
+      document.body.style.opacity = '1';
+
+      // Load caller's active orgs — scoped to the ACTIVE subscription for multi-tenant users.
+      const subId = (window.activeOrg && window.activeOrg.getSubscription)
+        ? window.activeOrg.getSubscription() : null;
+      const memQuery = sb
+        .from('team_members')
+        .select('organisation_id, organisations!inner(id, name, subscription_id)')
+        .eq('user_id', user.id)
+        .eq('status', 'active');
+      if (subId) memQuery.eq('organisations.subscription_id', subId);
+      const { data: mems, error: memErr } = await memQuery;
+
+      const wrap = document.getElementById('plansWrap');
+
+      if (memErr) {
+        wrap.innerHTML = `<div class="state-msg error">Could not load businesses: ${escHtml(memErr.message)}</div>`;
+        return;
+      }
+      if (!mems || !mems.length) {
+        wrap.innerHTML = `<div class="state-msg">No businesses in this account yet. <a href="setup.html">Create your first business</a>.</div>`;
+        return;
+      }
+
+      const orgs = mems
+        .map(m => ({ id: m.organisations.id, name: m.organisations.name }))
+        .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      const orgIds = orgs.map(o => o.id);
+
+      const quarter = currentQuarter();
+      const thisMonday = mondayISO(new Date());
+      const weeks = [-5,-4,-3,-2,-1,0].map(o => isoAddWeeks(thisMonday, o));
+
+      // 3 parallel queries across all orgs
+      const [rocksRes, metricsRes, issuesRes] = await Promise.all([
+        sb.from('rocks')
+          .select('id, organisation_id, description, owner, status, quarter, company_rock, sort_order')
+          .in('organisation_id', orgIds)
+          .eq('quarter', quarter)
+          .order('sort_order', { ascending: true }),
+        sb.from('scorecard_metrics')
+          .select('id, organisation_id, name, owner, goal, measurement_type, sort_order')
+          .in('organisation_id', orgIds)
+          .order('sort_order', { ascending: true }),
+        sb.from('issues')
+          .select('id, organisation_id, description, owner, status, created_at')
+          .in('organisation_id', orgIds)
+          .eq('status', 'open')
+          .order('created_at', { ascending: true })
+      ]);
+
+      const byOrg = new Map();
+      orgs.forEach(o => byOrg.set(o.id, {
+        rocks: [], metrics: [], entriesByMetric: {}, issues: []
+      }));
+
+      (rocksRes.data   || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.rocks.push(r); });
+      (metricsRes.data || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.metrics.push(r); });
+      (issuesRes.data  || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.issues.push(r); });
+
+      // Fetch scorecard entries for ALL metrics across all orgs in one round-trip
+      const allMetricIds = (metricsRes.data || []).map(m => m.id);
+      if (allMetricIds.length) {
+        const metricToOrg = new Map((metricsRes.data || []).map(m => [m.id, m.organisation_id]));
+        const { data: entries } = await sb
+          .from('scorecard_entries')
+          .select('metric_id, week_date, value')
+          .in('metric_id', allMetricIds)
+          .gte('week_date', weeks[0]);
+        if (Array.isArray(entries)) {
+          for (const e of entries) {
+            const oid = metricToOrg.get(e.metric_id);
+            const row = oid ? byOrg.get(oid) : null;
+            if (!row) continue;
+            if (!row.entriesByMetric[e.metric_id]) row.entriesByMetric[e.metric_id] = {};
+            row.entriesByMetric[e.metric_id][e.week_date] = e.value;
+          }
+        }
+      }
+
+      /* Carousel state + render */
+      let currentIdx = 0;
+
+      function renderCurrent() {
+        const o = orgs[currentIdx];
+        const total = orgs.length;
+        const prevIdx = (currentIdx - 1 + total) % total;
+        const nextIdx = (currentIdx + 1) % total;
+        const prevName = orgs[prevIdx].name;
+        const nextName = orgs[nextIdx].name;
+
+        const dots = orgs.map((biz, i) =>
+          `<button class="carousel-dot ${i === currentIdx ? 'active' : ''}" data-idx="${i}" aria-label="View ${escHtml(biz.name)}" title="${escHtml(biz.name)}"></button>`
+        ).join('');
+
+        const navHtml = total <= 1
+          ? `
+            <div class="carousel-center">
+              <div class="carousel-business-name">${escHtml(o.name)}</div>
+              <div class="carousel-counter">Your only business</div>
+            </div>
+          `
+          : `
+            <button class="carousel-btn" id="prevBtn" title="${escHtml(prevName)}">
+              <span>&#x2190;</span>
+              <span class="biz-name-hint">${escHtml(prevName)}</span>
+            </button>
+            <div class="carousel-center">
+              <div class="carousel-business-name">${escHtml(o.name)}</div>
+              <div class="carousel-counter">Business ${currentIdx + 1} of ${total}</div>
+              <div class="carousel-dots">${dots}</div>
+            </div>
+            <button class="carousel-btn" id="nextBtn" title="${escHtml(nextName)}">
+              <span class="biz-name-hint">${escHtml(nextName)}</span>
+              <span>&#x2192;</span>
+            </button>
+          `;
+
+        wrap.innerHTML =
+          `<div class="carousel-nav">${navHtml}</div>` +
+          renderPlanCard(o, byOrg.get(o.id), quarter, weeks);
+
+        const prev = document.getElementById('prevBtn');
+        const next = document.getElementById('nextBtn');
+        if (prev) prev.addEventListener('click', () => { currentIdx = prevIdx; renderCurrent(); });
+        if (next) next.addEventListener('click', () => { currentIdx = nextIdx; renderCurrent(); });
+        document.querySelectorAll('.carousel-dot').forEach(btn => {
+          btn.addEventListener('click', e => {
+            const i = parseInt(e.currentTarget.dataset.idx, 10);
+            if (!Number.isNaN(i) && i !== currentIdx) { currentIdx = i; renderCurrent(); }
+          });
+        });
+      }
+
+      document.addEventListener('keydown', e => {
+        if (orgs.length <= 1) return;
+        const tag = (e.target && e.target.tagName) || '';
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+        if (e.key === 'ArrowLeft') {
+          currentIdx = (currentIdx - 1 + orgs.length) % orgs.length;
+          renderCurrent();
+        } else if (e.key === 'ArrowRight') {
+          currentIdx = (currentIdx + 1) % orgs.length;
+          renderCurrent();
+        }
+      });
+
+      renderCurrent();
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -4,6 +4,17 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.115
+- **New `account-ops-plans.html`** — the account-level companion to `one-page-operations.html` (v0.5.114). User asked: "is this added to the account level as well?" — it wasn't, now it is. Mirrors the existing strategy pattern: `one-page-plan.html` is the per-business strategy doc, `account-plans.html` is the carousel of all businesses' strategy docs; `one-page-operations.html` is the per-business ops doc, `account-ops-plans.html` is the carousel of all businesses' ops docs.
+- **Carousel mechanics** — copied directly from `account-plans.html`: prev/next buttons with hint of the next business name, dots, keyboard arrow nav (don't hijack while typing), wraps at the ends.
+- **Per-business render** — same 3-column doc as v0.5.114 (Quarterly Goals · Weekly Numbers · Open Issues), one card per business, doc-header carries the business name + today's date.
+- **Data layer** — fans out 3 parallel queries (`rocks`, `scorecard_metrics`, `issues`) `.in('organisation_id', orgIds)` for all loaded businesses, plus one `scorecard_entries` query across every metric. Result is bucketed back per-org client-side. Reads the current quarter (`Q{n} {year}`) for rocks; reads the last 6 Monday-anchored weeks for the scorecard.
+- **Multi-tenant scoping** — the membership query has `.eq('organisations.subscription_id', activeSubId)` when an active subscription is set, so a user who owns SARUBA + Acme + … only sees the businesses inside the currently-selected account. The active subscription is read via `window.activeOrg.getSubscription()` (added by v0.5.111).
+- **Same scoping fix backported to `account-plans.html`** — that strategy carousel had the same pre-existing leak: without subscription scoping it pulled every team_membership the user had, mixing businesses across all their client accounts into one strip. Added the `if (subId) memQuery.eq('organisations.subscription_id', subId)` filter, plus loaded `js/active-org.js` (which it wasn't previously). The 11 other `account-*.html` carousel pages have the same bug and should get the same fix in a subsequent pass; out of scope for this version since the user's ask was specifically about the operations one-pager.
+- **Linked from `account-operations.html`** via a new "View One-Page Operations — All Businesses" `.view-plan-btn` (style added inline, mirroring `account-strategy.html`).
+
+---
+
 ## v0.5.114
 - **New `one-page-operations.html`** — parallel to the existing `one-page-plan.html` (which covers strategy). User asked: "create a one page plan to house the goals, weekly numbers and the issues, similar for the one page plan."
 - **Layout** — landscape A4, three columns of equal-ish weight (`1fr 1.55fr 1fr`):
