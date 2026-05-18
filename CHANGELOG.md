@@ -4,6 +4,20 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.114
+- **New `one-page-operations.html`** — parallel to the existing `one-page-plan.html` (which covers strategy). User asked: "create a one page plan to house the goals, weekly numbers and the issues, similar for the one page plan."
+- **Layout** — landscape A4, three columns of equal-ish weight (`1fr 1.55fr 1fr`):
+  - **Column 1 — Quarterly Goals**: every row in `rocks` for the active org + current quarter (`Qn YYYY`), ordered by `sort_order`. Each goal shows status icon (🟢🟡🔴✅⚪), description, owner (teal), status label, and a navy "Company" pill when `company_rock = true`.
+  - **Column 2 — Weekly Numbers**: mini-table of `scorecard_metrics` × the last 6 Monday-anchored weeks. Columns are Metric · Goal · 6 week-date headers. Each cell is teal (`hit`) or red (`miss`) against the metric's goal (when goal is non-null); empty cells are grey em-dashes. Owner is shown as a teal sub-line under the metric name.
+  - **Column 3 — Open Issues**: numbered list of `issues` rows where `status = 'open'`, ordered by `created_at ASC`. Each issue shows description + owner sub-line. Count of open issues appears in the heading-meta.
+- **Doc header** — business name (from `activeOrg.getName()` with a fallback Supabase lookup if the cache is empty), "Operations Snapshot" subtitle, today's date.
+- **Data layer** — reads `rocks`, `scorecard_metrics`, `scorecard_entries`, `issues`, all scoped by `organisation_id = activeOrg.get()`. Same RLS gate as the per-page tools. No new schema, no SQL.
+- **Empty states** — "No quarterly goals recorded." / "No weekly numbers recorded yet." / "No open issues. Nice work." per column when the active business has none.
+- **Print** — same `@page A4 landscape` rules + print-only stylesheet as `one-page-plan.html`, so the print button drops to a clean one-page PDF.
+- **Linked from `operations.html`** via a new "View One-Page Operations" `.view-plan-btn` (matching style added inline, mirroring `strategy.html`).
+
+---
+
 ## v0.5.113
 - **Fixed cross-account data leak on `business.html`.** User opened the business dashboard for a brand-new client account and saw Coach4U's sample 1-year goal ("Sign 20 new clients, launch group coaching program, hire first associate coach by Q3, and publish Signature Program workbook") plus Coach4U's core values pills (Integrity / Growth Mindset / Client First / Accountability) — even though no `targets` or `core_values` row existed in Supabase for the new org. Looked like multi-tenant data was bleeding across accounts; actually a pre-existing display bug that only became visible once a second account existed.
 - **Root cause:** the 1-Year Goal and Core Values panels had hardcoded Coach4U sample text inside the HTML (`<div id="oneYearGoal">Sign 20 new clients…</div>`, `<span class="value-pill">Integrity</span>` etc.). The render JS only overwrote those defaults IF the Supabase query returned a row. For a new biz with no row, the JS bailed out of the `if (targets)` / `if (cv)` block and the hardcoded Coach4U text just stayed visible. Same pattern as the `one-page-plan.html` issue that v0.5.104 fixed — this was the other half.

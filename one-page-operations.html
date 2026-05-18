@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One-Page Operations | Your Business Coach</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#003366">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Your Business Coach">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      background: #e8edf2;
+      min-height: 100vh;
+      padding-bottom: 24px;
+    }
+
+    .screen-toolbar {
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .toolbar-back {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #0D9488;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .toolbar-back:hover { text-decoration: underline; }
+    .toolbar-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #003366;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .toolbar-hint { font-size: 0.72rem; color: #999; }
+    @media (max-width: 600px) { .toolbar-hint { display: none; } }
+
+    .print-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 14px;
+      background: #0D9488;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .print-btn:hover { background: #0F766E; }
+
+    .mobile-hint {
+      display: none;
+      background: #f0fdfa;
+      border-bottom: 1px solid #d1fae5;
+      padding: 8px 16px;
+      font-size: 0.75rem;
+      color: #065f46;
+    }
+    @media (max-width: 900px) { .mobile-hint { display: block; } }
+
+    .doc-preview {
+      padding: 16px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .plan-page {
+      min-width: 820px;
+      background: white;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.14);
+      border-radius: 4px;
+      overflow: hidden;
+      font-family: 'Aptos', 'Segoe UI', system-ui, sans-serif;
+    }
+
+    .doc-header {
+      background: #003366;
+      color: white;
+      padding: 11px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .doc-company { font-size: 0.95rem; font-weight: 800; letter-spacing: 0.3px; }
+    .doc-company-sub { font-size: 0.68rem; opacity: 0.7; margin-top: 1px; }
+    .doc-plan-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; }
+    .doc-year { font-size: 0.68rem; opacity: 0.6; margin-top: 2px; text-align: right; }
+
+    .doc-body {
+      display: grid;
+      grid-template-columns: 1fr 1.55fr 1fr;
+    }
+    .doc-col { padding: 14px 16px; border-right: 1px solid #e5e7eb; }
+    .doc-col:last-child { border-right: none; }
+
+    .col-heading {
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: #0D9488;
+      border-left: 3px solid #0D9488;
+      padding-left: 7px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .col-heading-meta { font-size: 0.58rem; color: #888; letter-spacing: 1px; font-weight: 700; }
+
+    .field { margin-bottom: 10px; }
+    .field:last-child { margin-bottom: 0; }
+    .field-divider { border: none; border-top: 1px solid #f0f0f0; margin: 10px 0; }
+    .empty-line { font-size: 0.72rem; color: #b0b0b0; font-style: italic; }
+
+    /* --- Goals column --- */
+    .goal-row {
+      display: grid;
+      grid-template-columns: 16px 1fr;
+      column-gap: 6px;
+      align-items: start;
+      padding: 5px 0;
+      border-bottom: 1px dashed #f0f0f0;
+    }
+    .goal-row:last-child { border-bottom: none; }
+    .goal-status { font-size: 0.95rem; line-height: 1.1; padding-top: 1px; }
+    .goal-text { font-size: 0.74rem; line-height: 1.4; color: #2d2d2d; font-weight: 600; }
+    .goal-meta {
+      font-size: 0.6rem; color: #888;
+      margin-top: 2px;
+      display: flex; flex-wrap: wrap; gap: 4px 8px;
+      letter-spacing: 0.2px;
+    }
+    .goal-meta .owner { font-weight: 700; color: #0D9488; }
+    .goal-meta .company-flag {
+      background: rgba(0,51,102,0.08);
+      color: #003366; font-weight: 700;
+      padding: 0 5px; border-radius: 8px; font-size: 0.56rem;
+      text-transform: uppercase; letter-spacing: 0.6px;
+    }
+
+    /* --- Scorecard column (mini-grid) --- */
+    .sc-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.7rem;
+      table-layout: fixed;
+    }
+    .sc-table th, .sc-table td {
+      padding: 4px 5px;
+      border-bottom: 1px solid #f0f0f0;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .sc-table th {
+      font-size: 0.55rem;
+      font-weight: 800;
+      color: #003366;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      background: #fafbfc;
+    }
+    .sc-table th.sc-name, .sc-table td.sc-name {
+      text-align: left;
+      width: 38%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sc-table th.sc-goal, .sc-table td.sc-goal {
+      width: 13%;
+      color: #888;
+      font-weight: 700;
+    }
+    .sc-table td.sc-name {
+      color: #2d2d2d; font-weight: 700;
+    }
+    .sc-table .sc-owner {
+      display: block;
+      font-size: 0.6rem;
+      color: #0D9488;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+    .sc-cell.hit  { color: #0D9488; font-weight: 700; }
+    .sc-cell.miss { color: #c53030; font-weight: 700; }
+    .sc-cell.empty { color: #c0c0c0; }
+    .sc-empty { font-size: 0.72rem; color: #b0b0b0; font-style: italic; padding: 6px 0; }
+
+    /* --- Issues column --- */
+    .issue-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .issue-row {
+      display: grid;
+      grid-template-columns: 14px 1fr;
+      column-gap: 6px;
+      align-items: start;
+      padding: 4px 0;
+      border-bottom: 1px dashed #f0f0f0;
+    }
+    .issue-row:last-child { border-bottom: none; }
+    .issue-num { color: #0D9488; font-weight: 800; font-size: 0.68rem; padding-top: 1px; }
+    .issue-text { font-size: 0.73rem; line-height: 1.4; color: #2d2d2d; }
+    .issue-owner { font-size: 0.6rem; color: #0D9488; font-weight: 700; margin-top: 2px; }
+
+    .doc-footer {
+      background: #f8f9fa;
+      border-top: 1px solid #e5e7eb;
+      padding: 6px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .doc-footer-text { font-size: 0.6rem; color: #aaa; }
+    .doc-footer-tagline { font-size: 0.6rem; color: #0D9488; font-weight: 700; }
+
+    @page { size: A4 landscape; margin: 7mm 9mm; }
+
+    @media print {
+      body { opacity: 1 !important; background: white !important; padding: 0 !important; }
+      .screen-toolbar, .mobile-hint { display: none !important; }
+      .doc-preview { padding: 0 !important; overflow: visible !important; }
+      .plan-page {
+        min-width: 0 !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .doc-body { page-break-inside: avoid; break-inside: avoid; }
+      .doc-header { padding: 9px 18px; }
+      .doc-col { padding: 11px 14px; }
+      .col-heading { margin-bottom: 9px; }
+      .field { margin-bottom: 8px; }
+      .field-divider { margin: 8px 0; }
+      .sc-table th, .sc-table td { padding: 3px 4px; }
+      .doc-footer { padding: 5px 18px; }
+    }
+  </style>
+  <script src="js/active-session.js" defer></script>
+  <script src="js/active-org.js" defer></script>
+</head>
+<body>
+
+  <div class="screen-toolbar">
+    <div class="toolbar-left">
+      <a href="operations.html" class="toolbar-back">&#x2190; Operations</a>
+      <span class="toolbar-title">One-Page Operations</span>
+      <span id="activeBizName" class="biz-pill"></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+      <span class="toolbar-hint">Scroll to see full plan &middot; Print for landscape A4</span>
+      <button class="print-btn" onclick="window.print()">&#x1F5A8;&nbsp; Print / PDF</button>
+    </div>
+  </div>
+
+  <div class="mobile-hint">
+    &#x21C4; Scroll right to see the full plan &nbsp;&middot;&nbsp; Use Print / PDF for the best result
+  </div>
+
+  <div class="doc-preview">
+    <div class="plan-page">
+
+      <div class="doc-header">
+        <div>
+          <div class="doc-company" id="opp-company">&mdash;</div>
+          <div class="doc-company-sub">Operations Snapshot</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="doc-plan-title">One-Page Operations</div>
+          <div class="doc-year" id="opp-doc-date"></div>
+        </div>
+      </div>
+
+      <div class="doc-body">
+
+        <div class="doc-col">
+          <div class="col-heading">
+            <span>Quarterly Goals</span>
+            <span class="col-heading-meta" id="opp-quarter-label"></span>
+          </div>
+          <div id="opp-goals"></div>
+        </div>
+
+        <div class="doc-col">
+          <div class="col-heading">
+            <span>Weekly Numbers</span>
+            <span class="col-heading-meta" id="opp-weeks-label"></span>
+          </div>
+          <div id="opp-scorecard"></div>
+        </div>
+
+        <div class="doc-col">
+          <div class="col-heading">
+            <span>Open Issues</span>
+            <span class="col-heading-meta" id="opp-issues-count"></span>
+          </div>
+          <ul class="issue-list" id="opp-issues"></ul>
+        </div>
+
+      </div>
+
+      <div class="doc-footer">
+        <span class="doc-footer-text">Confidential &mdash; For internal use only</span>
+        <span class="doc-footer-tagline">Your Business Coach &mdash; coach4u.com.au</span>
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const supabase = createClient(
+      'https://eekefsuaefgpqmjdyniy.supabase.co',
+      'sb_publishable_pcXHwQVMpvEojb4K3afEMw_RMvgZM-Y'
+    );
+
+    const STATUS_ICON = {
+      on_track:'\u{1F7E2}', at_risk:'\u{1F7E1}', off_track:'\u{1F534}',
+      done:'\u{2705}',    not_started:'\u{26AA}'
+    };
+    const STATUS_LABEL = {
+      on_track:'On Track', at_risk:'At Risk', off_track:'Off Track',
+      done:'Done',         not_started:'Not Started'
+    };
+
+    function escapeHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+    function mondayISO(d) {
+      const dt = new Date(d); const day = dt.getDay();
+      dt.setDate(dt.getDate() + ((day === 0 ? -6 : 1) - day));
+      return dt.toISOString().slice(0, 10);
+    }
+    function isoAddWeeks(iso, wk) {
+      const dt = new Date(iso + 'T00:00:00');
+      dt.setDate(dt.getDate() + wk * 7);
+      return dt.toISOString().slice(0, 10);
+    }
+    function fmtWeek(iso) {
+      const dt = new Date(iso + 'T00:00:00');
+      return dt.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+    }
+    function fmtVal(v, type) {
+      if (v === null || v === undefined || v === '') return '—';
+      if (type === 'currency')   return '$' + Number(v).toLocaleString();
+      if (type === 'percentage') return v + '%';
+      return String(v);
+    }
+    function currentQuarter() {
+      const d = new Date();
+      return 'Q' + (Math.floor(d.getMonth() / 3) + 1) + ' ' + d.getFullYear();
+    }
+
+    // ── Goals (rocks) ───────────────────────────────────────────────
+    function renderGoals(rocks) {
+      const wrap = document.getElementById('opp-goals');
+      if (!rocks || !rocks.length) {
+        wrap.innerHTML = '<div class="empty-line">No quarterly goals recorded.</div>';
+        return;
+      }
+      wrap.innerHTML = rocks.map(r => {
+        const icon = STATUS_ICON[r.status] || '⚪';
+        const label = STATUS_LABEL[r.status] || 'Not Started';
+        const owner = (r.owner || '').trim();
+        const meta = [];
+        if (owner) meta.push(`<span class="owner">${escapeHtml(owner)}</span>`);
+        meta.push(`<span>${escapeHtml(label)}</span>`);
+        if (r.company_rock) meta.push('<span class="company-flag">Company</span>');
+        return `
+          <div class="goal-row">
+            <div class="goal-status">${icon}</div>
+            <div>
+              <div class="goal-text">${escapeHtml(r.description || '—')}</div>
+              <div class="goal-meta">${meta.join('')}</div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // ── Scorecard (metrics + entries × last 6 weeks) ────────────────
+    function renderScorecard(metrics, entriesByMetric, weeks) {
+      const wrap = document.getElementById('opp-scorecard');
+      const weeksLabel = document.getElementById('opp-weeks-label');
+      if (weeks && weeks.length) {
+        weeksLabel.textContent = 'Last ' + weeks.length + ' weeks';
+      }
+      if (!metrics || !metrics.length) {
+        wrap.innerHTML = '<div class="sc-empty">No weekly numbers recorded yet.</div>';
+        return;
+      }
+      const header = `
+        <tr>
+          <th class="sc-name">Metric</th>
+          <th class="sc-goal">Goal</th>
+          ${weeks.map(w => `<th>${escapeHtml(fmtWeek(w))}</th>`).join('')}
+        </tr>`;
+      const body = metrics.map(m => {
+        const entries = entriesByMetric[m.id] || {};
+        const goal = (m.goal === null || m.goal === undefined) ? null : Number(m.goal);
+        const cells = weeks.map(w => {
+          const v = entries[w];
+          if (v === undefined || v === null || v === '') {
+            return `<td class="sc-cell empty">&mdash;</td>`;
+          }
+          let cls = '';
+          if (goal !== null && !isNaN(goal)) {
+            cls = Number(v) >= goal ? ' hit' : ' miss';
+          }
+          return `<td class="sc-cell${cls}">${fmtVal(v, m.measurement_type)}</td>`;
+        }).join('');
+        const owner = (m.owner || '').trim();
+        return `
+          <tr>
+            <td class="sc-name">
+              ${escapeHtml(m.name || '')}
+              ${owner ? `<span class="sc-owner">${escapeHtml(owner)}</span>` : ''}
+            </td>
+            <td class="sc-goal">${goal !== null && !isNaN(goal) ? fmtVal(goal, m.measurement_type) : '—'}</td>
+            ${cells}
+          </tr>`;
+      }).join('');
+      wrap.innerHTML = `<table class="sc-table"><thead>${header}</thead><tbody>${body}</tbody></table>`;
+    }
+
+    // ── Issues ──────────────────────────────────────────────────────
+    function renderIssues(issues) {
+      const wrap = document.getElementById('opp-issues');
+      const countEl = document.getElementById('opp-issues-count');
+      if (!issues || !issues.length) {
+        countEl.textContent = '';
+        wrap.innerHTML = '<li class="empty-line">No open issues. Nice work.</li>';
+        return;
+      }
+      countEl.textContent = issues.length + ' open';
+      wrap.innerHTML = issues.map((iss, i) => {
+        const owner = (iss.owner || '').trim();
+        return `
+          <li class="issue-row">
+            <span class="issue-num">${i + 1}.</span>
+            <div>
+              <div class="issue-text">${escapeHtml(iss.description || '—')}</div>
+              ${owner ? `<div class="issue-owner">${escapeHtml(owner)}</div>` : ''}
+            </div>
+          </li>`;
+      }).join('');
+    }
+
+    async function init() {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (!user || error) { window.location.href = 'login.html'; return; }
+      const { data: profile } = await supabase
+        .from('users').select('membership_status').eq('id', user.id).single();
+      if (!profile || profile.membership_status !== 'active') {
+        window.location.href = 'inactive.html'; return;
+      }
+
+      const orgId = window.activeOrg && window.activeOrg.get();
+      if (!orgId) { window.location.href = 'index.html'; return; }
+
+      // Company name + date in the doc header
+      const companyEl = document.getElementById('opp-company');
+      const cachedName = window.activeOrg.getName && window.activeOrg.getName();
+      if (companyEl) companyEl.textContent = cachedName || '—';
+      const dateEl = document.getElementById('opp-doc-date');
+      if (dateEl) {
+        dateEl.textContent = new Date().toLocaleDateString('en-AU', {
+          day: 'numeric', month: 'short', year: 'numeric'
+        });
+      }
+
+      // Quarter + weeks
+      const quarter = currentQuarter();
+      document.getElementById('opp-quarter-label').textContent = quarter;
+      const thisMonday = mondayISO(new Date());
+      const weeks = [-5,-4,-3,-2,-1,0].map(o => isoAddWeeks(thisMonday, o));
+
+      try {
+        const [rocksRes, metricsRes, issuesRes, orgRes] = await Promise.all([
+          supabase.from('rocks')
+            .select('id, description, owner, status, quarter, company_rock, sort_order')
+            .eq('organisation_id', orgId)
+            .eq('quarter', quarter)
+            .order('sort_order', { ascending: true }),
+          supabase.from('scorecard_metrics')
+            .select('id, name, owner, goal, measurement_type, sort_order')
+            .eq('organisation_id', orgId)
+            .order('sort_order', { ascending: true }),
+          supabase.from('issues')
+            .select('id, description, owner, status, created_at')
+            .eq('organisation_id', orgId)
+            .eq('status', 'open')
+            .order('created_at', { ascending: true }),
+          cachedName ? Promise.resolve(null) : supabase.from('organisations').select('name').eq('id', orgId).maybeSingle()
+        ]);
+
+        if (!cachedName && orgRes && orgRes.data && orgRes.data.name && companyEl) {
+          companyEl.textContent = orgRes.data.name;
+        }
+
+        const rocks   = (rocksRes && !rocksRes.error && Array.isArray(rocksRes.data)) ? rocksRes.data : [];
+        const metrics = (metricsRes && !metricsRes.error && Array.isArray(metricsRes.data)) ? metricsRes.data : [];
+        const issues  = (issuesRes && !issuesRes.error && Array.isArray(issuesRes.data)) ? issuesRes.data : [];
+
+        // Fetch entries for the loaded metrics over the visible weeks
+        const entriesByMetric = {};
+        if (metrics.length) {
+          const metricIds = metrics.map(m => m.id);
+          const { data: entries } = await supabase
+            .from('scorecard_entries')
+            .select('metric_id, week_date, value')
+            .in('metric_id', metricIds)
+            .gte('week_date', weeks[0]);
+          if (Array.isArray(entries)) {
+            for (const e of entries) {
+              if (!entriesByMetric[e.metric_id]) entriesByMetric[e.metric_id] = {};
+              entriesByMetric[e.metric_id][e.week_date] = e.value;
+            }
+          }
+        }
+
+        renderGoals(rocks);
+        renderScorecard(metrics, entriesByMetric, weeks);
+        renderIssues(issues);
+      } catch (e) {
+        console.warn('Operations one-page load error:', e);
+        renderGoals([]);
+        renderScorecard([], {}, weeks);
+        renderIssues([]);
+      }
+
+      document.body.style.opacity = '1';
+    }
+    init();
+  </script>
+</body>
+</html>
