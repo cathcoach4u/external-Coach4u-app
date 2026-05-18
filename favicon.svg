@@ -7,6 +7,7 @@
   </defs>
   <rect width="192" height="192" rx="42" fill="url(#bg)"/>
   <circle cx="158" cy="34" r="26" fill="#ffffff" opacity="0.08"/>
-  <text x="62" y="128" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Aptos, sans-serif" font-size="108" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-4">C</text>
-  <text x="132" y="128" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Aptos, sans-serif" font-size="62" font-weight="800" fill="#0D9488" text-anchor="middle">4U</text>
+  <text x="96" y="130" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Aptos, sans-serif" font-size="108" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-2">
+    <tspan fill="#ffffff">B</tspan><tspan fill="#0D9488">C</tspan>
+  </text>
 </svg>

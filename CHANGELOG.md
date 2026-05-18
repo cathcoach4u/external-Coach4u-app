@@ -4,6 +4,17 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.123
+- **Fixed the broken PWA install.** User screenshot of "Add to Home Screen" dialog showed the app name as "Coach4U" with a generic auto-generated "C" letter avatar, URL truncated to `cathcoach4u.github.io/exte…`. Three things were wrong:
+  - **`manifest.json` had stale paths.** `start_url`, `scope` and the two icon `src` values all pointed at `/external-Coach4u-app/` (the old repo path). The site lives at `/yourbusinesscoach/`, so iOS launched the installed app at a 404 and couldn't load the icon — falling back to its auto-generated letter avatar. Rewrote with relative paths (`./`, `./icon-192.png`, `./icon-512.png`) so the manifest works on any hosting URL.
+  - **`apple-touch-icon` missing on most pages.** Only `business.html` and `setup.html` declared the link, and both pointed at `favicon.svg`. iOS Safari doesn't reliably honour SVG as a home-screen icon; it needs a PNG. Added `<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">` to every page (57 files: every root HTML + every `learn/` guide).
+  - **No PNG icons existed.** Generated three from a Python/Pillow script that matches the brand: 180×180 (`apple-touch-icon.png`, what iOS uses for home-screen), 192×192 and 512×512 (manifest icons, what PWA installers + Android Chrome use). Design: navy rounded square with diagonal gradient + subtle decorative circle, white **B** and teal **C** centred (per user request, "BC such as Business Coach"). Also updated `favicon.svg` to the same BC mark so the browser tab matches.
+- **`offline.html`** had `window.location.href='/external-Coach4u-app/'` baked into its "Go to home" button — fixed to use relative `./`.
+- **Service-worker cache version bumped** to `coach4u-v0.5.123` so iOS picks up the new manifest + icons on the next visit. The user will need to **remove the existing app icon from their home screen and Add to Home Screen again** — iOS aggressively caches PWA icons and won't update them in place.
+- **No SQL.**
+
+---
+
 ## v0.5.122
 - **Smart "back" link on every Learning Vault guide.** User feedback: "It says back to learning vault but if you have opened it from the sections you need to go back to the section you have opened it. But good to also go to learning vault." Two paths in, one path back wasn't right.
 - **The pattern**: on guide page load, check `document.referrer`. If the visitor came from the matching worksheet/tool (e.g. they clicked `Read the Quarterly Goals guide →` from `goals.html`), swap the header back link from `← Learning Vault` → `← Quarterly Goals` and point it at `../goals.html`. If they came from the Vault index (or from anywhere unrecognised), the link stays `← Learning Vault`. Brief flicker on the swap is acceptable — the JS runs at the top of `init()` before the auth check.
