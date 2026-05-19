@@ -4,6 +4,21 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.136
+- **Account-scoped session area links now route to the account carousels.** User report from inside an iasHQ account-level session: "the links in the annual session ie targets needs to go to the IAS area, not the outsourcing." The "Open Targets →" link was hardcoded to `targets.html` &mdash; a biz-scoped page &mdash; so it opened whatever business `window.activeOrg.get()` was holding (some other biz like Outsourcing), not the account context.
+- **Pattern:** added an `ACCOUNT_LINK_MAP` in both `run-annual-session.html` and `run-quarterly-session.html`:
+  - `core-values.html` &rarr; `account-values.html`
+  - `core-focus.html` &rarr; `account-focus.html`
+  - `targets.html` &rarr; `account-targets.html`
+  - `marketing-strategy.html` &rarr; `account-marketing.html`
+  - `leadership-team.html` &rarr; `account-leadership.html`
+  - `goals.html` &rarr; `account-goals.html`
+- A `scopeAreaLinks(areas, isAccount)` helper rewrites the `href` on every area link before render. When `isAccount` is false (biz-scoped sessions), the helper is a no-op &mdash; existing behaviour preserved. When the session has `subscription_id` set and `organisation_id` is null, the map is applied.
+- **Why account carousels:** they're cross-business read-only views that already exist (added in v0.5.96; multi-tenant-scoped to the active subscription in v0.5.116). Landing there gives the user the right context for account-level planning &mdash; they can see every business's targets/values/etc. side by side.
+- No SQL. UI-only fix on two files.
+
+---
+
 ## v0.5.135
 - **Account-scope context fix on planning pages.** User report: "iasHQ - click on planning - start a planning day and it's opening the general business." On a closer look the session was being created with the correct `subscription_id` (iasHQ's sub), so the data was right — but the navy header pill still showed whatever business was last active (typically Coach4U from another account), which made the workspace LOOK like it belonged to that biz. Confusing.
 - **What changed:** on the three account-scoped list pages (`annual-sessions.html?scope=account`, `quarterly-sessions.html?scope=account`, `team-checkins.html?scope=account`) and their workspaces (`run-annual-session.html`, `run-quarterly-session.html` when the loaded row has `subscription_id` set but no `organisation_id`), the `#activeBizName` element is overridden after init to read `🏛️ [Account Name]` instead of `🏢 [Biz Name]`. Different icon (`🏛️` ≠ `🏢`) so the user can tell account-scope from biz-scope at a glance.

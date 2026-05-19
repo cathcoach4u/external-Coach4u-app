@@ -281,6 +281,25 @@
     {id:4, name:'Set 1-Year Plan + Q1 Goals',        links:[{href:'targets.html',text:'Open Targets →'},{href:'goals.html',text:'Open Quarterly Goals →'}]}
   ];
 
+  // When the loaded session is account-scoped, swap the area links to the
+  // account-level carousel pages so the user lands on a cross-business view
+  // instead of a single business's worksheet (their last-active biz).
+  const ACCOUNT_LINK_MAP = {
+    'core-values.html':       'account-values.html',
+    'core-focus.html':        'account-focus.html',
+    'targets.html':           'account-targets.html',
+    'marketing-strategy.html':'account-marketing.html',
+    'leadership-team.html':   'account-leadership.html',
+    'goals.html':             'account-goals.html'
+  };
+  function scopeAreaLinks(areas, isAccount) {
+    if (!isAccount) return areas;
+    return areas.map(a => ({
+      ...a,
+      links: a.links.map(l => ({ ...l, href: ACCOUNT_LINK_MAP[l.href] || l.href }))
+    }));
+  }
+
   async function loadDetail(id){
     const s=await fetchSession(id);
     if(!s){
@@ -345,7 +364,7 @@
       <div class="areas-block">
         <h3 class="block-title">&#x2705; Areas to Cover</h3>
         <p class="areas-progress" id="areas-progress">${progressText(areasCompleted)}</p>
-        ${AREAS.map(area=>{
+        ${scopeAreaLinks(AREAS, !!(s.subscription_id && !s.organisation_id)).map(area=>{
           const checked=!!areasCompleted[area.id];
           const linksHtml=area.links.length?`<div class="area-links">${area.links.map(l=>`<a href="${l.href}">${l.text}</a>`).join('')}</div>`:'';
           return `
