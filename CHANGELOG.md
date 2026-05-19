@@ -4,6 +4,19 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.134
+- **Surfaced actual insert errors on the "+ New" buttons.** User reported "the account create planning annual day link start new meeting isn't working" — generic "Could not create session" toast was hiding the real cause.
+- **Pattern applied to three pages** — `annual-sessions.html`, `quarterly-sessions.html`, `team-checkins.html`. Now the toast picks the right hint based on the Postgres error:
+  - `column subscription_id does not exist` → "SQL not applied — run supabase/v0.5.132-delta.sql"
+  - `row-level security` / `policy` → "Permission denied — you need to be the account owner"
+  - `violates check constraint` → "Schema mismatch — re-run v0.5.132-delta.sql"
+  - Otherwise → the raw Postgres message verbatim
+- Also added explicit pre-check: if `IS_ACCOUNT` is true but `subId` is null at click time, the toast reads "No active account — switch account first" instead of going straight to the API.
+- Errors also now `console.warn` the full error object (not just `.message`) so DevTools shows the full hint/details for further triage.
+- No SQL changes. Pure UX fix for diagnostics.
+
+---
+
 ## v0.5.133
 - **Hygiene fix to `supabase/schema.sql`.** User hit the error `cannot drop function user_org_ids(uuid) because other objects depend on it ... policy "members read financial_periods" on table financial_periods depends on function user_org_ids(uuid) ... use DROP ... CASCADE` while applying SQL.
 - **Root cause:** the error came from running `schema.sql` (the full source-of-truth file) on a populated DB, *not* from `v0.5.132-delta.sql`. The delta file is clean — it doesn't drop user_org_ids anywhere. But `schema.sql` line 59 had `DROP FUNCTION IF EXISTS public.user_org_ids(uuid)` without `CASCADE`. That was safe pre-v0.5.117 (no dependents); after the financial_periods table arrived with a policy that uses user_org_ids, the bare DROP fails.

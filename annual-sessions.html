@@ -156,16 +156,30 @@
       attendance: '',
       areas_completed: {}
     };
-    if (IS_ACCOUNT) payload.subscription_id = subId;
-    else            payload.organisation_id = orgId;
+    if (IS_ACCOUNT) {
+      if (!subId) { showToast('No active account — switch account first','error'); return; }
+      payload.subscription_id = subId;
+    } else {
+      payload.organisation_id = orgId;
+    }
     const { data, error } = await _sb
       .from('annual_sessions')
       .insert(payload)
       .select()
       .single();
     if(error || !data){
-      console.warn('Create annual session failed:', error && error.message);
-      showToast('Could not create session','error');
+      const msg = (error && error.message) || 'unknown error';
+      console.warn('Create annual session failed:', error);
+      // Hint at the most common cause if the column is missing
+      if (/column .*subscription_id.*does not exist/i.test(msg)) {
+        showToast('SQL not applied — run supabase/v0.5.132-delta.sql','error');
+      } else if (/row-level security/i.test(msg) || /policy/i.test(msg)) {
+        showToast('Permission denied — you need to be the account owner','error');
+      } else if (/violates check constraint/i.test(msg)) {
+        showToast('Schema mismatch — re-run v0.5.132-delta.sql','error');
+      } else {
+        showToast('Could not create: ' + msg, 'error');
+      }
       return;
     }
     window.location.href='run-annual-session.html?id='+encodeURIComponent(data.id);
