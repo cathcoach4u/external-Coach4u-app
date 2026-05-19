@@ -64,7 +64,7 @@
       <p class="ws-sub">Once a year &#x2014; set the direction, refresh the One-Page Plan, agree the Q1 goals.</p>
     </div>
 
-    <div class="ws-hint">
+    <div class="ws-hint" id="ws-hint-biz">
       <a href="one-page-plan.html">View your current One-Page Plan &#x2192;</a>
     </div>
 
@@ -198,7 +198,15 @@
       if (!subId) { window.location.href = 'index.html'; return; }
       // Update header for account scope
       const back = document.querySelector('.header-back');
-      if (back) { back.setAttribute('href','account-planning.html'); back.textContent = '← Account Planning'; }
+      if (back) { back.setAttribute('href','account-planning.html'); back.textContent = '\u2190 Account Planning'; }
+      const pill = document.getElementById('activeBizName');
+      if (pill) {
+        const accName = (window.activeOrg && window.activeOrg.getSubscriptionName && window.activeOrg.getSubscriptionName()) || 'Account';
+        pill.textContent = '\u{1F3DB}\u{FE0F} ' + accName;
+      }
+      // Hide the business-scope hint link
+      const hint = document.getElementById('ws-hint-biz');
+      if (hint) hint.style.display = 'none';
       const ttl = document.querySelector('.ws-title');
       if (ttl) ttl.innerHTML = '&#x1F5FA;&#xFE0F; Account Annual Planning';
       const sub = document.querySelector('.ws-sub');

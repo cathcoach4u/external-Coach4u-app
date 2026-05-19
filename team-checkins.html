@@ -225,7 +225,12 @@
         subId = window.activeOrg && window.activeOrg.getSubscription && window.activeOrg.getSubscription();
         if (!subId) { window.location.href = 'index.html'; return; }
         const back = document.querySelector('.header-back');
-        if (back) { back.setAttribute('href','account-planning.html'); back.textContent = '← Account Planning'; }
+        if (back) { back.setAttribute('href','account-planning.html'); back.textContent = '\u2190 Account Planning'; }
+      const pill = document.getElementById('activeBizName');
+      if (pill) {
+        const accName = (window.activeOrg && window.activeOrg.getSubscriptionName && window.activeOrg.getSubscriptionName()) || 'Account';
+        pill.textContent = '\u{1F3DB}\u{FE0F} ' + accName;
+      }
         document.getElementById('ws-title').innerHTML = '&#x1F4DD; Team Check-ins (Account)';
         document.getElementById('ws-sub').textContent = 'Account-level pulse surveys. Data analysed in one place, admin-only.';
       } else {

@@ -4,6 +4,15 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.135
+- **Account-scope context fix on planning pages.** User report: "iasHQ - click on planning - start a planning day and it's opening the general business." On a closer look the session was being created with the correct `subscription_id` (iasHQ's sub), so the data was right — but the navy header pill still showed whatever business was last active (typically Coach4U from another account), which made the workspace LOOK like it belonged to that biz. Confusing.
+- **What changed:** on the three account-scoped list pages (`annual-sessions.html?scope=account`, `quarterly-sessions.html?scope=account`, `team-checkins.html?scope=account`) and their workspaces (`run-annual-session.html`, `run-quarterly-session.html` when the loaded row has `subscription_id` set but no `organisation_id`), the `#activeBizName` element is overridden after init to read `🏛️ [Account Name]` instead of `🏢 [Biz Name]`. Different icon (`🏛️` ≠ `🏢`) so the user can tell account-scope from biz-scope at a glance.
+- **Also hidden in account scope:** the ws-hint links at the top of `annual-sessions.html` ("View your current One-Page Plan →") and `quarterly-sessions.html` ("Open Quarterly Goals →") — those point at business-scoped destinations and don't apply when running account-level planning.
+- **Account name source:** `window.activeOrg.getSubscriptionName()` (set when the user switches account via the `index.html` switcher in v0.5.111). Falls back to the literal word "Account" if for some reason the name isn't in localStorage yet.
+- **No SQL.** Pure UI override on five pages.
+
+---
+
 ## v0.5.134
 - **Surfaced actual insert errors on the "+ New" buttons.** User reported "the account create planning annual day link start new meeting isn't working" — generic "Could not create session" toast was hiding the real cause.
 - **Pattern applied to three pages** — `annual-sessions.html`, `quarterly-sessions.html`, `team-checkins.html`. Now the toast picks the right hint based on the Postgres error:

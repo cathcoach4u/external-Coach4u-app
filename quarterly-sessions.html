@@ -75,7 +75,7 @@
       <p class="ws-sub">Three times a year &#x2014; review the prior quarter, set the next.</p>
     </div>
 
-    <div class="ws-hint">
+    <div class="ws-hint" id="ws-hint-biz">
       <a href="goals.html">Open Quarterly Goals &#x2192;</a>
     </div>
 
@@ -263,7 +263,15 @@
       subId = window.activeOrg && window.activeOrg.getSubscription && window.activeOrg.getSubscription();
       if (!subId) { window.location.href = 'index.html'; return; }
       const back = document.querySelector('.header-back');
-      if (back) { back.setAttribute('href','account-planning.html'); back.textContent = '← Account Planning'; }
+      if (back) { back.setAttribute('href','account-planning.html'); back.textContent = '\u2190 Account Planning'; }
+      const pill = document.getElementById('activeBizName');
+      if (pill) {
+        const accName = (window.activeOrg && window.activeOrg.getSubscriptionName && window.activeOrg.getSubscriptionName()) || 'Account';
+        pill.textContent = '\u{1F3DB}\u{FE0F} ' + accName;
+      }
+      // Hide the business-scope hint link
+      const hint = document.getElementById('ws-hint-biz');
+      if (hint) hint.style.display = 'none';
       const ttl = document.querySelector('.ws-title');
       if (ttl) ttl.innerHTML = '&#x1F3AF; Account Quarterly Planning';
       const sub = document.querySelector('.ws-sub');

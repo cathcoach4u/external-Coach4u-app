@@ -289,10 +289,17 @@
       return;
     }
     _currentSession=s;
-    // If this session is account-scoped, point the header-back at the account list.
+    // If this session is account-scoped, point the header-back at the account list,
+    // and replace the navy biz pill with the account context (so the user doesn't
+    // see a stale '🏢 Coach4U' pill from whatever biz was last active).
     if (s.subscription_id && !s.organisation_id) {
       const back = document.querySelector('.header-back');
       if (back) { back.setAttribute('href','annual-sessions.html?scope=account'); back.textContent = '← Account Annual Sessions'; }
+      const pill = document.getElementById('activeBizName');
+      if (pill) {
+        const accName = (window.activeOrg && window.activeOrg.getSubscriptionName && window.activeOrg.getSubscriptionName()) || 'Account';
+        pill.textContent = '\u{1F3DB}\u{FE0F} ' + accName;  // 🏛️ for account-level
+      }
     }
     document.getElementById('ws-title').innerHTML='&#x1F4C5; Annual Planning '+(s.subscription_id?'(Account)':'')+' — '+fmtDate(s.session_date);
     document.getElementById('ws-sub').textContent='Year '+(s.year||'')+' — track attendance, tick off each area as you cover it, and share the team check-in link.';

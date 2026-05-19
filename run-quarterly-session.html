@@ -266,6 +266,11 @@
     if (s.subscription_id && !s.organisation_id) {
       const back = document.querySelector('.header-back');
       if (back) { back.setAttribute('href','quarterly-sessions.html?scope=account'); back.textContent = '← Account Quarterly Sessions'; }
+      const pill = document.getElementById('activeBizName');
+      if (pill) {
+        const accName = (window.activeOrg && window.activeOrg.getSubscriptionName && window.activeOrg.getSubscriptionName()) || 'Account';
+        pill.textContent = '\u{1F3DB}\u{FE0F} ' + accName;
+      }
     }
     const qn=(/^Q(\d)/.exec(s.target_quarter||'')||[])[1]||'';
     document.getElementById('ws-title').innerHTML='&#x1F3AF; '+(qn?'Q'+qn:'Quarterly')+' Planning Session '+(s.subscription_id?'(Account)':'')+' — '+fmtDate(s.session_date);
