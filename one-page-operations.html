@@ -231,6 +231,25 @@
     .issue-text { font-size: 0.73rem; line-height: 1.4; color: #2d2d2d; }
     .issue-owner { font-size: 0.6rem; color: #0D9488; font-weight: 700; margin-top: 2px; }
 
+    /* Financial Outlook strip (Last Year / This Year annual totals) */
+    .doc-financials { border-top: 1px solid #e5e7eb; background: #fdfdfd; padding: 10px 16px 12px; }
+    .fin-strip-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+    .fin-strip-title { font-size: 0.6rem; font-weight: 800; letter-spacing: 1.8px; text-transform: uppercase; color: #0D9488; border-left: 3px solid #0D9488; padding-left: 7px; }
+    .fin-strip-meta { font-size: 0.58rem; color: #888; letter-spacing: 0.8px; font-weight: 700; }
+    .fin-strip-body { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .fin-strip-col-head { display: flex; align-items: baseline; justify-content: space-between; font-size: 0.56rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.9px; color: #003366; margin-bottom: 4px; }
+    .fin-strip-col-meta { color: #999; letter-spacing: 0.4px; font-weight: 700; }
+    .fin-totals { background: #fafbfc; border: 1px solid #ececec; border-radius: 6px; padding: 6px 10px; }
+    .fin-line { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 3px 0; font-size: 0.72rem; }
+    .fin-line + .fin-line { border-top: 1px solid #f0f0f0; }
+    .fin-line-label { font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #003366; }
+    .fin-line-value { font-weight: 700; color: #2d2d2d; }
+    .fin-line.fin-line-profit { padding-top: 5px; margin-top: 2px; }
+    .fin-line.fin-line-profit .fin-line-label { color: #0D9488; }
+    .fin-line.fin-line-profit.fin-pos .fin-line-value { color: #0D9488; }
+    .fin-line.fin-line-profit.fin-neg .fin-line-value { color: #c53030; }
+    .fin-line.fin-line-profit.fin-empty .fin-line-value { color: #c0c0c0; font-weight: 500; }
+
     .doc-footer {
       background: #f8f9fa;
       border-top: 1px solid #e5e7eb;
@@ -257,6 +276,8 @@
         break-inside: avoid;
       }
       .doc-body { page-break-inside: avoid; break-inside: avoid; }
+      .doc-financials { padding: 8px 14px 10px; page-break-inside: avoid; break-inside: avoid; }
+      .fin-totals { padding: 5px 9px; }
       .doc-header { padding: 9px 18px; }
       .doc-col { padding: 11px 14px; }
       .col-heading { margin-bottom: 9px; }
@@ -328,6 +349,29 @@
           <ul class="issue-list" id="opp-issues"></ul>
         </div>
 
+      </div>
+
+      <div class="doc-financials">
+        <div class="fin-strip-head">
+          <span class="fin-strip-title">Financial Outlook</span>
+          <span class="fin-strip-meta">Annual totals</span>
+        </div>
+        <div class="fin-strip-body">
+          <div class="fin-strip-col">
+            <div class="fin-strip-col-head">
+              <span>Last Year</span>
+              <span class="fin-strip-col-meta" id="opp-fin-last-year"></span>
+            </div>
+            <div class="fin-totals" id="opp-fin-last"></div>
+          </div>
+          <div class="fin-strip-col">
+            <div class="fin-strip-col-head">
+              <span>This Year</span>
+              <span class="fin-strip-col-meta" id="opp-fin-this-year"></span>
+            </div>
+            <div class="fin-totals" id="opp-fin-this"></div>
+          </div>
+        </div>
       </div>
 
       <div class="doc-footer">
@@ -456,6 +500,50 @@
     }
 
     // ── Issues ──────────────────────────────────────────────────────
+    // ── Annual financials (Last Year + This Year totals) ─────────────
+    function fmtCurrency(n) {
+      if (n === null || n === undefined || n === '' || isNaN(Number(n))) return '—';
+      const v = Number(n); const abs = Math.abs(v); const sign = v < 0 ? '-' : '';
+      if (abs >= 1_000_000) return sign + '$' + (abs / 1_000_000).toFixed(1) + 'M';
+      if (abs >= 1_000)     return sign + '$' + Math.round(abs / 1_000) + 'K';
+      return sign + '$' + Math.round(abs);
+    }
+    function profitClass(p) {
+      if (p === null || p === undefined) return 'fin-empty';
+      if (p > 0) return 'fin-pos';
+      if (p < 0) return 'fin-neg';
+      return '';
+    }
+    function aggregateYear(rows, year) {
+      let totRev = 0, totExp = 0, anyRev = false, anyExp = false;
+      for (const r of rows) {
+        const yr = parseInt(String(r.period).slice(0, 4), 10);
+        if (yr !== year) continue;
+        if (r.revenue  !== null && r.revenue  !== undefined) { totRev += Number(r.revenue);  anyRev = true; }
+        if (r.expenses !== null && r.expenses !== undefined) { totExp += Number(r.expenses); anyExp = true; }
+      }
+      return { totRev, totExp, anyRev, anyExp };
+    }
+    function renderAnnualFinancials(rows, lastYear, thisYear) {
+      document.getElementById('opp-fin-last-year').textContent = String(lastYear);
+      document.getElementById('opp-fin-this-year').textContent = String(thisYear) + ' YTD';
+      function block(targetId, year) {
+        const { totRev, totExp, anyRev, anyExp } = aggregateYear(rows, year);
+        const any = anyRev || anyExp;
+        const profit = any ? totRev - totExp : null;
+        document.getElementById(targetId).innerHTML = `
+          <div class="fin-line"><span class="fin-line-label">Revenue</span>
+            <span class="fin-line-value">${anyRev ? fmtCurrency(totRev) : '—'}</span></div>
+          <div class="fin-line"><span class="fin-line-label">Expenses</span>
+            <span class="fin-line-value">${anyExp ? fmtCurrency(totExp) : '—'}</span></div>
+          <div class="fin-line fin-line-profit ${profitClass(profit)}">
+            <span class="fin-line-label">Profit</span>
+            <span class="fin-line-value">${profit === null ? '—' : fmtCurrency(profit)}</span></div>`;
+      }
+      block('opp-fin-last', lastYear);
+      block('opp-fin-this', thisYear);
+    }
+
     function renderIssues(issues) {
       const wrap = document.getElementById('opp-issues');
       const countEl = document.getElementById('opp-issues-count');
@@ -507,8 +595,14 @@
       const thisMonday = mondayISO(new Date());
       const weeks = [-5,-4,-3,-2,-1,0].map(o => isoAddWeeks(thisMonday, o));
 
+      // Annual financial window: last calendar year (Jan 1 → Dec 31) + this year YTD.
+      const thisYear = new Date().getFullYear();
+      const lastYear = thisYear - 1;
+      const finStart = lastYear + '-01-01';
+      const finEnd   = thisYear + '-12-01';
+
       try {
-        const [rocksRes, metricsRes, issuesRes, orgRes] = await Promise.all([
+        const [rocksRes, metricsRes, issuesRes, finRes, orgRes] = await Promise.all([
           supabase.from('rocks')
             .select('id, description, owner, status, quarter, company_rock, sort_order')
             .eq('organisation_id', orgId)
@@ -523,6 +617,11 @@
             .eq('organisation_id', orgId)
             .eq('status', 'open')
             .order('created_at', { ascending: true }),
+          supabase.from('financial_periods')
+            .select('period, revenue, expenses')
+            .eq('organisation_id', orgId)
+            .gte('period', finStart)
+            .lte('period', finEnd),
           cachedName ? Promise.resolve(null) : supabase.from('organisations').select('name').eq('id', orgId).maybeSingle()
         ]);
 
@@ -554,11 +653,14 @@
         renderGoals(rocks);
         renderScorecard(metrics, entriesByMetric, weeks);
         renderIssues(issues);
+        const finRows = (finRes && !finRes.error && Array.isArray(finRes.data)) ? finRes.data : [];
+        renderAnnualFinancials(finRows, lastYear, thisYear);
       } catch (e) {
         console.warn('Operations one-page load error:', e);
         renderGoals([]);
         renderScorecard([], {}, weeks);
         renderIssues([]);
+        renderAnnualFinancials([], lastYear, thisYear);
       }
 
       document.body.style.opacity = '1';

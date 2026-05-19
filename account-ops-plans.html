@@ -214,6 +214,25 @@
     .issue-text { font-size: 0.73rem; line-height: 1.4; color: #2d2d2d; }
     .issue-owner { font-size: 0.6rem; color: #0D9488; font-weight: 700; margin-top: 2px; }
 
+    /* Financial Outlook strip (annual totals) */
+    .doc-financials { border-top: 1px solid #e5e7eb; background: #fdfdfd; padding: 10px 16px 12px; }
+    .fin-strip-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+    .fin-strip-title { font-size: 0.6rem; font-weight: 800; letter-spacing: 1.8px; text-transform: uppercase; color: #0D9488; border-left: 3px solid #0D9488; padding-left: 7px; }
+    .fin-strip-meta { font-size: 0.58rem; color: #888; letter-spacing: 0.8px; font-weight: 700; }
+    .fin-strip-body { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .fin-strip-col-head { display: flex; align-items: baseline; justify-content: space-between; font-size: 0.56rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.9px; color: #003366; margin-bottom: 4px; }
+    .fin-strip-col-meta { color: #999; letter-spacing: 0.4px; font-weight: 700; }
+    .fin-totals { background: #fafbfc; border: 1px solid #ececec; border-radius: 6px; padding: 6px 10px; }
+    .fin-line { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 3px 0; font-size: 0.72rem; }
+    .fin-line + .fin-line { border-top: 1px solid #f0f0f0; }
+    .fin-line-label { font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #003366; }
+    .fin-line-value { font-weight: 700; color: #2d2d2d; }
+    .fin-line.fin-line-profit { padding-top: 5px; margin-top: 2px; }
+    .fin-line.fin-line-profit .fin-line-label { color: #0D9488; }
+    .fin-line.fin-line-profit.fin-pos .fin-line-value { color: #0D9488; }
+    .fin-line.fin-line-profit.fin-neg .fin-line-value { color: #c53030; }
+    .fin-line.fin-line-profit.fin-empty .fin-line-value { color: #c0c0c0; font-weight: 500; }
+
     .doc-footer {
       background: #f8f9fa; border-top: 1px solid #e5e7eb;
       padding: 6px 20px;
@@ -246,6 +265,8 @@
         box-shadow: none !important; border-radius: 0 !important;
       }
       .doc-body { page-break-inside: avoid; break-inside: avoid; }
+      .doc-financials { padding: 8px 14px 10px; page-break-inside: avoid; break-inside: avoid; }
+      .fin-totals { padding: 5px 9px; }
       .doc-header { padding: 9px 18px; }
       .doc-col { padding: 11px 14px; }
       .col-heading { margin-bottom: 9px; }
@@ -406,6 +427,31 @@
       }).join('');
     }
 
+    function buildAnnualTotalsBlock(finByYear, year) {
+      const row = (finByYear && finByYear[year]) || { totRev: 0, totExp: 0, anyRev: false, anyExp: false };
+      const any = row.anyRev || row.anyExp;
+      const profit = any ? row.totRev - row.totExp : null;
+      const profCls = profit === null ? 'fin-empty' : (profit > 0 ? 'fin-pos' : (profit < 0 ? 'fin-neg' : ''));
+      return `
+        <div class="fin-line"><span class="fin-line-label">Revenue</span>
+          <span class="fin-line-value">${row.anyRev ? fmtCurrency(row.totRev) : '—'}</span></div>
+        <div class="fin-line"><span class="fin-line-label">Expenses</span>
+          <span class="fin-line-value">${row.anyExp ? fmtCurrency(row.totExp) : '—'}</span></div>
+        <div class="fin-line fin-line-profit ${profCls}">
+          <span class="fin-line-label">Profit</span>
+          <span class="fin-line-value">${profit === null ? '—' : fmtCurrency(profit)}</span></div>`;
+    }
+    function fmtCurrency(n) {
+      if (n === null || n === undefined || n === '' || isNaN(Number(n))) return '—';
+      const v = Number(n); const abs = Math.abs(v); const sign = v < 0 ? '-' : '';
+      if (abs >= 1_000_000) return sign + '$' + (abs / 1_000_000).toFixed(1) + 'M';
+      if (abs >= 1_000)     return sign + '$' + Math.round(abs / 1_000) + 'K';
+      return sign + '$' + Math.round(abs);
+    }
+
+    const thisYear = new Date().getFullYear();
+    const lastYear = thisYear - 1;
+
     function renderPlanCard(org, data, quarter, weeks) {
       const today = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
       return `
@@ -449,6 +495,23 @@
                 <ul class="issue-list">${renderIssuesBlock(data.issues)}</ul>
               </div>
 
+            </div>
+
+            <div class="doc-financials">
+              <div class="fin-strip-head">
+                <span class="fin-strip-title">Financial Outlook</span>
+                <span class="fin-strip-meta">Annual totals</span>
+              </div>
+              <div class="fin-strip-body">
+                <div class="fin-strip-col">
+                  <div class="fin-strip-col-head"><span>Last Year</span><span class="fin-strip-col-meta">${lastYear}</span></div>
+                  <div class="fin-totals">${buildAnnualTotalsBlock(data.finByYear, lastYear)}</div>
+                </div>
+                <div class="fin-strip-col">
+                  <div class="fin-strip-col-head"><span>This Year</span><span class="fin-strip-col-meta">${thisYear} YTD</span></div>
+                  <div class="fin-totals">${buildAnnualTotalsBlock(data.finByYear, thisYear)}</div>
+                </div>
+              </div>
             </div>
 
             <div class="doc-footer">
@@ -504,8 +567,8 @@
       const thisMonday = mondayISO(new Date());
       const weeks = [-5,-4,-3,-2,-1,0].map(o => isoAddWeeks(thisMonday, o));
 
-      // 3 parallel queries across all orgs
-      const [rocksRes, metricsRes, issuesRes] = await Promise.all([
+      // 4 parallel queries across all orgs (rocks / metrics / issues / financials)
+      const [rocksRes, metricsRes, issuesRes, finRes] = await Promise.all([
         sb.from('rocks')
           .select('id, organisation_id, description, owner, status, quarter, company_rock, sort_order')
           .in('organisation_id', orgIds)
@@ -519,17 +582,30 @@
           .select('id, organisation_id, description, owner, status, created_at')
           .in('organisation_id', orgIds)
           .eq('status', 'open')
-          .order('created_at', { ascending: true })
+          .order('created_at', { ascending: true }),
+        sb.from('financial_periods')
+          .select('organisation_id, period, revenue, expenses')
+          .in('organisation_id', orgIds)
+          .gte('period', lastYear + '-01-01')
+          .lte('period', thisYear + '-12-01')
       ]);
 
       const byOrg = new Map();
       orgs.forEach(o => byOrg.set(o.id, {
-        rocks: [], metrics: [], entriesByMetric: {}, issues: []
+        rocks: [], metrics: [], entriesByMetric: {}, issues: [], finByYear: {}
       }));
 
       (rocksRes.data   || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.rocks.push(r); });
       (metricsRes.data || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.metrics.push(r); });
       (issuesRes.data  || []).forEach(r => { const e = byOrg.get(r.organisation_id); if (e) e.issues.push(r); });
+      (finRes && finRes.data || []).forEach(r => {
+        const e = byOrg.get(r.organisation_id); if (!e) return;
+        const yr = parseInt(String(r.period).slice(0, 4), 10);
+        if (!e.finByYear[yr]) e.finByYear[yr] = { totRev: 0, totExp: 0, anyRev: false, anyExp: false };
+        const row = e.finByYear[yr];
+        if (r.revenue  !== null && r.revenue  !== undefined) { row.totRev += Number(r.revenue);  row.anyRev = true; }
+        if (r.expenses !== null && r.expenses !== undefined) { row.totExp += Number(r.expenses); row.anyExp = true; }
+      });
 
       // Fetch scorecard entries for ALL metrics across all orgs in one round-trip
       const allMetricIds = (metricsRes.data || []).map(m => m.id);

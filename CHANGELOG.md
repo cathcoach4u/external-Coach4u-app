@@ -4,6 +4,22 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.137
+- **Financial Outlook on the Operations one-pager.** User asked: "change the financials for each operations as an annual figure for last year and this year." Strategy one-pager has had financials for a while (v0.5.117 — 12 / 12 months rolling; simplified to totals in v0.5.118); Operations one-pager didn't have any. Now it does &mdash; annual format.
+- **Two new strips, both at the bottom between the 3-column body and the footer:**
+  - **`one-page-operations.html`** &mdash; single-business doc. Last Year + This Year (YTD), each with Revenue / Expenses / Profit.
+  - **`account-ops-plans.html`** &mdash; carousel renders the same strip inside every business card, with the totals scoped to that business.
+- **Data source**: reuses the existing `financial_periods` table (no SQL changes). Query `period >= [lastYear]-01-01 AND period <= [thisYear]-12-01`, aggregate by `YEAR(period)`.
+  - Last Year = previous calendar year, full-year totals
+  - This Year = current calendar year, YTD totals (months already entered)
+  - Profit = Revenue &minus; Expenses, coloured teal / red against zero, grey when both inputs are empty
+  - Per-row missing data shows "—"; rows where neither was entered get the empty profit treatment
+- **Account carousel** adds one parallel query (`financial_periods.in(orgIds)`) when loading; results bucketed per-org client-side into `data.finByYear[year] = { totRev, totExp, anyRev, anyExp }` so each card renders independently.
+- **CSS**: copied the `.doc-financials` / `.fin-strip-*` / `.fin-line-*` block from the Strategy one-pager so both ops pages match the look. Print rules added (`page-break-inside: avoid`, tighter padding in print).
+- **Trade-off note**: the Strategy one-pager uses *rolling* 12 months (May 25 → Apr 26 last; May 26 → Apr 27 next). The Ops one-pager uses *calendar year* totals (2025 full year; 2026 YTD). Different framings; matches the user's "last year / this year" ask.
+
+---
+
 ## v0.5.136
 - **Account-scoped session area links now route to the account carousels.** User report from inside an iasHQ account-level session: "the links in the annual session ie targets needs to go to the IAS area, not the outsourcing." The "Open Targets →" link was hardcoded to `targets.html` &mdash; a biz-scoped page &mdash; so it opened whatever business `window.activeOrg.get()` was holding (some other biz like Outsourcing), not the account context.
 - **Pattern:** added an `ACCOUNT_LINK_MAP` in both `run-annual-session.html` and `run-quarterly-session.html`:
