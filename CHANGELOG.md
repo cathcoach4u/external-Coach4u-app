@@ -4,6 +4,19 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.138
+- **Promote an issue to a Quarterly Goal.** User asked to "set up the issues and add a button to add the goal on the back of the issues" — the common IDS-on-the-back-of-an-issue flow: discuss issue, decide it's actually a strategic priority, make it a goal.
+- **UI:** new teal "Make a goal →" button in the Edit-Issue modal footer (only shown on existing issues, hidden on Add-new since the row needs an ID before it can be promoted).
+- **What it does on click:**
+  1. Confirms with the user (shows the issue text + current quarter label so they know exactly what they're creating)
+  2. Inserts a `rocks` row scoped to the active `organisation_id`: `description` and `owner` copied from the issue, `quarter = current quarter`, `status = on_track`, `company_rock = false`
+  3. Marks the source `issue.status = 'resolved'` and writes a solution note: `"Promoted to Q[n] [YYYY] goal: '[description]'"` so the link is visible in the issues archive
+  4. Closes the modal, shows a toast, navigates to `goals.html` (800ms later) so the user can finish setting up SMART criteria / status / etc.
+- **Falls back gracefully**: if the rocks insert fails (RLS, schema, network), the toast surfaces the Postgres message and the issue is left untouched. If the rocks insert succeeds but the issue update fails, the goal still exists — the issue just won't auto-resolve; admin can mark it manually.
+- **No SQL.** Reuses the existing `rocks` and `issues` tables and the v0.5.110+ RLS that lets admins+coaches write both.
+
+---
+
 ## v0.5.137
 - **Financial Outlook on the Operations one-pager.** User asked: "change the financials for each operations as an annual figure for last year and this year." Strategy one-pager has had financials for a while (v0.5.117 — 12 / 12 months rolling; simplified to totals in v0.5.118); Operations one-pager didn't have any. Now it does &mdash; annual format.
 - **Two new strips, both at the bottom between the 3-column body and the footer:**

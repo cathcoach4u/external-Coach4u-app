@@ -136,6 +136,7 @@
       <div class="modal-footer">
         <button class="ws-btn-secondary hidden" id="issue-modal-delete" style="color:#991b1b;border-color:#fca5a5;">Delete</button>
         <div class="modal-footer-right">
+          <button class="ws-btn-secondary hidden" id="issue-modal-make-goal" title="Promote this issue to a Quarterly Goal" style="color:#0D9488;border-color:#0D9488;">Make a goal &rarr;</button>
           <button class="ws-btn-secondary" id="issue-modal-cancel">Cancel</button>
           <button class="ws-btn" id="issue-modal-save">Save Issue</button>
         </div>
@@ -238,8 +239,50 @@
     document.getElementById('issue-solution').value=isNew?'':(issue.solution||'');
     solutionField.style.display=statusSel.value==='resolved'?'':'none';
     document.getElementById('issue-modal-delete').classList.toggle('hidden',isNew);
+    // Make-a-goal button only on saved (existing) issues — needs an ID to reference back.
+    document.getElementById('issue-modal-make-goal').classList.toggle('hidden',isNew);
     document.getElementById('issue-modal').classList.remove('hidden');
   }
+
+  // ── Promote an issue to a Quarterly Goal ──
+  function currentQuarter(){
+    const d = new Date();
+    return 'Q' + (Math.floor(d.getMonth() / 3) + 1) + ' ' + d.getFullYear();
+  }
+  document.getElementById('issue-modal-make-goal').addEventListener('click', async () => {
+    const id = document.getElementById('issue-id').value;
+    if (!id) return;
+    const issue = _issues.find(x => String(x.id) === String(id));
+    if (!issue) return;
+    const q = currentQuarter();
+    if (!confirm(`Promote this issue to a ${q} goal?\n\n"${issue.description}"\n\nThis creates a new quarterly goal owned by ${issue.owner || 'no-one'} and marks the issue as resolved.`)) return;
+
+    // 1. Insert the rocks row
+    const goalPayload = {
+      organisation_id: orgId,
+      description: issue.description,
+      owner: issue.owner || null,
+      status: 'on_track',
+      quarter: q,
+      company_rock: false
+    };
+    const { data: newGoal, error: goalErr } = await supabase
+      .from('rocks').insert(goalPayload).select().single();
+    if (goalErr || !newGoal) {
+      showToast('Could not create goal: ' + (goalErr && goalErr.message || 'unknown'), 'error');
+      return;
+    }
+    // 2. Mark the issue resolved, with a solution noting the link
+    const solutionNote = 'Promoted to ' + q + ' goal: "' + issue.description + '"';
+    await supabase.from('issues').update({
+      status: 'resolved',
+      solution: solutionNote
+    }).eq('id', issue.id);
+
+    showToast('Goal created in ' + q + ' — opening Goals…', 'success');
+    closeModal();
+    setTimeout(() => { window.location.href = 'goals.html'; }, 800);
+  });
   function closeModal(){document.getElementById('issue-modal').classList.add('hidden')}
   document.getElementById('issue-modal-close').addEventListener('click',closeModal);
   document.getElementById('issue-modal-cancel').addEventListener('click',closeModal);
