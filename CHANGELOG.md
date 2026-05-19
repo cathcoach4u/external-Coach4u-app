@@ -4,6 +4,18 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.139
+- **Business-switcher dropdown in the navy header.** User feedback: working with a multi-business client account, they wanted to jump between businesses without leaving the page they're on. "If I'm in issues I need to go to each issue for each business with a drop down."
+- **How it works:** `js/active-org.js` now detects when the active subscription has 2+ businesses the user is a member of, and converts the `🏢 [Biz Name]` pill (a `<span>`) into a `<select>` listing every business. Picking a different biz from the dropdown calls `activeOrg.set(newOrgId, newName)` then `window.location.reload()` — same page (issues.html / goals.html / scorecard.html / wherever), different business's data.
+- **Available on every business-level page** automatically — they all already render the `#activeBizName` pill from `active-org.js`. Single-business accounts don't see the dropdown (no point); the pill stays a plain span.
+- **Lazy-loaded Supabase:** active-org.js wasn't tied to Supabase before. Now it dynamically `import()`s the client only when the switcher needs to fetch the business list. No upfront cost on page loads where it's not used.
+- **5-minute localStorage cache** (`coach4u_biz_list_cache` keyed by subscription id) so the switcher renders instantly on subsequent pages without re-querying. Invalidated automatically when the account is switched via `setSubscription(...)` (the index.html switcher already calls this).
+- **Account-scope override compat:** the v0.5.135 account-pill override (`🏛️ [Account]` on `annual-sessions.html?scope=account`, `quarterly-sessions.html?scope=account`, `team-checkins.html?scope=account`, and the two account-scope session workspaces) now marks the pill `data-overridden="1"`. The switcher checks for that flag and leaves the override alone. If the switcher had already replaced the pill with a `<select>` first, the override swaps it back to a `<span>` showing the account context.
+- **CSS:** added `select.biz-pill` rules (appearance:none, inline SVG caret, teal background) so the dropdown looks like the existing pill rather than a native select control.
+- **No SQL.** One file (`js/active-org.js`) gained ~70 lines of switcher logic, plus a small CSS addition and one-line marker insertions across 5 account-scope pages.
+
+---
+
 ## v0.5.138
 - **Promote an issue to a Quarterly Goal.** User asked to "set up the issues and add a button to add the goal on the back of the issues" — the common IDS-on-the-back-of-an-issue flow: discuss issue, decide it's actually a strategic priority, make it a goal.
 - **UI:** new teal "Make a goal →" button in the Edit-Issue modal footer (only shown on existing issues, hidden on Add-new since the row needs an ID before it can be promoted).

@@ -100,6 +100,21 @@ button { font-family: inherit; cursor: pointer; border: none; }
   overflow: hidden; text-overflow: ellipsis;
 }
 .biz-pill:empty { display: none; }
+
+/* When the pill is a <select> (multi-business switcher in v0.5.139), style
+   it like the pill — appearance:none to drop native chrome, keep the same
+   shape, add a subtle caret to hint it's a dropdown. */
+select.biz-pill {
+  appearance: none; -webkit-appearance: none; -moz-appearance: none;
+  border: none; cursor: pointer; font-family: inherit;
+  padding-right: 22px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='6' viewBox='0 0 8 6'><path fill='%23ffffff' d='M0 0l4 6 4-6z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+select.biz-pill:hover, select.biz-pill:focus { background-color: var(--accent-dark); outline: none; }
+select.biz-pill option { background: white; color: var(--text); font-weight: 600; }
+
 @media (max-width: 480px) {
   .biz-pill { font-size: 11px; padding: 3px 8px; max-width: 140px; }
 }

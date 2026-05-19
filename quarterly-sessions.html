@@ -268,6 +268,15 @@
       if (pill) {
         const accName = (window.activeOrg && window.activeOrg.getSubscriptionName && window.activeOrg.getSubscriptionName()) || 'Account';
         pill.textContent = '\u{1F3DB}\u{FE0F} ' + accName;
+        pill.dataset.overridden = '1';
+        // If the switcher had already replaced the pill with a <select>, swap back to a span
+        if (pill.tagName === 'SELECT') {
+          const span = document.createElement('span');
+          span.id = 'activeBizName'; span.className = 'biz-pill';
+          span.dataset.overridden = '1';
+          span.textContent = pill.textContent;
+          pill.replaceWith(span);
+        }
       }
       // Hide the business-scope hint link
       const hint = document.getElementById('ws-hint-biz');
