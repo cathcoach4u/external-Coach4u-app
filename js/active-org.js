@@ -117,12 +117,16 @@
     if (!user) return [];
     const { data } = await sb
       .from('team_members')
-      .select('organisation_id, organisations!inner(id, name, subscription_id)')
+      .select('organisation_id, organisations!inner(id, name, subscription_id, sort_order)')
       .eq('user_id', user.id).eq('status', 'active')
       .eq('organisations.subscription_id', subId);
     const orgs = (data || [])
-      .map(r => ({ id: r.organisations.id, name: r.organisations.name }))
-      .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      .map(r => ({ id: r.organisations.id, name: r.organisations.name, sort_order: r.organisations.sort_order || 0 }))
+      .sort((a, b) => {
+        const so = a.sort_order - b.sort_order;
+        if (so !== 0) return so;
+        return (a.name || '').localeCompare(b.name || '');
+      });
     writeBizListCache(orgs);
     return orgs;
   }

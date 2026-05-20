@@ -152,6 +152,20 @@
     }
     .biz-open:hover { background: rgba(13,148,136,0.18); color: var(--accent); }
 
+    /* Reorder arrows on biz cards (v0.5.140) */
+    .reorder-wrap { display: inline-flex; gap: 2px; }
+    .reorder-btn {
+      width: 26px; height: 26px; line-height: 1;
+      border: 1px solid var(--border);
+      background: white; color: #666;
+      border-radius: 6px; font-size: 14px;
+      cursor: pointer; font-family: inherit;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background .12s, border-color .12s, color .12s;
+    }
+    .reorder-btn:hover:not(:disabled) { background: #f0fdfa; border-color: var(--accent); color: var(--accent); }
+    .reorder-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
     /* ── Snapshot grid ── */
     .snapshot-grid {
       display: grid; grid-template-columns: repeat(3, 1fr);
@@ -623,7 +637,7 @@
       // The !inner join lets us filter on organisations.subscription_id.
       const memQuery = sb
         .from('team_members')
-        .select('id, organisation_id, role, status, organisations!inner(id, name, subscription_id)')
+        .select('id, organisation_id, role, status, organisations!inner(id, name, subscription_id, sort_order)')
         .eq('user_id', user.id)
         .eq('status', 'active');
       if (activeSub) memQuery.eq('organisations.subscription_id', activeSub.id);
@@ -791,11 +805,19 @@
         wrap.innerHTML = '<div class="empty-state">No businesses in ' + subLabel + ' yet. Click <strong>+ New Business</strong> to create one.</div>';
         return;
       }
-      wrap.innerHTML = myMemberships.map(m => {
+      // Sort by sort_order, then name (alphabetical fallback for ties / pre-v0.5.140 rows)
+      myMemberships.sort((a, b) => {
+        const so = (a.organisations.sort_order || 0) - (b.organisations.sort_order || 0);
+        if (so !== 0) return so;
+        return String(a.organisations.name || '').localeCompare(String(b.organisations.name || ''));
+      });
+      wrap.innerHTML = myMemberships.map((m, idx) => {
         const orgId = m.organisations.id;
         const name  = m.organisations.name;
         const role  = m.role;
         const isAdmin = role === 'admin';
+        const isFirst = idx === 0;
+        const isLast  = idx === myMemberships.length - 1;
         const snap = snapshotByOrg.get(orgId) || { revenue: null, rocksOnTrack: 0, rocksTotal: 0, openIssues: 0, nextMeeting: null };
 
         const revenueHtml = (snap.revenue && String(snap.revenue).trim())
@@ -817,6 +839,12 @@
             <div class="biz-card-head">
               <div class="biz-name">${escHtml(name)}</div>
               <span class="role-pill role-${role}">${role}</span>
+              ${isAdmin && myMemberships.length > 1 ? `
+                <div class="reorder-wrap" title="Reorder">
+                  <button class="reorder-btn" data-action="move-up"   ${isFirst ? 'disabled' : ''} aria-label="Move up">&uarr;</button>
+                  <button class="reorder-btn" data-action="move-down" ${isLast  ? 'disabled' : ''} aria-label="Move down">&darr;</button>
+                </div>
+              ` : ''}
               <button class="biz-open" data-action="open">Open &rsaquo;</button>
               ${isAdmin ? `
                 <div class="actions-wrap">
@@ -880,7 +908,43 @@
             openDeleteBiz(orgId, orgName);
           });
         }
+        // ── Reorder (move-up / move-down) ──
+        card.querySelectorAll('[data-action^="move-"]').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.preventDefault(); e.stopPropagation();
+            if (btn.disabled) return;
+            await moveBiz(orgId, btn.dataset.action === 'move-up' ? -1 : 1);
+          });
+        });
       });
+    }
+
+    // Swap sort_order with the adjacent biz, persist both updates, re-render.
+    async function moveBiz(orgId, delta) {
+      const idx = myMemberships.findIndex(m => m.organisations.id === orgId);
+      if (idx === -1) return;
+      const swapIdx = idx + delta;
+      if (swapIdx < 0 || swapIdx >= myMemberships.length) return;
+      const a = myMemberships[idx].organisations;
+      const b = myMemberships[swapIdx].organisations;
+      // Compute fresh sort_orders so ties from default-0 rows get resolved
+      const aNew = (b.sort_order || 0);
+      const bNew = (a.sort_order || 0);
+      // If both are 0 (pre-migration default), give them distinct values based on position
+      let aFinal = aNew, bFinal = bNew;
+      if (aNew === bNew) { aFinal = swapIdx; bFinal = idx; }
+      const { error: errA } = await sb.from('organisations').update({ sort_order: aFinal }).eq('id', a.id);
+      const { error: errB } = await sb.from('organisations').update({ sort_order: bFinal }).eq('id', b.id);
+      if (errA || errB) {
+        alert('Could not reorder: ' + ((errA || errB).message || 'unknown'));
+        return;
+      }
+      // Update local state + re-render
+      a.sort_order = aFinal;
+      b.sort_order = bFinal;
+      renderBusinesses();
+      // Invalidate cached biz list so the header switcher picks up the new order
+      try { localStorage.removeItem('coach4u_biz_list_cache'); } catch (_) {}
     }
 
     // Close ⋮ menus on outside click

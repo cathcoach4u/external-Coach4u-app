@@ -97,8 +97,11 @@ CREATE TABLE public.organisations (
   id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   subscription_id uuid NOT NULL REFERENCES public.subscriptions(id) ON DELETE CASCADE,
   name            text NOT NULL,
+  sort_order      int  NOT NULL DEFAULT 0,
   created_at      timestamptz NOT NULL DEFAULT now()
 );
+CREATE INDEX organisations_sub_sort_idx
+  ON public.organisations(subscription_id, sort_order);
 CREATE INDEX organisations_subscription_idx ON public.organisations(subscription_id);
 
 CREATE TABLE public.team_members (

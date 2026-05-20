@@ -4,6 +4,20 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.140
+- **Manual reordering of businesses.** User asked: "I want to be able to move the order of the businesses." Previously they were sorted alphabetically (by name) wherever they appeared (account dashboard list, v0.5.139 navy header switcher, account-level carousels). Now the order is admin-controlled.
+- **`supabase/v0.5.140-delta.sql`** — one column, one index, no RLS change:
+  ```sql
+  ALTER TABLE organisations ADD COLUMN IF NOT EXISTS sort_order int NOT NULL DEFAULT 0;
+  CREATE INDEX IF NOT EXISTS organisations_sub_sort_idx ON organisations(subscription_id, sort_order);
+  ```
+- **UI on `index.html`**: each biz card now has a small ↑/↓ pair next to the role pill, hidden for non-admins and when there's only one biz. Click swaps `sort_order` between the clicked biz and its neighbour, persists both updates to Supabase, re-renders the list. Top biz's ↑ is disabled; bottom biz's ↓ is disabled.
+- **`renderBusinesses()` sort** changed from "alphabetical by name" to "sort_order ASC then name ASC" so ties from default-0 rows resolve sensibly. The first reorder click migrates default-0 rows to distinct values based on their current position.
+- **`js/active-org.js`** — the multi-biz switcher dropdown (v0.5.139) now selects `sort_order` and applies the same ordering. Reorder clicks on the dashboard invalidate the `coach4u_biz_list_cache` localStorage entry so the switcher picks up the new order on the next page load.
+- **No new pages.** All changes land on `index.html`, `js/active-org.js`, `css/style.css` (one small block of CSS for the `.reorder-btn` style — square 26x26 buttons with subtle hover), and the SQL delta.
+
+---
+
 ## v0.5.139
 - **Business-switcher dropdown in the navy header.** User feedback: working with a multi-business client account, they wanted to jump between businesses without leaving the page they're on. "If I'm in issues I need to go to each issue for each business with a drop down."
 - **How it works:** `js/active-org.js` now detects when the active subscription has 2+ businesses the user is a member of, and converts the `🏢 [Biz Name]` pill (a `<span>`) into a `<select>` listing every business. Picking a different biz from the dropdown calls `activeOrg.set(newOrgId, newName)` then `window.location.reload()` — same page (issues.html / goals.html / scorecard.html / wherever), different business's data.
