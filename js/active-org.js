@@ -177,7 +177,26 @@
     renderBizSwitcher  // exposed so pages can call after their own pill overrides
   };
 
+  // v0.5.141: move the pill OUT of the navy header into a sub-toolbar that
+  // sits right under it, right-aligned. Keeps the navy header clean for brand
+  // ("Your Business Coach") and gives the switcher more room (and a square pill).
+  function relocatePillToSubToolbar() {
+    const pill = document.getElementById('activeBizName');
+    if (!pill) return;
+    const header = pill.closest('header.site-header');
+    if (!header) return;  // not in the navy header — leave it alone (account toolbar pages)
+    if (document.getElementById('bizSwitcherBar')) return;  // already done
+    const bar = document.createElement('div');
+    bar.id = 'bizSwitcherBar';
+    bar.className = 'biz-switcher-bar';
+    // Move the pill into the bar (preserves event listeners, dataset, etc.)
+    bar.appendChild(pill);
+    // Insert the bar immediately after the navy header
+    header.parentNode.insertBefore(bar, header.nextSibling);
+  }
+
   function boot() {
+    relocatePillToSubToolbar();
     renderHeader();
     // Don't await — the switcher fills in shortly after page paint
     renderBizSwitcher();

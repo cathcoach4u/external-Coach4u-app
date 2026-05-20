@@ -4,6 +4,20 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.141
+- **Header layout rework.** User: "move the pill for the drop down out of the main header and put it to the right side of the screen and I want it a square 'pill'. And Your business coach more at the top."
+- **Sub-toolbar relocation:** `js/active-org.js` now detects the `#activeBizName` pill on init and, if it's inside `<header class="site-header">`, moves it into a new `<div id="bizSwitcherBar" class="biz-switcher-bar">` inserted right after the header. The move happens once per page load via `insertBefore` — preserves event listeners, dataset attributes, and the v0.5.135 account-override flag. Account-level toolbar pages (those using `.screen-toolbar` instead of `.site-header`) are untouched.
+- **CSS:**
+  - New `.biz-switcher-bar` — `display: flex; justify-content: flex-end; padding: 8px 16px; background: #f4f6f9; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 40;`. Right-aligned content, hides itself when empty.
+  - `.biz-pill` border-radius: `14px` → `6px` (square-ish). Padding bumped slightly (6px×12px) and font-size 13px so the new shape doesn't look cramped.
+  - Removed the v0.5.124/130 `.site-header:has(.biz-pill:not(:empty)) .header-title { display: none; }` rule — the pill no longer lives in the header, so the title doesn't need to give it space. On phones the title now always shows.
+  - `.header-title` font on phones: `1rem` → `1.05rem`, font-weight `700` → `800`. Slightly more prominent on small screens.
+- **Compat with v0.5.139 switcher:** `renderBizSwitcher()` runs after `relocatePillToSubToolbar()`, so the `<select>` it builds lives in the sub-toolbar from the start. Click-to-switch behaviour unchanged.
+- **Compat with v0.5.135 account override:** the account-scope override (`🏛️ [Account Name]`) still writes to `#activeBizName` — which is now in the sub-toolbar. Same visual result, just relocated.
+- **No SQL.**
+
+---
+
 ## v0.5.140
 - **Manual reordering of businesses.** User asked: "I want to be able to move the order of the businesses." Previously they were sorted alphabetically (by name) wherever they appeared (account dashboard list, v0.5.139 navy header switcher, account-level carousels). Now the order is admin-controlled.
 - **`supabase/v0.5.140-delta.sql`** — one column, one index, no RLS change:
