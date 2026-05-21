@@ -4,6 +4,23 @@ All notable changes to the project. The two most recent entries live in `CLAUDE.
 
 ---
 
+## v0.5.142
+- **Account item added to bottom nav.** User: "the flow needs to be easier to get back to the main accounts page. can we add this as a box next to learn?"
+- **What changed:** the bottom nav on every business-level page goes from 5 items to 6 — the new item sits to the right of "Learn":
+  ```html
+  <a class="bottom-nav-item" href="index.html" title="Back to your account dashboard">
+    <span class="bottom-nav-icon">&#x1F3DB;&#xFE0F;</span>
+    <span>Account</span>
+  </a>
+  ```
+- **Why:** previously the only one-tap return-to-account-dashboard path was through the navy header `← Back` link, which goes to `business.html` (not `index.html`). For a multi-business account owner, getting back to the dashboard meant either Home → Home (two steps) or remembering to use the browser history. The new `🏛️ Account` slot puts it in the same place as every other navigation pillar.
+- **Files patched (22):** `business.html`, `strategy.html`, `operations.html`, `planning.html`, `learning-vault.html`, `core-values.html`, `core-focus.html`, `targets.html`, `marketing-strategy.html`, `leadership-team.html`, `financials.html`, `scorecard.html`, `goals.html`, `meeting.html`, `run-meeting.html`, `issues.html`, `annual-sessions.html`, `run-annual-session.html`, `quarterly-sessions.html`, `run-quarterly-session.html`, `team-checkins.html`, `run-team-checkin.html`.
+- **Not patched (correct):** `index.html` (the destination), `account-strategy.html`, `account-operations.html`, `account-planning.html` (account-level hubs — already at the top of the tree). The `account-*` carousel pages use the `.screen-toolbar` pattern rather than the bottom nav, so they're unaffected.
+- **CLAUDE.md rule updated:** the nav-order convention now reads "Home / Planning / Strategy / Operations / Learn / Account".
+- **No SQL.**
+
+---
+
 ## v0.5.141
 - **Header layout rework.** User: "move the pill for the drop down out of the main header and put it to the right side of the screen and I want it a square 'pill'. And Your business coach more at the top."
 - **Sub-toolbar relocation:** `js/active-org.js` now detects the `#activeBizName` pill on init and, if it's inside `<header class="site-header">`, moves it into a new `<div id="bizSwitcherBar" class="biz-switcher-bar">` inserted right after the header. The move happens once per page load via `insertBefore` — preserves event listeners, dataset attributes, and the v0.5.135 account-override flag. Account-level toolbar pages (those using `.screen-toolbar` instead of `.site-header`) are untouched.

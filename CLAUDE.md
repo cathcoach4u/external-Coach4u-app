@@ -109,7 +109,7 @@ supabase/
 ### Pages and routing
 - All HTML pages use Design 1 (`css/style.css`) — no exceptions.
 - Strategy worksheets and Operations tools live at root and ARE the source-of-truth pages. `learn/` is reserved for reference / how-to content (guides, exercises like Values Discovery). `strategy.html` and `operations.html` cards must link to root URLs, not `learn/`.
-- Bottom nav order is always: **Home / Planning / Strategy / Operations / Learn** — active item gets `.active` class.
+- Bottom nav order is always: **Home / Planning / Strategy / Operations / Learn / Account** (v0.5.142+) — active item gets `.active` class. Account item links to `index.html`.
 - Account-level pages use the white `.screen-toolbar` pattern (toolbar-back + toolbar-title); business-level pages use the navy `site-header` with `← Back · Your Business Coach · 🏢 [Business Name] pill`.
 
 ### Conventions every page must follow
@@ -188,9 +188,10 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 - No staging or branch preview URLs. GitHub Pages deploys `main` directly on every push.
 
 ## Current Version
-v0.5.141
+v0.5.142
 
 ## Latest
+- **v0.5.142** — Added an **Account** item to the bottom nav, sitting after Learn (🏛️ icon → `index.html`). User feedback: "the flow needs to be easier to get back to the main accounts page. can we add this as a box next to learn?" Previously the only way back to the multi-business account dashboard was through the navy header's `← Back` (which goes to `business.html`, not `index.html`) or the breadcrumb chain. Now every business-level page (22 files including `business.html`, all 4 hubs, every operations tool, every strategy worksheet, planning list pages, sessions, learning vault) has a one-tap path to the account dashboard. The bottom-nav is now 6 items: Home / Planning / Strategy / Operations / Learn / Account. Account-level pages (`account-*.html`) and `index.html` itself are unchanged.
 - **v0.5.141** — Header layout rework. User feedback: "move the pill for the drop down out of the main header and put it to the right side of the screen and I want it a square 'pill'. And Your business coach more at the top." Done — `js/active-org.js` now detaches `#activeBizName` from the navy header on init and moves it into a new sticky sub-toolbar (`.biz-switcher-bar`) right under the header, right-aligned. Pill border-radius dropped from 14px → 6px (square-ish). Removed the v0.5.124/130 hide-title-on-phones CSS rule since the pill no longer crowds the navy bar — "Your Business Coach" now shows on every viewport and is slightly bolder (font-weight 800, 1.05rem on phones).
 - **v0.5.140** — Manual reordering for businesses. New `sort_order` column on `organisations` (default 0). On the account dashboard, each biz card gets a small ↑/↓ pair (admins only, hidden when there's just one biz). Click swaps sort_orders with the adjacent biz, persists both, re-renders. The v0.5.139 navy-header switcher dropdown picks up the new order too (cache busted automatically). **Requires SQL** — see `supabase/v0.5.140-delta.sql`.
 - **v0.5.139** — Business-switcher dropdown in the navy header. User feedback: "if I'm in issues I need go to each issue for each business with a drop down." When the active subscription has 2+ businesses, the `🏢 [Biz Name]` pill on every business-level page is now a `<select>` listing every biz the user is admin/coach/member of in the active account. Picking a different biz calls `activeOrg.set(...)` and reloads the same page — so you stay on Issues / Goals / Scorecard / Meeting / etc. but viewing the other business's data. Lazy-loads Supabase only when needed; caches the business list in localStorage for 5 minutes. Account-scope session pages still show `🏛️ [Account]` (v0.5.135) — the override now marks the pill `data-overridden="1"` so the switcher doesn't replace it back.
